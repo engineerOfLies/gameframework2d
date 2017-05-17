@@ -1,2 +1,6 @@
-game.o: game.c ../include/gf2d_graphics.h
-gf2d_graphics.o: gf2d_graphics.c ../include/gf2d_graphics.h
+game.o: game.c ../include/gf2d_graphics.h ../include/gf2d_types.h \
+ ../include/gf2d_vector.h
+gf2d_graphics.o: gf2d_graphics.c ../include/gf2d_graphics.h \
+ ../include/gf2d_types.h ../include/gf2d_vector.h
+gf2d_vector.o: gf2d_vector.c ../include/gf2d_vector.h \
+ ../include/gf2d_types.h

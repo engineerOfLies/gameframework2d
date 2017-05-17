@@ -1,3 +1,5 @@
+#include <SDL.h>
+
 #include "gf2d_graphics.h"
 
 void gf2d_graphics_close()
