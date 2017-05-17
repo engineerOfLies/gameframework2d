@@ -81,17 +81,13 @@ void vector4d_set_magnitude(Vector4D * V,float magnitude)
   V->w *= magnitude;
 }
 
-Bool  vector3d_magnitude_less_than(Vector3D V,float size)
+int vector3d_magnitude_less_than(Vector3D V,float size)
 {
-  return (vector3d_magnitude_squared(V) < (size * size));
-}
-
-Bool distance_between_less_than3d(Vector3D p1,Vector3D p2,float size)
-{
-  return vector3d_magnitude_less_than(vector3d(p1.x - p2.x,
-                                                 p1.y - p2.y,
-                                                 p1.z - p2.z),
-                                       size);
+    float ms = vector3d_magnitude_squared(V);
+    float ss = size * size;
+    if (ms < ss)return -1;
+    if (ms == ss)return 0;
+    return 1;
 }
 
 void vector3d_set_angle_by_radians(Vector3D *out,float radians)

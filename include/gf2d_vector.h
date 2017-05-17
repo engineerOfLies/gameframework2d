@@ -270,15 +270,15 @@ float vector3d_magnitude_squared(Vector3D V);
 float vector4d_magnitude_squared(Vector4D V);
 
 /**
- * @brief checks if the magnitude of V is less than size.  It does this without
+ * @brief checks if the magnitude of V against size.  It does this without
  * doing square roots, which are costly.  It will still do floating point multiplication
  * @param V the vector to check
  * @param size the magnitude to check against
- * @return MglTrue if the magnitude of V is less than size or MglFalse otherwise
+ * @return -1 f V is less than size, 0 if equal or 1 if size is greater than V
  */
-Bool  vector2d_magnitude_less_than(Vector2D V,float size);
-Bool  vector3d_magnitude_less_than(Vector3D V,float size);
-Bool  vector4d_magnitude_less_than(Vector4D V,float size);
+int  vector2d_magnitude_compare(Vector2D V,float size);
+int  vector3d_magnitude_compare(Vector3D V,float size);
+int  vector4d_magnitude_compare(Vector4D V,float size);
 
 /**
  * @brief scales the vector to the specified length without changing direction

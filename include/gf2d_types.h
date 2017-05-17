@@ -13,6 +13,11 @@
 
 typedef short unsigned int Bool;
 
-
+#ifndef false
+#define false 0
+#endif
+#ifndef true
+#define true 1
+#endif
 
 #endif
