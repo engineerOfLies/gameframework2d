@@ -1,0 +1,2 @@
+game.o: game.c ../include/gf2d_graphics.h
+gf2d_graphics.o: gf2d_graphics.c ../include/gf2d_graphics.h
