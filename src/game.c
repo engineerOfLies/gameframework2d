@@ -13,7 +13,7 @@ int main(int argc, char * argv[])
     int mx,my;
     float mf = 0;
     Sprite *mouse;
-    Vector4D mouseColor = {100,255,255,200};
+    Vector4D mouseColor = {255,100,255,200};
     
     /*program initializtion*/
     init_logger("gf2d.log");
