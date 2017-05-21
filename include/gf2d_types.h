@@ -20,4 +20,31 @@ typedef short unsigned int Bool;
 #define true 1
 #endif
 
+/**
+ * @brief random macro taken from Id Software's Quake 2 Source.
+ * This macro exposes the more random bits from the rand() function
+ * @return a random float between 0 and 1.0
+ */
+#define gf2d_random()  ((rand ()%1000)/(float)1000.0)
+
+/**
+ * @brief random macro taken from Id Software's Quake 2 Source.
+ * This macro exposes the more random bits from the rand() function
+ * @return a random float between -1.0 and 1.0
+ */
+#define gf2d_crandom() (((float)((rand()%1000)/(float)1000.0) * 2.0) - 1.0)
+
+/**
+ * basic operations
+ */
+#ifndef MIN
+#define MIN(a,b)          (a<=b?a:b)
+#endif
+
+#ifndef MAX
+#define MAX(a,b)          (a>=b?a:b)
+#endif
+
+#define gf2d_rect_set(r,a,b,c,d) (r.x=(a), r.y=(b), r.w=(c), r.h=(d))
+
 #endif

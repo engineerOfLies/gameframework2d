@@ -157,6 +157,140 @@ void gf2d_graphics_close()
     gf2d_graphics.renderer = NULL;
     gf2d_graphics.texture = NULL;
     gf2d_graphics.temp_buffer = NULL;
+
+    slog("graphics closed");
+}
+
+SDL_Renderer *gf2d_graphics_get_renderer()
+{
+    return gf2d_graphics.renderer;
+}
+
+SDL_Texture *gf2d_graphics_get_screen_texture()
+{
+    return gf2d_graphics.texture;
+}
+
+SDL_Surface *gf2d_graphics_get_screen_surface()
+{
+    return gf2d_graphics.surface;
+}
+
+void gf2d_graphics_set_frame_delay(Uint32 frameDelay)
+{
+    gf2d_graphics.frame_delay = frameDelay;
+}
+
+float gf2d_graphics_get_frames_per_second()
+{
+    return gf2d_graphics.fps;
+}
+
+void gf2d_graphics_frame_delay()
+{
+    Uint32 diff;
+    gf2d_graphics.then = gf2d_graphics.now;
+    slog_sync();// make sure logs get written when we have time to write it
+    gf2d_graphics.now = SDL_GetTicks();
+    diff = (gf2d_graphics.now - gf2d_graphics.then);
+    if (diff < gf2d_graphics.frame_delay)
+    {
+        SDL_Delay(gf2d_graphics.frame_delay - diff);
+    }
+    gf2d_graphics.fps = 1000.0/MAX(SDL_GetTicks() - gf2d_graphics.then,0.001);
+}
+
+void gf2d_grahics_next_frame()
+{
+    SDL_RenderPresent(gf2d_graphics.renderer);
+    gf2d_graphics_frame_delay();
+}
+
+void gf2d_graphics_clear_screen()
+{
+    if (!gf2d_graphics.surface)
+    {
+        return;
+    }
+    SDL_SetRenderDrawColor(
+        gf2d_graphics.renderer,
+        gf2d_graphics.background_color_v.x,
+        gf2d_graphics.background_color_v.y,
+        gf2d_graphics.background_color_v.z,
+        gf2d_graphics.background_color_v.w);
+    SDL_FillRect(gf2d_graphics.surface,NULL,gf2d_graphics.background_color);
+    SDL_RenderClear(gf2d_graphics.renderer);
+}
+
+SDL_Surface *gf2d_graphics_create_surface(Uint32 w,Uint32 h)
+{
+    SDL_Surface *surface;
+    surface = SDL_CreateRGBSurface(
+        0,w, h,
+        gf2d_graphics.bitdepth,
+        gf2d_graphics.rmask,
+        gf2d_graphics.gmask,
+        gf2d_graphics.bmask,
+        gf2d_graphics.amask);
+    return surface;
+}
+
+void gf2d_graphics_render_texture_to_screen(SDL_Texture *texture,const SDL_Rect * srcRect,SDL_Rect * dstRect)
+{
+    if (!texture)return;
+    if (!gf2d_graphics.renderer)
+    {
+        slog("no graphics rendering context");
+        return;
+    }
+    if (SDL_RenderCopy(gf2d_graphics.renderer,
+                   texture,
+                   srcRect,
+                   dstRect))
+    {
+        slog("failed to render:%s",SDL_GetError());
+    }
+
+}
+
+void gf2d_graphics_blit_surface_to_screen(SDL_Surface *surface,const SDL_Rect * srcRect,SDL_Rect * dstRect)
+{
+    if (!surface)return;
+    if (!gf2d_graphics.surface)
+    {
+        slog("no screen surface loaded");
+        return;
+    }
+    SDL_BlitSurface(surface,
+                    srcRect,
+                    gf2d_graphics.surface,
+                    dstRect);
+}
+
+SDL_Surface *gf2d_graphics_screen_convert(SDL_Surface **surface)
+{
+    SDL_Surface *convert;
+    if (!(*surface))
+    {
+        slog("surface provided was NULL");
+        return NULL;
+    }
+    if (!gf2d_graphics.surface)
+    {
+        slog("graphics not yet initialized");
+        return NULL;
+    }
+    convert = SDL_ConvertSurface(*surface,
+                       gf2d_graphics.surface->format,
+                       0);
+    if (!convert)
+    {
+        slog("failed to convert surface: %s",SDL_GetError());
+        return NULL;
+    }
+    SDL_FreeSurface(*surface);
+    *surface = NULL;
+    return convert;
 }
 
 /*eol@eof*/
