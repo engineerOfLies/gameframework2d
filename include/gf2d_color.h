@@ -54,7 +54,7 @@ Color gf2d_color_hsl(float h,float s,float l,float a);
  * @param hex the hex value of the color
  * @returns a newly set color
  */
-Color gf2d_color8(Uint32 hex);
+Color gf2d_color_hex(Uint32 hex);
 
 /**
  * @brief convert a color to floating point representation

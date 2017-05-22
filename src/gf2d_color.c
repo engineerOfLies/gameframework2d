@@ -36,11 +36,12 @@ Color gf2d_color_hsl(float h,float s,float l,float a)
     return color;
 }
 
-Color gf2d_color8(Uint32 hex)
+Color gf2d_color_hex(Uint32 hex)
 {
     Color color;
     color.r = (float)hex;
     color.ct = CT_HEX;
+    return color;
 }
 
 Color gf2d_color_to_float(Color color)
@@ -61,7 +62,7 @@ Color gf2d_color_to_float(Color color)
             break;
         case CT_HSL:
             C = (1 - fabs(2*color.b -1)) * color.g;
-            X = C * (1 - fabs(color.r/60 % 2 - 1));
+            X = C * (1 - fabs(fmod(color.r/60,2) - 1));
             m = color.b - (C * 0.5);
             if (color.r < 60)
             {
@@ -101,29 +102,30 @@ Color gf2d_color_to_float(Color color)
             }
             break;
         case CT_HEX:
-            color.r = ((float)(hex & 0xff000000)>>24)/0xff;
-            color.g = ((float)(hex & 0x00ff0000)>>16)/0xff;
-            color.b = ((float)(hex & 0x0000ff00)>>8)/0xff;
-            color.a = ((float)hex & 0x000000ff)/0xff;
+            nc.r = (((Uint32)color.r & 0xff000000)>>24)/0xff;
+            nc.g = (((Uint32)color.r & 0x00ff0000)>>16)/0xff;
+            nc.b = (((Uint32)color.r & 0x0000ff00)>>8)/0xff;
+            nc.a = ((Uint32)color.r & 0x000000ff)/0xff;
             break;
     }
-    nc.ct = CT_RGBAf
+    nc.ct = CT_RGBAf;
     return nc;
 }
 
 Color gf2d_color_to_int8(Color color)
 {
     Color nc;
+    float C,X,m;
     switch (color.ct)
     {
         case CT_HEX:
-            color.r = ((float)(hex & 0xff000000)>>24);
-            color.g = ((float)(hex & 0x00ff0000)>>16);
-            color.b = ((float)(hex & 0x0000ff00)>>8);
-            color.a = ((float)hex & 0x000000ff);
+            nc.r = (((Uint32)color.r & 0xff000000)>>24);
+            nc.g = (((Uint32)color.r & 0x00ff0000)>>16);
+            nc.b = (((Uint32)color.r & 0x0000ff00)>>8);
+            nc.a = ((Uint32)color.r & 0x000000ff);
         case CT_HSL:
             C = (1 - fabs(2*color.b -1)) * color.g;
-            X = C * (1 - fabs(color.r/60 % 2 - 1));
+            X = C * (1 - fabs(fmod(color.r/60,2) - 1));
             m = color.b - (C * 0.5);
             if (color.r < 60)
             {
@@ -200,7 +202,7 @@ Color gf2d_color_to_hsla(Color color)
         S = D / (1 - fabs(Cmax+Cmin-1));
         if (Cmax == nc.r)
         {
-            H = 60 * ((nc.g - nc.b)/D)%6;
+            H = 60 * fmod(((nc.g - nc.b)/D),6);
         }
         else if (Cmax == nc.g)
         {
@@ -290,17 +292,17 @@ SDL_Color gf2d_color_to_sdl(Color color)
 void gf2d_color_set_hue(float hue,Color *color)
 {
     Color temp;
-    if (color.ct == CT_HSL)
+    if (color->ct == CT_HSL)
     {
-        color.r = hue;
+        color->r = hue;
         return;
     }
     temp = gf2d_color_to_hsla(*color);
     temp.r = hue;
-    switch(color.ct)
+    switch(color->ct)
     {
         case CT_HEX:
-            *color = gf2d_color_to_hex(temp);
+            color->r = gf2d_color_to_hex(temp);
             return;
         case CT_RGBA8:
             *color = gf2d_color_to_int8(temp);
