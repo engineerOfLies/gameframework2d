@@ -13,6 +13,8 @@ int main(int argc, char * argv[])
     int mx,my;
     float mf = 0;
     Sprite *mouse;
+    Sprite *ship;
+    Vector2D flipHorizontal = {1,0};
     Vector4D mouseColor = {255,100,255,200};
     
     /*program initializtion*/
@@ -33,6 +35,7 @@ int main(int argc, char * argv[])
     /*demo setup*/
     sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16);
+    ship = gf2d_sprite_load_all("images/ed210.png",128,128,16);
     /*main game loop*/
     while(!done)
     {
@@ -48,6 +51,19 @@ int main(int argc, char * argv[])
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
             gf2d_sprite_draw_image(sprite,vector2d(0,0));
+            
+            // game entities next
+            
+            gf2d_sprite_draw(
+                ship,
+                vector2d(64,570),
+                NULL,
+                NULL,
+                NULL,
+                &flipHorizontal,
+                NULL,
+                36+(int)mf);
+            
             
             //UI elements last
             gf2d_sprite_draw(

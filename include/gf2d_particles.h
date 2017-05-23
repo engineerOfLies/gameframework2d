@@ -4,6 +4,7 @@
 #include <SDL.h>
 
 #include "gf2d_vector.h"
+#include "gf2d_color.h"
 
 typedef enum
 {
@@ -19,8 +20,8 @@ typedef struct Particle_S
     Vector2D position;      /**<position of the particle*/
     Vector2D velocity;      /**<movement velocity of the particle*/
     Vector2D acceleration;  /**<movement acceleration of the particle*/
-    Vector4D color;         /**<rendering color of the particle*/
-    Vector4D colorVector;   /**<*/
+    Color color;         /**<rendering color of the particle*/
+    Color colorVector;   /**<*/
     ParticleTypes type;     /**<*/
     float frame,framerate;  /**<*/
     int startFrame,endFrame;/**<*/
