@@ -301,6 +301,9 @@ void gf2d_color_set_hue(float hue,Color *color)
     temp.r = hue;
     switch(color->ct)
     {
+        case CT_HSL:
+            // case already handled
+            break;
         case CT_HEX:
             color->r = gf2d_color_to_hex(temp);
             return;

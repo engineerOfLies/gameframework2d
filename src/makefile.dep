@@ -6,10 +6,13 @@ gf2d_color.o: gf2d_color.c ../include/gf2d_color.h \
 gf2d_graphics.o: gf2d_graphics.c ../include/gf2d_graphics.h \
  ../include/gf2d_types.h ../include/gf2d_vector.h \
  ../include/simple_logger.h
+<<<<<<< HEAD
 gf2d_particles.o: gf2d_particles.c ../include/gf2d_particles.h \
  ../include/gf2d_vector.h ../include/gf2d_types.h ../include/gf2d_color.h \
  ../include/gf2d_sprite.h ../include/gf2d_vector.h \
  ../include/gf2d_types.h
+=======
+>>>>>>> color
 gf2d_sprite.o: gf2d_sprite.c ../include/simple_logger.h \
  ../include/gf2d_sprite.h ../include/gf2d_types.h \
  ../include/gf2d_vector.h ../include/gf2d_text.h \
