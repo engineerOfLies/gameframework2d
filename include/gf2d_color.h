@@ -21,6 +21,8 @@ typedef struct
     ColorType ct;   /**<how this structure is used*/
 }Color;
 
+#define gf2d_color_copy(dst,src) (dst.r = src.r,dst.g = src.g,dst.b = src.b,dst.a = src.a,dst.ct = src.ct)
+
 /**
  * @brief create and return a color from floating point RGBA values
  * values over 1 are clamped to 1, values under 0 are clamped to zero
@@ -108,7 +110,7 @@ Color gf2d_color_from_vector4(Vector4D vector);
 /**
  * @brief convert a color to a vector where x = r, y = g, z = b, w = a
  * @param color the color to convert
- * @return a new color in the format CT_HSL
+ * @return a vector set to the color provided
  */
 Vector4D gf2d_color_to_vector4(Color color);
 
@@ -127,5 +129,21 @@ float gf2d_color_get_hue(Color color);
  * @return a new color in the format CT_HSL
  */
 void gf2d_color_set_hue(float hue,Color *color);
+
+/**
+ * @brief adds colors a and b and saves the result in dst
+ * @param dst if NULL this function is a no op.  Result saved here
+ * @param a the format for a is used as the resulting format.  Conversion happen before adding
+ * @param b the color to add to a
+ */
+void gf2d_color_add(Color *dst,Color a,Color b);
+
+/**
+ * @brief make sure the values in the color are within acceptable ranges
+ * Note this will break any colors used as a vector that contain negative values
+ * @param color the color to clamp
+ * @return the new color within specified range
+ */
+Color gf2d_color_clamp(Color color);
 
  #endif
