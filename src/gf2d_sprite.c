@@ -6,15 +6,6 @@
 #include "gf2d_text.h"
 #include "gf2d_graphics.h"
 
-struct Sprite_S
-{
-    int ref_count;
-    TextLine filepath;
-    SDL_Texture *texture;
-    Uint32 frames_per_line;
-    Uint32 frame_w,frame_h;
-};
-
 typedef struct
 {
     Uint32 max_sprites;

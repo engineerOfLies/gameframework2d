@@ -4,8 +4,16 @@
 #include <SDL.h>
 #include "gf2d_types.h"
 #include "gf2d_vector.h"
+#include "gf2d_text.h"
 
-typedef struct Sprite_S Sprite;
+typedef struct Sprite_S
+{
+    int ref_count;
+    TextLine filepath;
+    SDL_Texture *texture;
+    Uint32 frames_per_line;
+    Uint32 frame_w,frame_h;
+}Sprite;
 
 /**
  * @brief initializes the sprite manager 
