@@ -2,6 +2,7 @@
 #include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
 #include "simple_logger.h"
+#include "gf2d_particles.h"
 
 int main(int argc, char * argv[])
 {
@@ -12,6 +13,7 @@ int main(int argc, char * argv[])
     
     int mx,my;
     float mf = 0;
+    ParticleEmitter *pe;
     Sprite *mouse;
     Sprite *ship;
     Vector2D flipHorizontal = {1,0};
@@ -36,6 +38,31 @@ int main(int argc, char * argv[])
     sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16);
     ship = gf2d_sprite_load_all("images/ed210.png",128,128,16);
+    
+    pe = gf2d_particle_emitter_new_full(
+        500000,
+        400,
+        5,
+        PT_Sprite,
+        vector2d(620,375),
+        vector2d(5,5),
+        vector2d(0,-5),
+        vector2d(2,5),
+        vector2d(0,0.05),
+        vector2d(0,0.01),
+        gf2d_color(1,0,0,1),
+        gf2d_color(-0.01,-0.01,-0.01,0),
+        gf2d_color(0.1,0.1,0.1,0.1),
+        0,
+        0,
+        0,
+        "images/cloud.png",
+        32,
+        32,
+        1,
+        0,
+        SDL_BLENDMODE_ADD);
+    
     /*main game loop*/
     while(!done)
     {
@@ -45,15 +72,17 @@ int main(int argc, char * argv[])
         SDL_GetMouseState(&mx,&my);
         mf+=0.1;
         if (mf >= 16.0)mf = 0;
-        
-        
+
+        gf2d_particle_emitter_update(pe);        
+        gf2d_particle_new_default(pe,50);
+
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
             gf2d_sprite_draw_image(sprite,vector2d(0,0));
             
             // game entities next
-            
+            gf2d_particle_emitter_draw(pe);
             gf2d_sprite_draw(
                 ship,
                 vector2d(64,570),
@@ -80,6 +109,9 @@ int main(int argc, char * argv[])
         if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition
         slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
+    // any custome clean up goes here
+    gf2d_particle_emitter_free(pe);
+    
     slog("---==== END ====---");
     return 0;
 }
