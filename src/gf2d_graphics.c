@@ -124,7 +124,8 @@ void gf2d_graphics_initialize(
     
     gf2d_graphics.background_color = SDL_MapRGB(gf2d_graphics.surface->format, bgcolor.x,bgcolor.y,bgcolor.z);
     vector4d_set(gf2d_graphics.background_color_v,bgcolor.x,bgcolor.y,bgcolor.z,bgcolor.w);
-    
+    SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),SDL_BLENDMODE_BLEND);
+
     srand(SDL_GetTicks());
     atexit(gf2d_graphics_close);
     slog("graphics initialized");
