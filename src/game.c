@@ -16,6 +16,7 @@ int main(int argc, char * argv[])
     ParticleEmitter *pe;
     Sprite *mouse;
     Sprite *ship;
+    Sprite *bug;
     Vector2D flipHorizontal = {1,0};
     Vector4D mouseColor = {255,100,255,200};
     
@@ -38,21 +39,22 @@ int main(int argc, char * argv[])
     sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16);
     ship = gf2d_sprite_load_all("images/ed210.png",128,128,16);
+    bug = gf2d_sprite_load_all("images/space_bug.png",128,128,16);
     
     pe = gf2d_particle_emitter_new_full(
         500000,
-        400,
+        200,
         5,
-        PT_Sprite,
-        vector2d(620,375),
-        vector2d(5,5),
-        vector2d(0,-5),
-        vector2d(2,5),
+        PT_Pixel,
+        vector2d(575,340),
+        vector2d(2,2),
+        vector2d(0,-3),
+        vector2d(2,1),
         vector2d(0,0.05),
         vector2d(0,0.01),
-        gf2d_color(1,0,0,1),
-        gf2d_color(-0.01,-0.01,-0.01,0),
-        gf2d_color(0.1,0.1,0.1,0.1),
+        gf2d_color(0.85,0.55,0,1),
+        gf2d_color(-0.01,-0.02,0,0),
+        gf2d_color(0.1,0.1,0,0.1),
         0,
         0,
         0,
@@ -74,7 +76,7 @@ int main(int argc, char * argv[])
         if (mf >= 16.0)mf = 0;
 
         gf2d_particle_emitter_update(pe);        
-        gf2d_particle_new_default(pe,50);
+        gf2d_particle_new_default(pe,25);
 
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
@@ -91,8 +93,17 @@ int main(int argc, char * argv[])
                 NULL,
                 &flipHorizontal,
                 NULL,
-                36+(int)mf);
+                90+(int)mf);
             
+            gf2d_sprite_draw(
+                bug,
+                vector2d(1024,570),
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+                88+(int)mf);
             
             //UI elements last
             gf2d_sprite_draw(
