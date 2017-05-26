@@ -81,7 +81,16 @@ void vector4d_set_magnitude(Vector4D * V,float magnitude)
   V->w *= magnitude;
 }
 
-int vector3d_magnitude_less_than(Vector3D V,float size)
+int vector2d_magnitude_compare(Vector2D V,float size)
+{
+    float ms = vector2d_magnitude_squared(V);
+    float ss = size * size;
+    if (ms < ss)return -1;
+    if (ms == ss)return 0;
+    return 1;
+}
+
+int vector3d_magnitude_compare(Vector3D V,float size)
 {
     float ms = vector3d_magnitude_squared(V);
     float ss = size * size;
@@ -89,6 +98,16 @@ int vector3d_magnitude_less_than(Vector3D V,float size)
     if (ms == ss)return 0;
     return 1;
 }
+
+int vector4d_magnitude_compare(Vector4D V,float size)
+{
+    float ms = vector4d_magnitude_squared(V);
+    float ss = size * size;
+    if (ms < ss)return -1;
+    if (ms == ss)return 0;
+    return 1;
+}
+
 
 void vector3d_set_angle_by_radians(Vector3D *out,float radians)
 {
