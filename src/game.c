@@ -4,6 +4,7 @@
 #include "simple_logger.h"
 #include "gf2d_particles.h"
 #include "gf2d_actor.h"
+#include "gf2d_entity.h"
 
 int main(int argc, char * argv[])
 {
@@ -39,8 +40,9 @@ int main(int argc, char * argv[])
     gf2d_graphics_set_frame_delay(16);
     gf2d_sprite_init(1024);
     SDL_ShowCursor(SDL_DISABLE);
-    gf2d_action_list_init(100);
-
+    gf2d_action_list_init(200);
+    gf2d_entity_system_init(2028);
+    
     /*demo setup*/
     
     sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
@@ -83,6 +85,8 @@ int main(int argc, char * argv[])
         mf+=0.1;
         if (mf >= 16.0)mf = 0;
 
+        gf2d_entity_think_all();
+        gf2d_entity_update_all();
         gf2d_action_list_get_next_frame(al,&shipframe,"walk");
         
         gf2d_particle_emitter_update(pe);        
@@ -115,6 +119,8 @@ int main(int argc, char * argv[])
                 NULL,
                 NULL,
                 88+(int)mf);
+            
+            gf2d_entity_draw_all();
             
             //UI elements last
             gf2d_sprite_draw(
