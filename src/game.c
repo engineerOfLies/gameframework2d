@@ -3,6 +3,7 @@
 #include "gf2d_sprite.h"
 #include "simple_logger.h"
 #include "gf2d_particles.h"
+#include "gf2d_actor.h"
 
 int main(int argc, char * argv[])
 {
@@ -13,10 +14,14 @@ int main(int argc, char * argv[])
     
     int mx,my;
     float mf = 0;
+    float shipframe = 0;
+    
     ParticleEmitter *pe;
     Sprite *mouse;
     Sprite *ship;
     Sprite *bug;
+    ActionList *al;
+    
     Vector2D flipHorizontal = {1,0};
     Vector4D mouseColor = {255,100,255,200};
     
@@ -34,11 +39,14 @@ int main(int argc, char * argv[])
     gf2d_graphics_set_frame_delay(16);
     gf2d_sprite_init(1024);
     SDL_ShowCursor(SDL_DISABLE);
-    
+    gf2d_action_list_init(100);
+
     /*demo setup*/
+    
     sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16);
     ship = gf2d_sprite_load_all("images/ed210.png",128,128,16);
+    al = gf2d_action_list_load("actors/ed210.actor");
     bug = gf2d_sprite_load_all("images/space_bug.png",128,128,16);
     
     pe = gf2d_particle_emitter_new_full(
@@ -75,6 +83,8 @@ int main(int argc, char * argv[])
         mf+=0.1;
         if (mf >= 16.0)mf = 0;
 
+        gf2d_action_list_get_next_frame(al,&shipframe,"walk");
+        
         gf2d_particle_emitter_update(pe);        
         gf2d_particle_new_default(pe,25);
 
@@ -85,6 +95,7 @@ int main(int argc, char * argv[])
             
             // game entities next
             gf2d_particle_emitter_draw(pe);
+            
             gf2d_sprite_draw(
                 ship,
                 vector2d(64,570),
@@ -93,7 +104,7 @@ int main(int argc, char * argv[])
                 NULL,
                 &flipHorizontal,
                 NULL,
-                90+(int)mf);
+                (int)shipframe);
             
             gf2d_sprite_draw(
                 bug,

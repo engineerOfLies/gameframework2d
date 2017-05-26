@@ -1,7 +1,11 @@
 game.o: game.c ../include/gf2d_graphics.h ../include/gf2d_types.h \
  ../include/gf2d_vector.h ../include/gf2d_sprite.h ../include/gf2d_text.h \
  ../include/simple_logger.h ../include/gf2d_particles.h \
- ../include/gf2d_color.h ../include/gf2d_sprite.h
+ ../include/gf2d_color.h ../include/gf2d_sprite.h ../include/gf2d_actor.h
+gf2d_actor.o: gf2d_actor.c ../include/gf2d_actor.h \
+ ../include/gf2d_sprite.h ../include/gf2d_types.h \
+ ../include/gf2d_vector.h ../include/gf2d_text.h \
+ ../include/simple_logger.h
 gf2d_color.o: gf2d_color.c ../include/gf2d_color.h \
  ../include/gf2d_vector.h ../include/gf2d_types.h
 gf2d_draw.o: gf2d_draw.c ../include/gf2d_draw.h ../include/gf2d_vector.h \
