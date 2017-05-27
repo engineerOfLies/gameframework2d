@@ -2,6 +2,8 @@
 #include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
 #include "simple_logger.h"
+#include "gf2d_draw.h"
+#include "gf2d_collision.h"
 
 int main(int argc, char * argv[])
 {
@@ -14,6 +16,7 @@ int main(int argc, char * argv[])
     float mf = 0;
     Sprite *mouse;
     Vector4D mouseColor = {255,100,255,200};
+    Space *space;
     
     /*program initializtion*/
     init_logger("gf2d.log");
@@ -33,6 +36,11 @@ int main(int argc, char * argv[])
     /*demo setup*/
     sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16);
+    
+    space = gf2d_space_new_full(
+        gf2d_rect(0,0,1200,700),
+        0.1,
+        vector2d(0,0.1));
     /*main game loop*/
     while(!done)
     {
@@ -48,7 +56,8 @@ int main(int argc, char * argv[])
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
             gf2d_sprite_draw_image(sprite,vector2d(0,0));
-            
+
+            gf2d_space_draw(space);
             //UI elements last
             gf2d_sprite_draw(
                 mouse,
@@ -64,6 +73,8 @@ int main(int argc, char * argv[])
         if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition
         slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
+    
+    gf2d_space_free(space);
     slog("---==== END ====---");
     return 0;
 }

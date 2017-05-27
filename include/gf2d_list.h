@@ -33,6 +33,12 @@ List *gf2d_list_new();
 List *gf2d_list_new_size(Uint32 count);
 
 /**
+ * @brief deletes a list that has been previously allocated
+ * @param list the list to delete;
+ */
+void gf2d_list_delete(List *list);
+
+/**
  * @brief get the data stored at the nth element
  * @param list the list to pull data from
  * @param n which element to look out
