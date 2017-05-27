@@ -17,6 +17,7 @@ int main(int argc, char * argv[])
     Sprite *mouse;
     Vector4D mouseColor = {255,100,255,200};
     Space *space;
+    Body body;// not a pointer!
     
     /*program initializtion*/
     init_logger("gf2d.log");
@@ -41,6 +42,19 @@ int main(int argc, char * argv[])
         gf2d_rect(0,0,1200,700),
         0.1,
         vector2d(0,0.1));
+    
+    gf2d_body_set(
+        &body,
+        ALL_LAYERS,
+        0,
+        vector2d(600,360),
+        vector2d(0,0),
+        10,
+        NULL,
+        NULL,
+        NULL,
+        NULL);
+
     /*main game loop*/
     while(!done)
     {

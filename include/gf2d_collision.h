@@ -35,6 +35,40 @@ typedef struct
     Vector2D    gravity;        /**<global gravity pull direction*/
 }Space;
 
+
+#define ALL_LAYERS 0xffffffff
+
+/**
+ * @brief initializes a body to zero
+ * @warning do not use this on a body in use
+ */
+void gf2d_body_clear(Body *body);
+
+/**
+ * @brief set all parameters for a body
+ * @param body the body to set the parameters for
+ * @param layer the layer mask
+ * @param team the team
+ * @param positition the position in space to be added at
+ * @param velocity the velocity that the body is moving at
+ * @param mass the mass of the body (for momentum purposes)
+ * @param shape a pointer to the shape data to use for the body
+ * @param data any custom data you want associated with the body
+ * @param bodyTouch the callback to invoke when this body touches another body
+ * @param worldTouch the callback to invoke when this body touches the world
+ */
+void gf2d_body_set(
+    Body *body,
+    Uint32      layer,
+    Uint32      team,
+    Vector2D    position,
+    Vector2D    velocity,
+    float       mass,
+    Shape      *shape,
+    void       *data,
+    int     (*bodyTouch)(struct Body_S *self, struct Body_S *other, Collision *collision),
+    int     (*worldTouch)(struct Body_S *self, Collision *collision));
+
 /**
  * @brief create a new space
  * @return NULL on error or a new empty space
