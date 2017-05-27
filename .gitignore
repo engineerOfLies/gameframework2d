@@ -56,3 +56,5 @@ gf2d
 
 #logs
 *.log
+
+makefile.dep
