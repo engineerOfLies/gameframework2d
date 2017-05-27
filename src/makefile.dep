@@ -1,12 +1,20 @@
 game.o: game.c ../include/gf2d_graphics.h ../include/gf2d_types.h \
- ../include/gf2d_vector.h ../include/gf2d_sprite.h \
+ ../include/gf2d_vector.h ../include/gf2d_sprite.h ../include/gf2d_text.h \
  ../include/simple_logger.h
+gf2d_collision.o: gf2d_collision.c ../include/gf2d_collision.h \
+ ../include/gf2d_shape.h ../include/gf2d_vector.h ../include/gf2d_types.h
+gf2d_draw.o: gf2d_draw.c ../include/gf2d_draw.h ../include/gf2d_vector.h \
+ ../include/gf2d_types.h ../include/gf2d_graphics.h
 gf2d_graphics.o: gf2d_graphics.c ../include/gf2d_graphics.h \
  ../include/gf2d_types.h ../include/gf2d_vector.h \
  ../include/simple_logger.h
+gf2d_list.o: gf2d_list.c ../include/gf2d_list.h \
+ ../include/simple_logger.h
+gf2d_shape.o: gf2d_shape.c ../include/gf2d_shape.h \
+ ../include/gf2d_vector.h ../include/gf2d_types.h
 gf2d_sprite.o: gf2d_sprite.c ../include/simple_logger.h \
  ../include/gf2d_sprite.h ../include/gf2d_types.h \
- ../include/gf2d_vector.h ../include/gf2d_text.h \
+ ../include/gf2d_vector.h ../include/gf2d_text.h ../include/gf2d_text.h \
  ../include/gf2d_graphics.h
 gf2d_vector.o: gf2d_vector.c ../include/gf2d_vector.h \
  ../include/gf2d_types.h
