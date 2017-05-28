@@ -14,7 +14,7 @@ typedef struct
 
 typedef struct Body_S
 {
-    int         inactive;       /**<when true, it is ignored by the space*/
+    int         inactive;       /**<internal use only*/
     Uint32      layer;          /**<only bodies that share one or more layers will interact*/
     Uint32      team;           /**<bodies that share a team will NOT interact*/
     Vector2D    position;       /**<position of the center of mass*/
@@ -30,6 +30,7 @@ typedef struct
 {
     List       *bodyList;       /**<list of bodies in the space*/
     List       *staticShapes;   /**<list of shapes that will collide that do not move*/
+    int         precision;      /**<number of backoff attempts before giving up*/
     Rect        bounds;         /**<absolute bounds of the space*/
     float       timeStep;       /**<how much each iteration of the simulation progresses time by*/
     Vector2D    gravity;        /**<global gravity pull direction*/
@@ -77,11 +78,13 @@ Space *gf2d_space_new();
 
 /**
  * @brief create a new space and set some defaults
+ * @param precision number of retry attempts when movement collides
  * @param bounds the absolute bounds of the space
  * @param timeStep this should be fraction that can add up to 1.  ie: 0.1 or 0.01, etc
  * @param gravity the direction that gravity pulls
  */
 Space *gf2d_space_new_full(
+    int         precision,
     Rect        bounds,
     float       timeStep,
     Vector2D    gravity);

@@ -7,8 +7,12 @@
 
 typedef struct
 {
-    Vector2D    center;
-    float       radius;
+    float x1,y1,x2,y2;
+}Edge;
+
+typedef struct
+{
+    float       x,y,r;
 }Circle;
 
 typedef struct
@@ -19,7 +23,8 @@ typedef struct
 typedef enum
 {
     ST_RECT,
-    ST_CIRCLE
+    ST_CIRCLE,
+    ST_EDGE
 }ShapeTypes;
 
 
@@ -30,6 +35,7 @@ typedef struct
     {
         Circle c;
         Rect r;
+        Edge e;
     }s;
 }Shape;
 
@@ -96,6 +102,15 @@ Shape gf2d_shape_from_cirlce(Circle c);
  * @param src the rect to be copied from
  */
 #define gf2d_rect_copy(dst,src) (dst.x = src.x,dst.y = src.y,dst.w = src.w,dst.h = src.h)
+
+/**
+ * @brief determine if the point lies within the rectangle
+ * @param p the point to check
+ * @param r the rectangle to check
+ * @return true if the point is inside the rectangle, false otherwise
+ */
+Uint8 gf2d_point_in_rect(Vector2D p,Rect r);
+
 /**
  * @brief check if two rectangles are overlapping
  * @param a rect A
@@ -123,7 +138,7 @@ Circle gf2d_circle(float x, float y, float r);
  * @brief set all the parameters of a GF2D circle at once
  * @param
  */
-#define gf2d_circle_set(circle,a,b,c) (circle.center.x = a,circle.center.y = b, circle.radius =c)
+#define gf2d_circle_set(circle,a,b,c) (circle.x = a,circle.y = b, circle.r = c)
 
 /**
  * @brief check if two circles are overlapping
@@ -140,6 +155,13 @@ Uint8 gf2d_circle_overlap(Circle a, Circle b);
  * @return true if there is any overlap, false otherwise
  */
 Uint8 gf2d_circle_rect_overlap(Circle a, Rect b);
+
+/**@brief check if a shape is overlapping another shape
+ * @param a one shape
+ * @param b the other shape
+ * @return true is there is overlap, false otherwise
+ */
+Uint8 gf2d_shape_overlap(Shape a, Shape b);
 
 /**
  * @brief convert a GF2D rect to an SDL rect
@@ -175,5 +197,61 @@ void gf2d_shape_move(Shape *shape,Vector2D move);
  * @param src the shape you want to copy FROM
  */
 void gf2d_shape_copy(Shape *dst,Shape src);
+
+/**
+ * @brief make an edge
+ * @param x1 the X component of starting point
+ * @param y1 the Y component of starting point
+ * @param x2 the X component of ending point
+ * @param y2 the Y component of ending point
+ * @return a set edge
+ */
+Edge gf2d_edge(float x1, float y1, float x2, float y2);
+
+/**
+ * @brief make an edge from two vectors
+ * @param a the starting point vector
+ * @param b the ending point vector
+ * @return a set edge
+ */
+Edge gf2d_edge_from_vectors(Vector2D a,Vector2D b);
+
+/**
+ * @brief set an edge
+ * @param e the edge to set
+ * @param a the X component of starting point
+ * @param b the Y component of starting point
+ * @param c the X component of ending point
+ * @param d the Y component of ending point
+ */
+#define gf2d_edge_set(e,a,b,c,d) (e.x1 = a,e.y1 = b, e.x2 = c, e.y2 = d)
+
+/**
+ * @brief determine if and where two edges intersect
+ * @param a edge A
+ * @param b edge B
+ * @param contact (optional) if provided this will be populated with the intersection point if there was an intersection
+ * @return true on intersection, false otherwise
+ */
+Uint8 gf2d_edge_intersect(
+  Edge a,
+  Edge b,
+  Vector2D *contact);
+
+/**
+ * @brief check if an edge intersects a rectangle
+ * @param e the edge to test
+ * @param r the rect to rest
+ * @return true if there is an intersection, false otherwise
+ */
+Uint8 gf2d_edge_rect_intersection(Edge e, Rect r);
+
+/**
+ * @brief check if an edge intersects a circle
+ * @param e the edge to check
+ * @param c the circle to check
+ * @return true if there is an intersection, false otherwise
+ */
+Uint8 gf2d_edge_circle_intersection(Edge e,Circle c);
 
 #endif

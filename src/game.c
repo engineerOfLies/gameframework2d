@@ -17,7 +17,8 @@ int main(int argc, char * argv[])
     Sprite *mouse;
     Vector4D mouseColor = {255,100,255,200};
     Space *space;
-    Body body;// not a pointer!
+    Body body[50];// not a pointer!
+    Shape shape[4];// not a pointer!
     
     /*program initializtion*/
     init_logger("gf2d.log");
@@ -39,22 +40,64 @@ int main(int argc, char * argv[])
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16);
     
     space = gf2d_space_new_full(
+        3,
         gf2d_rect(0,0,1200,700),
         0.1,
         vector2d(0,0.1));
     
+    shape[0] = gf2d_shape_cirlce(0,0, 50);
+    shape[1] = gf2d_shape_cirlce(20,0, 25);
+    shape[2] = gf2d_shape_rect(-32,-32,64,64);
+    shape[3] = gf2d_shape_rect(-16,-16, 32,32);
     gf2d_body_set(
-        &body,
+        &body[0],
         ALL_LAYERS,
         0,
         vector2d(600,360),
         vector2d(0,0),
         10,
-        NULL,
+        &shape[0],
         NULL,
         NULL,
         NULL);
-
+    gf2d_body_set(
+        &body[1],
+        ALL_LAYERS,
+        0,
+        vector2d(200,360),
+        vector2d(0,0),
+        10,
+        &shape[1],
+        NULL,
+        NULL,
+        NULL);
+    gf2d_body_set(
+        &body[2],
+        ALL_LAYERS,
+        0,
+        vector2d(600,260),
+        vector2d(0,0),
+        10,
+        &shape[2],
+        NULL,
+        NULL,
+        NULL);
+    gf2d_body_set(
+        &body[3],
+        ALL_LAYERS,
+        0,
+        vector2d(200,260),
+        vector2d(0,0),
+        10,
+        &shape[3],
+        NULL,
+        NULL,
+        NULL);
+    gf2d_space_add_body(space,&body[0]);
+    gf2d_space_add_body(space,&body[1]);
+    gf2d_space_add_body(space,&body[2]);
+    gf2d_space_add_body(space,&body[3]);
+    
     /*main game loop*/
     while(!done)
     {
