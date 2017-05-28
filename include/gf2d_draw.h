@@ -14,5 +14,12 @@ void gf2d_draw_circle(Vector2D center, int radius, Vector4D color);
 
 void gf2d_draw_rect(SDL_Rect rect,Vector4D color);
 
+/**
+ * @brief draw a line to the current rendering context
+ * @param p1 starting point
+ * @param p2 ending point
+ * @param color the color to draw with
+ */
+void gf2d_draw_line(Vector2D p1,Vector2D p2, Vector4D color);
 
 #endif
