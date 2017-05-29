@@ -15,15 +15,17 @@ typedef struct
 typedef struct Body_S
 {
     int         inactive;       /**<internal use only*/
+    float       gravity;        /**<the factor this body adheres to gravity*/
     Uint32      layer;          /**<only bodies that share one or more layers will interact*/
     Uint32      team;           /**<bodies that share a team will NOT interact*/
     Vector2D    position;       /**<position of the center of mass*/
     Vector2D    velocity;       /**<rate of change of position over time*/
+    Vector2D    newvelocity;    /**<after a collision this is the new calculated velocity*/
     float       mass;           /**<used for inertia*/
     Shape      *shape;          /**<which shape data will be used to collide for this body*/
     void       *data;           /**<custom data pointer*/
-    int     (*bodyTouch)(struct Body_S *self, struct Body_S *other, Collision *collision);/**< function to call when two bodies collide*/
-    int     (*worldTouch)(struct Body_S *self, Collision *collision);/**<function to call when a body collides with a static shape*/
+    int       (*bodyTouch)(struct Body_S *self, struct Body_S *other, Collision *collision);/**< function to call when two bodies collide*/
+    int       (*worldTouch)(struct Body_S *self, Collision *collision);/**<function to call when a body collides with a static shape*/
 }Body;
 
 typedef struct
@@ -53,6 +55,7 @@ void gf2d_body_clear(Body *body);
  * @param positition the position in space to be added at
  * @param velocity the velocity that the body is moving at
  * @param mass the mass of the body (for momentum purposes)
+ * @param gravity the factor this body adheres to gravity
  * @param shape a pointer to the shape data to use for the body
  * @param data any custom data you want associated with the body
  * @param bodyTouch the callback to invoke when this body touches another body
@@ -65,6 +68,7 @@ void gf2d_body_set(
     Vector2D    position,
     Vector2D    velocity,
     float       mass,
+    float       gravity,
     Shape      *shape,
     void       *data,
     int     (*bodyTouch)(struct Body_S *self, struct Body_S *other, Collision *collision),
@@ -106,5 +110,11 @@ void gf2d_space_draw(Space *space);
  * @note the space will not free the body, but do not until it has been removed from the space
  */
 void gf2d_space_add_body(Space *space,Body *body);
+
+/**
+ * @brief update the bodies in the physics space for one time slice
+ * @param space the space to be updated
+ */
+void gf2d_space_update(Space *space);
 
 #endif

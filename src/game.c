@@ -12,12 +12,12 @@ int main(int argc, char * argv[])
     const Uint8 * keys;
     Sprite *sprite;
     
-    int mx,my;
+    int mx,my,i;
     float mf = 0;
     Sprite *mouse;
-    Vector4D mouseColor = {255,100,255,200};
+    Vector4D mouseColor = {255,255,100,200};
     Space *space;
-    Body body[50];// not a pointer!
+    Body body[10000];// not a pointer!
     Shape shape[4];// not a pointer!
     
     /*program initializtion*/
@@ -45,59 +45,60 @@ int main(int argc, char * argv[])
         0.1,
         vector2d(0,0.1));
     
-    shape[0] = gf2d_shape_cirlce(0,0, 50);
-    shape[1] = gf2d_shape_cirlce(20,0, 25);
+    shape[0] = gf2d_shape_circle(0,0, 50);
+    shape[1] = gf2d_shape_circle(20,0, 25);
     shape[2] = gf2d_shape_rect(-32,-32,64,64);
     shape[3] = gf2d_shape_rect(-16,-16, 32,32);
-    gf2d_body_set(
-        &body[0],
-        ALL_LAYERS,
-        0,
-        vector2d(600,360),
-        vector2d(0,0),
-        10,
-        &shape[0],
-        NULL,
-        NULL,
-        NULL);
-    gf2d_body_set(
-        &body[1],
-        ALL_LAYERS,
-        0,
-        vector2d(200,360),
-        vector2d(0,0),
-        10,
-        &shape[1],
-        NULL,
-        NULL,
-        NULL);
-    gf2d_body_set(
-        &body[2],
-        ALL_LAYERS,
-        0,
-        vector2d(600,260),
-        vector2d(0,0),
-        10,
-        &shape[2],
-        NULL,
-        NULL,
-        NULL);
-    gf2d_body_set(
-        &body[3],
-        ALL_LAYERS,
-        0,
-        vector2d(200,260),
-        vector2d(0,0),
-        10,
-        &shape[3],
-        NULL,
-        NULL,
-        NULL);
-    gf2d_space_add_body(space,&body[0]);
-    gf2d_space_add_body(space,&body[1]);
-    gf2d_space_add_body(space,&body[2]);
-    gf2d_space_add_body(space,&body[3]);
-    
+
+/* Stress test
+    for (i = 0; i < 50;i++)
+    {
+        gf2d_body_set(
+            &body[i],
+            ALL_LAYERS,
+            0,
+            vector2d(
+                600+sin(i)*(gf2d_random()*500),
+                360+cos(i)*(gf2d_random()*300)),
+            vector2d(gf2d_crandom(),gf2d_crandom()),
+            10,
+            1,
+            &shape[i%4],
+            NULL,
+            NULL,
+            NULL);
+        gf2d_space_add_body(space,&body[i]);
+    }
+*/
+/* collision test*/
+        gf2d_body_set(
+            &body[0],
+            ALL_LAYERS,
+            0,
+            vector2d(100,340),
+            vector2d(2,0),
+            10,
+            0,
+            &shape[2],
+            NULL,
+            NULL,
+            NULL);
+        gf2d_space_add_body(space,&body[0]);
+        gf2d_body_set(
+            &body[1],
+            ALL_LAYERS,
+            0,
+            vector2d(500,340),
+            vector2d(-2,0),
+            10,
+            0,
+            &shape[2],
+            NULL,
+            NULL,
+            NULL);
+        gf2d_space_add_body(space,&body[1]);
+
+// */
     /*main game loop*/
     while(!done)
     {
@@ -113,6 +114,7 @@ int main(int argc, char * argv[])
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
             gf2d_sprite_draw_image(sprite,vector2d(0,0));
+        gf2d_space_update(space);
 
             gf2d_space_draw(space);
             //UI elements last

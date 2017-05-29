@@ -76,13 +76,31 @@ Shape gf2d_shape_from_sdl_rect(SDL_Rect r);
  * @param y the center y
  * @param r the radius
  */
-Shape gf2d_shape_cirlce(float x, float y, float r);
+Shape gf2d_shape_circle(float x, float y, float r);
 
 /**
  * @brief make a shape based on a gf2d Circle
  * @param c the circle to make the shape with
+ * @return the shape
  */
-Shape gf2d_shape_from_cirlce(Circle c);
+Shape gf2d_shape_from_circle(Circle c);
+
+/**
+ * @brief make an edge shape basesd on the points provided
+ * @param x1 the X component of starting point
+ * @param y1 the Y component of starting point
+ * @param x2 the X component of ending point
+ * @param y2 the Y component of ending point
+ * @return the shape
+ */
+Shape gf2d_shape_edge(float x1,float y1,float x2,float y2);
+
+/**
+ * @brief make a shape based on a gf2d Edge
+ * @param e the edge to make the shape with
+ * @return the shape
+ */
+Shape gf2d_shape_from_edge(Edge e);
 
 /**
  * @brief set all parameters of a GF2D rect at once
@@ -120,6 +138,16 @@ Uint8 gf2d_point_in_rect(Vector2D p,Rect r);
 Uint8 gf2d_rect_overlap(Rect a,Rect b);
 
 /**
+ * @brief check if two rectangles are overlapping
+ * @param a rect A
+ * @param b rect B
+ * @param poc if set the point of contact is written here
+ * @param normal if provided, this will be populated with the normal for the point of impact
+ * @return true if there is any overlap, false otherwise
+ */
+Uint8 gf2d_rect_overlap_poc(Rect a,Rect b,Vector2D *poc, Vector2D *normal);
+
+/**
  * @brief draw a rect to the screen
  * @param r the rectangle to draw
  * @param color the color to draw it with
@@ -128,9 +156,9 @@ void gf2d_rect_draw(Rect r,Color color);
 
 /**
  * @brief make a GF2D Circle
- * @param x the position of the cirlce center
- * @param y the position of the cirlce center
- * @param r the radius of the cirlce
+ * @param x the position of the circle center
+ * @param y the position of the circle center
+ * @param r the radius of the circle
  */
 Circle gf2d_circle(float x, float y, float r);
 
@@ -141,12 +169,30 @@ Circle gf2d_circle(float x, float y, float r);
 #define gf2d_circle_set(circle,a,b,c) (circle.x = a,circle.y = b, circle.r = c)
 
 /**
+ * @brief check if the point lies within the circle c
+ * @param p the point to check
+ * @param c the circle to check
+ * @return true if the point is in the circle, false otherwise
+ */
+Uint8 gf2d_point_in_cicle(Vector2D p,Circle c);
+
+/**
  * @brief check if two circles are overlapping
  * @param a circle A
  * @param b circle B
  * @param returns true is there is overlap, false otherwise
  */
 Uint8 gf2d_circle_overlap(Circle a, Circle b);
+
+/**
+ * @brief check if two circles are overlapping and get the point of contact
+ * @param a circle A
+ * @param b circle B
+ * @param poc if set the point of contact is written here
+ * @param normal if provided, this will be populated with the normal for the point of impact
+ * @param returns true is there is overlap, false otherwise
+ */
+Uint8 gf2d_circle_overlap_poc(Circle a, Circle b,Vector2D *poc,Vector2D *normal);
 
 /**
  * @brief check if a circle and rect overlap
@@ -156,12 +202,31 @@ Uint8 gf2d_circle_overlap(Circle a, Circle b);
  */
 Uint8 gf2d_circle_rect_overlap(Circle a, Rect b);
 
+/**
+ * @brief check if a circle and rect overlap
+ * @param a the Circle
+ * @param b the Rect
+ * @param poc if set the point of contact is written here
+ * @param normal if provided, this will be populated with the normal for the point of impact
+ * @return true if there is any overlap, false otherwise
+ */
+Uint8 gf2d_circle_rect_overlap_poc(Circle a, Rect b,Vector2D *poc,Vector2D * normal);
+
 /**@brief check if a shape is overlapping another shape
  * @param a one shape
  * @param b the other shape
  * @return true is there is overlap, false otherwise
  */
 Uint8 gf2d_shape_overlap(Shape a, Shape b);
+
+/**@brief check if a shape is overlapping another shape
+ * @param a one shape
+ * @param b the other shape
+ * @return true is there is overlap, false otherwise
+ * @param poc if set the point of contact is written here
+ * @param normal if provided, this will be populated with the normal for the point of impact
+ */
+Uint8 gf2d_shape_overlap_poc(Shape a, Shape b, Vector2D *poc, Vector2D *normal);
 
 /**
  * @brief convert a GF2D rect to an SDL rect
@@ -227,16 +292,33 @@ Edge gf2d_edge_from_vectors(Vector2D a,Vector2D b);
 #define gf2d_edge_set(e,a,b,c,d) (e.x1 = a,e.y1 = b, e.x2 = c, e.y2 = d)
 
 /**
+ * @brief copy the contents of the src edge into the dst edge
+ * @param dst the destination of the copy
+ * @param src the source of the copy
+ */
+#define gf2d_edge_copy(dst,src) (dst.x1 = src.x1,dst.y1 = src.y1,dst.x2 = src.x2,dst.y2 = src.y2)
+
+/**
  * @brief determine if and where two edges intersect
  * @param a edge A
  * @param b edge B
  * @param contact (optional) if provided this will be populated with the intersection point if there was an intersection
+ * @param normal (optional) if provided this will be populated with a vector perpendicular to b
  * @return true on intersection, false otherwise
  */
-Uint8 gf2d_edge_intersect(
-  Edge a,
-  Edge b,
-  Vector2D *contact);
+Uint8 gf2d_edge_intersect_poc(
+    Edge a,
+    Edge b,
+    Vector2D *contact,
+    Vector2D *normal);
+
+/**
+ * @brief determine if and where two edges intersect
+ * @param a edge A
+ * @param b edge B
+ * @return true on intersection, false otherwise
+ */
+Uint8 gf2d_edge_intersect(Edge a,Edge b);
 
 /**
  * @brief check if an edge intersects a rectangle
@@ -247,11 +329,55 @@ Uint8 gf2d_edge_intersect(
 Uint8 gf2d_edge_rect_intersection(Edge e, Rect r);
 
 /**
+ * @brief check if an edge intersects a rectangle and get the point of contact and normal
+ * @param e the edge to test
+ * @param r the rect to rest
+ * @param contact (optional) if provided this will be populated with the intersection point if there was an intersection
+ * @param normal (optional) if provided this will be populated with a vector perpendicular to b
+ * @return true if there is an intersection, false otherwise
+ */
+Uint8 gf2d_edge_rect_intersection_poc(Edge e, Rect r,Vector2D *poc,Vector2D *normal);
+
+/**
  * @brief check if an edge intersects a circle
  * @param e the edge to check
  * @param c the circle to check
  * @return true if there is an intersection, false otherwise
  */
 Uint8 gf2d_edge_circle_intersection(Edge e,Circle c);
+
+/**
+ * @brief check if an edge intersects a circle and get point of contact
+ * @param e the edge to check
+ * @param c the circle to check
+ * @param poc (optional) if provided this will be populated with the intersection point if there was an intersection
+ * @param normal if provided, this will be populated with the normal for the point of impact
+ * @return true if there is an intersection, false otherwise
+ */
+Uint8 gf2d_edge_circle_intersection_poc(Edge e,Circle c,Vector2D *poc,Vector2D *normal);
+
+/**
+ * @brief check if the edge intersects the shape
+ * @param e the edge the test
+ * @param s the shape to test
+ * @param true if the shape and edge intersect, false otherwise
+ */
+Uint8 gf2d_edge_intersect_shape(Edge e,Shape s);
+
+/**
+ * @brief check if the edge intersects the shape
+ * @param e the edge the test
+ * @param s the shape to test
+ * @param poc (optional) if provided this will be populated with the intersection point if there was an intersection
+ * @param normal if provided, this will be populated with the normal for the point of impact
+ * @param true if the shape and edge intersect, false otherwise
+ */
+Uint8 gf2d_edge_intersect_shape_poc(Edge e,Shape s,Vector2D *poc,Vector2D *normal);
+
+/**
+ * @brief echo out the shape information to log (and stdout)
+ * @param shape the shape information to echo
+ */
+void gf2d_shape_slog(Shape shape);
 
 #endif
