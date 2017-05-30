@@ -490,7 +490,7 @@ float vector_angle(float x,float y)
   {
     fraction -= 1.0;
   }
-  return (fraction * 360);
+  return (fraction * 360)-180;
 }
 
 void angle_clamp_degrees(float *a)

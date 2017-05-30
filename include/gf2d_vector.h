@@ -210,7 +210,7 @@ void vector3d_cross_product(Vector3D *out, Vector3D v1, Vector3D v2);
  * @param src MglVect[2D|3D|4D] input
  * @param dst MglVect[2D|3D|4D] negated output
  */
-#define vector2d_negate(dst,src)      (dst.x = -src.x,dst.y = -src.y)
+#define vector2d_negate(dst,src)      (dst.x = -1 * src.x,dst.y = -1 * src.y)
 #define vector3d_negate(dst,src)      (dst.x = -src.x,dst.y = -src.y,dst.z = -src.z)
 #define vector4d_negate(dst,src)      (dst.x = -src.x,dst.y = -src.y,dst.z = -src.z,dst.w = -src.w)
 

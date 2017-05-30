@@ -380,4 +380,6 @@ Uint8 gf2d_edge_intersect_shape_poc(Edge e,Shape s,Vector2D *poc,Vector2D *norma
  */
 void gf2d_shape_slog(Shape shape);
 
+void gf2d_rect_slog(Rect r);
+
 #endif

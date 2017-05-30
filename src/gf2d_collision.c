@@ -9,7 +9,8 @@ void gf2d_body_clear(Body *body)
 }
 
 void gf2d_body_set(
-    Body *body,
+    Body       *body,
+    char       *name,
     Uint32      layer,
     Uint32      team,
     Vector2D    position,
@@ -32,6 +33,7 @@ void gf2d_body_set(
     body->data = data;
     body->bodyTouch = bodyTouch;
     body->worldTouch = worldTouch;
+    gf2d_word_cpy(body->name,name);
 }
 
 void gf2d_free_shapes(void *data,void *context)
@@ -184,31 +186,24 @@ Vector2D gf2d_body_normal(Body *body,Vector2D poc, Vector2D *normal)
     vector2d_copy(n,(*normal));
     if ((normal->x > 0) && (body->position.x < poc.x))
     {
-        {
-            vector2d_negate(n,n);
-            return n;
-        }
+        n = vector2d_rotate(n,GF2D_PI);
+        return n;
     }
     if ((normal->x < 0) && (body->position.x > poc.x))
     {
-        {
-            vector2d_negate(n,n);
-            return n;
-        }
+        n = vector2d_rotate(n,GF2D_PI);
+        return n;
     }
     if ((normal->y > 0) && (body->position.y < poc.y))
     {
-        {
-            vector2d_negate(n,n);
-            return n;
-        }
+        n = vector2d_rotate(n,GF2D_PI);
+        return n;
     }
     if ((normal->y < 0) && (body->position.y < poc.y))
     {
-        {
-            vector2d_negate(n,n);
-            return n;
-        }
+//        vector2d_negate(n,n);
+        n = vector2d_rotate(n,GF2D_PI);
+        return n;
     }
     return n;
 }
@@ -221,13 +216,11 @@ void gf2d_body_adjust_collision_velocity(Body *a,Body *b,Vector2D poc, Vector2D 
     double part1;
     Vector2D nv;
     if ((!a)||(!b))return;
-    normal = gf2d_body_normal(b,poc, &normal);
+    normal = gf2d_body_normal(a,poc, &normal);
     v1 = vector2d_magnitude(a->velocity);
     v2 = vector2d_magnitude(b->velocity);
-    theta1 = vector2d_angle(a->velocity);
-    theta2 = vector2d_angle(b->velocity);
-    slog("angle of normal: %f",vector2d_angle(normal));
-//    phi = vector2d_angle(vector2d_rotate(normal,-GF2D_HALF_PI))*GF2D_DEGTORAD;
+    theta1 = vector2d_angle(a->velocity)*GF2D_DEGTORAD;
+    theta2 = vector2d_angle(b->velocity)*GF2D_DEGTORAD;
     phi = vector2d_angle(normal)*GF2D_DEGTORAD;
     part1 = (v1*cos(theta1-phi)*(a->mass - b->mass) + 2 *b->mass*v2*cos(theta2 - phi))/(a->mass+b->mass);
     nv.x = part1*cos(phi)+v1*sin(theta1-phi)*cos(phi + GF2D_HALF_PI);
@@ -338,6 +331,8 @@ attempt:
     if ((collider)||(collided))
     {
         body->inactive = 1;
+        vector2d_set_magnitude(&velocity,-GF2D_EPSILON);
+        vector2d_add(body->position,body->position,velocity);
     }
     if (collider)
     {
@@ -350,6 +345,7 @@ attempt:
             body->bodyTouch(body,other,&collision);
         }
         gf2d_body_adjust_collision_velocity(body,collider,poc, normal);
+        gf2d_body_adjust_collision_velocity(collider,body,poc, normal);
     }
     if (collided)
     {

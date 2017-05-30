@@ -3,6 +3,7 @@
 
 #include "gf2d_shape.h"
 #include "gf2d_list.h"
+#include "gf2d_text.h"
 
 typedef struct
 {
@@ -14,6 +15,7 @@ typedef struct
 
 typedef struct Body_S
 {
+    TextLine    name;           /**<name for debugging purposes*/
     int         inactive;       /**<internal use only*/
     float       gravity;        /**<the factor this body adheres to gravity*/
     Uint32      layer;          /**<only bodies that share one or more layers will interact*/
@@ -50,6 +52,7 @@ void gf2d_body_clear(Body *body);
 /**
  * @brief set all parameters for a body
  * @param body the body to set the parameters for
+ * @param name the name of the body
  * @param layer the layer mask
  * @param team the team
  * @param positition the position in space to be added at
@@ -63,6 +66,7 @@ void gf2d_body_clear(Body *body);
  */
 void gf2d_body_set(
     Body *body,
+    char       *name,
     Uint32      layer,
     Uint32      team,
     Vector2D    position,

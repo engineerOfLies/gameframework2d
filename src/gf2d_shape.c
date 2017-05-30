@@ -79,22 +79,22 @@ Uint8 gf2d_rect_overlap_poc(Rect a,Rect b,Vector2D *poc, Vector2D *normal)
     {
         poc->y = poc->x = 0;
         if (normal)normal->x = normal->y = 0;
-        if (a.x == b.x + b.w)
+        if (a.x + 1 >= b.x + b.w)
         {
             poc->x = a.x;
             if (normal)normal->x = -1;
         }
-        else if (b.x == a.x + a.w)
+        else if (b.x + 1 >= a.x + a.w)
         {
             poc->x = b.x;
             if (normal)normal->x = 1;
         }
-        if (a.y == b.y + b.h)
+        if (a.y + 1 >= b.y + b.h)
         {
             poc->y = a.y;
             if (normal)normal->y = -1;
         }
-        if (b.y == a.y + a.h)
+        if (b.y + 1 >= a.y + a.h)
         {
             if (normal)normal->y = 1;
             poc->y = b.y;
@@ -157,8 +157,9 @@ Uint8 gf2d_circle_rect_overlap_poc(Circle a, Rect b,Vector2D *poc,Vector2D * nor
         }
         if (normal)
         {
-            normal->x = -GF2D_ROOT2;
-            normal->y = -GF2D_ROOT2;
+            normal->x = a.x-b.x;
+            normal->y = a.y-b.y;
+            vector2d_normalize(normal);
         }
         return 1;
     }
@@ -171,8 +172,9 @@ Uint8 gf2d_circle_rect_overlap_poc(Circle a, Rect b,Vector2D *poc,Vector2D * nor
         }
         if (normal)
         {
-            normal->x = GF2D_ROOT2;
-            normal->y = -GF2D_ROOT2;
+            normal->x = a.x-(b.x+b.w);
+            normal->y = a.y-b.y;
+            vector2d_normalize(normal);
         }
         return 1;
     }
@@ -185,8 +187,9 @@ Uint8 gf2d_circle_rect_overlap_poc(Circle a, Rect b,Vector2D *poc,Vector2D * nor
         }
         if (normal)
         {
-            normal->x = -GF2D_ROOT2;
-            normal->y = GF2D_ROOT2;
+            normal->x = a.x-b.x;
+            normal->y = a.y-(b.y + b.h);
+            vector2d_normalize(normal);
         }
         return 1;
     }
@@ -199,8 +202,9 @@ Uint8 gf2d_circle_rect_overlap_poc(Circle a, Rect b,Vector2D *poc,Vector2D * nor
         }
         if (normal)
         {
-            normal->x = GF2D_ROOT2;
-            normal->y = GF2D_ROOT2;
+            normal->x = a.x-(b.x+b.w);
+            normal->y = a.y-(b.y + b.h);
+            vector2d_normalize(normal);
         }
         return 1;
     }
