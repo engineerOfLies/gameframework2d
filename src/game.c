@@ -44,16 +44,18 @@ int main(int argc, char * argv[])
         gf2d_rect(0,0,1200,700),
         0.1,
         vector2d(0,0.1),
-        0.9999);
+        1,
+        0.1);
     
     shape[0] = gf2d_shape_circle(0,0, 50);
     shape[1] = gf2d_shape_circle(20,0, 25);
     shape[2] = gf2d_shape_rect(-32,-32,64,64);
     shape[3] = gf2d_shape_rect(-16,-16, 32,32);
 
+    gf2d_space_add_static_shape(space,gf2d_shape_rect(200,500, 512,32));
 /* Stress test*/
-/*
-    for (i = 0; i < 50;i++)
+
+    for (i = 0; i < 100;i++)
     {
         gf2d_body_set(
             &body[i],
@@ -61,47 +63,50 @@ int main(int argc, char * argv[])
             ALL_LAYERS,
             0,
             vector2d(
-                600+sin(i)*(gf2d_random()*500),
-                360+cos(i)*(gf2d_random()*300)),
+                600+(gf2d_crandom()*500),
+                360+(gf2d_crandom()*300)),
             vector2d(gf2d_crandom(),gf2d_crandom()),
             10,
-            0,
+            1,
+            1,
             &shape[i%4],
             NULL,
             NULL,
             NULL);
         gf2d_space_add_body(space,&body[i]);
     }
-*/
+
 /* collision test*/
-        gf2d_body_set(
-            &body[0],
-            "Body A",
-            ALL_LAYERS,
-            0,
-            vector2d(100,300),
-            vector2d(2,2),
-            10,
-            1,
-            &shape[2],
-            NULL,
-            NULL,
-            NULL);
-         gf2d_space_add_body(space,&body[0]);
-        gf2d_body_set(
-            &body[1],
-            "Body B",
-            ALL_LAYERS,
-            0,
-            vector2d(600,340),
-            vector2d(-2,0),
-            10,
-            1,
-            &shape[0],
-            NULL,
-            NULL,
-            NULL);
-        gf2d_space_add_body(space,&body[1]);
+//         gf2d_body_set(
+//             &body[0],
+//             "Body A",
+//             ALL_LAYERS,
+//             0,
+//             vector2d(100,300),
+//             vector2d(-1,0),
+//             1000,
+//             0,
+//             0,
+//             &shape[2],
+//             NULL,
+//             NULL,
+//             NULL);
+//          gf2d_space_add_body(space,&body[0]);
+//         gf2d_body_set(
+//             &body[1],
+//             "Body B",
+//             ALL_LAYERS,
+//             0,
+//             vector2d(600,340),
+//             vector2d(1,1),
+//             10,
+//             1,
+//             1,
+//             &shape[0],
+//             NULL,
+//             NULL,
+//             NULL);
+//         gf2d_space_add_body(space,&body[1]);
 
  //*/
     /*main game loop*/
