@@ -474,6 +474,14 @@ float vector2d_angle(Vector2D v)
   return vector_angle(v.x,v.y);
 }
 
+Vector2D vector2d_rotate(Vector2D in, float angle)
+{
+    Vector2D out;
+    out.x = in.x * cos(angle) - in.y * sin(angle); // now x is something different than original vector x
+    out.y = in.x * sin(angle) + in.y * cos(angle);
+    return out;
+}
+
 float vector_angle(float x,float y)
 {
   float angle = atan2(y, x) + M_PI;
@@ -482,7 +490,7 @@ float vector_angle(float x,float y)
   {
     fraction -= 1.0;
   }
-  return (fraction * 360);
+  return (fraction * 360)-180;
 }
 
 void angle_clamp_degrees(float *a)
