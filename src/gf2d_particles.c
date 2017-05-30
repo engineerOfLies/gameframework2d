@@ -23,6 +23,7 @@ struct ParticleEmitter_S
     Color           color;          /**<default color*/
     Color           colorVector;    /**<how color changes over time*/
     Color           colorVariance;  /**<how much defualt color can vary*/
+    Shape           shape;          /**<default shape*/
     Uint32          startFrame;     /**<starting frame for a sprite particle*/
     Uint32          endFrame;       /**<end frame for a sprite particle*/
     Uint32          frameVariance;  /**<how much starting frame can vary*/
@@ -77,6 +78,7 @@ ParticleEmitter *gf2d_particle_emitter_new_full(
     Color       color,
     Color       colorVector,
     Color       colorVariance,
+    Shape      *shape,
     Uint32      startFrame,
     Uint32      endFrame,
     Uint32      frameVariance,
@@ -111,6 +113,10 @@ ParticleEmitter *gf2d_particle_emitter_new_full(
     pe->framesPerLine = framesPerLine;
     pe->framerate = framerate;
     pe->mode = mode;
+    if (shape)
+    {
+        gf2d_shape_copy(&pe->shape,*shape);
+    }
     return pe;
 }
 
@@ -199,6 +205,7 @@ void gf2d_particle_new_default(
                 pe->frameWidth,
                 pe->frameHeight,
                 pe->framesPerLine),
+            &pe->shape,
             position,
             velocity,
             acceleration,
@@ -218,6 +225,7 @@ void gf2d_particle_new_full_bulk(
         Uint32   count,
         Uint32   ttl,
         Sprite *sprite,
+        Shape  *shape,
         Vector2D position,
         Vector2D velocity,
         Vector2D acceleration,
@@ -237,6 +245,7 @@ void gf2d_particle_new_full_bulk(
             pe,
             ttl,
             sprite,
+            shape,
             position,
             velocity,
             acceleration,
@@ -256,6 +265,7 @@ void gf2d_particle_new_full(
         ParticleEmitter *pe,
         Uint32   ttl,
         Sprite *sprite,
+        Shape  *shape,
         Vector2D position,
         Vector2D velocity,
         Vector2D acceleration,
@@ -284,6 +294,10 @@ void gf2d_particle_new_full(
     p->startFrame = startFrame;
     p->endFrame = endFrame;
     p->mode = mode;
+    if (shape)
+    {
+        gf2d_shape_copy(&p->shape,*shape);
+    }
 }
 
 
@@ -315,6 +329,7 @@ Particle * gf2d_particle_new(ParticleEmitter *pe)
 void gf2d_particle_draw(Particle *p)
 {
     Vector4D color;
+    Shape shape;
     if ((!p)||(p->inuse == 0))return;
     switch(p->type)
     {
@@ -324,9 +339,13 @@ void gf2d_particle_draw(Particle *p)
             gf2d_draw_pixel(p->position,gf2d_color_to_vector4(p->color));
             SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),SDL_BLENDMODE_BLEND);
             break;
-        case PT_Circle:
-            break;
-        case PT_Rect:
+        case PT_Shape:
+            gf2d_shape_copy(&shape,p->shape);
+            gf2d_shape_move(&shape,p->position);
+            SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),p->mode);
+            color = gf2d_color_to_vector4(p->color);
+            gf2d_shape_draw(shape,p->color);
+            SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),SDL_BLENDMODE_BLEND);
             break;
         case PT_Sprite:
             SDL_SetTextureBlendMode(p->sprite->texture,p->mode);

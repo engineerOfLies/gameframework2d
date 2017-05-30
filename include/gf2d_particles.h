@@ -21,7 +21,7 @@ typedef struct Particle_S
     Uint8    inuse;          /**<do not touch this*/
     Uint32   ttl;             /**<time to live in update frames*/
     Sprite *sprite;         /**<if this particle is using a sprite, use this one*/
-    Shape    Shape;         /**<shape*/
+    Shape    shape;         /**<shape*/
     Vector2D position;      /**<position of the particle*/
     Vector2D velocity;      /**<movement velocity of the particle*/
     Vector2D acceleration;  /**<movement acceleration of the particle*/
@@ -62,6 +62,7 @@ ParticleEmitter *gf2d_particle_emitter_new_full(
     Color       color,
     Color       colorVector,
     Color       colorVariance,
+    Shape       *shape,
     Uint32      startFrame,
     Uint32      endFrame,
     Uint32      frameVariance,
@@ -105,6 +106,7 @@ void gf2d_particle_new_full(
         ParticleEmitter *pe,
         Uint32   ttl,
         Sprite *sprite,
+        Shape  *shape,
         Vector2D position,
         Vector2D velocity,
         Vector2D acceleration,
