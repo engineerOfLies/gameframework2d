@@ -43,7 +43,8 @@ int main(int argc, char * argv[])
         3,
         gf2d_rect(0,0,1200,700),
         0.1,
-        vector2d(0,0.1));
+        vector2d(0,0.1),
+        0.9999);
     
     shape[0] = gf2d_shape_circle(0,0, 50);
     shape[1] = gf2d_shape_circle(20,0, 25);
@@ -51,6 +52,7 @@ int main(int argc, char * argv[])
     shape[3] = gf2d_shape_rect(-16,-16, 32,32);
 
 /* Stress test*/
+/*
     for (i = 0; i < 50;i++)
     {
         gf2d_body_set(
@@ -70,22 +72,22 @@ int main(int argc, char * argv[])
             NULL);
         gf2d_space_add_body(space,&body[i]);
     }
-
-/* collision test
+*/
+/* collision test*/
         gf2d_body_set(
             &body[0],
             "Body A",
             ALL_LAYERS,
             0,
             vector2d(100,300),
-            vector2d(2,0),
+            vector2d(2,2),
             10,
-            0,
+            1,
             &shape[2],
             NULL,
             NULL,
             NULL);
-        gf2d_space_add_body(space,&body[0]);
+         gf2d_space_add_body(space,&body[0]);
         gf2d_body_set(
             &body[1],
             "Body B",
@@ -94,14 +96,14 @@ int main(int argc, char * argv[])
             vector2d(600,340),
             vector2d(-2,0),
             10,
-            0,
+            1,
             &shape[0],
             NULL,
             NULL,
             NULL);
         gf2d_space_add_body(space,&body[1]);
 
- */
+ //*/
     /*main game loop*/
     while(!done)
     {

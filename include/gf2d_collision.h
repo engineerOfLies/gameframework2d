@@ -38,6 +38,7 @@ typedef struct
     Rect        bounds;         /**<absolute bounds of the space*/
     float       timeStep;       /**<how much each iteration of the simulation progresses time by*/
     Vector2D    gravity;        /**<global gravity pull direction*/
+    float       dampening;      /**<rate of movement degrade  ambient frictions*/
 }Space;
 
 
@@ -90,12 +91,14 @@ Space *gf2d_space_new();
  * @param bounds the absolute bounds of the space
  * @param timeStep this should be fraction that can add up to 1.  ie: 0.1 or 0.01, etc
  * @param gravity the direction that gravity pulls
+ * @param dampening the rate of all movemement decay
  */
 Space *gf2d_space_new_full(
     int         precision,
     Rect        bounds,
     float       timeStep,
-    Vector2D    gravity);
+    Vector2D    gravity,
+    float       dampening);
 
 /**
  * @brief cleans up a space

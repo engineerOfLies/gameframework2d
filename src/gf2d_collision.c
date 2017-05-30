@@ -59,7 +59,8 @@ Space *gf2d_space_new_full(
     int         precision,
     Rect        bounds,
     float       timeStep,
-    Vector2D    gravity)
+    Vector2D    gravity,
+    float       dampening)
 {
     Space *space;
     space = gf2d_space_new();
@@ -68,6 +69,7 @@ Space *gf2d_space_new_full(
     vector2d_copy(space->gravity,gravity);
     space->timeStep = timeStep;
     space->precision = precision;
+    space->dampening = dampening;
     return space;
 }
 
@@ -199,13 +201,40 @@ Vector2D gf2d_body_normal(Body *body,Vector2D poc, Vector2D *normal)
         n = vector2d_rotate(n,GF2D_PI);
         return n;
     }
-    if ((normal->y < 0) && (body->position.y < poc.y))
+    if ((normal->y < 0) && (body->position.y > poc.y))
     {
 //        vector2d_negate(n,n);
         n = vector2d_rotate(n,GF2D_PI);
         return n;
     }
     return n;
+}
+
+void gf2d_body_adjuct_bounds_collision_velocity(Body *a,Vector2D poc, Vector2D normal)
+{
+    Vector2D epsilon;
+
+    normal = gf2d_body_normal(a,poc, &normal);
+
+    vector2d_copy(epsilon,normal);
+    vector2d_set_magnitude(&epsilon,GF2D_EPSILON);
+    vector2d_add(a->position,a->position,epsilon);
+    if (normal.x > GF2D_EPSILON)
+    {
+        a->newvelocity.x = fabs(a->newvelocity.x);
+    }
+    else if (normal.x < -GF2D_EPSILON)
+    {
+        a->newvelocity.x = -fabs(a->newvelocity.x);
+    }
+    if (normal.y > GF2D_EPSILON)
+    {
+        a->newvelocity.y = fabs(a->newvelocity.y);
+    }
+    else if (normal.y < -GF2D_EPSILON)
+    {
+        a->newvelocity.y = -fabs(a->newvelocity.y);
+    }
 }
 
 void gf2d_body_adjust_collision_velocity(Body *a,Body *b,Vector2D poc, Vector2D normal)
@@ -242,7 +271,7 @@ Uint8 gf2d_body_collide(Body *a,Body *b,Vector2D *poc, Vector2D *normal)
     return gf2d_shape_overlap_poc(aS, bS,poc,normal);
 }
 
-Uint8 gf2d_body_check_bounds(Body *body,Rect bounds)
+Uint8 gf2d_body_check_bounds(Body *body,Rect bounds,Vector2D *poc,Vector2D *normal)
 {
     Shape aS,bs;
     if (!body)return 0;
@@ -252,30 +281,34 @@ Uint8 gf2d_body_check_bounds(Body *body,Rect bounds)
     gf2d_shape_copy(&aS,*body->shape);
     gf2d_shape_move(&aS,body->position);
     
-
     if (!gf2d_shape_overlap(aS, bs))
     {// we should DEFINITELY be inside the bounds, so return true here
         return 1;
     }
-    if (gf2d_edge_intersect_shape(gf2d_edge(bounds.x,bounds.y,bounds.x+bounds.w,bounds.y),aS)||
-        gf2d_edge_intersect_shape(gf2d_edge(bounds.x,bounds.y,bounds.x,bounds.y+bounds.h),aS)||
-        gf2d_edge_intersect_shape(gf2d_edge(bounds.x,bounds.y+bounds.h,bounds.x+bounds.w,bounds.y+bounds.h),aS)||
-        gf2d_edge_intersect_shape(gf2d_edge(bounds.x+bounds.w,bounds.y,bounds.x+bounds.w,bounds.y+bounds.h),aS))
+    if (gf2d_edge_intersect_shape_poc(gf2d_edge(bounds.x,bounds.y,bounds.x+bounds.w,bounds.y),aS,poc,normal)||
+        gf2d_edge_intersect_shape_poc(gf2d_edge(bounds.x,bounds.y,bounds.x,bounds.y+bounds.h),aS,poc,normal)||
+        gf2d_edge_intersect_shape_poc(gf2d_edge(bounds.x,bounds.y+bounds.h,bounds.x+bounds.w,bounds.y+bounds.h),aS,poc,normal)||
+        gf2d_edge_intersect_shape_poc(gf2d_edge(bounds.x+bounds.w,bounds.y,bounds.x+bounds.w,bounds.y+bounds.h),aS,poc,normal))
     {
         return 1;
     }
     return 0;
 }
 
-void gf2d_body_pre_step(Body *body)
+void gf2d_body_pre_step(Body *body,Space *space)
 {
     if (!body)return;
+    if (vector2d_magnitude_squared(body->velocity)< GF2D_EPSILON)
+    {
+        body->inactive = 1;
+    }
     vector2d_copy(body->newvelocity,body->velocity);
 }
 
-void gf2d_body_post_step(Body *body)
+void gf2d_body_post_step(Body *body,Space *space)
 {
     if (!body)return;
+    vector2d_scale(body->newvelocity,body->newvelocity,space->dampening);
     vector2d_copy(body->velocity,body->newvelocity);
 }
 
@@ -286,6 +319,7 @@ void gf2d_body_step(Body *body,Space *space,float step)
     int collided = 0;
     Collision collision;
     Vector2D poc, normal;
+    Vector2D pocB, normalB;
     Body *other,*collider = NULL;
     int bodies;
     Vector2D velocity;
@@ -303,7 +337,7 @@ void gf2d_body_step(Body *body,Space *space,float step)
     for (attempts = 0;attempts < space->precision;attempts++)
     {
         //bounds check
-        if (gf2d_body_check_bounds(body,space->bounds))
+        if (gf2d_body_check_bounds(body,space->bounds,&pocB,&normalB))
         {
             collided = 1;
             goto attempt;
@@ -331,11 +365,11 @@ attempt:
     if ((collider)||(collided))
     {
         body->inactive = 1;
-        vector2d_set_magnitude(&velocity,-GF2D_EPSILON);
-        vector2d_add(body->position,body->position,velocity);
     }
     if (collider)
     {
+        vector2d_set_magnitude(&velocity,-GF2D_EPSILON);
+        vector2d_add(body->position,body->position,velocity);
         if (body->bodyTouch != NULL)
         {
             collision.other = collider->shape;
@@ -353,6 +387,7 @@ attempt:
         {
             body->worldTouch(body,NULL);
         }
+        gf2d_body_adjuct_bounds_collision_velocity(body,pocB,normalB);
     }
 }
 
@@ -370,22 +405,22 @@ void gf2d_space_step(Space *space,float t)
     {
         body = (Body*)gf2d_list_get_nth(space->bodyList,i);
         if (!body)continue;// body already hit something
-        gf2d_body_pre_step(body);
+        vector2d_scale(gravityFactor,gravityStep,body->gravity);
+        vector2d_add(body->velocity,body->velocity,gravityFactor);
+        gf2d_body_pre_step(body,space);
     }
     for (i = 0; i < bodies; i++)
     {
         body = (Body*)gf2d_list_get_nth(space->bodyList,i);
         if ((!body)||(body->inactive))continue;// body already hit something
         // apply gravity
-        vector2d_scale(gravityFactor,gravityStep,body->gravity);
-        vector2d_add(body->velocity,body->velocity,gravityFactor);
         gf2d_body_step(body,space,t);
     }
     for (i = 0; i < bodies; i++)
     {
         body = (Body*)gf2d_list_get_nth(space->bodyList,i);
         if (!body)continue;// body already hit something
-        gf2d_body_post_step(body);
+        gf2d_body_post_step(body,space);
     }
 }
 

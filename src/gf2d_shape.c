@@ -459,20 +459,48 @@ Edge gf2d_edge_from_vectors(Vector2D a,Vector2D b)
 
 Uint8 gf2d_edge_rect_intersection_poc(Edge e, Rect r,Vector2D *poc,Vector2D *normal)
 {
-    if ((gf2d_edge_intersect_poc(e,gf2d_edge(r.x,r.y,r.x+r.w,r.y),poc,NULL))||//top
-        (gf2d_edge_intersect_poc(e,gf2d_edge(r.x,r.y,r.x,r.y+r.h),poc,NULL))||//left
-        (gf2d_edge_intersect_poc(e,gf2d_edge(r.x,r.y+r.h,r.x+r.w,r.y+r.h),poc,NULL))||//bottom
-        (gf2d_edge_intersect_poc(e,gf2d_edge(r.x+r.w,r.y,r.x+r.w,r.y+r.h),poc,NULL)))//right
+    Uint8 ret = 0;
+    if (gf2d_edge_intersect_poc(e,gf2d_edge(r.x,r.y,r.x+r.w,r.y),poc,NULL))//top
     {
-        if ((poc)&&(normal))
+        ret = 1;
+    }
+    if (gf2d_edge_intersect_poc(e,gf2d_edge(r.x,r.y,r.x,r.y+r.h),poc,NULL))//left
+    {
+        ret |= 2;
+    }
+    if (gf2d_edge_intersect_poc(e,gf2d_edge(r.x,r.y+r.h,r.x+r.w,r.y+r.h),poc,NULL))//bottom
+    {
+        ret |= 4;
+    }
+    if (gf2d_edge_intersect_poc(e,gf2d_edge(r.x+r.w,r.y,r.x+r.w,r.y+r.h),poc,NULL))//right
+    {
+        ret |= 8;
+    }
+    if (ret)
+    {
+        if (normal)
         {
-            vector2d_clear((*normal));
-            if (poc->x == r.x)normal->x = -1;
-            else if (poc->x == r.x+r.w)normal->x = 1;
-            if (poc->y == r.y)normal->y = -1;
-            else if (poc->y == r.y+r.h)normal->y = 1;
-            vector2d_normalize(normal);
-        }
+            if ((ret & 5)||(ret == 8))// top & bottom or right
+            {
+                normal->x = 1;
+                normal->y = 0;
+            }
+            else if ((ret & 10)||(ret == 1))// left & right or top
+            {
+                normal->x = 0;
+                normal->y = -1;
+            }
+            else if (ret & 2)// left
+            {
+                normal->x = -1;
+                normal->y = 0;
+            }
+            else
+            {
+                normal->x = 0;
+                normal->y = 1;
+            }
+        }   
         return 1;
     }
     if ((gf2d_point_in_rect(vector2d(e.x1,e.y1),r))||
