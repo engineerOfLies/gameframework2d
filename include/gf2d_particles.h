@@ -7,13 +7,13 @@
 #include "gf2d_color.h"
 #include "gf2d_sprite.h"
 #include "gf2d_text.h"
+#include "gf2d_shape.h"
 
 typedef enum
 {
     PT_Pixel,
-    PT_Circle,
-    PT_Rect,
-    PT_Sprite
+    PT_Sprite,
+    PT_Shape
 }ParticleTypes;
 
 typedef struct Particle_S
@@ -21,6 +21,7 @@ typedef struct Particle_S
     Uint8    inuse;          /**<do not touch this*/
     Uint32   ttl;             /**<time to live in update frames*/
     Sprite *sprite;         /**<if this particle is using a sprite, use this one*/
+    Shape    Shape;         /**<shape*/
     Vector2D position;      /**<position of the particle*/
     Vector2D velocity;      /**<movement velocity of the particle*/
     Vector2D acceleration;  /**<movement acceleration of the particle*/
@@ -29,6 +30,7 @@ typedef struct Particle_S
     ParticleTypes type;     /**< which type, see enumeration*/
     float frame,framerate;  /**<current frame for a sprite, rate of change for the sprite*/
     int startFrame,endFrame;/**<frames will loop between these frames*/
+    int drawSolid;          /**<if a shape should be drawn solid only matters for some shape types*/
     SDL_BlendMode mode;     /**<the render mode for drawing ADD, BLEND*/
 }Particle;
 
