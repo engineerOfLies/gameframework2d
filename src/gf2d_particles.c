@@ -90,7 +90,7 @@ ParticleEmitter *gf2d_particle_emitter_new_full(
     ParticleEmitter *pe;
     pe = gf2d_particle_emitter_new(maxParticles);
     if (!pe)return NULL;
-    pe->ttl = ttl;
+    pe->ttl = SDL_GetTicks() + ttl;
     pe->ttlVariance = ttlVariance;
     pe->particleType = particleType;
     vector2d_copy(pe->position,position);
@@ -191,7 +191,7 @@ void gf2d_particle_new_default(
         acceleration.y = pe->acceleration.y + (pe->accelerationVariance.y * gf2d_crandom());
         gf2d_particle_new_full(
             pe,
-            pe->ttl + (gf2d_crandom()*pe->ttlVariance),
+            pe->ttl + (gf2d_crandom()*pe->ttlVariance) + SDL_GetTicks(),
             (pe->particleType != PT_Sprite)?NULL:gf2d_sprite_load_all(
                 pe->spriteFile,
                 pe->frameWidth,
@@ -269,7 +269,7 @@ void gf2d_particle_new_full(
     Particle *p;
     p = gf2d_particle_new(pe);
     if (!p)return;
-    p->ttl = ttl;
+    p->ttl = ttl + SDL_GetTicks();
     p->sprite = sprite;
     vector2d_copy(p->position,position);
     vector2d_copy(p->velocity,velocity);
@@ -346,8 +346,7 @@ void gf2d_particle_draw(Particle *p)
 void gf2d_particle_update(Particle *p)
 {
     if ((!p)||(p->inuse == 0))return;
-    p->ttl--;
-    if (p->ttl <= 0)
+    if (p->ttl <= SDL_GetTicks())
     {
         gf2d_particle_free(p);
         return;
