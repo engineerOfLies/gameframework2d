@@ -35,7 +35,7 @@ struct ParticleEmitter_S
     SDL_BlendMode   mode;           /**<the mode to render the particles with*/
 };
 
-void gf2d_particle_update(Particle *p);
+void gf2d_particle_update(Particle *p,Uint32 now);
 void gf2d_particle_draw(Particle *p);
 
 void gf2d_particle_free(Particle *p)
@@ -145,10 +145,12 @@ ParticleEmitter *gf2d_particle_emitter_new(int maxParticles)
 void gf2d_particle_emitter_update(ParticleEmitter *pe)
 {
     int i;
+    Uint32 now;
     if (!pe)return;
+    now = SDL_GetTicks();
     for (i = 0;i < pe->maxParticles;i++)
     {
-        gf2d_particle_update(&pe->particleList[i]);
+        gf2d_particle_update(&pe->particleList[i],now);
     }
 }
 
@@ -343,10 +345,10 @@ void gf2d_particle_draw(Particle *p)
     }
 }
 
-void gf2d_particle_update(Particle *p)
+void gf2d_particle_update(Particle *p,Uint32 now)
 {
     if ((!p)||(p->inuse == 0))return;
-    if (p->ttl <= SDL_GetTicks())
+    if (p->ttl <= now)
     {
         gf2d_particle_free(p);
         return;
