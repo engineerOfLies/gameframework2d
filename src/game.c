@@ -15,7 +15,7 @@ int main(int argc, char * argv[])
     /*variable declarations*/
     int done = 0;
     const Uint8 * keys;
-    LevelInfo level;
+    LevelInfo *level;
     /*program initializtion*/
     init_logger("gf2d.log");
     slog("---==== BEGIN ====---");
@@ -40,6 +40,7 @@ int main(int argc, char * argv[])
 
     /*demo setup*/
     level_start(level);
+    level_info_free(level);
     /*main game loop*/
     while(!done)
     {

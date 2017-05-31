@@ -10,7 +10,7 @@
 typedef struct
 {
     Vector2D    position;
-    TextLine    entityName;
+    TextLine    name;
 }Spawn;
 
 
@@ -20,13 +20,15 @@ typedef struct
 typedef struct
 {
     TextLine    name;
-    List        spawnList;
-    Rect        Bounds;
+    Spawn      *spawnList;
+    Uint32      spawnCount;
+    Rect        bounds;
     TextLine    backgroundImage;
+    Vector2D    backgroundOffset;
     TextLine    backgroundMusic;
-    Color       backgroundColor;
-    Color       starfield;
-    Color       starfieldVariance;
+    Vector4D    backgroundColor;
+    Vector4D    starfield;
+    Vector4D    starfieldVariance;
     Uint32      starRate;
     float       starSpeed;
 }LevelInfo;
@@ -36,13 +38,20 @@ typedef struct
  * @param filename the file to load info from
  * @return the information loaded for the level
  */
-LevelInfo level_info_load(char *filename);
+LevelInfo *level_info_load(char *filename);
+
+/**
+ * @brief free the information loaded for a level
+ * @note: this can be done after the level has been started
+ * @param info the info to free
+ */
+void level_info_free(LevelInfo *info);
 
 /**
  * @brief using the level info, start running the level
  * @param info the level info to base this level on
  */
-void level_start(LevelInfo info);
+void level_start(LevelInfo *info);
 
 /**
  * @brief clean up the loaded level and free all data
