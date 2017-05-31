@@ -1,0 +1,15 @@
+name:   veil
+Bounds: 0,0,7000,700 
+backgroundImage: "images/backgrounds/veil_nebula.jpg"
+backgroundOffset: 0,0
+backgroundMusic: "music/wisdom.mp3"
+backgroundColor:  255,100,255,128
+starfield:  255,255,255,200
+starfieldVariance: 60,0.5,0.5,0.5
+starRate: 20
+starSpeed: 15
+spawnList:
+entity: player_start
+position: 100,360
+entity: space_bug
+position: 1200,360

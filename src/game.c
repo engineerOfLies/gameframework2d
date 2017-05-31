@@ -28,6 +28,7 @@ int main(int argc, char * argv[])
         vector4d(0,0,0,255),
         0);
     gf2d_graphics_set_frame_delay(16);
+    gf2d_audio_init(256,16,4,1,1,1);
     gf2d_sprite_init(1024);
     gf2d_audio_init(512,32,8,8,1,1);
 
@@ -65,6 +66,7 @@ int main(int argc, char * argv[])
         slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
     // any custome clean up goes here
+    level_close();
     slog("---==== END ====---");
     return 0;
 }

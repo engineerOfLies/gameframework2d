@@ -45,6 +45,12 @@ LevelInfo level_info_load(char *filename);
 void level_start(LevelInfo info);
 
 /**
+ * @brief clean up the loaded level and free all data
+ */
+void level_close();
+
+
+/**
  * @brief update the current level
  */
 void level_update();
