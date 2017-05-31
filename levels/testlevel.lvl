@@ -9,7 +9,23 @@ starfield:  255,255,255,200
 starfieldVariance: 60,0.5,0.5,0.5
 starRate: 5
 starSpeed: 0.5
+#entities begin
 entity: player_start
 position: 100,360
+positionVariance: 0,0
+
 entity: space_bug
-position: 1200,360
+position: 1230,360
+positionVariance: 0,300
+
+entity: space_bug
+position: 1260,360
+positionVariance: 0,300
+
+entity: space_bug
+position: 1290,360
+positionVariance: 0,300
+
+entity: space_bug
+position: 1320,360
+positionVariance: 0,300

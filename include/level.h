@@ -10,6 +10,7 @@
 typedef struct
 {
     Vector2D    position;
+    Vector2D    positionVariance;
     TextLine    name;
 }Spawn;
 

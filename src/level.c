@@ -124,6 +124,16 @@ void level_info_parse_file(FILE *file,LevelInfo *info)
             fscanf(file,"%lf,%lf",&spawn->position.x,&spawn->position.y);
             continue;
         }
+        if(strcmp(buf,"positionVariance:") == 0)
+        {
+            if (spawn < &info->spawnList[0])
+            {
+                slog("error in file, position before entity");
+                continue;// in case data is bad
+            }
+            fscanf(file,"%lf,%lf",&spawn->positionVariance.x,&spawn->positionVariance.y);
+            continue;
+        }
         fgets(buf, sizeof(buf), file);
     }
     return;
