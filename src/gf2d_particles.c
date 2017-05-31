@@ -23,6 +23,7 @@ struct ParticleEmitter_S
     Color           color;          /**<default color*/
     Color           colorVector;    /**<how color changes over time*/
     Color           colorVariance;  /**<how much defualt color can vary*/
+    Shape           shape;          /**<default shape*/
     Uint32          startFrame;     /**<starting frame for a sprite particle*/
     Uint32          endFrame;       /**<end frame for a sprite particle*/
     Uint32          frameVariance;  /**<how much starting frame can vary*/
@@ -35,7 +36,7 @@ struct ParticleEmitter_S
     SDL_BlendMode   mode;           /**<the mode to render the particles with*/
 };
 
-void gf2d_particle_update(Particle *p);
+void gf2d_particle_update(Particle *p,Uint32 now);
 void gf2d_particle_draw(Particle *p);
 
 void gf2d_particle_free(Particle *p)
@@ -77,6 +78,7 @@ ParticleEmitter *gf2d_particle_emitter_new_full(
     Color       color,
     Color       colorVector,
     Color       colorVariance,
+    Shape      *shape,
     Uint32      startFrame,
     Uint32      endFrame,
     Uint32      frameVariance,
@@ -90,7 +92,7 @@ ParticleEmitter *gf2d_particle_emitter_new_full(
     ParticleEmitter *pe;
     pe = gf2d_particle_emitter_new(maxParticles);
     if (!pe)return NULL;
-    pe->ttl = ttl;
+    pe->ttl = SDL_GetTicks() + ttl;
     pe->ttlVariance = ttlVariance;
     pe->particleType = particleType;
     vector2d_copy(pe->position,position);
@@ -111,6 +113,10 @@ ParticleEmitter *gf2d_particle_emitter_new_full(
     pe->framesPerLine = framesPerLine;
     pe->framerate = framerate;
     pe->mode = mode;
+    if (shape)
+    {
+        gf2d_shape_copy(&pe->shape,*shape);
+    }
     return pe;
 }
 
@@ -145,10 +151,12 @@ ParticleEmitter *gf2d_particle_emitter_new(int maxParticles)
 void gf2d_particle_emitter_update(ParticleEmitter *pe)
 {
     int i;
+    Uint32 now;
     if (!pe)return;
+    now = SDL_GetTicks();
     for (i = 0;i < pe->maxParticles;i++)
     {
-        gf2d_particle_update(&pe->particleList[i]);
+        gf2d_particle_update(&pe->particleList[i],now);
     }
 }
 
@@ -191,12 +199,13 @@ void gf2d_particle_new_default(
         acceleration.y = pe->acceleration.y + (pe->accelerationVariance.y * gf2d_crandom());
         gf2d_particle_new_full(
             pe,
-            pe->ttl + (gf2d_crandom()*pe->ttlVariance),
+            pe->ttl + (gf2d_crandom()*pe->ttlVariance) + SDL_GetTicks(),
             (pe->particleType != PT_Sprite)?NULL:gf2d_sprite_load_all(
                 pe->spriteFile,
                 pe->frameWidth,
                 pe->frameHeight,
                 pe->framesPerLine),
+            &pe->shape,
             position,
             velocity,
             acceleration,
@@ -216,6 +225,7 @@ void gf2d_particle_new_full_bulk(
         Uint32   count,
         Uint32   ttl,
         Sprite *sprite,
+        Shape  *shape,
         Vector2D position,
         Vector2D velocity,
         Vector2D acceleration,
@@ -235,6 +245,7 @@ void gf2d_particle_new_full_bulk(
             pe,
             ttl,
             sprite,
+            shape,
             position,
             velocity,
             acceleration,
@@ -254,6 +265,7 @@ void gf2d_particle_new_full(
         ParticleEmitter *pe,
         Uint32   ttl,
         Sprite *sprite,
+        Shape  *shape,
         Vector2D position,
         Vector2D velocity,
         Vector2D acceleration,
@@ -269,7 +281,7 @@ void gf2d_particle_new_full(
     Particle *p;
     p = gf2d_particle_new(pe);
     if (!p)return;
-    p->ttl = ttl;
+    p->ttl = ttl + SDL_GetTicks();
     p->sprite = sprite;
     vector2d_copy(p->position,position);
     vector2d_copy(p->velocity,velocity);
@@ -282,6 +294,10 @@ void gf2d_particle_new_full(
     p->startFrame = startFrame;
     p->endFrame = endFrame;
     p->mode = mode;
+    if (shape)
+    {
+        gf2d_shape_copy(&p->shape,*shape);
+    }
 }
 
 
@@ -313,6 +329,7 @@ Particle * gf2d_particle_new(ParticleEmitter *pe)
 void gf2d_particle_draw(Particle *p)
 {
     Vector4D color;
+    Shape shape;
     if ((!p)||(p->inuse == 0))return;
     switch(p->type)
     {
@@ -322,9 +339,13 @@ void gf2d_particle_draw(Particle *p)
             gf2d_draw_pixel(p->position,gf2d_color_to_vector4(p->color));
             SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),SDL_BLENDMODE_BLEND);
             break;
-        case PT_Circle:
-            break;
-        case PT_Rect:
+        case PT_Shape:
+            gf2d_shape_copy(&shape,p->shape);
+            gf2d_shape_move(&shape,p->position);
+            SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),p->mode);
+            color = gf2d_color_to_vector4(p->color);
+            gf2d_shape_draw(shape,p->color);
+            SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),SDL_BLENDMODE_BLEND);
             break;
         case PT_Sprite:
             SDL_SetTextureBlendMode(p->sprite->texture,p->mode);
@@ -343,11 +364,10 @@ void gf2d_particle_draw(Particle *p)
     }
 }
 
-void gf2d_particle_update(Particle *p)
+void gf2d_particle_update(Particle *p,Uint32 now)
 {
     if ((!p)||(p->inuse == 0))return;
-    p->ttl--;
-    if (p->ttl <= 0)
+    if (p->ttl <= now)
     {
         gf2d_particle_free(p);
         return;

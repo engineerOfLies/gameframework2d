@@ -22,6 +22,7 @@ int main(int argc, char * argv[])
     Sprite *ship;
     Sprite *bug;
     ActionList *al;
+    Shape shape;
     
     Vector2D flipHorizontal = {1,0};
     Vector4D mouseColor = {255,100,255,200};
@@ -51,11 +52,14 @@ int main(int argc, char * argv[])
     al = gf2d_action_list_load("actors/ed210.actor");
     bug = gf2d_sprite_load_all("images/space_bug.png",128,128,16);
     
+    shape = gf2d_shape_circle(0,0,8);
+//    shape = gf2d_shape_rect(-8, -8, 16, 16);
+//    shape = gf2d_shape_edge(-5,-5,5,5);
     pe = gf2d_particle_emitter_new_full(
         500000,
-        200,
+        100,
         5,
-        PT_Pixel,
+        PT_Shape,
         vector2d(575,340),
         vector2d(2,2),
         vector2d(0,-3),
@@ -65,6 +69,7 @@ int main(int argc, char * argv[])
         gf2d_color(0.85,0.55,0,1),
         gf2d_color(-0.01,-0.02,0,0),
         gf2d_color(0.1,0.1,0,0.1),
+        &shape,
         0,
         0,
         0,
@@ -73,6 +78,7 @@ int main(int argc, char * argv[])
         32,
         1,
         0,
+//        SDL_BLENDMODE_BLEND);
         SDL_BLENDMODE_ADD);
     
     /*main game loop*/
@@ -90,7 +96,7 @@ int main(int argc, char * argv[])
         gf2d_action_list_get_next_frame(al,&shipframe,"walk");
         
         gf2d_particle_emitter_update(pe);        
-        gf2d_particle_new_default(pe,25);
+        gf2d_particle_new_default(pe,20);
 
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
