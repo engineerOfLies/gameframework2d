@@ -1,4 +1,5 @@
 #include "gf2d_entity.h"
+#include "camera.h"
 #include "simple_logger.h"
 
 
@@ -75,13 +76,17 @@ Entity *gf2d_entity_new()
 void gf2d_entity_draw(Entity *self)
 {
     Vector4D color;
+    Vector2D drawPosition;
     if (!self)return;
     if (!self->inuse)return;
+    
+    vector2d_sub(drawPosition,self->position,camera_get_position());
+
     color = gf2d_color_to_vector4(self->color);
     gf2d_particle_emitter_draw(self->pe);
     gf2d_sprite_draw(
         self->sprite,
-        self->position,
+        drawPosition,
         &self->scale,
         &self->scaleCenter,
         &self->rotation,
@@ -102,6 +107,18 @@ void gf2d_entity_draw_all()
         if (entity_manager.entityList[i].inuse == 0)continue;
         gf2d_entity_draw(&entity_manager.entityList[i]);
     }
+}
+
+void gf2d_entity_pre_sync_body(Entity *self)
+{
+    if ((!self)||(!self->body))return;// nothin to do
+    vector2d_copy(self->body->velocity,self->velocity);
+}
+
+void gf2d_entity_post_sync_body(Entity *self)
+{
+    if ((!self)||(!self->body))return;// nothin to do
+    vector2d_copy(self->position,self->body->position);
 }
 
 void gf2d_entity_update(Entity *self)
@@ -133,6 +150,26 @@ void gf2d_entity_think_all()
         {
             entity_manager.entityList[i].think(&entity_manager.entityList[i]);
         }
+    }
+}
+
+void gf2d_entity_pre_sync_all()
+{
+    int i;
+    for (i = 0; i < entity_manager.maxEntities;i++)
+    {
+        if (entity_manager.entityList[i].inuse == 0)continue;
+        gf2d_entity_pre_sync_body(&entity_manager.entityList[i]);
+    }
+}
+
+void gf2d_entity_post_sync_all()
+{
+    int i;
+    for (i = 0; i < entity_manager.maxEntities;i++)
+    {
+        if (entity_manager.entityList[i].inuse == 0)continue;
+        gf2d_entity_post_sync_body(&entity_manager.entityList[i]);
     }
 }
 

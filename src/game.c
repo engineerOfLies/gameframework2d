@@ -34,6 +34,7 @@ int main(int argc, char * argv[])
     gf2d_audio_init(512,32,8,8,1,1);
 
     camera_set_dimensions(0,0,1200,720);// matches screen resolution
+    
     SDL_ShowCursor(SDL_DISABLE);
     gf2d_action_list_init(200);
     gf2d_entity_system_init(2028);
@@ -58,7 +59,7 @@ int main(int argc, char * argv[])
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
-            level_draw(camera_get_position());
+            level_draw();
             // game entities next            
             gf2d_entity_draw_all();
             

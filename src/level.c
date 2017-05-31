@@ -7,7 +7,8 @@
 #include "gf2d_sprite.h"
 #include "gf2d_audio.h"
 #include "gf2d_particles.h"
-
+#include "gf2d_collision.h"
+#include "gf2d_entity.h"
 #include "simple_logger.h"
 
 typedef struct
@@ -22,6 +23,7 @@ typedef struct
     Vector4D            starfieldVariance;
     Uint32              starRate;
     float               starSpeed;
+    Space              *space;
 }Level;
 
 static Level level;
@@ -195,6 +197,7 @@ void level_close()
         Mix_HaltMusic();
         Mix_FreeMusic(level.backgroundMusic);
     }
+    gf2d_space_free(level.space);
 }
 
 void level_start(LevelInfo *info)
@@ -223,6 +226,14 @@ void level_start(LevelInfo *info)
     camera_set_bounds(level.bounds.x,level.bounds.y,level.bounds.w,level.bounds.h);
 
     cam = camera_get_dimensions();
+
+    level.space = gf2d_space_new_full(
+        3,
+        level.bounds,
+        0.1,
+        vector2d(0,0),
+        0,
+        0.1);
     
     level.pe = gf2d_particle_emitter_new_full(
         10000,
@@ -262,13 +273,19 @@ void level_update()
     gf2d_particle_new_default(
         level.pe,
         level.starRate);
+
     gf2d_particle_emitter_update(level.pe);
+
+    gf2d_entity_pre_sync_all();
+    gf2d_space_update(level.space);
+    gf2d_entity_post_sync_all();
+    
 }
 
-void level_draw(Vector2D cameraPosition)
+void level_draw()
 {
     Vector2D drawPosition;
-    vector2d_sub(drawPosition,level.backgroundOffset,cameraPosition);
+    vector2d_sub(drawPosition,level.backgroundOffset,camera_get_position());
     
     SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),SDL_BLENDMODE_ADD);
     

@@ -5,12 +5,15 @@
 #include "gf2d_vector.h"
 #include "gf2d_actor.h"
 #include "gf2d_particles.h"
+#include "gf2d_collision.h"
 
 typedef struct Entity_S
 {
     Uint8 inuse;                            /**<never touch this*/
 
     TextLine name;                          /**<name of the entity, for information purposes*/
+    
+    Body *body;                             /**<the physics body for this entity*/
     
     Sprite *sprite;                         /**<which sprite to draw this entity with*/
     float frame;                            /**<current frame for the sprite*/
@@ -82,5 +85,15 @@ void gf2d_entity_think_all();
  * @brief update all active entities in the system
  */
 void gf2d_entity_update_all();
+
+/**
+ * @brief call before call to collision space update to prep all bodies with their entities
+ */
+void gf2d_entity_pre_sync_all();
+
+/**
+ * @brief call after call to collision space update to get all entities in sync with what happened
+ */
+void gf2d_entity_post_sync_all();
 
 #endif
