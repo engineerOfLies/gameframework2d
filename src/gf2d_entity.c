@@ -82,8 +82,9 @@ void gf2d_entity_draw(Entity *self)
     
     vector2d_sub(drawPosition,self->position,camera_get_position());
 
-    color = gf2d_color_to_vector4(self->color);
     gf2d_particle_emitter_draw(self->pe);
+
+    color = gf2d_color_to_vector4(self->color);
     gf2d_sprite_draw(
         self->sprite,
         drawPosition,
@@ -111,14 +112,14 @@ void gf2d_entity_draw_all()
 
 void gf2d_entity_pre_sync_body(Entity *self)
 {
-    if ((!self)||(!self->body))return;// nothin to do
-    vector2d_copy(self->body->velocity,self->velocity);
+    if (!self)return;// nothin to do
+    vector2d_copy(self->body.velocity,self->velocity);
 }
 
 void gf2d_entity_post_sync_body(Entity *self)
 {
-    if ((!self)||(!self->body))return;// nothin to do
-    vector2d_copy(self->position,self->body->position);
+    if (!self)return;// nothin to do
+    vector2d_copy(self->position,self->body.position);
 }
 
 void gf2d_entity_update(Entity *self)
@@ -126,8 +127,7 @@ void gf2d_entity_update(Entity *self)
     if (!self)return;
     if (!self->inuse)return;
 
-    /*do collision testing*/
-    vector2d_add(self->position,self->position,self->velocity);
+    /*collision handles position and velocity*/
     vector2d_add(self->velocity,self->velocity,self->acceleration);
 
     gf2d_particle_emitter_update(self->pe);

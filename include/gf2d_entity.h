@@ -12,28 +12,27 @@ typedef struct Entity_S
     Uint8 inuse;                            /**<never touch this*/
 
     TextLine name;                          /**<name of the entity, for information purposes*/
-    
-    Body *body;                             /**<the physics body for this entity*/
-    
-    Sprite *sprite;                         /**<which sprite to draw this entity with*/
-    float frame;                            /**<current frame for the sprite*/
-    ActionList *al;                         /**<action list for managing sprite animations*/
-    TextLine action;                        /**<the current action*/
-    
+        /*physics*/
+    Shape shape;                            /**<the shape of the physics collider*/
+    Body  body;                             /**<the physics body for this entity*/
     Vector2D position;                      /**<draw position*/
-    Vector2D velocity;                      /**<movement direction*/
-    Vector2D acceleration;                  /**<acceleration (or gravity)*/
+    Vector2D velocity;                      /**<desired movement direction*/
+    Vector2D acceleration;                  /**<acceleration*/
     
+        /*graphics*/
+    Sprite *sprite;                         /**<which sprite to draw this entity with*/
     Vector2D scale;                         /**<scale to draw sprite at*/
     Vector2D scaleCenter;                   /**<where to scale sprite from*/
     Vector3D rotation;                      /**<how to rotate the sprite*/
     Vector2D flip;                          /**<if to flip the sprite*/
     Color color;                            /**<color to shift sprite too*/
-
-    SDL_Rect boundingbox;                   /**<axis aligned bounding box*/
+    float frame;                            /**<current frame for the sprite*/
+    ActionList *al;                         /**<action list for managing sprite animations*/
+    TextLine action;                        /**<the current action*/
     
     ParticleEmitter *pe;                    /**<if this entity has its own particle emitter*/
     
+    /*system*/
     struct Entity_S *parent;                /**<pointer to the entity that spawned this one, if it applies*/
     
     void (*draw)(struct Entity_S *self);    /**<called after system entity drawing for custom effects*/
@@ -42,7 +41,9 @@ typedef struct Entity_S
     void (*touch)(struct Entity_S *self,struct Entity_S *other);/**<when this entity touches another entity*/
     void (*damage)(struct Entity_S *self,int amount, struct Entity_S *source);/**<when this entity takes damage*/
     void (*die)(struct Entity_S *self);     /**<when this entity dies*/
-    
+
+    /*game specific data*/
+
     float health;                           /**<health of entity*/
     int   maxHealth;                        /**<maximum health of entity*/
 }Entity;

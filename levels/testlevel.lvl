@@ -1,6 +1,6 @@
 # test level
 name: veil
-bounds: 0,0,7000,700 
+bounds: 0,10,7000,700 
 backgroundImage: images/backgrounds/veil_nebula.jpg
 backgroundOffset: 0,0
 backgroundColor: 255,255,255,128

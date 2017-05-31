@@ -51,7 +51,6 @@ int main(int argc, char * argv[])
         keys = SDL_GetKeyboardState(NULL); // get the keyboard state for this frame
         /*update things here*/
 
-        camera_move(vector2d(0.1,0));
         level_update();
         gf2d_entity_think_all();
         gf2d_entity_update_all();

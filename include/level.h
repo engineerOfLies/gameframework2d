@@ -5,7 +5,7 @@
 #include "gf2d_particles.h"
 #include "gf2d_list.h"
 #include "gf2d_vector.h"
-
+#include "gf2d_entity.h"
 
 typedef struct
 {
@@ -75,4 +75,11 @@ void level_draw();
  * @brief get the current absolute bounds of the level
  */
 Rect level_get_bounds();
+
+/**
+ * @brief adds an entity to the level physics space
+ * @note entity must have a Body defined
+ * @param ent the entity to add to the space
+ */
+void level_add_entity(Entity *ent);
 #endif

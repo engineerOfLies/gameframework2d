@@ -5,6 +5,8 @@
 #include "gf2d_list.h"
 #include "gf2d_text.h"
 
+#define ALL_LAYERS 0xffffffff
+
 typedef struct Collision_S Collision;
 
 typedef struct Body_S
@@ -47,8 +49,6 @@ typedef struct
     float       slop;           /**<how much to correct for body overlap*/
 }Space;
 
-
-#define ALL_LAYERS 0xffffffff
 
 /**
  * @brief initializes a body to zero

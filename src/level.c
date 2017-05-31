@@ -2,6 +2,7 @@
 
 #include "level.h"
 #include "camera.h"
+#include "spawn.h"
 
 #include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
@@ -27,6 +28,8 @@ typedef struct
 }Level;
 
 static Level level;
+
+void level_spawn_entities(LevelInfo *info);
 
 int level_info_get_spawn_count(FILE *file)
 {
@@ -233,7 +236,7 @@ void level_start(LevelInfo *info)
         0.1,
         vector2d(0,0),
         0,
-        0.1);
+        1);
     
     level.pe = gf2d_particle_emitter_new_full(
         10000,
@@ -259,9 +262,64 @@ void level_start(LevelInfo *info)
         0,
         0,
         SDL_BLENDMODE_ADD);
-
+    level_spawn_entities(info);
 }
 
+void level_spawn_entities(LevelInfo *info)
+{
+    int i;
+    Entity *ent;
+    Vector2D startPosition;
+    if (!info)return;
+    /*spawn entities*/
+    for (i = 0; i < info->spawnCount; i++)
+    {
+        startPosition.x = info->spawnList[i].position.x + gf2d_crandom()*info->spawnList[i].positionVariance.x;
+        startPosition.y = info->spawnList[i].position.y + gf2d_crandom()*info->spawnList[i].positionVariance.y;
+        ent = spawn_entity(info->spawnList[i].name,startPosition);
+        level_add_entity(ent);
+    }
+}
+
+int body_world_touch(Body *body, Collision *collision)
+{
+    Entity *self;
+    if (!body)return 0;
+    self = (Entity *)body->data;
+    if (!self)return 0;
+    return 0;
+}
+
+int body_body_touch(Body *self, Body *other, Collision *collision)
+{
+    Entity *selfEnt,*otherEnt;
+    if ((!self)||(!other))return 0;
+    selfEnt = (Entity *)self->data;
+    if (!selfEnt)return 0;
+    otherEnt = (Entity *)other->data;
+    if (!otherEnt)return 0;
+    if (selfEnt->touch)
+    {
+        selfEnt->touch(selfEnt,otherEnt);
+    }
+    return 0;
+}
+
+
+void level_add_entity(Entity *ent)
+{
+    if (!ent)return;
+    if (!level.space)
+    {
+        slog("cannot add entity %s to level, no space defined!",ent->name);
+        return;
+    }
+    if (ent->body.bodyTouch == NULL)
+    {
+        ent->body.bodyTouch = body_body_touch;
+    }
+    gf2d_space_add_body(level.space,&ent->body);
+}
 
 Rect level_get_bounds()
 {
@@ -301,6 +359,7 @@ void level_draw()
     SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),SDL_BLENDMODE_BLEND);
     
     gf2d_particle_emitter_draw(level.pe);
+//    gf2d_space_draw(level.space);
 }
 
 /*eol@eof*/

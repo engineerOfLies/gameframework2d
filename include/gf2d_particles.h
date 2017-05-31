@@ -120,6 +120,27 @@ void gf2d_particle_new_full(
         SDL_BlendMode mode);
 
 /**
+ * @brief create a bunch of new particles for the provided emitter
+ */
+void gf2d_particle_new_full_bulk(
+        ParticleEmitter *pe,
+        Uint32   count,
+        Uint32   ttl,
+        Sprite *sprite,
+        Shape  *shape,
+        Vector2D position,
+        Vector2D velocity,
+        Vector2D acceleration,
+        Color color,
+        Color colorVector,
+        ParticleTypes type,
+        float frame,
+        float framerate,
+        int startFrame,
+        int endFrame,
+        SDL_BlendMode mode);
+
+/**
  * @brief create a set of new particles for the emitter using its default parameters
  * @param pe the particle emitter to create particles for
  * @param count how many to create
