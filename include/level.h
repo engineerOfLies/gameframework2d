@@ -66,6 +66,12 @@ void level_update();
 
 /**
  * @brief draw the current level
+ * @param cameraPosition for calculating position to draw
  */
-void level_draw();
+void level_draw(Vector2D cameraPosition);
+
+/**
+ * @brief get the current absolute bounds of the level
+ */
+Rect level_get_bounds();
 #endif

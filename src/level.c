@@ -1,7 +1,9 @@
 #include <stdio.h>
 
 #include "level.h"
+#include "camera.h"
 
+#include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
 #include "gf2d_audio.h"
 #include "gf2d_particles.h"
@@ -13,8 +15,13 @@ typedef struct
     Sprite             *backgroundImage;
     Vector2D            backgroundOffset;
     Mix_Music          *backgroundMusic;
-    Color               backgroundColor;
+    Vector4D            backgroundColor;
     ParticleEmitter    *pe;
+    Rect                bounds;
+    Vector4D            starfield;
+    Vector4D            starfieldVariance;
+    Uint32              starRate;
+    float               starSpeed;
 }Level;
 
 static Level level;
@@ -182,6 +189,7 @@ void level_close()
 
 void level_start(LevelInfo *info)
 {
+    Rect cam;
     if (!info)return;
     level_close();
     level.backgroundMusic = Mix_LoadMUS(info->backgroundMusic);
@@ -193,23 +201,79 @@ void level_start(LevelInfo *info)
     {
         slog("failed to load music file %s, re: %s",info->backgroundMusic,Mix_GetError());
     }
+    vector4d_copy(level.backgroundColor,info->backgroundColor);
     level.backgroundImage = gf2d_sprite_load_image(info->backgroundImage);
+    
+    vector4d_copy(level.starfield,info->starfield);
+    vector4d_copy(level.starfieldVariance,info->starfieldVariance);
+    level.starRate = info->starRate;
+    level.starSpeed = info->starSpeed;
+    
+    gf2d_rect_copy(level.bounds,info->bounds);
+    camera_set_bounds(level.bounds.x,level.bounds.y,level.bounds.w,level.bounds.h);
+
+    cam = camera_get_dimensions();
+    
+    level.pe = gf2d_particle_emitter_new_full(
+        10000,
+        1200,
+        0,
+        PT_Pixel,
+        vector2d(cam.w + 20,cam.h/2),
+        vector2d(0,cam.h/2),
+        vector2d(-level.starSpeed,0),
+        vector2d(-0.1,0),
+        vector2d(-0.1,0),
+        vector2d(0.1,0),
+        gf2d_color_from_vector4(level.starfield),
+        gf2d_color(0,0,0,0),
+        gf2d_color_from_vector4(level.starfieldVariance),
+        NULL,
+        0,
+        0,
+        0,
+        "",
+        0,
+        0,
+        0,
+        0,
+        SDL_BLENDMODE_ADD);
+
 }
 
-/**
- * @brief update the current level
- */
+
+Rect level_get_bounds()
+{
+    return level.bounds;
+}
+
 void level_update()
 {
-    
+    gf2d_particle_new_default(
+        level.pe,
+        level.starRate);
+    gf2d_particle_emitter_update(level.pe);
 }
 
-/**
- * @brief draw the current level
- */
-void level_draw()
+void level_draw(Vector2D cameraPosition)
 {
-    gf2d_sprite_draw_image(level.backgroundImage,level.backgroundOffset);
+    Vector2D drawPosition;
+    vector2d_sub(drawPosition,level.backgroundOffset,cameraPosition);
+    
+    SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),SDL_BLENDMODE_ADD);
+    
+    gf2d_sprite_draw(
+        level.backgroundImage,
+        drawPosition,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        &level.backgroundColor,
+        0);
+    SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),SDL_BLENDMODE_BLEND);
+    
+    gf2d_particle_emitter_draw(level.pe);
 }
 
 /*eol@eof*/

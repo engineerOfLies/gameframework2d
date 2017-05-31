@@ -17,6 +17,7 @@ typedef struct
     Uint32 then;
     Bool print_fps;
     float fps; 
+    Uint32 w,h;
 
     Uint32 background_color;
     Vector4D background_color_v;
@@ -121,7 +122,8 @@ void gf2d_graphics_initialize(
         gf2d_graphics_close();
         return;
     }
-    
+    gf2d_graphics.w = renderWidth;
+    gf2d_graphics.h = renderHeight;
     gf2d_graphics.background_color = SDL_MapRGB(gf2d_graphics.surface->format, bgcolor.x,bgcolor.y,bgcolor.z);
     vector4d_set(gf2d_graphics.background_color_v,bgcolor.x,bgcolor.y,bgcolor.z,bgcolor.w);
     SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),SDL_BLENDMODE_BLEND);
@@ -160,6 +162,12 @@ void gf2d_graphics_close()
     gf2d_graphics.temp_buffer = NULL;
 
     slog("graphics closed");
+}
+
+void gf2d_graphics_get_screen_resolution(Uint32 *w,Uint32 *h)
+{
+    if (w)*w = gf2d_graphics.w;
+    if (h)*h = gf2d_graphics.h;
 }
 
 SDL_Renderer *gf2d_graphics_get_renderer()

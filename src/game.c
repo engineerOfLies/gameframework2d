@@ -1,5 +1,6 @@
 #include <SDL.h>
 #include "level.h"
+#include "camera.h"
 #include "gf2d_audio.h"
 #include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
@@ -32,6 +33,7 @@ int main(int argc, char * argv[])
     gf2d_sprite_init(1024);
     gf2d_audio_init(512,32,8,8,1,1);
 
+    camera_set_dimensions(0,0,1200,720);// matches screen resolution
     SDL_ShowCursor(SDL_DISABLE);
     gf2d_action_list_init(200);
     gf2d_entity_system_init(2028);
@@ -48,15 +50,15 @@ int main(int argc, char * argv[])
         keys = SDL_GetKeyboardState(NULL); // get the keyboard state for this frame
         /*update things here*/
 
+        camera_move(vector2d(0.1,0));
         level_update();
         gf2d_entity_think_all();
         gf2d_entity_update_all();
         
-
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
-            level_draw();
+            level_draw(camera_get_position());
             // game entities next            
             gf2d_entity_draw_all();
             

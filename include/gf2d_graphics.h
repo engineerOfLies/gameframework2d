@@ -39,6 +39,13 @@ void gf2d_graphics_set_frame_delay(Uint32 frameDelay);
 float gf2d_graphics_get_frames_per_second();
 
 /**
+ * @brief get the current rendering context width and height
+ * @param w a pointer to store the width
+ * @param h a pointer to store the height
+ */
+void gf2d_graphics_get_screen_resolution(Uint32 *w,Uint32 *h);
+
+/**
  * @brief get the current rendering context
  * @return NULL on error or the current rendering context
  */
