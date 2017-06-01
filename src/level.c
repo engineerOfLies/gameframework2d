@@ -300,7 +300,8 @@ int body_body_touch(Body *self, Body *other, Collision *collision)
     if (!otherEnt)return 0;
     if (selfEnt->touch)
     {
-        selfEnt->touch(selfEnt,otherEnt);
+        slog("%s is touching %s",selfEnt->name,otherEnt->name);
+        return selfEnt->touch(selfEnt,otherEnt);
     }
     return 0;
 }

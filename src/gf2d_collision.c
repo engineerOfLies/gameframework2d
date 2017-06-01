@@ -483,6 +483,16 @@ attempt:
             collision.timeStep = step;
             body->bodyTouch(body,other,&collision);
         }
+        if (other->bodyTouch != NULL)
+        {
+            collision.shape = body->shape;
+            collision.body = body;
+            vector2d_copy(collision.pointOfContact,poc);
+            vector2d_copy(collision.normal,normal);
+            collision.timeStep = step;
+            other->bodyTouch(other,body,&collision);
+        }
+
         gf2d_body_adjust_collision_velocity(body,collider,poc, normal);
         gf2d_body_adjust_collision_velocity(collider,body,poc, normal);
     }

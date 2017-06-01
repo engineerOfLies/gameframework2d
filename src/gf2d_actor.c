@@ -136,6 +136,21 @@ void gf2d_action_file_load_actions(FILE *file,Action *actions)
             fscanf(file,"%s",(char*)&actions->name);
             continue;
         }
+        if(strcmp(buf,"type:") == 0)
+        {
+            fscanf(file,"%s",buf);
+            if (strcmp(buf,"loop")==0)
+            {
+                actions->type = AT_LOOP;
+                continue;
+            }
+            if (strcmp(buf,"pass")==0)
+            {
+                actions->type = AT_PASS;
+                continue;
+            }
+            continue;
+        }
         if(strcmp(buf,"startFrame:") == 0)
         {
             fscanf(file,"%i",&actions->startFrame);
@@ -223,6 +238,18 @@ Action *gf2d_action_list_get_action(ActionList *al, char *name)
     return NULL;// not found
 }
 
+float gf2d_action_set(ActionList *al,char *name)
+{
+    Action *action;
+    action = gf2d_action_list_get_action(al, name);
+    if (!action)
+    {
+        slog("no action found by name %s",name);
+        return ART_ERROR;
+    }
+    return action->startFrame;
+}
+
 ActionReturnType gf2d_action_list_get_next_frame(
     ActionList *al,
     float * frame,
@@ -240,13 +267,8 @@ ActionReturnType gf2d_action_list_get_next_frame(
         slog("no action found by name %s",name);
         return ART_ERROR;
     }
-    if ((*frame < action->startFrame)||(*frame > action->endFrame))
-    {
-        *frame = action->startFrame;
-        return ART_START;
-    }
     *frame += action->frameRate;
-    if (*frame > action->endFrame)
+    if (*frame >= action->endFrame)
     {
         switch (action->type)
         {

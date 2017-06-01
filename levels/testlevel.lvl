@@ -15,17 +15,17 @@ position: 100,360
 positionVariance: 0,0
 
 entity: space_bug
-position: 1230,360
-positionVariance: 0,300
+position: 1030,360
+positionVariance: 0,250
 
 entity: space_bug
-position: 1260,360
-positionVariance: 0,300
+position: 1060,360
+positionVariance: 0,250
 
 entity: space_bug
-position: 1290,360
-positionVariance: 0,300
+position: 1090,360
+positionVariance: 0,250
 
 entity: space_bug
-position: 1320,360
-positionVariance: 0,300
+position: 1020,360
+positionVariance: 0,250

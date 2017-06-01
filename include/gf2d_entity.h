@@ -7,11 +7,23 @@
 #include "gf2d_particles.h"
 #include "gf2d_collision.h"
 
+typedef enum
+{
+    ES_Idle,
+    ES_Seeking,
+    ES_Attacking,
+    ES_Pain,
+    ES_Cooldown,
+    ES_Dying,
+    ES_Dead         //Auto cleaned up
+}EntityState;
+
 typedef struct Entity_S
 {
     Uint8 inuse;                            /**<never touch this*/
 
     TextLine name;                          /**<name of the entity, for information purposes*/
+    EntityState state;                      /**<state of the entity*/
         /*physics*/
     Shape shape;                            /**<the shape of the physics collider*/
     Body  body;                             /**<the physics body for this entity*/
@@ -29,6 +41,7 @@ typedef struct Entity_S
     float frame;                            /**<current frame for the sprite*/
     ActionList *al;                         /**<action list for managing sprite animations*/
     TextLine action;                        /**<the current action*/
+    ActionReturnType at;                    /**<set automatically each frame*/
     
     ParticleEmitter *pe;                    /**<if this entity has its own particle emitter*/
     
@@ -38,7 +51,7 @@ typedef struct Entity_S
     void (*draw)(struct Entity_S *self);    /**<called after system entity drawing for custom effects*/
     void (*think)(struct Entity_S *self);   /**<called before system updates to make decisions / hand input*/
     void (*update)(struct Entity_S *self);  /**<called after system entity update*/
-    void (*touch)(struct Entity_S *self,struct Entity_S *other);/**<when this entity touches another entity*/
+    int  (*touch)(struct Entity_S *self,struct Entity_S *other);/**<when this entity touches another entity*/
     void (*damage)(struct Entity_S *self,int amount, struct Entity_S *source);/**<when this entity takes damage*/
     void (*die)(struct Entity_S *self);     /**<when this entity dies*/
 
@@ -97,4 +110,13 @@ void gf2d_entity_pre_sync_all();
  */
 void gf2d_entity_post_sync_all();
 
+/**
+ * @brief deal damage to target entity
+ * @param target the entity to take damage
+ * @param inflictor the entity doing the damage
+ * @param attacker the entity getting the credit for the damage
+ * @param damage how much damage
+ * @param kick damage direction
+ */
+void gf2d_entity_deal_damage(Entity *target, Entity *inflictor, Entity *attacker,int damage,Vector2D kick);
 #endif

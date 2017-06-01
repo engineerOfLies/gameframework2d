@@ -77,4 +77,11 @@ ActionReturnType gf2d_action_list_get_next_frame(
     float * frame,
     char *name);
 
+/**
+ * @brief get the starting frame of an action
+ * @param al the action list to set the frame by
+ * @param name the action to set the frame to
+ * @return the frame
+ */
+float gf2d_action_set(ActionList *al,char *name);
 #endif

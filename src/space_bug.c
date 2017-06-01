@@ -1,11 +1,13 @@
 #include "space_bug.h"
 #include "simple_logger.h"
 #include "camera.h"
+#include "level.h"
+#include "particle_effects.h"
 
 void space_bug_draw(Entity *self);
 void space_bug_think(Entity *self);
 void space_bug_update(Entity *self);
-void space_bug_touch(Entity *self,Entity *other);
+int  space_bug_touch(Entity *self,Entity *other);
 void space_bug_damage(Entity *self,int amount, Entity *source);
 void space_bug_die(Entity *self);
 
@@ -24,7 +26,7 @@ Entity *space_bug_new(Vector2D position)
         &self->body,
         "space_bug",
         ALL_LAYERS,
-        1,
+        2,
         position,
         vector2d(0,0),
         10,
@@ -37,9 +39,10 @@ Entity *space_bug_new(Vector2D position)
 
     self->sprite = gf2d_sprite_load_all("images/space_bug.png",128,128,16);
 
-    self->frame = 0;
+    self->frame = (gf2d_random()*8);
     self->al = gf2d_action_list_load("actors/space_bug.actor");
     gf2d_line_cpy(self->action,"idle");
+    slog("bug starting action: %s",self->action);
     
     vector2d_copy(self->position,position);
     
@@ -83,13 +86,13 @@ void space_bug_spawn_thrust(Entity *self,Vector2D offset,int count)
             NULL,
             NULL,
             vector2d(
-                self->position.x - camPosition.x + gf2d_crandom()*2 + offset.x,
-                self->position.y - camPosition.y + gf2d_crandom()*2 + offset.y),
+                self->position.x - camPosition.x + gf2d_crandom()*5 + offset.x,
+                self->position.y - camPosition.y + gf2d_crandom()*5 + offset.y),
             vector2d(
                 -self->velocity.x*0.5 + gf2d_crandom()*2.5 + 2,
                 (-self->velocity.y*0.5 + gf2d_crandom()*2.5)*0.2),
             vector2d(-self->acceleration.x*0.5 + 0.1,-self->acceleration.y*0.05),
-            gf2d_color8(10,255,100,255),
+            gf2d_color8(10,100,255,255),
             gf2d_color(0,0,0,-0.01),
             PT_Pixel,
             0,
@@ -102,9 +105,10 @@ void space_bug_spawn_thrust(Entity *self,Vector2D offset,int count)
 
 void space_bug_update(Entity *self)
 {
+    Vector2D camera;
     Rect bounds,lbounds;
     if (!self)return;
-    Rect level_get_bounds();
+    camera = camera_get_position();
 
     bounds = gf2d_shape_get_bounds(self->shape);
     vector2d_add(bounds,bounds,self->position);
@@ -119,24 +123,63 @@ void space_bug_update(Entity *self)
         self->acceleration.y = 0;
         self->velocity.y = 0;
     }
-    // make thrust particles
-
-    space_bug_spawn_thrust(self,vector2d(40,8),50);
+    slog("bug action return state: %i",self->at);
+    
+    switch(self->state)
+    {
+        case ES_Idle:
+        case ES_Seeking:
+        case ES_Attacking:
+        case ES_Pain:
+        case ES_Cooldown:
+            space_bug_spawn_thrust(self,vector2d(-20,-14),20);
+            break;
+        case ES_Dying:
+            pe_blood_spray(
+                self->pe, 
+                vector2d(self->position.x - camera.x,self->position.y - camera.y),
+                vector2d(gf2d_crandom(),gf2d_crandom()),
+                gf2d_color8(50,200,50,200),
+                50);
+            if (self->at == ART_END)
+            {
+                // finished dying
+                slog("bug finished dying");
+                self->state = ES_Dead;
+            }
+            return;
+        case ES_Dead:
+            return;
+    }
 }
 
-void space_bug_touch(Entity *self,Entity *other)
+int space_bug_touch(Entity *self,Entity *other)
 {
-    
+    Vector2D kick;
+    if ((!self)||(!other))return 0;
+    vector2d_sub(kick,other->position,self->position);
+    gf2d_entity_deal_damage(other, self, self,self->health,kick);
+    vector2d_clear(self->velocity);
+    vector2d_clear(self->acceleration);
+    self->die(self);
+    return 1;
 }
 
 void space_bug_damage(Entity *self,int amount, Entity *source)
 {
-    
+    self->health -= amount;
+    if (self->health <= 0)self->die(self);
 }
 
 void space_bug_die(Entity *self)
 {
-    
+    self->body.layer = 0;// no longer clip
+    self->state = ES_Dying;
+    if (gf2d_crandom() > 0)
+    {
+        gf2d_line_cpy(self->action,"death1");
+    }else gf2d_line_cpy(self->action,"death1");
+    self->frame = gf2d_action_set(self->al,self->action);
 }
 
 /*eol@eof*/

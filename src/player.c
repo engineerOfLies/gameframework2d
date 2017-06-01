@@ -7,9 +7,11 @@ static Entity *_player = NULL;
 void player_draw(Entity *self);
 void player_think(Entity *self);
 void player_update(Entity *self);
-void player_touch(Entity *self,Entity *other);
+int  player_touch(Entity *self,Entity *other);
 void player_damage(Entity *self,int amount, Entity *source);
 void player_die(Entity *self);
+
+#define baseSpeed 1.5
 
 Entity *player_get()
 {
@@ -41,7 +43,8 @@ Entity *player_new(Vector2D position)
     gf2d_body_set(
         &self->body,
         "player",
-        ALL_LAYERS,
+//        0,//no layer
+        ALL_LAYERS,//all layers
         1,
         position,
         vector2d(0,0),
@@ -60,7 +63,7 @@ Entity *player_new(Vector2D position)
     gf2d_line_cpy(self->action,"idle");
     
     vector2d_copy(self->position,position);
-    vector2d_set(self->velocity,1.5,0);
+    vector2d_set(self->velocity,baseSpeed,0);
     
     vector2d_set(self->scale,1,1);
     vector2d_set(self->scaleCenter,64,64);
@@ -100,6 +103,14 @@ void player_think(Entity *self)
     {
         self->acceleration.y = (self->acceleration.y * 0.9) + (1.2 *0.1);
     }
+    if ((mx < 0)||(keys[SDL_SCANCODE_A]))
+    {
+        self->acceleration.x = (self->acceleration.x * 0.9) + (-1.2 *0.1);
+    }
+    if ((mx > 0)||(keys[SDL_SCANCODE_D]))
+    {
+        self->acceleration.x = (self->acceleration.x * 0.9) + (1.2 *0.1);
+    }
 }
 
 void player_spawn_thrust(Entity *self,Vector2D offset,int count)
@@ -121,7 +132,7 @@ void player_spawn_thrust(Entity *self,Vector2D offset,int count)
                 -self->velocity.x*0.5 + gf2d_crandom()*2.5 - 2,
                 (-self->velocity.y*0.5 + gf2d_crandom()*2.5)*0.2),
             vector2d(-self->acceleration.x*0.5 -0.1,-self->acceleration.y*0.05),
-            gf2d_color8(10,100,255,255),
+            gf2d_color8(10,255,100,255),
             gf2d_color(0,0,0,-0.01),
             PT_Pixel,
             0,
@@ -137,25 +148,28 @@ void player_update(Entity *self)
     Vector2D camPosition = {0,0};
     Rect bounds,lbounds;
     if (!self)return;
-    camPosition.x = self->position.x - 100;
+    camPosition.x = self->position.x - 200 + (self->velocity.x - baseSpeed)* 2;
     camera_set_position(camPosition);
     Rect level_get_bounds();
 
     bounds = gf2d_shape_get_bounds(self->shape);
     vector2d_add(bounds,bounds,self->position);
     lbounds = level_get_bounds();
+
     if ((bounds.y <= lbounds.y + 10) && (self->velocity.y < 0))
     {
         self->acceleration.y = 0;
         self->velocity.y = 0;
     }
+
     if ((bounds.y + bounds.h >= lbounds.y + lbounds.h - 10) && (self->velocity.y > 0))
     {
         self->acceleration.y = 0;
         self->velocity.y = 0;
     }
-    
-    if (self->velocity.x < 1.5)self->velocity.x = 1.5;
+
+    if (self->velocity.x < baseSpeed)self->velocity.x = baseSpeed;
+    if (self->velocity.x > 50)self->velocity.x = 50;
     if (self->velocity.y < -50)self->velocity.y = -50;
     if (self->velocity.y > 50)self->velocity.y = 50;
     
@@ -167,9 +181,9 @@ void player_update(Entity *self)
     player_spawn_thrust(self,vector2d(-20,16),25);
 }
 
-void player_touch(Entity *self,Entity *other)
+int player_touch(Entity *self,Entity *other)
 {
-    
+    return 0;// player does not touch
 }
 
 void player_damage(Entity *self,int amount, Entity *source)

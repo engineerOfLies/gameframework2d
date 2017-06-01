@@ -127,12 +127,17 @@ void gf2d_entity_update(Entity *self)
     if (!self)return;
     if (!self->inuse)return;
 
+    if (self->state == ES_Dead)
+    {
+        gf2d_entity_free(self);
+        return;
+    }
     /*collision handles position and velocity*/
     vector2d_add(self->velocity,self->velocity,self->acceleration);
 
     gf2d_particle_emitter_update(self->pe);
 
-    gf2d_action_list_get_next_frame(self->al,&self->frame,self->action);
+    self->at = gf2d_action_list_get_next_frame(self->al,&self->frame,self->action);
     
     if (self->update != NULL)
     {
@@ -181,6 +186,16 @@ void gf2d_entity_update_all()
         if (entity_manager.entityList[i].inuse == 0)continue;
         gf2d_entity_update(&entity_manager.entityList[i]);
     }
+}
+
+void gf2d_entity_deal_damage(Entity *target, Entity *inflictor, Entity *attacker,int damage,Vector2D kick)
+{
+    if (!target)return;
+    if (!inflictor)return;
+    if (!attacker)return;
+    if (!target->damage)return;// cannot take damage
+    target->damage(target,damage, inflictor);
+    vector2d_add(target->velocity,kick,target->velocity);
 }
 
 /*eol@eof*/

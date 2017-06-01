@@ -1,5 +1,47 @@
 action: idle
 startFrame: 0
-endFrame: 0
-frameRate: 0
-type:   none
+endFrame: 8
+frameRate: 0.1
+type:   loop
+
+action: attack1
+startFrame: 9
+endFrame: 17
+frameRate: 0.1
+type:   pass
+
+action: attack2
+startFrame: 18
+endFrame: 33
+frameRate: 0.1
+type:   pass
+
+action: attack3
+startFrame: 34
+endFrame: 46
+frameRate: 0.1
+type:   pass
+
+action: pain1
+startFrame: 47
+endFrame: 51
+frameRate: 0.1
+type:   pass
+
+action: pain2
+startFrame: 52
+endFrame: 56
+frameRate: 0.1
+type:   pass
+
+action: death1
+startFrame: 57
+endFrame: 63
+frameRate: 0.1
+type:   pass
+
+action: death2
+startFrame: 64
+endFrame: 70
+frameRate: 0.1
+type:   pass
