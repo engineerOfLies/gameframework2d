@@ -177,6 +177,8 @@ Sprite *gf2d_sprite_load_all(
         sprite->frame_w = surface->w;
     }
     else sprite->frame_w = frameWidth;
+    sprite->image_w = surface->w;
+    sprite->image_h = surface->h;
     sprite->frames_per_line = framesPerLine;
     gf2d_line_cpy(sprite->filepath,filename);
 

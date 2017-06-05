@@ -7,6 +7,7 @@ typedef struct
 {
     Uint32 maxEntities;
     Entity *entityList;
+    Uint64 autoincrement;
 }EntityManager;
 
 static EntityManager entity_manager;
@@ -51,6 +52,7 @@ void gf2d_entity_system_init(Uint32 maxEntities)
 void gf2d_entity_free(Entity *self)
 {
     if (!self)return;
+    if (self->free)self->free(self);
     gf2d_action_list_free(self->al);
     gf2d_sprite_free(self->sprite);
     gf2d_particle_emitter_free(self->pe);
@@ -64,6 +66,8 @@ Entity *gf2d_entity_new()
     {
         if (entity_manager.entityList[i].inuse == 0)
         {
+            memset(&entity_manager.entityList[i],0,sizeof(Entity));
+            entity_manager.entityList[i].id = entity_manager.autoincrement++;
             entity_manager.entityList[i].inuse = 1;
             vector2d_set(entity_manager.entityList[i].scale,1,1);
             entity_manager.entityList[i].color = gf2d_color(1,1,1,1);// no color shift, opaque
@@ -119,6 +123,7 @@ void gf2d_entity_pre_sync_body(Entity *self)
 void gf2d_entity_post_sync_body(Entity *self)
 {
     if (!self)return;// nothin to do
+//    slog("entity %li : %s old position(%f,%f) => new position (%f,%f)",self->id,self->name,self->position,self->body.position);
     vector2d_copy(self->position,self->body.position);
 }
 
@@ -188,14 +193,15 @@ void gf2d_entity_update_all()
     }
 }
 
-void gf2d_entity_deal_damage(Entity *target, Entity *inflictor, Entity *attacker,int damage,Vector2D kick)
+int gf2d_entity_deal_damage(Entity *target, Entity *inflictor, Entity *attacker,int damage,Vector2D kick)
 {
-    if (!target)return;
-    if (!inflictor)return;
-    if (!attacker)return;
-    if (!target->damage)return;// cannot take damage
+    if (!target)return 0;
+    if (!inflictor)return 0;
+    if (!attacker)return 0;
+    if (!target->damage)return 0;// cannot take damage
     target->damage(target,damage, inflictor);
     vector2d_add(target->velocity,kick,target->velocity);
+    return 1;
 }
 
 /*eol@eof*/

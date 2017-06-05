@@ -11,6 +11,7 @@ typedef struct Sprite_S
     int ref_count;
     TextLine filepath;
     SDL_Texture *texture;
+    Uint32 image_w,image_h;
     Uint32 frames_per_line;
     Uint32 frame_w,frame_h;
 }Sprite;

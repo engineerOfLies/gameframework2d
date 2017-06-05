@@ -11,6 +11,9 @@ typedef struct
 {
     Vector2D    position;
     Vector2D    positionVariance;
+    Uint32      startPosition;
+    Uint32      endPosition;
+    Uint32      autospawn;
     TextLine    name;
 }Spawn;
 
@@ -82,4 +85,12 @@ Rect level_get_bounds();
  * @param ent the entity to add to the space
  */
 void level_add_entity(Entity *ent);
+
+/**
+ * @brief removes an entity from the level physics space
+ * @note this should not be done during a space update (ie: collision callbacks)
+ * @param ent the entity to be removed
+ */
+void level_remove_entity(Entity *ent);
+
 #endif

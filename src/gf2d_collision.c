@@ -133,7 +133,10 @@ void gf2d_space_remove_body(Space *space,Body *body)
         slog("no body provided");
         return;
     }
-    space->bodyList = gf2d_list_delete_data(space->bodyList,(void *)body);
+    if (space->bodyList)
+    {
+        space->bodyList = gf2d_list_delete_data(space->bodyList,(void *)body);
+    }
 }
 
 void gf2d_space_add_body(Space *space,Body *body)
@@ -219,7 +222,6 @@ Vector2D gf2d_body_normal(Body *body,Vector2D poc, Vector2D *normal)
     }
     if ((normal->y < 0) && (body->position.y > poc.y))
     {
-//        vector2d_negate(n,n);
         n = vector2d_rotate(n,GF2D_PI);
         return n;
     }
@@ -253,7 +255,7 @@ void gf2d_body_adjust_bounds_collision_velocity(Body *a,Vector2D poc, Vector2D n
     }
 }
 
-void gf2d_body_adjust_static_collision_velocity(Body *a,Shape *s,Vector2D poc, Vector2D normal)
+void gf2d_body_adjust_static_bounce_velocity(Body *a,Shape *s,Vector2D poc, Vector2D normal)
 {
     double phi;//contact angle
     double theta1,theta2;// movement angles
@@ -420,7 +422,7 @@ void gf2d_body_step(Body *body,Space *space,float step)
 
     vector2d_scale(velocity,body->velocity,space->timeStep);
     
-    gf2d_body_adjust_collision_bounds_velocity(body,space->slop,space->bounds,&velocity);
+//    gf2d_body_adjust_collision_bounds_velocity(body,space->slop,space->bounds,&velocity);
 
     vector2d_add(body->position,body->position,velocity);
     if (space->precision)
@@ -461,6 +463,7 @@ void gf2d_body_step(Body *body,Space *space,float step)
                 goto attempt;
             }
         }
+        // this pass collided with no new things
         break;
 attempt:
         //collision
@@ -481,16 +484,16 @@ attempt:
             vector2d_copy(collision.pointOfContact,poc);
             vector2d_copy(collision.normal,normal);
             collision.timeStep = step;
-            body->bodyTouch(body,other,&collision);
+            body->bodyTouch(body,collider,&collision);
         }
-        if (other->bodyTouch != NULL)
+        if (collider->bodyTouch != NULL)
         {
             collision.shape = body->shape;
             collision.body = body;
             vector2d_copy(collision.pointOfContact,poc);
             vector2d_copy(collision.normal,normal);
             collision.timeStep = step;
-            other->bodyTouch(other,body,&collision);
+            collider->bodyTouch(collider,body,&collision);
         }
 
         gf2d_body_adjust_collision_velocity(body,collider,poc, normal);
@@ -504,7 +507,7 @@ attempt:
         {
             body->worldTouch(body,NULL);
         }
-        gf2d_body_adjust_static_collision_velocity(body,collisionShape,pocS, normalS);
+        gf2d_body_adjust_static_bounce_velocity(body,collisionShape,pocS, normalS);
     }
     if (collided)
     {

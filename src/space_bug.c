@@ -25,7 +25,7 @@ Entity *space_bug_new(Vector2D position)
     gf2d_body_set(
         &self->body,
         "space_bug",
-        ALL_LAYERS,
+        0,
         2,
         position,
         vector2d(0,0),
@@ -42,7 +42,6 @@ Entity *space_bug_new(Vector2D position)
     self->frame = (gf2d_random()*8);
     self->al = gf2d_action_list_load("actors/space_bug.actor");
     gf2d_line_cpy(self->action,"idle");
-    slog("bug starting action: %s",self->action);
     
     vector2d_copy(self->position,position);
     
@@ -51,7 +50,7 @@ Entity *space_bug_new(Vector2D position)
     vector3d_set(self->rotation,64,64,0);
     self->color = gf2d_color8(255,255,255,255);
     
-    self->pe = gf2d_particle_emitter_new(500);
+    self->pe = gf2d_particle_emitter_new(250);
     
     self->think = space_bug_think;
     self->draw = space_bug_draw;
@@ -59,6 +58,7 @@ Entity *space_bug_new(Vector2D position)
     self->touch = space_bug_touch;
     self->damage = space_bug_damage;
     self->die = space_bug_die;
+    self->free = level_remove_entity;
 
     return self;
 }
@@ -105,10 +105,10 @@ void space_bug_spawn_thrust(Entity *self,Vector2D offset,int count)
 
 void space_bug_update(Entity *self)
 {
-    Vector2D camera;
+    Rect camera;
     Rect bounds,lbounds;
     if (!self)return;
-    camera = camera_get_position();
+    camera = camera_get_dimensions();
 
     bounds = gf2d_shape_get_bounds(self->shape);
     vector2d_add(bounds,bounds,self->position);
@@ -123,11 +123,18 @@ void space_bug_update(Entity *self)
         self->acceleration.y = 0;
         self->velocity.y = 0;
     }
-    slog("bug action return state: %i",self->at);
-    
+    if (self->position.x > camera.x + camera.w + 32)return;// off the map, do no work
+    if (self->position.x < camera.x - 128)
+    {
+        self->state = ES_Dead;
+        return;
+    }
     switch(self->state)
     {
         case ES_Idle:
+            self->body.layer = ALL_LAYERS;
+            self->state = ES_Seeking;
+            break;
         case ES_Seeking:
         case ES_Attacking:
         case ES_Pain:
@@ -144,7 +151,6 @@ void space_bug_update(Entity *self)
             if (self->at == ART_END)
             {
                 // finished dying
-                slog("bug finished dying");
                 self->state = ES_Dead;
             }
             return;
@@ -155,10 +161,11 @@ void space_bug_update(Entity *self)
 
 int space_bug_touch(Entity *self,Entity *other)
 {
-    Vector2D kick;
     if ((!self)||(!other))return 0;
-    vector2d_sub(kick,other->position,self->position);
-    gf2d_entity_deal_damage(other, self, self,self->health,kick);
+    if (!gf2d_entity_deal_damage(other, self, self,self->health,vector2d(0,0)))
+    {
+        return 0;
+    }
     vector2d_clear(self->velocity);
     vector2d_clear(self->acceleration);
     self->die(self);

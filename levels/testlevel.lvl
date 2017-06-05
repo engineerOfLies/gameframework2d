@@ -1,6 +1,6 @@
 # test level
 name: veil
-bounds: 0,10,7000,700 
+bounds: 0,10,40000,700 
 backgroundImage: images/backgrounds/veil_nebula.jpg
 backgroundOffset: 0,0
 backgroundColor: 255,255,255,128
@@ -10,22 +10,20 @@ starfieldVariance: 60,0.5,0.5,0.5
 starRate: 5
 starSpeed: 0.5
 #entities begin
+
 entity: player_start
 position: 100,360
-positionVariance: 0,0
 
 entity: space_bug
-position: 1030,360
-positionVariance: 0,250
+position: 100,360
+positionVariance: 100,300
+autospawn: 50
+startPosition: 1000
+endPosition: 20000
 
 entity: space_bug
-position: 1060,360
-positionVariance: 0,250
-
-entity: space_bug
-position: 1090,360
-positionVariance: 0,250
-
-entity: space_bug
-position: 1020,360
-positionVariance: 0,250
+position: 100,360
+positionVariance: 100,300
+autospawn: 100
+startPosition: 20000
+endPosition: 39000

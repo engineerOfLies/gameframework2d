@@ -129,6 +129,36 @@ void level_info_parse_file(FILE *file,LevelInfo *info)
             fscanf(file,"%lf,%lf",&spawn->position.x,&spawn->position.y);
             continue;
         }
+        if(strcmp(buf,"endPosition:") == 0)
+        {
+            if (spawn < &info->spawnList[0])
+            {
+                slog("error in file, position before entity");
+                continue;// in case data is bad
+            }
+            fscanf(file,"%u",&spawn->endPosition);
+            continue;
+        }
+        if(strcmp(buf,"autospawn:") == 0)
+        {
+            if (spawn < &info->spawnList[0])
+            {
+                slog("error in file, position before entity");
+                continue;// in case data is bad
+            }
+            fscanf(file,"%u",&spawn->autospawn);
+            continue;
+        }
+        if(strcmp(buf,"startPosition:") == 0)
+        {
+            if (spawn < &info->spawnList[0])
+            {
+                slog("error in file, position before entity");
+                continue;// in case data is bad
+            }
+            fscanf(file,"%u",&spawn->startPosition);
+            continue;
+        }
         if(strcmp(buf,"positionVariance:") == 0)
         {
             if (spawn < &info->spawnList[0])
@@ -267,13 +297,24 @@ void level_start(LevelInfo *info)
 
 void level_spawn_entities(LevelInfo *info)
 {
-    int i;
+    int i,j;
     Entity *ent;
     Vector2D startPosition;
     if (!info)return;
     /*spawn entities*/
     for (i = 0; i < info->spawnCount; i++)
     {
+        if (info->spawnList[i].autospawn > 0)
+        {
+            for (j = 0; j < info->spawnList[i].autospawn;j++)
+            {
+                startPosition.x = info->spawnList[i].startPosition + (gf2d_random() * (info->spawnList[i].endPosition - info->spawnList[i].startPosition));
+                startPosition.y = info->spawnList[i].position.y + gf2d_crandom()*info->spawnList[i].positionVariance.y;
+                ent = spawn_entity(info->spawnList[i].name,startPosition);
+                level_add_entity(ent);
+            }
+            continue;
+        }
         startPosition.x = info->spawnList[i].position.x + gf2d_crandom()*info->spawnList[i].positionVariance.x;
         startPosition.y = info->spawnList[i].position.y + gf2d_crandom()*info->spawnList[i].positionVariance.y;
         ent = spawn_entity(info->spawnList[i].name,startPosition);
@@ -306,6 +347,16 @@ int body_body_touch(Body *self, Body *other, Collision *collision)
     return 0;
 }
 
+void level_remove_entity(Entity *ent)
+{
+    if (!ent)return;
+    if (!level.space)
+    {
+        slog("cannot add entity %s to level, no space defined!",ent->name);
+        return;
+    }
+    gf2d_space_remove_body(level.space,&ent->body);
+}
 
 void level_add_entity(Entity *ent)
 {
@@ -343,22 +394,30 @@ void level_update()
 
 void level_draw()
 {
-    Vector2D drawPosition;
-    vector2d_sub(drawPosition,level.backgroundOffset,camera_get_position());
-    
-    SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),SDL_BLENDMODE_ADD);
-    
-    gf2d_sprite_draw(
-        level.backgroundImage,
-        drawPosition,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        &level.backgroundColor,
-        0);
-    SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),SDL_BLENDMODE_BLEND);
-    
+    Vector2D drawPosition,aspect;
+    Rect camera = camera_get_dimensions();
+
+    if (level.backgroundImage != NULL)
+    {
+        aspect.x = (level.backgroundImage->frame_w - camera.w) / (level.bounds.w - camera.w);
+        aspect.y = 1;
+
+        drawPosition.x = level.backgroundOffset.x - (camera.x * aspect.x);
+        drawPosition.y = level.backgroundOffset.y - (camera.y * aspect.y);
+        
+        SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),SDL_BLENDMODE_ADD);
+        
+        gf2d_sprite_draw(
+            level.backgroundImage,
+            drawPosition,
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            &level.backgroundColor,
+            0);
+        SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),SDL_BLENDMODE_BLEND);
+    }
     gf2d_particle_emitter_draw(level.pe);
 //    gf2d_space_draw(level.space);
 }

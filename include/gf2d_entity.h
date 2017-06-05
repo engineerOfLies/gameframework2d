@@ -21,6 +21,7 @@ typedef enum
 typedef struct Entity_S
 {
     Uint8 inuse;                            /**<never touch this*/
+    Uint64  id;                             /**<auto increment id for this entity*/
 
     TextLine name;                          /**<name of the entity, for information purposes*/
     EntityState state;                      /**<state of the entity*/
@@ -54,11 +55,13 @@ typedef struct Entity_S
     int  (*touch)(struct Entity_S *self,struct Entity_S *other);/**<when this entity touches another entity*/
     void (*damage)(struct Entity_S *self,int amount, struct Entity_S *source);/**<when this entity takes damage*/
     void (*die)(struct Entity_S *self);     /**<when this entity dies*/
+    void (*free)(struct Entity_S *self);     /**<called when the entity is freed for any custom cleanup*/
 
     /*game specific data*/
 
     float health;                           /**<health of entity*/
     int   maxHealth;                        /**<maximum health of entity*/
+    int   cooldown;
 }Entity;
 
 /**
@@ -117,6 +120,7 @@ void gf2d_entity_post_sync_all();
  * @param attacker the entity getting the credit for the damage
  * @param damage how much damage
  * @param kick damage direction
+ * @return true if damage was dealth, false otherwise
  */
-void gf2d_entity_deal_damage(Entity *target, Entity *inflictor, Entity *attacker,int damage,Vector2D kick);
+int gf2d_entity_deal_damage(Entity *target, Entity *inflictor, Entity *attacker,int damage,Vector2D kick);
 #endif

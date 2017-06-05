@@ -4,11 +4,23 @@ endFrame: 0
 frameRate: 0
 type:   none
 
-action: weaponcheck
+action: attack1
 startFrame: 1
-endFrame: 8
+endFrame: 3
 frameRate: 1
 type:   pass
+
+action: attack2
+startFrame: 3
+endFrame: 5
+frameRate: 1
+type:   pass
+
+action: attack3
+startFrame: 6
+endFrame: 8
+frameRate: 1
+type:   loop
 
 action: dash
 startFrame: 9

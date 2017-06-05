@@ -27,7 +27,7 @@ int main(int argc, char * argv[])
         1200,
         720,
         vector4d(0,0,0,255),
-        0);
+        1);
     gf2d_graphics_set_frame_delay(16);
     gf2d_audio_init(256,16,4,1,1,1);
     gf2d_sprite_init(1024);
@@ -37,7 +37,7 @@ int main(int argc, char * argv[])
     
     SDL_ShowCursor(SDL_DISABLE);
     gf2d_action_list_init(200);
-    gf2d_entity_system_init(2028);
+    gf2d_entity_system_init(2048);
     
     level = level_info_load("levels/testlevel.lvl");
 
