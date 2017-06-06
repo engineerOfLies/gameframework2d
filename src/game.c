@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include "level.h"
 #include "camera.h"
+#include "items.h"
 #include "gf2d_audio.h"
 #include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
@@ -32,6 +33,8 @@ int main(int argc, char * argv[])
     gf2d_audio_init(256,16,4,1,1,1);
     gf2d_sprite_init(1024);
     gf2d_audio_init(512,32,8,8,1,1);
+    item_manager_init();
+//    item_load_list("config/itemlist.cfg");
 
     camera_set_dimensions(0,0,1200,720);// matches screen resolution
     
