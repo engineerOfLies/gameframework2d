@@ -3,6 +3,7 @@
 #include "camera.h"
 #include "level.h"
 #include "particle_effects.h"
+#include "items.h"
 
 void space_bug_draw(Entity *self);
 void space_bug_think(Entity *self);
@@ -187,6 +188,7 @@ void space_bug_die(Entity *self)
         gf2d_line_cpy(self->action,"death1");
     }else gf2d_line_cpy(self->action,"death1");
     self->frame = gf2d_action_set(self->al,self->action);
+    item_spawn("crysalis",self->position);
 }
 
 /*eol@eof*/

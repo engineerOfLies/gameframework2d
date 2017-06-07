@@ -133,24 +133,24 @@ List *gf2d_list_delete_last(List *list)
     return gf2d_list_delete_nth(list,list->count-1);
 }
 
-List *gf2d_list_delete_data(List *list,void *data)
+int gf2d_list_delete_data(List *list,void *data)
 {
     int i;
     if (!list)
     {
         slog("no list provided");
-        return NULL;
+        return -1;
     }
     for (i = 0; i < list->count;i++)
     {
         if (list->elements[i].data == data)
         {
             // found it, now delete it
-            return gf2d_list_delete_nth(list,i);
+            return 0;
         }
     }
     slog("data not found");
-    return list;
+    return -1;
 }
 
 List *gf2d_list_delete_nth(List *list,Uint32 n)

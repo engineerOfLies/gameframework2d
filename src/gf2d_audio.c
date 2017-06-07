@@ -34,12 +34,13 @@ void gf2d_audio_init(
         slog("failed to initialize some audio support: %s",SDL_GetError());
     }
     atexit(Mix_Quit);
-    atexit(gf2d_audio_close);    
+    atexit(gf2d_audio_close);
+    slog("audio system initialized");
 }
 
 void gf2d_audio_close()
 {
-
+    slog("audio system closed");
     
 }
 

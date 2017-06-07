@@ -11,6 +11,9 @@ typedef struct
 {
     TextLine name;      /**<name of the item*/
     TextLine sprite;    /**<sprite file to use*/
+    int spriteWidth;    /**<width of a sprite frame*/
+    int spriteHeight;   /**<height of a sprite frame*/
+    int spriteFPL;      /**<how many frames per line in the sprite sheet*/
     TextLine actor;     /**<actor file to use*/
     int count;          /**<how much of the something you get*/
     float radius;       /**<for pickup collision*/

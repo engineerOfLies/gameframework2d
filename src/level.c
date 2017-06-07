@@ -27,7 +27,7 @@ typedef struct
     Space              *space;
 }Level;
 
-static Level level;
+static Level level = {0};
 
 void level_spawn_entities(LevelInfo *info);
 

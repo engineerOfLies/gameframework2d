@@ -28,13 +28,11 @@ int main(int argc, char * argv[])
         1200,
         720,
         vector4d(0,0,0,255),
-        1);
+        0);
     gf2d_graphics_set_frame_delay(16);
-    gf2d_audio_init(256,16,4,1,1,1);
     gf2d_sprite_init(1024);
-    gf2d_audio_init(512,32,8,8,1,1);
+    gf2d_audio_init(256,16,4,1,1,1);
     item_manager_init();
-//    item_load_list("config/itemlist.cfg");
 
     camera_set_dimensions(0,0,1200,720);// matches screen resolution
     
@@ -47,6 +45,7 @@ int main(int argc, char * argv[])
     /*demo setup*/
     level_start(level);
     level_info_free(level);
+    item_load_list("config/itemlist.cfg");
     /*main game loop*/
     while(!done)
     {
@@ -69,7 +68,7 @@ int main(int argc, char * argv[])
         gf2d_grahics_next_frame();// render current draw frame and skip to the next frame
         
         if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition
-        slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
+//        slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
     // any custome clean up goes here
     level_close();

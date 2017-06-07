@@ -135,7 +135,10 @@ void gf2d_space_remove_body(Space *space,Body *body)
     }
     if (space->bodyList)
     {
-        space->bodyList = gf2d_list_delete_data(space->bodyList,(void *)body);
+        if (gf2d_list_delete_data(space->bodyList,(void *)body)!= 0)
+        {
+            slog("failed to remove body named %s from the space",body->name);
+        }
     }
 }
 
