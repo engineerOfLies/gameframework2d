@@ -3,6 +3,7 @@
 #include "camera.h"
 #include "projectiles.h"
 #include "level.h"
+#include "gui.h"
 
 static Entity *_player = NULL;
 
@@ -64,6 +65,7 @@ Entity *player_new(Vector2D position)
     self->frame = 0;
     self->al = gf2d_action_list_load("actors/ed210.actor");
     gf2d_line_cpy(self->action,"idle");
+    self->health = self->maxHealth = 100;
     
     vector2d_copy(self->position,position);
     vector2d_set(self->velocity,baseSpeed,0);
@@ -90,8 +92,9 @@ Entity *player_new(Vector2D position)
 
 void player_draw(Entity *self)
 {
-    
+    gui_set_health(self->health/(float)self->maxHealth);
 }
+
 void player_think(Entity *self)
 {
     int mx,my;
@@ -236,7 +239,10 @@ int player_touch(Entity *self,Entity *other)
 
 void player_damage(Entity *self,int amount, Entity *source)
 {
-    
+    slog("player taking %i damage!",amount);
+    self->health -= amount;
+    if (self->health <= 0)self->health = 0;
+    self->die(self);
 }
 
 void player_die(Entity *self)

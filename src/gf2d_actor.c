@@ -87,7 +87,7 @@ ActionList *gf2d_action_list_new()
             return &action_list_manager.actionLists[i];//return address of this array element
         }
     }
-    slog("error: out of sprite addresses");
+    slog("error: out of actionList addresses");
     return NULL;
 }
 
@@ -122,11 +122,13 @@ int gf2d_action_file_get_count(FILE *file)
     return count;
 }
 
-void gf2d_action_file_load_actions(FILE *file,Action *actions)
+void gf2d_action_file_load_actions(FILE *file,Action *actionList)
 {
+    Action *actions;
     char buf[512];
     if (!file)return;
     rewind(file);
+    actions = actionList;
     actions--;
     while(fscanf(file, "%s", buf) != EOF)
     {
@@ -134,6 +136,11 @@ void gf2d_action_file_load_actions(FILE *file,Action *actions)
         {
             actions++;
             fscanf(file,"%s",(char*)&actions->name);
+            continue;
+        }
+        if (actions < actionList)
+        {
+            slog("file formatting error, expect action: tag before rest of data");
             continue;
         }
         if(strcmp(buf,"type:") == 0)

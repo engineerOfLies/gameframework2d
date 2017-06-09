@@ -62,6 +62,7 @@ typedef struct Entity_S
     float health;                           /**<health of entity*/
     int   maxHealth;                        /**<maximum health of entity*/
     int   cooldown;
+    int   count;
 }Entity;
 
 /**

@@ -446,8 +446,8 @@ void gf2d_body_step(Body *body,Space *space,float step)
         {
             other = (Body*)gf2d_list_get_nth(space->bodyList,i);
             if ((!other)||// error check
-                (other == body)||//dont self collide
-                !(other->layer & body->layer))continue;// only we share a layer
+                (other == body))continue;//dont self collide
+            if(!(other->layer & body->layer))continue;// only we share a layer
             if ((body->team)&&(other->team == body->team))// no friendly fire
                 continue;
             if (gf2d_body_collide(body,other,&poc,&normal))

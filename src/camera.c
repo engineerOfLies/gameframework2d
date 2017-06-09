@@ -6,7 +6,7 @@ typedef struct
     Rect view;
     Rect bounds;
 }Camera;
-static Camera _camera;
+static Camera _camera = {0};
 
 void camera_set_dimensions(Sint32 x,Sint32 y,Uint32 w,Uint32 h)
 {

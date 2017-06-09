@@ -1,6 +1,7 @@
 #include "items.h"
 #include "level.h"
 #include "simple_logger.h"
+#include "camera.h"
 
 typedef struct
 {
@@ -14,6 +15,7 @@ void item_draw(Entity *self);
 void item_think(Entity *self);
 void item_update(Entity *self);
 int  item_touch(Entity *self,Entity *other);
+int  heal_touch(Entity *self,Entity *other);
 void item_damage(Entity *self,int amount, Entity *source);
 void item_die(Entity *self);
 
@@ -37,10 +39,13 @@ void item_manager_init()
 Item *item_get_by_name(char *name)
 {
     int i = 0;
+    slog("searching for %s",name);
     for (i = 0; i < item_manager.count;i++)
     {
+        slog("checking %s",item_manager.items[i].name);
         if (gf2d_line_cmp(item_manager.items[i].name,name) == 0)
         {
+            slog("found it!");
             return &item_manager.items[i];
         }
     }
@@ -55,21 +60,23 @@ Entity *item_spawn(char *name,Vector2D position)
     item = item_get_by_name(name);
     if (!item)
     {
+        slog("item not found, not spawning");
         return NULL;
     }
     self = gf2d_entity_new();
     if (!self)
     {
+        slog("no entities left, not spawning");
         return NULL;
     }
     gf2d_line_cpy(self->name,item->name);
     self->parent = NULL;
     
-    self->shape = gf2d_shape_rect(-32, -16, 64, 48);
+    self->shape = gf2d_shape_circle(0,0, item->radius);
     gf2d_body_set(
         &self->body,
         item->name,
-        0,
+        LAYER_ITEMS,
         2,
         position,
         vector2d(0,0),
@@ -83,15 +90,16 @@ Entity *item_spawn(char *name,Vector2D position)
 
     self->sprite = gf2d_sprite_load_all(item->sprite,item->spriteWidth,item->spriteHeight,item->spriteFPL);
 
-    self->frame = (gf2d_random()*16);
+    self->frame = 1;
+    self->state = ES_Idle;
     self->al = gf2d_action_list_load(item->actor);
     gf2d_line_cpy(self->action,"idle");
     
     vector2d_copy(self->position,position);
     
     vector2d_set(self->scale,1,1);
-    vector2d_set(self->scaleCenter,64,64);
-    vector3d_set(self->rotation,64,64,0);
+    vector2d_set(self->scaleCenter,item->spriteWidth/2,item->spriteHeight/2);
+    vector3d_set(self->rotation,item->spriteWidth/2,item->spriteHeight/2,gf2d_random()*360);
     self->color = gf2d_color8(255,255,255,255);
     
     self->pe = gf2d_particle_emitter_new(50);
@@ -99,11 +107,23 @@ Entity *item_spawn(char *name,Vector2D position)
     self->think = item_think;
     self->draw = item_draw;
     self->update = item_update;
-    self->touch = item_touch;
-    self->damage = item_damage;
+    self->damage = NULL;
     self->die = item_die;
     self->free = level_remove_entity;
+    switch (item->type)
+    {
+        case IT_HEAL:
+            self->touch = heal_touch;
+            break;
+        case IT_NONE:
+        case IT_AMMO:
+        case IT_CHARGE:
+            self->touch = item_touch;
+    }
 
+    self->count = item->count;
+    
+    level_add_entity(self);
     return self;
 }
 
@@ -114,17 +134,33 @@ void item_draw(Entity *self)
 
 void item_think(Entity *self)
 {
-    
 }
 
 void item_update(Entity *self)
 {
-    
+    Rect camera;
+    if (!self)return;
+    camera = camera_get_dimensions();
+    if (self->position.x < camera.x - 128)
+    {
+        self->state = ES_Dead;
+        return;
+    }    
 }
 
 int  item_touch(Entity *self,Entity *other)
 {
+    self->state = ES_Dead;
     return 0;
+}
+
+int  heal_touch(Entity *self,Entity *other)
+{
+    if ((!other)||(!self))return 0;
+    other->health += self->count;
+    other->health = MIN(other->health,other->maxHealth);
+    self->state = ES_Dead;
+    return 1;
 }
 
 void item_damage(Entity *self,int amount, Entity *source)
@@ -188,9 +224,23 @@ void item_file_load_items(FILE *file,Item *item)
             fscanf(file,"%i",&item->spriteFPL);
             continue;
         }
+        if(strcmp(buf,"color:") == 0)
+        {
+            fscanf(file,"%lf,%lf,%lf,%lf",&item->color.x,&item->color.y,&item->color.z,&item->color.w);
+            continue;
+        }
         if(strcmp(buf,"actor:") == 0)
         {
             fscanf(file,"%s",(char*)&item->actor);
+            continue;
+        }
+        if(strcmp(buf,"type:") == 0)
+        {
+            fscanf(file,"%s",buf);
+            if (strcmp(buf,"heal")==0)
+            {
+                item->type = IT_HEAL;
+            }
             continue;
         }
         if(strcmp(buf,"count:") == 0)
@@ -213,29 +263,30 @@ void item_load_list(char *filename)
     FILE *file;
     int count;
     file = fopen(filename,"r");
-     if (!file)
-     {
-         slog("failed to load item file: %s",filename);
-         return;
-     }
-     count = item_file_get_count(file);
-     if (!count)
-     {
-         slog("no items loaded!");
-         fclose(file);
-         return;
-     }
-     slog("attempting to allocate %i items",count);
-     item_manager.items = (Item*)malloc(sizeof(Item)*count);
+    if (!file)
+    {
+        slog("failed to load item file: %s",filename);
+        return;
+    }
+    count = item_file_get_count(file);
+    if (!count)
+    {
+        slog("no items loaded!");
+        fclose(file);
+        return;
+    }
+    slog("attempting to allocate %i items",count);
+    item_manager.items = (Item*)malloc(sizeof(Item)*count);
     if (!item_manager.items)
     {
         slog("failed to allocate memory for item list");
         fclose(file);
         return;
     }
-     memset(item_manager.items,0,sizeof(Item)*count);
-     item_file_load_items(file,item_manager.items);
-     fclose(file);
+    memset(item_manager.items,0,sizeof(Item)*count);
+    item_file_load_items(file,item_manager.items);
+    item_manager.count = count;
+    fclose(file);
 }
 
 

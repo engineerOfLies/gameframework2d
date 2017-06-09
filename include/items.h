@@ -3,6 +3,14 @@
 
 #include "gf2d_entity.h"
 
+typedef enum
+{
+    IT_NONE     = 0,
+    IT_HEAL     = 1,
+    IT_AMMO     = 2,
+    IT_CHARGE   = 4
+}ItemType;
+
 /**
  * @purpose the item information is what is loaded from disk to describe how the item entity
  * is loaded
@@ -14,7 +22,9 @@ typedef struct
     int spriteWidth;    /**<width of a sprite frame*/
     int spriteHeight;   /**<height of a sprite frame*/
     int spriteFPL;      /**<how many frames per line in the sprite sheet*/
+    Vector4D color;     /**<what color to shift this item*/
     TextLine actor;     /**<actor file to use*/
+    int type;           /**<what the item does*/
     int count;          /**<how much of the something you get*/
     float radius;       /**<for pickup collision*/
 }Item;

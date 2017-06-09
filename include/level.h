@@ -7,6 +7,11 @@
 #include "gf2d_vector.h"
 #include "gf2d_entity.h"
 
+#define LAYER_PROJECTILES   1
+#define LAYER_ITEMS         2
+#define LAYER_MOBS          4
+#define LAYER_TRIGGERS      8
+
 typedef struct
 {
     Vector2D    position;

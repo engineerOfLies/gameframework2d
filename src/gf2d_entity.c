@@ -10,7 +10,7 @@ typedef struct
     Uint64 autoincrement;
 }EntityManager;
 
-static EntityManager entity_manager;
+static EntityManager entity_manager = {0};
 
 void gf2d_entity_system_close()
 {

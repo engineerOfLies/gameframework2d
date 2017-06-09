@@ -1,8 +1,8 @@
 # test level
 name: veil
-bounds: 0,10,40000,700 
+bounds: 0,10,40000,670 
 backgroundImage: images/backgrounds/veil_nebula.jpg
-backgroundOffset: 0,0
+backgroundOffset: 0,-40
 backgroundColor: 255,255,255,128
 backgroundMusic: music/wisdom.mp3
 starfield:  255,255,255,200

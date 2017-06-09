@@ -31,7 +31,7 @@ Entity *projectile_new(Vector2D position,Vector2D velocity,Entity *parent)
     gf2d_body_set(
         &self->body,
         "projectile",
-        ALL_LAYERS,
+        LAYER_PROJECTILES,
         parent->body.team,
         position,
         velocity,
@@ -103,12 +103,12 @@ void projectile_update(Entity *self)
         self->acceleration.y = 0;
         self->velocity.y = 0;
         self->state = ES_Dead;
-        return;// off the map, do no work
+        return;// off the map, die
     }
     if (self->position.x > camera.x + camera.w + 32)
     {
         self->state = ES_Dead;
-        return;// off the map, do no work
+        return;// off the map, die
     }
     if (self->position.x < camera.x - 128)
     {
@@ -149,7 +149,6 @@ void projectile_die(Entity *self)
 {
     self->body.layer = 0;// no longer clip
     self->state = ES_Dead;
-    level_remove_entity(self);
 }
 
 /*eol@eof*/

@@ -60,6 +60,9 @@ Entity *space_bug_new(Vector2D position)
     self->damage = space_bug_damage;
     self->die = space_bug_die;
     self->free = level_remove_entity;
+    
+    self->health = 20;
+    self->maxHealth = 20;
 
     return self;
 }
@@ -133,7 +136,7 @@ void space_bug_update(Entity *self)
     switch(self->state)
     {
         case ES_Idle:
-            self->body.layer = ALL_LAYERS;
+            self->body.layer = LAYER_MOBS|LAYER_PROJECTILES;
             self->state = ES_Seeking;
             break;
         case ES_Seeking:
@@ -152,6 +155,7 @@ void space_bug_update(Entity *self)
             if (self->at == ART_END)
             {
                 // finished dying
+                item_spawn("small_crysalis",self->position);
                 self->state = ES_Dead;
             }
             return;
@@ -188,7 +192,6 @@ void space_bug_die(Entity *self)
         gf2d_line_cpy(self->action,"death1");
     }else gf2d_line_cpy(self->action,"death1");
     self->frame = gf2d_action_set(self->al,self->action);
-    item_spawn("crysalis",self->position);
 }
 
 /*eol@eof*/

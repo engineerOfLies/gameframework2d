@@ -62,12 +62,16 @@ List *gf2d_list_expand(List *list)
         slog("no list provided");
         return NULL;
     }
+    if (!list->size)list->size = 8;
     l = gf2d_list_new_size(list->size * 2);
     if (!l)
     {
         return list;
     }
-    memcpy(l->elements,list->elements,sizeof(ListElement)*list->count);
+    if (list->count > 0)
+    {
+        memcpy(l->elements,list->elements,sizeof(ListElement)*list->count);
+    }
     l->count = list->count;
     gf2d_list_delete(list);
     return l;
@@ -83,6 +87,7 @@ List *gf2d_list_append(List *list,void *data)
     if (list->count >= list->size)
     {
         list = gf2d_list_expand(list);
+        slog("append failed due to lack of memory");
         if (!list)return NULL;
     }
     list->elements[list->count++].data = data;
@@ -146,6 +151,7 @@ int gf2d_list_delete_data(List *list,void *data)
         if (list->elements[i].data == data)
         {
             // found it, now delete it
+            gf2d_list_delete_nth(list,i);
             return 0;
         }
     }

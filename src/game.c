@@ -2,6 +2,7 @@
 #include "level.h"
 #include "camera.h"
 #include "items.h"
+#include "gui.h"
 #include "gf2d_audio.h"
 #include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
@@ -31,6 +32,7 @@ int main(int argc, char * argv[])
         0);
     gf2d_graphics_set_frame_delay(16);
     gf2d_sprite_init(1024);
+    gui_setup_hud();
     gf2d_audio_init(256,16,4,1,1,1);
     item_manager_init();
 
@@ -65,6 +67,7 @@ int main(int argc, char * argv[])
             gf2d_entity_draw_all();
             
             //UI elements last
+            gui_draw_hud();
         gf2d_grahics_next_frame();// render current draw frame and skip to the next frame
         
         if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition

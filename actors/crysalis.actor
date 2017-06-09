@@ -1,0 +1,5 @@
+action: idle
+startFrame: 0
+endFrame: 15
+frameRate: 0.1
+type:   loop
