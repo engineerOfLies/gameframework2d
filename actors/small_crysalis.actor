@@ -1,6 +1,6 @@
-sprite: images/crysalis.png
-frameWidth: 64
-frameHeight: 64
+sprite: images/small_crysalis.png
+frameWidth: 32
+frameHeight: 32
 framesPerLine: 16
 color: 255,255,255,255
 

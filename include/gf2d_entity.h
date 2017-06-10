@@ -33,16 +33,11 @@ typedef struct Entity_S
     Vector2D acceleration;                  /**<acceleration*/
     
         /*graphics*/
-    Sprite *sprite;                         /**<which sprite to draw this entity with*/
+    Actor actor;                            /**<animated sprite information*/
     Vector2D scale;                         /**<scale to draw sprite at*/
     Vector2D scaleCenter;                   /**<where to scale sprite from*/
     Vector3D rotation;                      /**<how to rotate the sprite*/
     Vector2D flip;                          /**<if to flip the sprite*/
-    Color color;                            /**<color to shift sprite too*/
-    float frame;                            /**<current frame for the sprite*/
-    ActionList *al;                         /**<action list for managing sprite animations*/
-    TextLine action;                        /**<the current action*/
-    ActionReturnType at;                    /**<set automatically each frame*/
     
     ParticleEmitter *pe;                    /**<if this entity has its own particle emitter*/
     
@@ -56,13 +51,14 @@ typedef struct Entity_S
     void (*damage)(struct Entity_S *self,int amount, struct Entity_S *source);/**<when this entity takes damage*/
     void (*die)(struct Entity_S *self);     /**<when this entity dies*/
     void (*free)(struct Entity_S *self);     /**<called when the entity is freed for any custom cleanup*/
+    int dead;                               /**<when true, the entity system will delete the entity on the next update*/
 
     /*game specific data*/
-
     float health;                           /**<health of entity*/
     int   maxHealth;                        /**<maximum health of entity*/
-    int   cooldown;
-    int   count;
+    int   cooldown;                         /**<useful for timing cooldowns*/
+    int   count;                            /**<useful for counting things like ammo count or health ammount*/
+    void *data;                             /**<any other game specific data can be referenced here*/
 }Entity;
 
 /**

@@ -88,19 +88,16 @@ Entity *item_spawn(char *name,Vector2D position)
         NULL,
         NULL);
 
-    self->sprite = gf2d_sprite_load_all(item->sprite,item->spriteWidth,item->spriteHeight,item->spriteFPL);
+    gf2d_actor_load(&self->actor,item->actor);
+    gf2d_actor_set_action(&self->actor,"idle");
 
-    self->frame = 1;
     self->state = ES_Idle;
-    self->al = gf2d_action_list_load(item->actor);
-    gf2d_line_cpy(self->action,"idle");
     
     vector2d_copy(self->position,position);
     
     vector2d_set(self->scale,1,1);
-    vector2d_set(self->scaleCenter,item->spriteWidth/2,item->spriteHeight/2);
-    vector3d_set(self->rotation,item->spriteWidth/2,item->spriteHeight/2,gf2d_random()*360);
-    self->color = gf2d_color8(255,255,255,255);
+    vector2d_set(self->scaleCenter,self->actor.al->frameWidth/2,self->actor.al->frameHeight/2);
+    vector3d_set(self->rotation,self->actor.al->frameWidth/2,self->actor.al->frameHeight/2,gf2d_random()*360);
     
     self->pe = gf2d_particle_emitter_new(50);
     
@@ -143,14 +140,14 @@ void item_update(Entity *self)
     camera = camera_get_dimensions();
     if (self->position.x < camera.x - 128)
     {
-        self->state = ES_Dead;
+        self->dead = 1;
         return;
     }    
 }
 
 int  item_touch(Entity *self,Entity *other)
 {
-    self->state = ES_Dead;
+    self->dead = 1;
     return 0;
 }
 
@@ -159,7 +156,7 @@ int  heal_touch(Entity *self,Entity *other)
     if ((!other)||(!self))return 0;
     other->health += self->count;
     other->health = MIN(other->health,other->maxHealth);
-    self->state = ES_Dead;
+    self->dead = 1;
     return 1;
 }
 
@@ -202,31 +199,6 @@ void item_file_load_items(FILE *file,Item *item)
         {
             item++;
             fscanf(file,"%s",(char*)&item->name);
-            continue;
-        }
-        if(strcmp(buf,"sprite:") == 0)
-        {
-            fscanf(file,"%s",(char*)&item->sprite);
-            continue;
-        }
-        if(strcmp(buf,"spriteHeight:") == 0)
-        {
-            fscanf(file,"%i",&item->spriteHeight);
-            continue;
-        }
-        if(strcmp(buf,"spriteWidth:") == 0)
-        {
-            fscanf(file,"%i",&item->spriteWidth);
-            continue;
-        }
-        if(strcmp(buf,"spriteFPL:") == 0)
-        {
-            fscanf(file,"%i",&item->spriteFPL);
-            continue;
-        }
-        if(strcmp(buf,"color:") == 0)
-        {
-            fscanf(file,"%lf,%lf,%lf,%lf",&item->color.x,&item->color.y,&item->color.z,&item->color.w);
             continue;
         }
         if(strcmp(buf,"actor:") == 0)

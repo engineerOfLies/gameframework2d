@@ -1,6 +1,6 @@
 # test level
 name: veil
-bounds: 0,10,40000,670 
+bounds: 0,0,40000,650 
 backgroundImage: images/backgrounds/veil_nebula.jpg
 backgroundOffset: 0,-40
 backgroundColor: 255,255,255,128
@@ -15,15 +15,15 @@ entity: player_start
 position: 100,360
 
 entity: space_bug
-position: 100,360
-positionVariance: 100,300
+position: 100,320
+positionVariance: 100,280
 autospawn: 50
 startPosition: 1000
 endPosition: 20000
 
 entity: space_bug
-position: 100,360
-positionVariance: 100,300
+position: 100,320
+positionVariance: 100,280
 autospawn: 100
 startPosition: 20000
 endPosition: 39000

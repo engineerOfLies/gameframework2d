@@ -53,8 +53,7 @@ void gf2d_entity_free(Entity *self)
 {
     if (!self)return;
     if (self->free)self->free(self);
-    gf2d_action_list_free(self->al);
-    gf2d_sprite_free(self->sprite);
+    gf2d_actor_free(&self->actor);
     gf2d_particle_emitter_free(self->pe);
     memset(self,0,sizeof(Entity));
 }
@@ -70,7 +69,7 @@ Entity *gf2d_entity_new()
             entity_manager.entityList[i].id = entity_manager.autoincrement++;
             entity_manager.entityList[i].inuse = 1;
             vector2d_set(entity_manager.entityList[i].scale,1,1);
-            entity_manager.entityList[i].color = gf2d_color(1,1,1,1);// no color shift, opaque
+            entity_manager.entityList[i].actor.color = vector4d(1,1,1,1);// no color shift, opaque
             return &entity_manager.entityList[i];
         }
     }
@@ -79,7 +78,6 @@ Entity *gf2d_entity_new()
 
 void gf2d_entity_draw(Entity *self)
 {
-    Vector4D color;
     Vector2D drawPosition;
     if (!self)return;
     if (!self->inuse)return;
@@ -88,16 +86,15 @@ void gf2d_entity_draw(Entity *self)
 
     gf2d_particle_emitter_draw(self->pe);
 
-    color = gf2d_color_to_vector4(self->color);
     gf2d_sprite_draw(
-        self->sprite,
+        self->actor.sprite,
         drawPosition,
         &self->scale,
         &self->scaleCenter,
         &self->rotation,
         &self->flip,
-        &color,
-        (Uint32) self->frame);
+        &self->actor.color,
+        (Uint32) self->actor.frame);
     if (self->draw != NULL)
     {
         self->draw(self);
@@ -132,7 +129,7 @@ void gf2d_entity_update(Entity *self)
     if (!self)return;
     if (!self->inuse)return;
 
-    if (self->state == ES_Dead)
+    if (self->dead != 0)
     {
         gf2d_entity_free(self);
         return;
@@ -142,8 +139,8 @@ void gf2d_entity_update(Entity *self)
 
     gf2d_particle_emitter_update(self->pe);
 
-    self->at = gf2d_action_list_get_next_frame(self->al,&self->frame,self->action);
-    
+    gf2d_actor_next_frame(&self->actor);
+
     if (self->update != NULL)
     {
         self->update(self);

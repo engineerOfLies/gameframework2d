@@ -98,4 +98,11 @@ void level_add_entity(Entity *ent);
  */
 void level_remove_entity(Entity *ent);
 
+/**
+ * @brief prevent acceleration or velocity from pushing an entity to the vertical bounds
+ * @param self the entity to clamp
+ */
+void level_bounds_clamp(Entity *self);
+
+
 #endif

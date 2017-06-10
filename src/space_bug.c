@@ -38,18 +38,14 @@ Entity *space_bug_new(Vector2D position)
         NULL,
         NULL);
 
-    self->sprite = gf2d_sprite_load_all("images/space_bug.png",128,128,16);
-
-    self->frame = (gf2d_random()*8);
-    self->al = gf2d_action_list_load("actors/space_bug.actor");
-    gf2d_line_cpy(self->action,"idle");
+    gf2d_actor_load(&self->actor,"actors/space_bug.actor");
+    gf2d_actor_set_action(&self->actor,"idle");
     
     vector2d_copy(self->position,position);
     
     vector2d_set(self->scale,1,1);
     vector2d_set(self->scaleCenter,64,64);
     vector3d_set(self->rotation,64,64,0);
-    self->color = gf2d_color8(255,255,255,255);
     
     self->pe = gf2d_particle_emitter_new(250);
     
@@ -111,6 +107,7 @@ void space_bug_update(Entity *self)
 {
     Rect camera;
     Rect bounds,lbounds;
+    float r;
     if (!self)return;
     camera = camera_get_dimensions();
 
@@ -130,7 +127,7 @@ void space_bug_update(Entity *self)
     if (self->position.x > camera.x + camera.w + 32)return;// off the map, do no work
     if (self->position.x < camera.x - 128)
     {
-        self->state = ES_Dead;
+        self->dead = 1;
         return;
     }
     switch(self->state)
@@ -152,14 +149,23 @@ void space_bug_update(Entity *self)
                 vector2d(gf2d_crandom(),gf2d_crandom()),
                 gf2d_color8(50,200,50,200),
                 50);
-            if (self->at == ART_END)
+            if (self->actor.at == ART_END)
             {
                 // finished dying
-                item_spawn("small_crysalis",self->position);
                 self->state = ES_Dead;
             }
             return;
         case ES_Dead:
+            r = gf2d_random();
+            if (r < 0.1)
+            {
+                item_spawn("crysalis",self->position);
+            }
+            else if (r < 0.4)
+            {
+                item_spawn("small_crysalis",self->position);
+            }
+            self->dead = 1;
             return;
     }
 }
@@ -189,9 +195,8 @@ void space_bug_die(Entity *self)
     self->state = ES_Dying;
     if (gf2d_crandom() > 0)
     {
-        gf2d_line_cpy(self->action,"death1");
-    }else gf2d_line_cpy(self->action,"death1");
-    self->frame = gf2d_action_set(self->al,self->action);
+        gf2d_actor_set_action(&self->actor,"death1");
+    }else gf2d_actor_set_action(&self->actor,"death2");
 }
 
 /*eol@eof*/

@@ -87,8 +87,11 @@ List *gf2d_list_append(List *list,void *data)
     if (list->count >= list->size)
     {
         list = gf2d_list_expand(list);
-        slog("append failed due to lack of memory");
-        if (!list)return NULL;
+        if (!list)
+        {
+            slog("append failed due to lack of memory");
+            return NULL;
+        }
     }
     list->elements[list->count++].data = data;
     return list;

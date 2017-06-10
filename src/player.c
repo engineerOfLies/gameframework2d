@@ -15,6 +15,7 @@ void player_damage(Entity *self,int amount, Entity *source);
 void player_die(Entity *self);
 
 #define baseSpeed 3
+#define maxSpeed 50
 #define baseAcceleration 3.6
 
 Entity *player_get()
@@ -42,7 +43,6 @@ Entity *player_new(Vector2D position)
     gf2d_line_cpy(self->name,"player");
     self->parent = NULL;
     
-    
     self->shape = gf2d_shape_rect(-32, -16, 64, 52);
     gf2d_body_set(
         &self->body,
@@ -60,11 +60,9 @@ Entity *player_new(Vector2D position)
         NULL,
         NULL);
 
-    self->sprite = gf2d_sprite_load_all("images/ed210.png",128,128,16);
+    gf2d_actor_load(&self->actor,"actors/ed210.actor");
+    gf2d_actor_set_action(&self->actor,"idle");
 
-    self->frame = 0;
-    self->al = gf2d_action_list_load("actors/ed210.actor");
-    gf2d_line_cpy(self->action,"idle");
     self->health = self->maxHealth = 100;
     
     vector2d_copy(self->position,position);
@@ -73,7 +71,6 @@ Entity *player_new(Vector2D position)
     vector2d_set(self->scale,1,1);
     vector2d_set(self->scaleCenter,64,64);
     vector3d_set(self->rotation,64,64,0);
-    self->color = gf2d_color8(255,255,255,255);
     vector2d_set(self->flip,1,0);
     
     self->pe = gf2d_particle_emitter_new(1000);
@@ -93,15 +90,15 @@ Entity *player_new(Vector2D position)
 void player_draw(Entity *self)
 {
     gui_set_health(self->health/(float)self->maxHealth);
+    gui_set_thrust(self->velocity.x/maxSpeed);
 }
 
 void player_think(Entity *self)
 {
     int mx,my;
-    Uint32 buttons;
     const Uint8 * keys;
     keys = SDL_GetKeyboardState(NULL);
-    buttons = SDL_GetRelativeMouseState(&mx,&my);
+    SDL_GetRelativeMouseState(&mx,&my);
     if ((my < 0)||(keys[SDL_SCANCODE_W]))
     {
         self->acceleration.y = (self->acceleration.y * 0.9) + (-baseAcceleration *0.1);
@@ -123,8 +120,7 @@ void player_think(Entity *self)
         if (keys[SDL_SCANCODE_J])
         {
             self->state = ES_Attacking;
-            self->frame = gf2d_action_set(self->al,"attack1");
-            gf2d_line_cpy(self->action,"attack1");
+            gf2d_actor_set_action(&self->actor,"attack1");
         }
     }
 }
@@ -162,34 +158,18 @@ void player_spawn_thrust(Entity *self,Vector2D offset,int count)
 void player_update(Entity *self)
 {
     Vector2D camPosition = {0,0};
-    Rect bounds,lbounds;
     if (!self)return;
     camPosition.x = self->position.x - 200 + (self->velocity.x - baseSpeed)* 2;
     camera_set_position(camPosition);
-    Rect level_get_bounds();
 
-    bounds = gf2d_shape_get_bounds(self->shape);
-    vector2d_add(bounds,bounds,self->position);
-    lbounds = level_get_bounds();
+    level_bounds_clamp(self);
 
-    if ((bounds.y <= lbounds.y + 10) && (self->velocity.y < 0))
-    {
-        self->acceleration.y = 0;
-        self->velocity.y = 0;
-    }
-
-    if ((bounds.y + bounds.h >= lbounds.y + lbounds.h - 16) && (self->velocity.y > 0))
-    {
-        self->acceleration.y = 0;
-        self->velocity.y = 0;
-    }
-    
+        /*velocity checks*/
     self->velocity.y *= 0.999;
-
     if (self->velocity.x < baseSpeed)self->velocity.x = baseSpeed;
-    if (self->velocity.x > 50)self->velocity.x = 50;
-    if (self->velocity.y < -50)self->velocity.y = -50;
-    if (self->velocity.y > 50)self->velocity.y = 50;
+    if (self->velocity.x > maxSpeed)self->velocity.x = maxSpeed;
+    if (self->velocity.y < -maxSpeed)self->velocity.y = -maxSpeed;
+    if (self->velocity.y > maxSpeed)self->velocity.y = maxSpeed;
     
     vector2d_scale(self->acceleration,self->acceleration,0.8);
     // make thrust particles
@@ -204,7 +184,7 @@ void player_update(Entity *self)
         case ES_Seeking:
             break;
         case ES_Attacking:
-            if (self->at == ART_END)
+            if (self->actor.at == ART_END)
             {
                 projectile_new(
                     vector2d(self->position.x + 16,self->position.y + 16),
@@ -212,8 +192,7 @@ void player_update(Entity *self)
                     self);
                 self->state = ES_Cooldown;
                 self->cooldown = 8;
-                self->frame = gf2d_action_set(self->al,"idle");
-                gf2d_line_cpy(self->action,"idle");
+                gf2d_actor_set_action(&self->actor,"idle");
             }
             break;
         case ES_Pain:

@@ -231,6 +231,7 @@ void level_close()
         Mix_FreeMusic(level.backgroundMusic);
     }
     gf2d_space_free(level.space);
+    memset(&level,0,sizeof(Level));
 }
 
 void level_start(LevelInfo *info)
@@ -351,8 +352,7 @@ void level_remove_entity(Entity *ent)
 {
     if (!ent)return;
     if (!level.space)
-    {
-        slog("cannot add entity %s to level, no space defined!",ent->name);
+    {//nothing to do
         return;
     }
     gf2d_space_remove_body(level.space,&ent->body);
@@ -403,7 +403,8 @@ void level_draw()
         aspect.y = 1;
 
         drawPosition.x = level.backgroundOffset.x - (camera.x * aspect.x);
-        drawPosition.y = level.backgroundOffset.y - (camera.y * aspect.y);
+        drawPosition.y = 0;
+//        drawPosition.y = level.backgroundOffset.y - (camera.y * aspect.y);
         
         SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),SDL_BLENDMODE_ADD);
         
@@ -420,6 +421,28 @@ void level_draw()
     }
     gf2d_particle_emitter_draw(level.pe);
 //    gf2d_space_draw(level.space);
+}
+
+void level_bounds_clamp(Entity *self)
+{
+    Rect bounds;
+    if (!self)return;
+    
+    bounds = gf2d_shape_get_bounds(self->shape);
+    vector2d_add(bounds,bounds,self->position);
+
+    if ((bounds.y <= level.bounds.y + 8)  && (self->velocity.y < 0))
+    {
+        self->acceleration.y = 0;
+        self->velocity.y = 0;
+    }
+
+    if ((bounds.y + bounds.h >= level.bounds.y + level.bounds.h - 40) && (self->velocity.y > 0))
+    {
+        self->acceleration.y = 0;
+        self->velocity.y = 0;
+    }
+
 }
 
 /*eol@eof*/

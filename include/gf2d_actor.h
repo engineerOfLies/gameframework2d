@@ -43,7 +43,22 @@ typedef struct
     TextLine    filename;    
     Action     *actions;
     int         numActions;
+    TextLine    sprite;
+    int         frameWidth;
+    int         frameHeight;
+    int         framesPerLine;
+    Vector4D    color;
 }ActionList;
+
+typedef struct
+{
+    Sprite     *sprite;                         /**<which sprite to draw this entity with*/
+    Vector4D    color;                            /**<color to shift sprite too*/
+    float       frame;                            /**<current frame for the sprite*/
+    ActionList *al;                         /**<action list for managing sprite animations*/
+    TextLine    action;                        /**<the current action*/
+    ActionReturnType at;                    /**<set automatically each frame*/
+}Actor;
 
 /**
  * @brief initialize the action list system
@@ -84,4 +99,30 @@ ActionReturnType gf2d_action_list_get_next_frame(
  * @return the frame
  */
 float gf2d_action_set(ActionList *al,char *name);
+
+/**
+ * @brief load actor information from file into the actor provided
+ * @param actor a pointer to the actor to populate
+ * @param file the file path to load
+ */
+void gf2d_actor_load(Actor *actor,char *file);
+
+/**
+ * @brief free all assets loaded for the actor and set its data to 0
+ * @param actor a pointer to the actor to free
+ */
+void gf2d_actor_free(Actor *actor);
+
+
+/**
+ * @brief set the action and starting frame for an actor
+ * @param actor the actor to set
+ * @param action the action to set it to
+ */
+void gf2d_actor_set_action(Actor *actor,char *action);
+
+/**
+ * @brief based on the actor's current action set the next frame and return type
+ */
+void gf2d_actor_next_frame(Actor *actor);
 #endif

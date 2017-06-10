@@ -18,12 +18,7 @@ typedef enum
 typedef struct
 {
     TextLine name;      /**<name of the item*/
-    TextLine sprite;    /**<sprite file to use*/
-    int spriteWidth;    /**<width of a sprite frame*/
-    int spriteHeight;   /**<height of a sprite frame*/
-    int spriteFPL;      /**<how many frames per line in the sprite sheet*/
-    Vector4D color;     /**<what color to shift this item*/
-    TextLine actor;     /**<actor file to use*/
+    TextLine actor;    /**<sprite file to use*/
     int type;           /**<what the item does*/
     int count;          /**<how much of the something you get*/
     float radius;       /**<for pickup collision*/

@@ -532,6 +532,7 @@ void gf2d_space_step(Space *space,float t)
     if (!space)return;
     vector2d_scale(gravityStep,space->gravity,space->timeStep);
     bodies = gf2d_list_get_count(space->bodyList);
+//    slog("updating space step:");
     for (i = 0; i < bodies; i++)
     {
         body = (Body*)gf2d_list_get_nth(space->bodyList,i);
@@ -545,6 +546,10 @@ void gf2d_space_step(Space *space,float t)
         body = (Body*)gf2d_list_get_nth(space->bodyList,i);
         if ((!body)||(body->inactive))continue;// body already hit something
         // apply gravity
+//         if (strcmp(body->name,"player")==0)
+//         {
+//                 slog("updating player body");
+//         }
         gf2d_body_step(body,space,t);
     }
     for (i = 0; i < bodies; i++)

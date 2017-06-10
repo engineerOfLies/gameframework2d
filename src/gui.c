@@ -7,6 +7,7 @@ typedef struct
 {
     Sprite *hud;
     float   healthPercent;
+    float   thrustPercent;
     float   shieldPercent;
     float   chargePercent;
     float   energyPercent;
@@ -28,24 +29,60 @@ void gui_setup_hud()
     atexit(gui_close_hud);
 }
 
-void gui_draw_percent_bar(Rect rect,float percent,Vector4D fgColor,Vector4D bgColor)
+void gui_draw_percent_bar_horizontal(Rect rect,float percent,Vector4D fgColor,Vector4D bgColor,int left)
 {
     SDL_Rect r;
     r = gf2d_rect_to_sdl_rect(rect);
     gf2d_draw_solid_rect(r,bgColor);
-    r = gf2d_rect_to_sdl_rect(gf2d_rect(rect.x,rect.y,(float)rect.w*percent,rect.h));
+    if (left)
+    {
+        r = gf2d_rect_to_sdl_rect(gf2d_rect(rect.x,rect.y,(float)rect.w*percent,rect.h));
+    }
+    else
+    {
+        r = gf2d_rect_to_sdl_rect(gf2d_rect(rect.x+(1-percent)*rect.w,rect.y,(float)rect.w*percent,rect.h));
+    }
+    gf2d_draw_solid_rect(r,fgColor);
+}
+
+void gui_draw_percent_bar_vertical(Rect rect,float percent,Vector4D fgColor,Vector4D bgColor,int top)
+{
+    SDL_Rect r;
+    r = gf2d_rect_to_sdl_rect(rect);
+    gf2d_draw_solid_rect(r,bgColor);
+    if (top)
+    {
+        r = gf2d_rect_to_sdl_rect(gf2d_rect(rect.x,rect.y+(1-percent)*rect.h,rect.w,rect.h*percent));
+    }
+    else
+    {
+        r = gf2d_rect_to_sdl_rect(gf2d_rect(rect.x,rect.y,rect.w,rect.h*percent));
+    }
     gf2d_draw_solid_rect(r,fgColor);
 }
 
 void gui_draw_hud()
 {
-    gf2d_sprite_draw_image(gui.hud,vector2d(0,120));
-    gui_draw_percent_bar(gf2d_rect(465,685,350,30),gui.healthPercent,vector4d((1-gui.healthPercent)*255,gui.healthPercent*255,0,255),vector4d(128,0,0,128));
+    gf2d_sprite_draw_image(gui.hud,vector2d(0,100));
+    gui_draw_percent_bar_horizontal(gf2d_rect(495,680,145,10),gui.healthPercent,vector4d((1-gui.healthPercent) * 255, gui.healthPercent*255, 0, 255), vector4d(128, 0, 0, 128),0);
+    gui_draw_percent_bar_horizontal(gf2d_rect(640,680,145,10),gui.shieldPercent,vector4d(0, 0, 255, 255), vector4d(128, 0, 0, 128),1);
+    gui_draw_percent_bar_vertical(gf2d_rect(475,680,15,30),gui.thrustPercent,vector4d(0, 255, 255, 255), vector4d(128, 0, 0, 128),1);
 }
 
 void gui_set_health(float health)
 {
     gui.healthPercent = health;
 }
+
+void gui_set_energy(float energy)
+{
+    gui.energyPercent = energy;
+}
+
+void gui_set_thrust(float thrust)
+{
+    gui.thrustPercent = thrust;
+}
+
 
 /*eol@eof*/

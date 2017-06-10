@@ -77,6 +77,7 @@ void gf2d_graphics_initialize(
     }
     
     gf2d_graphics.renderer = SDL_CreateRenderer(gf2d_graphics.main_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
+    //gf2d_graphics.renderer = SDL_CreateRenderer(gf2d_graphics.main_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE| SDL_RENDERER_PRESENTVSYNC);
     if (!gf2d_graphics.renderer)
     {
         slog("failed to create renderer: %s",SDL_GetError());

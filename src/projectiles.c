@@ -43,11 +43,8 @@ Entity *projectile_new(Vector2D position,Vector2D velocity,Entity *parent)
         NULL,
         NULL);
 
-    self->sprite = gf2d_sprite_load_all("images/plasma_bolt.png",64,64,16);
-
-    self->frame = (gf2d_random()*8);
-    self->al = gf2d_action_list_load("actors/plasma_bolt.actor");
-    gf2d_line_cpy(self->action,"idle");
+    gf2d_actor_load(&self->actor,"actors/plasma_bolt.actor");
+    gf2d_actor_set_action(&self->actor,"idle");
     
     vector2d_copy(self->position,position);
     vector2d_copy(self->velocity,velocity);
@@ -55,7 +52,6 @@ Entity *projectile_new(Vector2D position,Vector2D velocity,Entity *parent)
     vector2d_set(self->scale,0.25,0.25);
     vector2d_set(self->scaleCenter,32,32);
     vector3d_set(self->rotation,32,32,0);
-    self->color = gf2d_color8(255,255,255,255);
     
     self->pe = gf2d_particle_emitter_new(250);
     
@@ -95,24 +91,24 @@ void projectile_update(Entity *self)
     {
         self->acceleration.y = 0;
         self->velocity.y = 0;
-        self->state = ES_Dead;
+        self->dead = 1;
         return;// off the map, do no work
     }
     if ((bounds.y + bounds.h >= lbounds.y + lbounds.h - 1) && (self->velocity.y > 0))
     {
         self->acceleration.y = 0;
         self->velocity.y = 0;
-        self->state = ES_Dead;
+        self->dead = 1;
         return;// off the map, die
     }
     if (self->position.x > camera.x + camera.w + 32)
     {
-        self->state = ES_Dead;
+        self->dead = 1;
         return;// off the map, die
     }
     if (self->position.x < camera.x - 128)
     {
-        self->state = ES_Dead;
+        self->dead = 1;
         return;
     }
     pe_thrust(
@@ -148,7 +144,7 @@ void projectile_damage(Entity *self,int amount, Entity *source)
 void projectile_die(Entity *self)
 {
     self->body.layer = 0;// no longer clip
-    self->state = ES_Dead;
+    self->dead = 1;
 }
 
 /*eol@eof*/
