@@ -16,14 +16,6 @@ typedef struct
     int defaultChannel;
 }Sound;
 
-
-typedef struct
-{
-    List sounds;
-    float volume;
-    int defaultGroup;
-}soundPack;
-
 /**defaultChannel
  * @brief initializes the audio system based on the passed in parameters
  * @param maxSounds the maximum number of sounds that can be loaded into memory at once

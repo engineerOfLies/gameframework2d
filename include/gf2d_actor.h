@@ -47,18 +47,19 @@ typedef struct
     int         frameWidth;
     int         frameHeight;
     int         framesPerLine;
+    Vector2D    scale;        /**<scale to draw at*/
     Vector4D    color;
     Vector4D    colorSpecial;
 }ActionList;
 
 typedef struct
 {
-    Sprite     *sprite;                         /**<which sprite to draw this entity with*/
-    Vector4D    color;                            /**<color to shift sprite too*/
-    float       frame;                            /**<current frame for the sprite*/
-    ActionList *al;                         /**<action list for managing sprite animations*/
-    TextLine    action;                        /**<the current action*/
-    ActionReturnType at;                    /**<set automatically each frame*/
+    Sprite     *sprite;       /**<which sprite to draw this entity with*/
+    Vector4D    color;        /**<color to shift sprite too*/
+    float       frame;        /**<current frame for the sprite*/
+    ActionList *al;           /**<action list for managing sprite animations*/
+    TextLine    action;       /**<the current action*/
+    ActionReturnType at;      /**<set automatically each frame*/
 }Actor;
 
 /**

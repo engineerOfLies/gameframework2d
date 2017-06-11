@@ -51,9 +51,13 @@ void gf2d_entity_system_init(Uint32 maxEntities)
 
 void gf2d_entity_free(Entity *self)
 {
+    int i;
     if (!self)return;
     if (self->free)self->free(self);
-    gf2d_sound_free(self->sound);
+    for (i = 0;i < EntitySoundMax;i++)
+    {
+        gf2d_sound_free(self->sound[i]);
+    }
     gf2d_actor_free(&self->actor);
     gf2d_particle_emitter_free(self->pe);
     memset(self,0,sizeof(Entity));

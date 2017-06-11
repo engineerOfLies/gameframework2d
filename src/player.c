@@ -78,14 +78,17 @@ Entity *player_new(Vector2D position)
 
     gf2d_actor_load(&self->actor,"actors/ed210.actor");
     gf2d_actor_set_action(&self->actor,"idle");
-    self->sound = gf2d_sound_load("audio/plasma_fire.wav",1,-1);
+    self->sound[0] = gf2d_sound_load("audio/plasma_fire.wav",1,-1);
+    self->sound[1] = gf2d_sound_load("audio/chargeup.wav",1,3);
+    self->sound[2] = gf2d_sound_load("audio/charge_hum.wav",1,-1);
+    self->sound[3] = gf2d_sound_load("audio/charge_release.wav",1,4);
 
     self->health = self->maxHealth = 100;
     
     vector2d_copy(self->position,position);
     vector2d_set(self->velocity,playerData.baseSpeed,0);
     
-    vector2d_set(self->scale,1,1);
+    vector2d_copy(self->scale,self->actor.al->scale);
     vector2d_set(self->scaleCenter,64,64);
     vector3d_set(self->rotation,64,64,0);
     vector2d_set(self->flip,1,0);
@@ -148,6 +151,7 @@ void player_think(Entity *self)
             gf2d_actor_set_action(&self->actor,"attack3");
             playerData.charge = 0;
             playerData.attackType = 1;
+            gf2d_sound_play(self->sound[2],0,1,-1,-1);
         }
     }
     else if (self->state == ES_Charging)
@@ -230,6 +234,7 @@ void player_update(Entity *self)
         case ES_Charging:
             // play sound
             // emit particles
+            gf2d_sound_play(self->sound[2],0,0.2,-1,-1);
             break;
         case ES_Attacking:
             if (self->actor.at == ART_END)
@@ -240,13 +245,13 @@ void player_update(Entity *self)
                         projectile_new(
                             vector2d(self->position.x + 16,self->position.y + 16),
                             vector2d(140,0),
-                            5,
+                            7,
                             0.25,
                             self,
                             "actors/plasma_bolt.actor");
                         self->state = ES_Cooldown;
                         self->cooldown = 8;
-                        gf2d_sound_play(self->sound,0,0.2,-1,-1);
+                        gf2d_sound_play(self->sound[0],0,1,-1,-1);
                         break;
                     case 1:
                         projectile_new(
@@ -257,6 +262,7 @@ void player_update(Entity *self)
                             self,
                             "actors/charge_bolt.actor");
                         self->state = ES_Cooldown;
+                        gf2d_sound_play(self->sound[3],0,(playerData.charge/playerData.chargeMax),-1,-1);
                         self->cooldown = 8+(playerData.charge*0.5);
                         break;
                 }

@@ -4,6 +4,7 @@ frameHeight: 32
 framesPerLine: 16
 color: 255,255,255,255
 colorSpecial: 100,100,255,255
+scale: 1,1
 
 action: idle
 startFrame: 0

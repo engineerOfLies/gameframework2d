@@ -152,6 +152,11 @@ void gf2d_action_file_load_actions(FILE *file,ActionList *actionList)
             fscanf(file,"%i",&actionList->framesPerLine);
             continue;
         }
+        if(strcmp(buf,"scale:") == 0)
+        {
+            fscanf(file,"%lf,%lf",&actionList->scale.x,&actionList->scale.y);
+            continue;
+        }
         if(strcmp(buf,"color:") == 0)
         {
             fscanf(file,"%lf,%lf,%lf,%lf",&actionList->color.x,&actionList->color.y,&actionList->color.z,&actionList->color.w);

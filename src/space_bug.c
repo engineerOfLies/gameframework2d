@@ -23,7 +23,7 @@ Entity *space_bug_new(Vector2D position)
     self->parent = NULL;
     
     
-    self->shape = gf2d_shape_rect(-30, -16, 64, 52);
+    self->shape = gf2d_shape_rect(-34, -16, 64, 58);
     gf2d_body_set(
         &self->body,
         "space_bug",
@@ -42,11 +42,11 @@ Entity *space_bug_new(Vector2D position)
     gf2d_actor_load(&self->actor,"actors/space_bug.actor");
     gf2d_actor_set_action(&self->actor,"idle");
     
-    self->sound = gf2d_sound_load("audio/squishy2.wav",1,-1);
+    self->sound[0] = gf2d_sound_load("audio/squishy2.wav",1,-1);
     
     vector2d_copy(self->position,position);
     
-    vector2d_set(self->scale,1,1);
+    vector2d_copy(self->scale,self->actor.al->scale);
     vector2d_set(self->scaleCenter,64,64);
     vector3d_set(self->rotation,64,64,0);
     
@@ -224,7 +224,7 @@ void space_bug_die(Entity *self)
     {
         gf2d_actor_set_action(&self->actor,"death1");
     }else gf2d_actor_set_action(&self->actor,"death2");
-    gf2d_sound_play(self->sound,0,1,-1,-1);
+    gf2d_sound_play(self->sound[0],0,1,-1,-1);
 }
 
 /*eol@eof*/

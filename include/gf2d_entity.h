@@ -20,6 +20,8 @@ typedef enum
     ES_Dead         //Auto cleaned up
 }EntityState;
 
+#define EntitySoundMax 8
+
 typedef struct Entity_S
 {
     Uint8 inuse;                            /**<never touch this*/
@@ -44,7 +46,7 @@ typedef struct Entity_S
     ParticleEmitter *pe;                    /**<if this entity has its own particle emitter*/
 
     /*sound*/
-    Sound *sound;                            /**<sounds*/
+    Sound *sound[EntitySoundMax];           /**<sounds*/
     /*system*/
     struct Entity_S *parent;                /**<pointer to the entity that spawned this one, if it applies*/
     

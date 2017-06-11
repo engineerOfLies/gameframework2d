@@ -95,7 +95,7 @@ Entity *item_spawn(char *name,Vector2D position)
     
     vector2d_copy(self->position,position);
     
-    vector2d_set(self->scale,1,1);
+    vector2d_copy(self->scale,self->actor.al->scale);
     vector2d_set(self->scaleCenter,self->actor.al->frameWidth/2,self->actor.al->frameHeight/2);
     vector3d_set(self->rotation,self->actor.al->frameWidth/2,self->actor.al->frameHeight/2,gf2d_random()*360);
     

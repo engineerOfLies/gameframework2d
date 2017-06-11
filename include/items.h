@@ -19,6 +19,7 @@ typedef struct
 {
     TextLine name;      /**<name of the item*/
     TextLine actor;    /**<sprite file to use*/
+    TextLine sound;    /**<sound file to use for pickup*/
     int type;           /**<what the item does*/
     int count;          /**<how much of the something you get*/
     float radius;       /**<for pickup collision*/
