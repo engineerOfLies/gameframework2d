@@ -4,8 +4,27 @@
 #include <SDL.h>
 #include <SDL_mixer.h>
 #include "gf2d_types.h"
+#include "gf2d_text.h"
+#include "gf2d_list.h"
 
-/**
+typedef struct
+{
+    Uint32 ref_count;
+    TextLine filepath;  /**<the sound file that was loaded*/
+    Mix_Chunk *sound;
+    float volume;
+    int defaultChannel;
+}Sound;
+
+
+typedef struct
+{
+    List sounds;
+    float volume;
+    int defaultGroup;
+}soundPack;
+
+/**defaultChannel
  * @brief initializes the audio system based on the passed in parameters
  * @param maxSounds the maximum number of sounds that can be loaded into memory at once
  * @param channels the nrumber of allocated audio channels (excluding music channel)
@@ -22,5 +41,24 @@ void gf2d_audio_init(
     Uint8  enableMP3,
     Uint8  enableOgg);
 
+/**
+ * @brief load a WAV or RIFF from file and return it as a sound pointer
+ * @param filename the file to load
+ * @param volume how loud the sound should be on a scale from 0 to 1.0
+ * @param defaultChannel which channel to play this sound on if not specified
+ * @return NULL on error or a pointer to the sound file
+ */
+Sound *gf2d_sound_load(char *filename,float volume,int defaultChannel);
+
+/**
+ * @brief decrement references to the sound.  Free it when needed
+ * @param sound the sound file to free
+ */
+void gf2d_sound_free(Sound *sound);
+
+/**
+ * @brief frees all sounds from memory.  This will invalidate any help Sound pointers
+ */
+void gf2d_sound_clear_all();
 
 #endif

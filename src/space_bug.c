@@ -4,12 +4,13 @@
 #include "level.h"
 #include "particle_effects.h"
 #include "items.h"
+#include "player.h"
 
 void space_bug_draw(Entity *self);
 void space_bug_think(Entity *self);
 void space_bug_update(Entity *self);
 int  space_bug_touch(Entity *self,Entity *other);
-void space_bug_damage(Entity *self,int amount, Entity *source);
+int  space_bug_damage(Entity *self,int amount, Entity *source);
 void space_bug_die(Entity *self);
 
 Entity *space_bug_new(Vector2D position)
@@ -140,6 +141,13 @@ void space_bug_update(Entity *self)
         case ES_Charging:
         case ES_Attacking:
         case ES_Pain:
+            if (self->actor.at == ART_END)
+            {
+                self->body.layer = LAYER_MOBS|LAYER_PROJECTILES;
+                self->state = ES_Seeking;
+                gf2d_actor_set_action(&self->actor,"idle");
+            }
+            break;
         case ES_Cooldown:
             space_bug_spawn_thrust(self,vector2d(-20,-14),20);
             break;
@@ -178,16 +186,32 @@ int space_bug_touch(Entity *self,Entity *other)
     {
         return 0;
     }
+    if (other != player_get())
+    {
+        return 0;
+    }
     vector2d_clear(self->velocity);
     vector2d_clear(self->acceleration);
     self->die(self);
     return 1;
 }
 
-void space_bug_damage(Entity *self,int amount, Entity *source)
+int space_bug_damage(Entity *self,int amount, Entity *source)
 {
+    int taken;
+    taken = MIN(self->health,amount);
     self->health -= amount;
-    if (self->health <= 0)self->die(self);
+    slog("space_bug taking %i damage",amount);
+    slog("space_bug health %f",self->health);
+    if (self->health <= 0)
+    {
+        self->die(self);
+        return taken;
+    }
+    self->state = ES_Pain;
+    self->body.layer = 0;
+    gf2d_actor_set_action(&self->actor,"pain1");
+    return taken;
 }
 
 void space_bug_die(Entity *self)

@@ -4,6 +4,7 @@
 #include "gf2d_text.h"
 #include "gf2d_vector.h"
 #include "gf2d_actor.h"
+#include "gf2d_audio.h"
 #include "gf2d_particles.h"
 #include "gf2d_collision.h"
 
@@ -41,7 +42,9 @@ typedef struct Entity_S
     Vector2D flip;                          /**<if to flip the sprite*/
     
     ParticleEmitter *pe;                    /**<if this entity has its own particle emitter*/
-    
+
+    /*sound*/
+    Sound *sound;                            /**<sounds*/
     /*system*/
     struct Entity_S *parent;                /**<pointer to the entity that spawned this one, if it applies*/
     
@@ -49,7 +52,7 @@ typedef struct Entity_S
     void (*think)(struct Entity_S *self);   /**<called before system updates to make decisions / hand input*/
     void (*update)(struct Entity_S *self);  /**<called after system entity update*/
     int  (*touch)(struct Entity_S *self,struct Entity_S *other);/**<when this entity touches another entity*/
-    void (*damage)(struct Entity_S *self,int amount, struct Entity_S *source);/**<when this entity takes damage*/
+    int  (*damage)(struct Entity_S *self,int amount, struct Entity_S *source);/**<when this entity takes damage*/
     void (*die)(struct Entity_S *self);     /**<when this entity dies*/
     void (*free)(struct Entity_S *self);     /**<called when the entity is freed for any custom cleanup*/
     int dead;                               /**<when true, the entity system will delete the entity on the next update*/

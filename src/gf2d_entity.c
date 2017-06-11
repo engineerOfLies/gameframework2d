@@ -53,6 +53,7 @@ void gf2d_entity_free(Entity *self)
 {
     if (!self)return;
     if (self->free)self->free(self);
+    gf2d_sound_free(self->sound);
     gf2d_actor_free(&self->actor);
     gf2d_particle_emitter_free(self->pe);
     memset(self,0,sizeof(Entity));
@@ -192,13 +193,17 @@ void gf2d_entity_update_all()
 
 int gf2d_entity_deal_damage(Entity *target, Entity *inflictor, Entity *attacker,int damage,Vector2D kick)
 {
+    Vector2D k;
+    int inflicted;
     if (!target)return 0;
     if (!inflictor)return 0;
     if (!attacker)return 0;
     if (!target->damage)return 0;// cannot take damage
-    target->damage(target,damage, inflictor);
-    vector2d_add(target->velocity,kick,target->velocity);
-    return 1;
+    if (!damage)return 0;// no damage to deal
+    inflicted = target->damage(target,damage, inflictor);
+    vector2d_scale(k,kick,(float)inflicted/(float)damage);
+    vector2d_add(target->velocity,k,target->velocity);
+    return inflicted;
 }
 
 /*eol@eof*/

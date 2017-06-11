@@ -7,7 +7,7 @@ void projectile_draw(Entity *self);
 void projectile_think(Entity *self);
 void projectile_update(Entity *self);
 int  projectile_touch(Entity *self,Entity *other);
-void projectile_damage(Entity *self,int amount, Entity *source);
+int  projectile_damage(Entity *self,int amount, Entity *source);
 void projectile_die(Entity *self);
 
 Entity *projectile_new(Vector2D position,Vector2D velocity,float damage,float scale,Entity *parent,char *actor)
@@ -27,7 +27,7 @@ Entity *projectile_new(Vector2D position,Vector2D velocity,float damage,float sc
     self->parent = parent;
     
     
-    self->shape = gf2d_shape_circle(0,0, 30);
+    self->shape = gf2d_shape_circle(0,0, 10*scale);
     gf2d_body_set(
         &self->body,
         "projectile",
@@ -126,20 +126,32 @@ void projectile_update(Entity *self)
 
 int projectile_touch(Entity *self,Entity *other)
 {
+    int inflicted;
+    Vector2D kick = {0};
     if ((!self)||(!other))return 0;
-    if (!gf2d_entity_deal_damage(other, self, self,self->health,self->velocity))
+    slog("projectile dealing %f damage",self->health);
+    vector2d_copy(kick,self->velocity);
+    vector2d_normalize(&kick);
+    inflicted = gf2d_entity_deal_damage(other, self, self,self->health,kick);
+    if (!inflicted)
     {
         return 0;
     }
+    if (inflicted < self->health)
+    {
+        self->health -= inflicted;
+        return 1;
+    }
+    self->health -= inflicted;
     vector2d_clear(self->velocity);
     vector2d_clear(self->acceleration);
     self->die(self);
     return 1;
 }
 
-void projectile_damage(Entity *self,int amount, Entity *source)
+int projectile_damage(Entity *self,int amount, Entity *source)
 {
-    return;
+    return 0;
 }
 
 void projectile_die(Entity *self)

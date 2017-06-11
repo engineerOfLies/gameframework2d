@@ -11,7 +11,7 @@ void player_draw(Entity *self);
 void player_think(Entity *self);
 void player_update(Entity *self);
 int  player_touch(Entity *self,Entity *other);
-void player_damage(Entity *self,int amount, Entity *source);
+int  player_damage(Entity *self,int amount, Entity *source);
 void player_die(Entity *self);
 
 typedef struct
@@ -283,12 +283,13 @@ int player_touch(Entity *self,Entity *other)
     return 0;// player does not touch
 }
 
-void player_damage(Entity *self,int amount, Entity *source)
+int player_damage(Entity *self,int amount, Entity *source)
 {
     slog("player taking %i damage!",amount);
     self->health -= amount;
     if (self->health <= 0)self->health = 0;
     self->die(self);
+    return amount;//todo factor in shields
 }
 
 void player_die(Entity *self)
