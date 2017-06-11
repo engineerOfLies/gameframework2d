@@ -3,6 +3,7 @@ frameWidth: 64
 frameHeight: 64
 framesPerLine: 16
 color: 255,255,255,255
+colorSpecial: 0,255,000,255
 
 action: idle
 startFrame: 0

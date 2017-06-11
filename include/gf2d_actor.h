@@ -48,6 +48,7 @@ typedef struct
     int         frameHeight;
     int         framesPerLine;
     Vector4D    color;
+    Vector4D    colorSpecial;
 }ActionList;
 
 typedef struct

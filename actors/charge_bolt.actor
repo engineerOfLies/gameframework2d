@@ -8,3 +8,4 @@ frameWidth: 64
 frameHeight: 64
 framesPerLine: 16
 color: 255,255,255,255
+colorSpecial: 255,100,100,255

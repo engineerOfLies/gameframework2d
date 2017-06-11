@@ -3,6 +3,7 @@ frameWidth: 128
 frameHeight: 128
 framesPerLine: 16
 color: 255,255,255,255
+colorSpecial: 10,255,100,255
 
 action: idle
 startFrame: 0
@@ -18,12 +19,12 @@ type:   pass
 
 action: attack2
 startFrame: 3
-endFrame: 5
+endFrame: 7
 frameRate: 1
 type:   pass
 
 action: attack3
-startFrame: 6
+startFrame: 8
 endFrame: 8
 frameRate: 1
 type:   loop

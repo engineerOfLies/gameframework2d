@@ -10,7 +10,7 @@ int  projectile_touch(Entity *self,Entity *other);
 void projectile_damage(Entity *self,int amount, Entity *source);
 void projectile_die(Entity *self);
 
-Entity *projectile_new(Vector2D position,Vector2D velocity,Entity *parent)
+Entity *projectile_new(Vector2D position,Vector2D velocity,float damage,float scale,Entity *parent,char *actor)
 {
     Entity *self;
     self = gf2d_entity_new();
@@ -43,13 +43,13 @@ Entity *projectile_new(Vector2D position,Vector2D velocity,Entity *parent)
         NULL,
         NULL);
 
-    gf2d_actor_load(&self->actor,"actors/plasma_bolt.actor");
+    gf2d_actor_load(&self->actor,actor);
     gf2d_actor_set_action(&self->actor,"idle");
     
     vector2d_copy(self->position,position);
     vector2d_copy(self->velocity,velocity);
     
-    vector2d_set(self->scale,0.25,0.25);
+    vector2d_set(self->scale,scale,scale);
     vector2d_set(self->scaleCenter,32,32);
     vector3d_set(self->rotation,32,32,0);
     
@@ -63,6 +63,7 @@ Entity *projectile_new(Vector2D position,Vector2D velocity,Entity *parent)
     self->die = projectile_die;
     self->free = level_remove_entity;
     
+    self->health = damage;
     level_add_entity(self);
     return self;
 }
@@ -119,7 +120,7 @@ void projectile_update(Entity *self)
         vector2d(0,0),
         vector2d(0,0),
         vector2d(0,0),
-        gf2d_color8(100,255,100,255),
+        gf2d_color_from_vector4(self->actor.al->colorSpecial),
         10);
 }
 

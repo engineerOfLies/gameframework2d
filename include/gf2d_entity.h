@@ -11,6 +11,7 @@ typedef enum
 {
     ES_Idle,
     ES_Seeking,
+    ES_Charging,
     ES_Attacking,
     ES_Pain,
     ES_Cooldown,

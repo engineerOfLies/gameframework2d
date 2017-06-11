@@ -14,9 +14,25 @@ int  player_touch(Entity *self,Entity *other);
 void player_damage(Entity *self,int amount, Entity *source);
 void player_die(Entity *self);
 
-#define baseSpeed 3
-#define maxSpeed 50
-#define baseAcceleration 3.6
+typedef struct
+{
+    int baseSpeed;
+    int maxSpeed;
+    float baseAcceleration;
+    float shields,shieldMax;
+    float charge,chargeMax;
+    float energy,energyMax;
+    int capacitors,capacitorsMax;
+    int attackType;
+}PlayerData;
+
+
+static PlayerData playerData = {
+    3,50,3.6,
+    0,100,
+    0,100,
+    0,100,
+    0,0};
 
 Entity *player_get()
 {
@@ -51,7 +67,7 @@ Entity *player_new(Vector2D position)
         ALL_LAYERS,//all layers
         1,
         position,
-        vector2d(baseSpeed,0),
+        vector2d(playerData.baseSpeed,0),
         10,
         0,
         0,
@@ -66,7 +82,7 @@ Entity *player_new(Vector2D position)
     self->health = self->maxHealth = 100;
     
     vector2d_copy(self->position,position);
-    vector2d_set(self->velocity,baseSpeed,0);
+    vector2d_set(self->velocity,playerData.baseSpeed,0);
     
     vector2d_set(self->scale,1,1);
     vector2d_set(self->scaleCenter,64,64);
@@ -83,6 +99,7 @@ Entity *player_new(Vector2D position)
     self->die = player_die;
     self->free = level_remove_entity;
 
+    self->data = (void*)&playerData;
     _player = self;
     return self;
 }
@@ -90,7 +107,8 @@ Entity *player_new(Vector2D position)
 void player_draw(Entity *self)
 {
     gui_set_health(self->health/(float)self->maxHealth);
-    gui_set_thrust(self->velocity.x/maxSpeed);
+    gui_set_thrust(self->velocity.x/playerData.maxSpeed);
+    gui_set_charge(playerData.charge/playerData.chargeMax);
 }
 
 void player_think(Entity *self)
@@ -101,19 +119,19 @@ void player_think(Entity *self)
     SDL_GetRelativeMouseState(&mx,&my);
     if ((my < 0)||(keys[SDL_SCANCODE_W]))
     {
-        self->acceleration.y = (self->acceleration.y * 0.9) + (-baseAcceleration *0.1);
+        self->acceleration.y = (self->acceleration.y * 0.9) + (-playerData.baseAcceleration *0.1);
     }
     if ((my > 0)||(keys[SDL_SCANCODE_S]))
     {
-        self->acceleration.y = (self->acceleration.y * 0.9) + (baseAcceleration *0.1);
+        self->acceleration.y = (self->acceleration.y * 0.9) + (playerData.baseAcceleration *0.1);
     }
     if ((mx < 0)||(keys[SDL_SCANCODE_A]))
     {
-        self->acceleration.x = (self->acceleration.x * 0.9) + (-baseAcceleration *0.1);
+        self->acceleration.x = (self->acceleration.x * 0.9) + (-playerData.baseAcceleration *0.1);
     }
     if ((mx > 0)||(keys[SDL_SCANCODE_D]))
     {
-        self->acceleration.x = (self->acceleration.x * 0.9) + (baseAcceleration *0.1);
+        self->acceleration.x = (self->acceleration.x * 0.9) + (playerData.baseAcceleration *0.1);
     }
     if (self->state == ES_Idle)
     {
@@ -121,6 +139,31 @@ void player_think(Entity *self)
         {
             self->state = ES_Attacking;
             gf2d_actor_set_action(&self->actor,"attack1");
+            playerData.attackType = 0;
+        }
+        if (keys[SDL_SCANCODE_K])
+        {
+            self->state = ES_Charging;
+            gf2d_actor_set_action(&self->actor,"attack3");
+            playerData.charge = 0;
+            playerData.attackType = 1;
+        }
+    }
+    else if (self->state == ES_Charging)
+    {
+        if (keys[SDL_SCANCODE_K])
+        {
+            // continue to charge
+            if (playerData.charge < playerData.chargeMax)
+            {
+                playerData.charge += 10;
+            }
+        }
+        else
+        {
+            // release
+            self->state = ES_Attacking;
+            gf2d_actor_set_action(&self->actor,"attack2");
         }
     }
 }
@@ -159,17 +202,17 @@ void player_update(Entity *self)
 {
     Vector2D camPosition = {0,0};
     if (!self)return;
-    camPosition.x = self->position.x - 200 + (self->velocity.x - baseSpeed)* 2;
+    camPosition.x = self->position.x - 200 + (self->velocity.x - playerData.baseSpeed)* 2;
     camera_set_position(camPosition);
 
     level_bounds_clamp(self);
 
         /*velocity checks*/
     self->velocity.y *= 0.999;
-    if (self->velocity.x < baseSpeed)self->velocity.x = baseSpeed;
-    if (self->velocity.x > maxSpeed)self->velocity.x = maxSpeed;
-    if (self->velocity.y < -maxSpeed)self->velocity.y = -maxSpeed;
-    if (self->velocity.y > maxSpeed)self->velocity.y = maxSpeed;
+    if (self->velocity.x < playerData.baseSpeed)self->velocity.x = playerData.baseSpeed;
+    if (self->velocity.x > playerData.maxSpeed)self->velocity.x = playerData.maxSpeed;
+    if (self->velocity.y < -playerData.maxSpeed)self->velocity.y = -playerData.maxSpeed;
+    if (self->velocity.y > playerData.maxSpeed)self->velocity.y = playerData.maxSpeed;
     
     vector2d_scale(self->acceleration,self->acceleration,0.8);
     // make thrust particles
@@ -183,15 +226,39 @@ void player_update(Entity *self)
             break;
         case ES_Seeking:
             break;
+        case ES_Charging:
+            // play sound
+            // emit particles
+            break;
         case ES_Attacking:
             if (self->actor.at == ART_END)
             {
-                projectile_new(
-                    vector2d(self->position.x + 16,self->position.y + 16),
-                    vector2d(140,0),
-                    self);
-                self->state = ES_Cooldown;
-                self->cooldown = 8;
+                switch(playerData.attackType)
+                {
+                    case 0:
+                        projectile_new(
+                            vector2d(self->position.x + 16,self->position.y + 16),
+                            vector2d(140,0),
+                            5,
+                            0.25,
+                            self,
+                            "actors/plasma_bolt.actor");
+                        self->state = ES_Cooldown;
+                        self->cooldown = 8;
+                        break;
+                    case 1:
+                        projectile_new(
+                            vector2d(self->position.x + 16,self->position.y + 10),
+                            vector2d(120,0),
+                            (playerData.charge/playerData.chargeMax)*50,
+                            0.5 + (playerData.charge/playerData.chargeMax)*1.5,
+                            self,
+                            "actors/charge_bolt.actor");
+                        self->state = ES_Cooldown;
+                        self->cooldown = 8+(playerData.charge*0.5);
+                        break;
+                }
+                playerData.charge = 0;
                 gf2d_actor_set_action(&self->actor,"idle");
             }
             break;

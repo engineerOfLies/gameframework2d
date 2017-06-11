@@ -67,6 +67,7 @@ void gui_draw_hud()
     gui_draw_percent_bar_horizontal(gf2d_rect(495,680,145,10),gui.healthPercent,vector4d((1-gui.healthPercent) * 255, gui.healthPercent*255, 0, 255), vector4d(128, 0, 0, 128),0);
     gui_draw_percent_bar_horizontal(gf2d_rect(640,680,145,10),gui.shieldPercent,vector4d(0, 0, 255, 255), vector4d(128, 0, 0, 128),1);
     gui_draw_percent_bar_vertical(gf2d_rect(475,680,15,30),gui.thrustPercent,vector4d(0, 255, 255, 255), vector4d(128, 0, 0, 128),1);
+    gui_draw_percent_bar_vertical(gf2d_rect(790,680,15,30),gui.chargePercent,vector4d(128+(127*gui.chargePercent), 128 - (127*gui.chargePercent), 128 - (127*gui.chargePercent), 255), vector4d(128, 0, 0, 128),1);
 }
 
 void gui_set_health(float health)
@@ -77,6 +78,11 @@ void gui_set_health(float health)
 void gui_set_energy(float energy)
 {
     gui.energyPercent = energy;
+}
+
+void gui_set_charge(float charge)
+{
+    gui.chargePercent = charge;
 }
 
 void gui_set_thrust(float thrust)

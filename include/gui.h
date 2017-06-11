@@ -6,6 +6,7 @@ void gui_draw_hud();
 void gui_set_health(float health);
 void gui_set_thrust(float thrust);
 void gui_set_energy(float energy);
+void gui_set_charge(float charge);
 
 
 

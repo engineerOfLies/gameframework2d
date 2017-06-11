@@ -137,6 +137,7 @@ void space_bug_update(Entity *self)
             self->state = ES_Seeking;
             break;
         case ES_Seeking:
+        case ES_Charging:
         case ES_Attacking:
         case ES_Pain:
         case ES_Cooldown:
