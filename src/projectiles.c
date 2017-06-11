@@ -27,7 +27,7 @@ Entity *projectile_new(Vector2D position,Vector2D velocity,float damage,float sc
     self->parent = parent;
     
     
-    self->shape = gf2d_shape_circle(0,0, 10*scale);
+    self->shape = gf2d_shape_circle(0,0, 16*scale);
     gf2d_body_set(
         &self->body,
         "projectile",
@@ -45,6 +45,8 @@ Entity *projectile_new(Vector2D position,Vector2D velocity,float damage,float sc
 
     gf2d_actor_load(&self->actor,actor);
     gf2d_actor_set_action(&self->actor,"idle");
+    
+    self->sound = gf2d_sound_load("audio/impact1.wav",1,-1);
     
     vector2d_copy(self->position,position);
     vector2d_copy(self->velocity,velocity);
@@ -156,7 +158,15 @@ int projectile_damage(Entity *self,int amount, Entity *source)
 
 void projectile_die(Entity *self)
 {
+    Rect camera;
+    camera = camera_get_dimensions();
     self->body.layer = 0;// no longer clip
+    gf2d_sound_play(self->sound,0,1,-1,-1);
+    pe_explosion(
+        level_get_particle_emitter(),
+        vector2d(self->position.x - camera.x,self->position.y - camera.y),
+        gf2d_color_from_vector4(self->actor.al->colorSpecial),
+        1);
     self->dead = 1;
 }
 

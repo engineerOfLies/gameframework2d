@@ -352,7 +352,7 @@ void gf2d_particle_draw(Particle *p)
             color = gf2d_color_to_vector4(p->color);
             gf2d_sprite_draw(
                 p->sprite,
-                vector2d(p->position.x - (p->sprite->frame_w << 1),p->position.y - (p->sprite->frame_h << 1)),
+                vector2d(p->position.x - (p->sprite->frame_w/2),p->position.y - (p->sprite->frame_h/2)),
                 NULL,
                 NULL,
                 NULL,

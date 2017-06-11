@@ -23,7 +23,7 @@ Entity *space_bug_new(Vector2D position)
     self->parent = NULL;
     
     
-    self->shape = gf2d_shape_rect(-32, -16, 64, 48);
+    self->shape = gf2d_shape_rect(-30, -16, 64, 52);
     gf2d_body_set(
         &self->body,
         "space_bug",
@@ -41,6 +41,8 @@ Entity *space_bug_new(Vector2D position)
 
     gf2d_actor_load(&self->actor,"actors/space_bug.actor");
     gf2d_actor_set_action(&self->actor,"idle");
+    
+    self->sound = gf2d_sound_load("audio/squishy2.wav",1,-1);
     
     vector2d_copy(self->position,position);
     
@@ -154,10 +156,10 @@ void space_bug_update(Entity *self)
         case ES_Dying:
             pe_blood_spray(
                 self->pe, 
-                vector2d(self->position.x - camera.x,self->position.y - camera.y),
+                vector2d(self->position.x - camera.x - 20,self->position.y - camera.y),
                 vector2d(gf2d_crandom(),gf2d_crandom()),
                 gf2d_color8(50,200,50,200),
-                50);
+                1);
             if (self->actor.at == ART_END)
             {
                 // finished dying
@@ -222,6 +224,7 @@ void space_bug_die(Entity *self)
     {
         gf2d_actor_set_action(&self->actor,"death1");
     }else gf2d_actor_set_action(&self->actor,"death2");
+    gf2d_sound_play(self->sound,0,1,-1,-1);
 }
 
 /*eol@eof*/

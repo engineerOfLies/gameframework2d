@@ -378,6 +378,11 @@ Rect level_get_bounds()
     return level.bounds;
 }
 
+ParticleEmitter *level_get_particle_emitter()
+{
+    return level.pe;
+}
+
 void level_update()
 {
     gf2d_particle_new_default(

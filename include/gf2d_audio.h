@@ -51,6 +51,14 @@ void gf2d_audio_init(
 Sound *gf2d_sound_load(char *filename,float volume,int defaultChannel);
 
 /**
+ * @brief play a sound file that has been loaded
+ * @param loops number of times to loop,  0 means play once, no loops
+ * @param channel which channel to play on, -1 means use default
+ * @param group which group to play on, -1 means use default
+ */
+void gf2d_sound_play(Sound *sound,int loops,float volume,int channel,int group);
+
+/**
  * @brief decrement references to the sound.  Free it when needed
  * @param sound the sound file to free
  */

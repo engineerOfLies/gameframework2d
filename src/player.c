@@ -78,6 +78,7 @@ Entity *player_new(Vector2D position)
 
     gf2d_actor_load(&self->actor,"actors/ed210.actor");
     gf2d_actor_set_action(&self->actor,"idle");
+    self->sound = gf2d_sound_load("audio/plasma_fire.wav",1,-1);
 
     self->health = self->maxHealth = 100;
     
@@ -245,6 +246,7 @@ void player_update(Entity *self)
                             "actors/plasma_bolt.actor");
                         self->state = ES_Cooldown;
                         self->cooldown = 8;
+                        gf2d_sound_play(self->sound,0,0.2,-1,-1);
                         break;
                     case 1:
                         projectile_new(

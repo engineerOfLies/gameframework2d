@@ -12,6 +12,7 @@
 #include "gf2d_entity.h"
 #include "gf2d_draw.h"
 #include "gf2d_collision.h"
+#include "particle_effects.h"
 
 int main(int argc, char * argv[])
 {
@@ -48,6 +49,7 @@ int main(int argc, char * argv[])
     level_start(level);
     level_info_free(level);
     item_load_list("config/itemlist.cfg");
+    pe_load_assets();
     /*main game loop*/
     while(!done)
     {

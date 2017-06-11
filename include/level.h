@@ -104,5 +104,11 @@ void level_remove_entity(Entity *ent);
  */
 void level_bounds_clamp(Entity *self);
 
+/**
+ * @brief get a pointer to the level's particle emitter
+ * @return a pointer to the level's particle emitter or NULL if its not loaded
+ */
+ParticleEmitter *level_get_particle_emitter();
+
 
 #endif

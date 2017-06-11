@@ -5,6 +5,11 @@
 #include "gf2d_color.h"
 #include "gf2d_particles.h"
 
+/**
+ * @brief load a default set of assets used for particle effects
+ */
+void pe_load_assets();
+
 void pe_thrust(
     ParticleEmitter *pe,
     Vector2D position,
@@ -18,5 +23,10 @@ void pe_thrust(
 
 void pe_blood_spray(ParticleEmitter *pe, Vector2D position,Vector2D direction,Color color,int amount);
 
+void pe_explosion(
+    ParticleEmitter *pe,
+    Vector2D position,
+    Color color,
+    int count);
 
 #endif
