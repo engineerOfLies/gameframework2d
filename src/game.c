@@ -33,6 +33,7 @@ int main(int argc, char * argv[])
         0);
     gf2d_graphics_set_frame_delay(16);
     gf2d_sprite_init(1024);
+    gf2d_text_init("config/font.cfg");
     gui_setup_hud();
     gf2d_audio_init(256,16,4,1,1,1);
     item_manager_init();

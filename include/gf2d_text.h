@@ -58,4 +58,10 @@ typedef char TextBlock[512];
 #define gf2d_block_cpy(dst,src) (strncpy(dst,src,GF2DTEXTLEN))
 #define gf2d_block_clear(a)  (memset(a,0,sizeof(char)*GF2DTEXTLEN))
 
+/**
+ * @brief initialized text drawing system
+ * @param configFile the file to load font information from
+ */
+void gf2d_text_init(char *configFile);
+
 #endif
