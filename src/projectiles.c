@@ -2,6 +2,7 @@
 #include "camera.h"
 #include "level.h"
 #include "particle_effects.h"
+#include "entity_common.h"
 
 void projectile_draw(Entity *self);
 void projectile_think(Entity *self);
@@ -104,15 +105,10 @@ void projectile_update(Entity *self)
         self->dead = 1;
         return;// off the map, die
     }
-    if (self->position.x > camera.x + camera.w + 32)
+    if (!entity_camera_view(self))
     {
         self->dead = 1;
         return;// off the map, die
-    }
-    if (self->position.x < camera.x - 128)
-    {
-        self->dead = 1;
-        return;
     }
     pe_thrust(
         self->pe,

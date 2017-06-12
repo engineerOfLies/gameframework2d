@@ -14,8 +14,8 @@ typedef enum
     ES_Seeking,
     ES_Charging,
     ES_Attacking,
-    ES_Pain,
     ES_Cooldown,
+    ES_Pain,
     ES_Dying,
     ES_Dead         //Auto cleaned up
 }EntityState;

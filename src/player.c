@@ -4,6 +4,7 @@
 #include "projectiles.h"
 #include "level.h"
 #include "gui.h"
+#include "entity_common.h"
 
 static Entity *_player = NULL;
 

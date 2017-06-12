@@ -5,6 +5,7 @@
 #include "particle_effects.h"
 #include "items.h"
 #include "player.h"
+#include "entity_common.h"
 
 void space_bug_draw(Entity *self);
 void space_bug_think(Entity *self);
@@ -62,6 +63,7 @@ Entity *space_bug_new(Vector2D position)
     
     self->health = 20;
     self->maxHealth = 20;
+    self->count = gf2d_random()*16;
 
     return self;
 }
@@ -70,10 +72,20 @@ void space_bug_draw(Entity *self)
 {
     
 }
+
 void space_bug_think(Entity *self)
 {
-
-    
+    Entity * player;
+    if (self->state != ES_Seeking)return;
+    if (!entity_camera_view(self))
+    {
+        return;// off the map, don't think
+    }
+    self->acceleration.y = sin(SDL_GetTicks() + self->count)*6;
+    player = player_get();
+    if (!player)return;
+    if (self->position.y < player->position.y)self->acceleration.y += 2;
+    if (self->position.y > player->position.y)self->acceleration.y -= 2;
 }
 
 void space_bug_spawn_thrust(Entity *self,Vector2D offset,int count)
@@ -220,6 +232,8 @@ void space_bug_die(Entity *self)
 {
     self->body.layer = 0;// no longer clip
     self->state = ES_Dying;
+    vector2d_clear(self->velocity);
+    vector2d_clear(self->acceleration);
     if (gf2d_crandom() > 0)
     {
         gf2d_actor_set_action(&self->actor,"death1");
