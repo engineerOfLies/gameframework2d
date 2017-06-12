@@ -212,7 +212,6 @@ LevelInfo *level_info_load(char *filename)
             return NULL;
         }
     }
-    slog("level contains %i spawn candidates",count);
     info->spawnCount = count;
     level_info_parse_file(file,info);
     fclose(file);

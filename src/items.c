@@ -247,7 +247,6 @@ void item_load_list(char *filename)
         fclose(file);
         return;
     }
-    slog("attempting to allocate %i items",count);
     item_manager.items = (Item*)malloc(sizeof(Item)*count);
     if (!item_manager.items)
     {
