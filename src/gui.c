@@ -68,7 +68,8 @@ void gui_draw_hud()
     gui_draw_percent_bar_horizontal(gf2d_rect(640,680,145,10),gui.shieldPercent,vector4d(0, 0, 255, 255), vector4d(128, 0, 0, 128),1);
     gui_draw_percent_bar_vertical(gf2d_rect(475,680,15,30),gui.thrustPercent,vector4d(0, 255, 255, 255), vector4d(128, 0, 0, 128),1);
     gui_draw_percent_bar_vertical(gf2d_rect(790,680,15,30),gui.chargePercent,vector4d(128+(127*gui.chargePercent), 128 - (127*gui.chargePercent), 128 - (127*gui.chargePercent), 255), vector4d(128, 0, 0, 128),1);
-    gf2d_text_draw_line("Health",FT_Normal,gf2d_color8(255,255,255,255), vector2d(0,0));
+    gf2d_text_draw_line("Health",FT_Small,gf2d_color8(0,255,0,255), vector2d(495,665));
+    gf2d_text_draw_line("Shields",FT_Small,gf2d_color8(0,0,255,255), vector2d(672,665));
 }
 
 void gui_set_health(float health)
