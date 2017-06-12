@@ -13,6 +13,7 @@ typedef struct
     float   energyPercent;
     float   capacitors;
     int     score;
+    float   alert;
 }GUI;
 
 static GUI gui = {0};
@@ -63,7 +64,21 @@ void gui_draw_percent_bar_vertical(Rect rect,float percent,Vector4D fgColor,Vect
 
 void gui_draw_hud()
 {
-    gf2d_sprite_draw_image(gui.hud,vector2d(0,100));
+    Vector4D color = {255,255,255,255};
+    if (gui.healthPercent < 0.2)
+    {
+        gui.alert = (gui.alert + 0.02);
+        if (gui.alert >= GF2D_PI)gui.alert = 0;
+        color.y = color.z = sin(gui.alert)*255;
+    }
+    gf2d_sprite_draw(
+        gui.hud,vector2d(0,100),
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        &color,
+        0);
     gui_draw_percent_bar_horizontal(gf2d_rect(495,680,145,10),gui.healthPercent,vector4d((1-gui.healthPercent) * 255, gui.healthPercent*255, 0, 255), vector4d(128, 0, 0, 128),0);
     gui_draw_percent_bar_horizontal(gf2d_rect(640,680,145,10),gui.shieldPercent,vector4d(0, 0, 255, 255), vector4d(128, 0, 0, 128),1);
     gui_draw_percent_bar_vertical(gf2d_rect(475,680,15,30),gui.thrustPercent,vector4d(0, 255, 255, 255), vector4d(128, 0, 0, 128),1);
