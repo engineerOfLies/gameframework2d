@@ -68,7 +68,7 @@ void gui_draw_hud()
     if (gui.healthPercent < 0.2)
     {
         gui.alert = (gui.alert + 0.02);
-        if (gui.alert >= GF2D_PI)gui.alert = 0;
+        if (gui.alert >= M_PI)gui.alert = 0;
         color.y = color.z = sin(gui.alert)*255;
     }
     gf2d_sprite_draw(

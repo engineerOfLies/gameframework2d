@@ -210,22 +210,22 @@ Vector2D gf2d_body_normal(Body *body,Vector2D poc, Vector2D *normal)
     vector2d_copy(n,(*normal));
     if ((normal->x > 0) && (body->position.x < poc.x))
     {
-        n = vector2d_rotate(n,GF2D_PI);
+        n = vector2d_rotate(n,M_PI);
         return n;
     }
     if ((normal->x < 0) && (body->position.x > poc.x))
     {
-        n = vector2d_rotate(n,GF2D_PI);
+        n = vector2d_rotate(n,M_PI);
         return n;
     }
     if ((normal->y > 0) && (body->position.y < poc.y))
     {
-        n = vector2d_rotate(n,GF2D_PI);
+        n = vector2d_rotate(n,M_PI);
         return n;
     }
     if ((normal->y < 0) && (body->position.y > poc.y))
     {
-        n = vector2d_rotate(n,GF2D_PI);
+        n = vector2d_rotate(n,M_PI);
         return n;
     }
     return n;
