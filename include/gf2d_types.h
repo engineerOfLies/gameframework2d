@@ -1,6 +1,9 @@
 #ifndef __GF2D_TYPES_H__
 #define __GF2D_TYPES_H__
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 #define GF2D_EPSILON   1e-6f
 
 #define GF2D_2PI 6.283185308
