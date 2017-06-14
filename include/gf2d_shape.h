@@ -380,6 +380,17 @@ Uint8 gf2d_edge_intersect_shape_poc(Edge e,Shape s,Vector2D *poc,Vector2D *norma
  */
 void gf2d_shape_slog(Shape shape);
 
+/**
+ * @brief echo out the rect information to log (and stdout)
+ * @param r the rect information to echo
+ */
 void gf2d_rect_slog(Rect r);
+
+/**
+ * @brief get the minum rectangle that bounds the shape
+ * @param shape the shape to get the bounds of
+ * @return the bounding rectangle
+ */
+Rect gf2d_shape_get_bounds(Shape shape);
 
 #endif

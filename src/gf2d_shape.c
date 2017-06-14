@@ -601,4 +601,42 @@ void gf2d_shape_slog(Shape shape)
             break;
     }
 }
+
+Rect gf2d_edge_get_bounds(Edge e)
+{
+    Rect r;
+    r.x = MIN(e.x1,e.x2);
+    r.y = MIN(e.y1,e.y2);
+    r.w = fabs(e.x1 - e.x2);
+    r.h = fabs(e.y1 - e.y2);
+    return r;
+}
+
+Rect gf2d_circle_get_bounds(Circle c)
+{
+    Rect r;
+    r.x = c.x-c.r;
+    r.y = c.y-c.r;
+    r.w = c.r*2;
+    r.h = c.r*2;
+    return r;
+}
+
+Rect gf2d_shape_get_bounds(Shape shape)
+{
+    Rect r = {0,0,0,0};
+    switch(shape.type)
+    {
+        case ST_EDGE:
+            gf2d_edge_get_bounds(shape.s.e);
+            break;
+        case ST_RECT:
+            return shape.s.r;
+            break;
+        case ST_CIRCLE:
+            gf2d_circle_get_bounds(shape.s.c);
+            break;
+    }
+    return r;
+}
 /*eol@eof*/

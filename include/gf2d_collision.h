@@ -5,6 +5,8 @@
 #include "gf2d_list.h"
 #include "gf2d_text.h"
 
+#define ALL_LAYERS 0xffffffff
+
 typedef struct Collision_S Collision;
 
 typedef struct Body_S
@@ -47,8 +49,6 @@ typedef struct
     float       slop;           /**<how much to correct for body overlap*/
 }Space;
 
-
-#define ALL_LAYERS 0xffffffff
 
 /**
  * @brief initializes a body to zero
@@ -127,6 +127,14 @@ void gf2d_space_draw(Space *space);
  * @note the space will not free the body, but do not until it has been removed from the space
  */
 void gf2d_space_add_body(Space *space,Body *body);
+
+/**
+ * @brief removes a body from the space
+ * @note this should not be done DURING a space update
+ * @param space the space to remove the body from
+ * @param body the body to remove
+ */
+void gf2d_space_remove_body(Space *space,Body *body);
 
 /**
  * @brief apply a force to a body taking into account momentum

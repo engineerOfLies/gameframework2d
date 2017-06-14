@@ -133,7 +133,13 @@ void gf2d_space_remove_body(Space *space,Body *body)
         slog("no body provided");
         return;
     }
-    space->bodyList = gf2d_list_delete_data(space->bodyList,(void *)body);
+    if (space->bodyList)
+    {
+        if (gf2d_list_delete_data(space->bodyList,(void *)body)!= 0)
+        {
+            slog("failed to remove body named %s from the space",body->name);
+        }
+    }
 }
 
 void gf2d_space_add_body(Space *space,Body *body)
@@ -219,7 +225,6 @@ Vector2D gf2d_body_normal(Body *body,Vector2D poc, Vector2D *normal)
     }
     if ((normal->y < 0) && (body->position.y > poc.y))
     {
-//        vector2d_negate(n,n);
         n = vector2d_rotate(n,GF2D_PI);
         return n;
     }
@@ -253,7 +258,7 @@ void gf2d_body_adjust_bounds_collision_velocity(Body *a,Vector2D poc, Vector2D n
     }
 }
 
-void gf2d_body_adjust_static_collision_velocity(Body *a,Shape *s,Vector2D poc, Vector2D normal)
+void gf2d_body_adjust_static_bounce_velocity(Body *a,Shape *s,Vector2D poc, Vector2D normal)
 {
     double phi;//contact angle
     double theta1,theta2;// movement angles
@@ -272,13 +277,39 @@ void gf2d_body_adjust_static_collision_velocity(Body *a,Shape *s,Vector2D poc, V
     vector2d_copy(a->newvelocity,nv);
 }
 
-void gf2d_body_adjust_collision_overlap(Body *a,float slop,Vector2D poc, Vector2D normal)
+void gf2d_body_adjust_collision_overlap(Body *a,float slop,Rect bounds)
 {
+    Rect r;
     if (!a)return;
-    normal = gf2d_body_normal(a,poc, &normal);
-    vector2d_set_magnitude(&normal,slop);
-    vector2d_add(a->position,a->position,normal);
+    gf2d_shape_get_bounds(*a->shape);
+    vector2d_add(r,r,a->position);
+    if (r.x < bounds.x)r.x = bounds.x + slop;
+    if (r.y < bounds.y)r.y = bounds.y + slop;
+    if (r.x + r.w > bounds.x + bounds.w)r.x = bounds.x + bounds.w - r.w - slop;
+    if (r.y + r.h > bounds.y + bounds.h)r.y = bounds.y + bounds.h - r.h - slop;
 }
+
+void gf2d_body_adjust_collision_bounds_velocity(Body *a,float slop, Rect bounds,Vector2D *velocity)
+{
+    Rect r;
+    if (!a)return;
+    gf2d_shape_get_bounds(*a->shape);
+    vector2d_add(r,r,a->position);
+    vector2d_add(r,r,(*velocity));
+    if ((r.x <= bounds.x + slop)&&(velocity->x < 0))velocity->x = 0;
+    if ((r.y <= bounds.y + 2)&&(velocity->y < 0))
+    {
+        slog("would collide with upper bounds");
+        velocity->y = 0;
+    }
+    if ((r.x + r.w >= bounds.x + bounds.w - slop)&&(velocity->x > 0))velocity->x = 0;
+    if ((r.y + r.h >= bounds.y + bounds.h - slop)&&(velocity->y > 0))
+    {
+        velocity->y = 0;
+        slog("would collide with lower bounds");
+    }
+}
+
 
 void gf2d_body_adjust_collision_velocity(Body *a,Body *b,Vector2D poc, Vector2D normal)
 {
@@ -389,10 +420,14 @@ void gf2d_body_step(Body *body,Space *space,float step)
     Vector2D velocity;
     if (!body)return;
     if (!space)return;
-    vector2d_scale(velocity,body->velocity,space->timeStep);
-    vector2d_add(body->position,body->position,velocity);
     bodies = gf2d_list_get_count(space->bodyList);
     staticShapes = gf2d_list_get_count(space->staticShapes);
+
+    vector2d_scale(velocity,body->velocity,space->timeStep);
+    
+//    gf2d_body_adjust_collision_bounds_velocity(body,space->slop,space->bounds,&velocity);
+
+    vector2d_add(body->position,body->position,velocity);
     if (space->precision)
     {
         vector2d_scale(velocity,velocity,1.0/space->precision);
@@ -411,8 +446,8 @@ void gf2d_body_step(Body *body,Space *space,float step)
         {
             other = (Body*)gf2d_list_get_nth(space->bodyList,i);
             if ((!other)||// error check
-                (other == body)||//dont self collide
-                !(other->layer & body->layer))continue;// only we share a layer
+                (other == body))continue;//dont self collide
+            if(!(other->layer & body->layer))continue;// only we share a layer
             if ((body->team)&&(other->team == body->team))// no friendly fire
                 continue;
             if (gf2d_body_collide(body,other,&poc,&normal))
@@ -431,6 +466,7 @@ void gf2d_body_step(Body *body,Space *space,float step)
                 goto attempt;
             }
         }
+        // this pass collided with no new things
         break;
 attempt:
         //collision
@@ -451,8 +487,18 @@ attempt:
             vector2d_copy(collision.pointOfContact,poc);
             vector2d_copy(collision.normal,normal);
             collision.timeStep = step;
-            body->bodyTouch(body,other,&collision);
+            body->bodyTouch(body,collider,&collision);
         }
+        if (collider->bodyTouch != NULL)
+        {
+            collision.shape = body->shape;
+            collision.body = body;
+            vector2d_copy(collision.pointOfContact,poc);
+            vector2d_copy(collision.normal,normal);
+            collision.timeStep = step;
+            collider->bodyTouch(collider,body,&collision);
+        }
+
         gf2d_body_adjust_collision_velocity(body,collider,poc, normal);
         gf2d_body_adjust_collision_velocity(collider,body,poc, normal);
     }
@@ -464,7 +510,7 @@ attempt:
         {
             body->worldTouch(body,NULL);
         }
-        gf2d_body_adjust_static_collision_velocity(body,collisionShape,pocS, normalS);
+        gf2d_body_adjust_static_bounce_velocity(body,collisionShape,pocS, normalS);
     }
     if (collided)
     {
@@ -472,7 +518,7 @@ attempt:
         {
             body->worldTouch(body,NULL);
         }
-        gf2d_body_adjust_collision_overlap(body,space->slop,pocB, normalB);
+        gf2d_body_adjust_collision_overlap(body,space->slop,space->bounds);
     }
 }
 
@@ -486,6 +532,7 @@ void gf2d_space_step(Space *space,float t)
     if (!space)return;
     vector2d_scale(gravityStep,space->gravity,space->timeStep);
     bodies = gf2d_list_get_count(space->bodyList);
+//    slog("updating space step:");
     for (i = 0; i < bodies; i++)
     {
         body = (Body*)gf2d_list_get_nth(space->bodyList,i);
@@ -499,6 +546,10 @@ void gf2d_space_step(Space *space,float t)
         body = (Body*)gf2d_list_get_nth(space->bodyList,i);
         if ((!body)||(body->inactive))continue;// body already hit something
         // apply gravity
+//         if (strcmp(body->name,"player")==0)
+//         {
+//                 slog("updating player body");
+//         }
         gf2d_body_step(body,space,t);
     }
     for (i = 0; i < bodies; i++)
