@@ -81,21 +81,58 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\camera.c" />
+    <ClCompile Include="..\..\src\entity_common.c" />
     <ClCompile Include="..\..\src\game.c" />
+    <ClCompile Include="..\..\src\gf2d_actor.c" />
+    <ClCompile Include="..\..\src\gf2d_audio.c" />
+    <ClCompile Include="..\..\src\gf2d_collision.c" />
+    <ClCompile Include="..\..\src\gf2d_color.c" />
     <ClCompile Include="..\..\src\gf2d_draw.c" />
+    <ClCompile Include="..\..\src\gf2d_entity.c" />
     <ClCompile Include="..\..\src\gf2d_graphics.c" />
+    <ClCompile Include="..\..\src\gf2d_list.c" />
+    <ClCompile Include="..\..\src\gf2d_particles.c" />
+    <ClCompile Include="..\..\src\gf2d_shape.c" />
     <ClCompile Include="..\..\src\gf2d_sprite.c" />
+    <ClCompile Include="..\..\src\gf2d_text.c" />
     <ClCompile Include="..\..\src\gf2d_vector.c" />
+    <ClCompile Include="..\..\src\gui.c" />
+    <ClCompile Include="..\..\src\items.c" />
+    <ClCompile Include="..\..\src\level.c" />
+    <ClCompile Include="..\..\src\particle_effects.c" />
+    <ClCompile Include="..\..\src\player.c" />
+    <ClCompile Include="..\..\src\projectiles.c" />
     <ClCompile Include="..\..\src\simple_logger.c" />
+    <ClCompile Include="..\..\src\space_bug.c" />
+    <ClCompile Include="..\..\src\spawn.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\include\camera.h" />
+    <ClInclude Include="..\..\include\entity_common.h" />
+    <ClInclude Include="..\..\include\gf2d_actor.h" />
+    <ClInclude Include="..\..\include\gf2d_audio.h" />
+    <ClInclude Include="..\..\include\gf2d_collision.h" />
+    <ClInclude Include="..\..\include\gf2d_color.h" />
     <ClInclude Include="..\..\include\gf2d_draw.h" />
+    <ClInclude Include="..\..\include\gf2d_entity.h" />
     <ClInclude Include="..\..\include\gf2d_graphics.h" />
+    <ClInclude Include="..\..\include\gf2d_list.h" />
+    <ClInclude Include="..\..\include\gf2d_particles.h" />
+    <ClInclude Include="..\..\include\gf2d_shape.h" />
     <ClInclude Include="..\..\include\gf2d_sprite.h" />
     <ClInclude Include="..\..\include\gf2d_text.h" />
     <ClInclude Include="..\..\include\gf2d_types.h" />
     <ClInclude Include="..\..\include\gf2d_vector.h" />
+    <ClInclude Include="..\..\include\gui.h" />
+    <ClInclude Include="..\..\include\items.h" />
+    <ClInclude Include="..\..\include\level.h" />
+    <ClInclude Include="..\..\include\particle_effects.h" />
+    <ClInclude Include="..\..\include\player.h" />
+    <ClInclude Include="..\..\include\projectiles.h" />
     <ClInclude Include="..\..\include\simple_logger.h" />
+    <ClInclude Include="..\..\include\space_bug.h" />
+    <ClInclude Include="..\..\include\spawn.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

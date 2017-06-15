@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include "simple_logger.h"
 #include "camera.h"
 #include "level.h"
@@ -19,7 +21,12 @@ Entity *projectile_new(Vector2D position,Vector2D velocity,float damage,float sc
 
     if (parent)
     {
+#if defined(_MSC_VER) && _MSC_VER < 1900
+        sprintf(self->name,"%s's projectile",parent->name);
+	
+#elif
         snprintf(self->name,GF2DLINELEN,"%s's projectile",parent->name);
+#endif
     }
     else
     {

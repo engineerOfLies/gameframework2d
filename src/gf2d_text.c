@@ -1,4 +1,5 @@
 #include <SDL_ttf.h>
+#include <stdio.h>
 #include "gf2d_text.h"
 #include "gf2d_graphics.h"
 #include "simple_logger.h"

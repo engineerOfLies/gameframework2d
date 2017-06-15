@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "items.h"
 #include "level.h"
 #include "simple_logger.h"
