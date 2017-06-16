@@ -25,7 +25,7 @@
  * @purpose the MGL text library provides common string support for fixed length
  *  strings.  For use with unlimited strings mgl will use glib's GString type
  */
-
+#include <string.h>
 #include "gf2d_types.h"
 
 /**
