@@ -2,6 +2,7 @@
 #include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
 #include "simple_logger.h"
+#include "gf2d_list.h"
 
 int main(int argc, char * argv[])
 {
@@ -9,7 +10,7 @@ int main(int argc, char * argv[])
     int done = 0;
     const Uint8 * keys;
     Sprite *sprite;
-    
+    List *list;
     int mx,my;
     float mf = 0;
     Sprite *mouse;
@@ -33,6 +34,11 @@ int main(int argc, char * argv[])
     /*demo setup*/
     sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16);
+    
+    list = gf2d_list_new();
+    
+    list = gf2d_list_append(list,(void *)mouse);
+    
     /*main game loop*/
     while(!done)
     {
@@ -64,6 +70,7 @@ int main(int argc, char * argv[])
         if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition
         slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
+    gf2d_list_delete(list);
     slog("---==== END ====---");
     return 0;
 }
