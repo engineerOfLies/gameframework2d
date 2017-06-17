@@ -62,12 +62,16 @@ List *gf2d_list_expand(List *list)
         slog("no list provided");
         return NULL;
     }
+    if (!list->size)list->size = 8;
     l = gf2d_list_new_size(list->size * 2);
     if (!l)
     {
         return list;
     }
-    memcpy(l->elements,list->elements,sizeof(ListElement)*list->count);
+    if (list->count > 0)
+    {
+        memcpy(l->elements,list->elements,sizeof(ListElement)*list->count);
+    }
     l->count = list->count;
     gf2d_list_delete(list);
     return l;
@@ -83,7 +87,11 @@ List *gf2d_list_append(List *list,void *data)
     if (list->count >= list->size)
     {
         list = gf2d_list_expand(list);
-        if (!list)return NULL;
+        if (!list)
+        {
+            slog("append failed due to lack of memory");
+            return NULL;
+        }
     }
     list->elements[list->count++].data = data;
     return list;
@@ -133,24 +141,25 @@ List *gf2d_list_delete_last(List *list)
     return gf2d_list_delete_nth(list,list->count-1);
 }
 
-List *gf2d_list_delete_data(List *list,void *data)
+int gf2d_list_delete_data(List *list,void *data)
 {
     int i;
     if (!list)
     {
         slog("no list provided");
-        return NULL;
+        return -1;
     }
     for (i = 0; i < list->count;i++)
     {
         if (list->elements[i].data == data)
         {
             // found it, now delete it
-            return gf2d_list_delete_nth(list,i);
+            gf2d_list_delete_nth(list,i);
+            return 0;
         }
     }
     slog("data not found");
-    return list;
+    return -1;
 }
 
 List *gf2d_list_delete_nth(List *list,Uint32 n)
