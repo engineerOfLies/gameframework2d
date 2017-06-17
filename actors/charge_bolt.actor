@@ -1,0 +1,13 @@
+sprite: images/charge_bolt.png
+frameWidth: 64
+frameHeight: 64
+framesPerLine: 16
+scale: 1,1
+color: 255,255,255,255
+colorSpecial: 255,100,100,255
+
+action: idle
+startFrame: 0
+endFrame: 15
+frameRate: 0.5
+type:   loop
