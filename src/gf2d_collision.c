@@ -24,7 +24,7 @@ void gf2d_body_set(
     int     (*worldTouch)(struct Body_S *self, Collision *collision))
 {
     if (!body)return;
-    body->layer = layer;
+	body->layer = layer;
     body->team = team;
     vector2d_copy(body->position,position);
     vector2d_copy(body->velocity,velocity);
@@ -281,7 +281,7 @@ void gf2d_body_adjust_collision_overlap(Body *a,float slop,Rect bounds)
 {
     Rect r;
     if (!a)return;
-    gf2d_shape_get_bounds(*a->shape);
+    r = gf2d_shape_get_bounds(*a->shape);
     vector2d_add(r,r,a->position);
     if (r.x < bounds.x)r.x = bounds.x + slop;
     if (r.y < bounds.y)r.y = bounds.y + slop;
