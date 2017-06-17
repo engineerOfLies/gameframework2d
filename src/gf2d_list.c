@@ -149,6 +149,7 @@ int gf2d_list_delete_data(List *list,void *data)
         slog("no list provided");
         return -1;
     }
+    if (!data)return 0;
     for (i = 0; i < list->count;i++)
     {
         if (list->elements[i].data == data)

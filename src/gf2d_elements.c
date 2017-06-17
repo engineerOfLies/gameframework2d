@@ -16,6 +16,25 @@ Element *gf2d_element_new()
     return e;
 }
 
+Element *gf2d_element_new_full(
+    int      index,
+    TextLine name,
+    Rect bounds,
+    Color color,
+    int state
+)
+{
+    Element *e;
+    e = gf2d_element_new();
+    if (!e)return NULL;
+    gf2d_line_cpy(e->name,name);
+    e->index = index;
+    e->color = color;
+    e->state = state;
+    e->bounds = bounds;
+    return e;
+}
+
 void gf2d_element_free(Element *e)
 {
     if (!e)return;

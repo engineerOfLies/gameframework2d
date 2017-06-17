@@ -139,6 +139,22 @@ void gf2d_color_set_hue(float hue,Color *color);
 void gf2d_color_add(Color *dst,Color a,Color b);
 
 /**
+ * @brief blend two colors together
+ * @param dst if NULL this function is a no op.  Result saved here
+ * @param a the format for a is used as the resulting format.  Conversion happen before blending
+ * @param b the color to add to a
+ */
+void gf2d_color_blend(Color *dst,Color a,Color b);
+
+/**
+ * @brief multiplies colors a and b and saves the result in dst
+ * @param dst if NULL this function is a no op.  Result saved here
+ * @param a the format for a is used as the resulting format.  Conversion happen before multiplying
+ * @param b the color to add to a
+ */
+void gf2d_color_multiply(Color *dst,Color a,Color b);
+
+/**
  * @brief make sure the values in the color are within acceptable ranges
  * Note this will break any colors used as a vector that contain negative values
  * @param color the color to clamp

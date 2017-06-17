@@ -4,6 +4,7 @@
 #include "gf2d_sprite.h"
 #include "gf2d_list.h"
 #include "gf2d_elements.h"
+#include "gf2d_label_element.h"
 
 typedef enum
 {
@@ -20,11 +21,13 @@ typedef enum
 typedef struct Window_S
 {
     int _inuse;             /**<do not touch*/
-    List *elements;
+    int no_draw_generic;    /**<if true, do not use the generic window draw style*/
+    List *elements;         /**<all the components of the window*/
     Sprite *background;     /**<background image*/
     Sprite *border;         /**<border sprites*/
     Rect dimensions;        /**<where on the screen*/
     Rect canvas;            /**<Where within the window we draw things*/
+    Vector4D color;         /**<color to draw the window with*/
     int (*update)(struct Window_S *win);
     int (*draw)(struct Window_S *win);
     int (*free_data)(struct Window_S *win);
@@ -90,13 +93,15 @@ void gf2d_window_draw(Window *win);
  * @param border the sprite containing the border elements
  * @param bg the sprite to use for the background image (it will be stretch to match the rect
  * @param rect the dimensions of the window to draw
+ * @param color the color to draw the window with
  */
 void gf2d_draw_window_border(Sprite *border,Sprite *bg,Rect rect,Vector4D color);
 
 /**
  * @brief draw a generic window using the common border assets
  * @param rect the dimensions of the window to draw
+ * @param color the color to draw the window with
  */
-void gf2d_draw_window_border_generic(Rect rect);
+void gf2d_draw_window_border_generic(Rect rect,Vector4D color);
 
 #endif

@@ -275,6 +275,50 @@ void gf2d_color_set_hue(float hue,Color *color)
     }
 }
 
+void gf2d_color_blend(Color *dst,Color a,Color b)
+{
+    float hex;
+    if (!dst)return;
+    switch (a.ct)
+    {
+        case CT_HSL:
+            b = gf2d_color_to_hsla(b);
+            *dst = gf2d_color_hsl(
+                (a.r+b.r)*0.5,
+                (a.g+b.g)*0.5,
+                (a.b+b.b)*0.5,
+                (a.a+b.a)*0.5);
+        return;
+        case CT_HEX:
+            a = gf2d_color_to_int8(a);
+            b = gf2d_color_to_int8(b);
+            *dst = gf2d_color8(
+                (a.r+b.r)*0.5,
+                (a.g+b.g)*0.5,
+                (a.b+b.b)*0.5,
+                (a.a+b.a)*0.5);
+            hex = gf2d_color_to_hex(*dst);
+            *dst = gf2d_color_hex(hex);
+        return;
+        case CT_RGBA8:
+            b = gf2d_color_to_int8(b);
+            *dst = gf2d_color8(
+                (a.r+b.r)*0.5,
+                (a.g+b.g)*0.5,
+                (a.b+b.b)*0.5,
+                (a.a+b.a)*0.5);
+        return;
+        case CT_RGBAf:
+            b = gf2d_color_to_float(b);
+            *dst = gf2d_color(
+                (a.r+b.r)*0.5,
+                (a.g+b.g)*0.5,
+                (a.b+b.b)*0.5,
+                (a.a+b.a)*0.5);
+        return;
+    }    
+}
+
 void gf2d_color_add(Color *dst,Color a,Color b)
 {
     float hex;
@@ -315,6 +359,50 @@ void gf2d_color_add(Color *dst,Color a,Color b)
                 a.g+b.g,
                 a.b+b.b,
                 a.a+b.a);
+        return;
+    }    
+}
+
+void gf2d_color_multiply(Color *dst,Color a,Color b)
+{
+    float hex;
+    if (!dst)return;
+    switch (a.ct)
+    {
+        case CT_HSL:
+            b = gf2d_color_to_hsla(b);
+            *dst = gf2d_color_hsl(
+                a.r*b.r,
+                a.g*b.g,
+                a.b*b.b,
+                a.a*b.a);
+        return;
+        case CT_HEX:
+            a = gf2d_color_to_int8(a);
+            b = gf2d_color_to_int8(b);
+            *dst = gf2d_color8(
+                a.r*b.r,
+                a.g*b.g,
+                a.b*b.b,
+                a.a*b.a);
+            hex = gf2d_color_to_hex(*dst);
+            *dst = gf2d_color_hex(hex);
+        return;
+        case CT_RGBA8:
+            b = gf2d_color_to_int8(b);
+            *dst = gf2d_color8(
+                a.r*b.r,
+                a.g*b.g,
+                a.b*b.b,
+                a.a*b.a);
+        return;
+        case CT_RGBAf:
+            b = gf2d_color_to_float(b);
+            *dst = gf2d_color(
+                a.r*b.r,
+                a.g*b.g,
+                a.b*b.b,
+                a.a*b.a);
         return;
     }    
 }
