@@ -4,6 +4,7 @@
 #include "simple_logger.h"
 #include "gf2d_list.h"
 #include "gf2d_audio.h"
+#include "gf2d_windows.h"
 
 int main(int argc, char * argv[])
 {
@@ -11,7 +12,6 @@ int main(int argc, char * argv[])
     int done = 0;
     const Uint8 * keys;
     Sprite *sprite;
-    Mix_Music *music;
     
     int mx,my;
     float mf = 0;
@@ -32,13 +32,12 @@ int main(int argc, char * argv[])
     gf2d_graphics_set_frame_delay(16);
     gf2d_audio_init(256,16,4,1,1,1);
     gf2d_sprite_init(1024);
+    gf2d_windows_init(128);
     SDL_ShowCursor(SDL_DISABLE);
     
     /*demo setup*/
     sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16);
-    music = Mix_LoadMUS("music/wisdom.mp3");
-    Mix_PlayMusic(music, -1);
 
     /*main game loop*/
     while(!done)
@@ -57,6 +56,7 @@ int main(int argc, char * argv[])
             gf2d_sprite_draw_image(sprite,vector2d(0,0));
             
             //UI elements last
+            gf2d_draw_window_border_generic(gf2d_rect(100,200,700,250));
             gf2d_sprite_draw(
                 mouse,
                 vector2d(mx,my),
@@ -69,10 +69,8 @@ int main(int argc, char * argv[])
         gf2d_grahics_next_frame();// render current draw frame and skip to the next frame
         
         if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition
-        slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
+   //     slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
-    Mix_HaltMusic();
-    Mix_FreeMusic(music);
     slog("---==== END ====---");
     return 0;
 }

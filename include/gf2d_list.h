@@ -72,6 +72,7 @@ List *gf2d_list_delete_nth(List *list,Uint32 n);
 
 /**
  * @brief delete the first element in the list pointing to the address of data
+ * @note does not delete the data itself
  * @param list the list to delete the element from
  * @param data used to match against which element to delete
  * @return 0 on complete, error otherwise
