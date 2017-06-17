@@ -3,6 +3,7 @@
 #include "gf2d_sprite.h"
 #include "simple_logger.h"
 #include "gf2d_list.h"
+#include "gf2d_audio.h"
 
 int main(int argc, char * argv[])
 {
@@ -10,6 +11,8 @@ int main(int argc, char * argv[])
     int done = 0;
     const Uint8 * keys;
     Sprite *sprite;
+    Mix_Music *music;
+    
     int mx,my;
     float mf = 0;
     Sprite *mouse;
@@ -27,13 +30,16 @@ int main(int argc, char * argv[])
         vector4d(0,0,0,255),
         0);
     gf2d_graphics_set_frame_delay(16);
+    gf2d_audio_init(256,16,4,1,1,1);
     gf2d_sprite_init(1024);
     SDL_ShowCursor(SDL_DISABLE);
     
     /*demo setup*/
     sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16);
-        
+    music = Mix_LoadMUS("music/wisdom.mp3");
+    Mix_PlayMusic(music, -1);
+
     /*main game loop*/
     while(!done)
     {
@@ -65,6 +71,8 @@ int main(int argc, char * argv[])
         if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition
         slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
+    Mix_HaltMusic();
+    Mix_FreeMusic(music);
     slog("---==== END ====---");
     return 0;
 }
