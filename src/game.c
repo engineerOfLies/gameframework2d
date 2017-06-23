@@ -6,21 +6,61 @@
 #include "gf2d_audio.h"
 #include "gf2d_windows.h"
 
+void add_menu_item(Element *menu,char *text,int id)
+{
+    Element *e;
+    Element *l;
+    l = gf2d_element_new_full(
+        id,
+        text,
+        gf2d_rect(0,0,menu->bounds.w,32),
+        gf2d_color8(255,255,255,255),
+        0);
+    gf2d_element_make_list(l,gf2d_element_list_new_full(vector2d(64,32),LS_Horizontal,0,0));
+    
+    e = gf2d_element_new_full(
+        0,
+        "bullet",
+        gf2d_rect(0,-16,64,32),
+        gf2d_color8(255,255,255,255),
+        0);
+    gf2d_element_make_actor(e,gf2d_element_actor_new_full("actors/charge_bolt.actor"));
+    gf2d_element_list_add_item(l,e);
+    
+    e = gf2d_element_new();
+    gf2d_element_make_label(e,gf2d_element_label_new_full(text,gf2d_color8(255,255,255,255),FT_H3,0));
+    gf2d_element_list_add_item(l,e);
+
+    gf2d_element_list_add_item(menu,l);
+}
+
 void main_menu()
 {
     Element *e;
+    Element *l;
     Window *win;
     win = gf2d_window_new();
     win->color = vector4d(0,255,100,255);
     win->dimensions = gf2d_rect(200,200,800,400);
     
-    e = gf2d_element_new();
-    gf2d_element_make_label(e,gf2d_label_element_new("Window Heading",gf2d_color8(255,255,255,255),FT_H1,0));
-    gf2d_window_add_element(win,e);
+    l = gf2d_element_new_full(
+        0,
+        "list",
+        gf2d_rect(10,10,win->dimensions.w-20,win->dimensions.h-20),
+        gf2d_color8(255,255,255,255),
+        0);
+    gf2d_element_make_list(l,gf2d_element_list_new_full(vector2d(100,32),LS_Vertical,0,0));
+    gf2d_window_add_element(win,l);
+
     
     e = gf2d_element_new();
-    gf2d_element_make_actor(e,gf2d_actor_element_new_full("actors/charge_bolt.actor"));
-    gf2d_window_add_element(win,e);
+    gf2d_element_make_label(e,gf2d_element_label_new_full("Window Heading",gf2d_color8(255,255,255,255),FT_H1,0));
+    gf2d_element_list_add_item(l,e);
+
+    add_menu_item(l,"New Game",0);
+    add_menu_item(l,"Continue",1);
+    add_menu_item(l,"Load Game",2);
+    add_menu_item(l,"Quit",3);
 }
 
 int main(int argc, char * argv[])
@@ -67,6 +107,7 @@ int main(int argc, char * argv[])
         SDL_GetMouseState(&mx,&my);
         mf+=0.1;
         if (mf >= 16.0)mf = 0;
+        gf2d_windows_update_all();
         
         
         gf2d_graphics_clear_screen();// clears drawing buffers

@@ -1,9 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "gf2d_actor_element.h"
+#include "gf2d_element_actor.h"
 #include "simple_logger.h"
 
-void actor_draw(Element *element,Vector2D offset)
+void gf2d_element_actor_draw(Element *element,Vector2D offset)
 {
     ActorElement *actor;
     Vector2D position;
@@ -11,7 +11,6 @@ void actor_draw(Element *element,Vector2D offset)
     actor = (ActorElement*)element->data;
     if (!actor)return;
     vector2d_add(position,offset,element->bounds);
-    slog("drawing actor at scale %f,%f",actor->scale.x,actor->scale.y);
     gf2d_actor_draw(
         &actor->actor,
         position,
@@ -21,12 +20,17 @@ void actor_draw(Element *element,Vector2D offset)
         NULL);
 }
 
-int  actor_update(Element *element,Vector2D offset)
+int  gf2d_element_actor_update(Element *element,Vector2D offset)
 {
+    ActorElement *actor;
+    if (!element)return 0;
+    actor = (ActorElement*)element->data;
+    if (!actor)return 0;
+    gf2d_actor_next_frame(&actor->actor);
     return 0;
 }
 
-void actor_free(Element *element)
+void gf2d_element_actor_free(Element *element)
 {
     ActorElement *actor;
     if (!element)return;
@@ -37,7 +41,7 @@ void actor_free(Element *element)
     }
 }
 
-ActorElement *gf2d_actor_element_new()
+ActorElement *gf2d_element_actor_new()
 {
     ActorElement *actor;
     actor = (ActorElement *)malloc(sizeof(ActorElement));
@@ -51,10 +55,10 @@ ActorElement *gf2d_actor_element_new()
 }
 
 
-ActorElement *gf2d_actor_element_new_full(char *actorFile)
+ActorElement *gf2d_element_actor_new_full(char *actorFile)
 {
     ActorElement *ae;
-    ae = gf2d_actor_element_new();
+    ae = gf2d_element_actor_new();
     if (!ae)
     {
         return NULL;
@@ -68,8 +72,8 @@ void gf2d_element_make_actor(Element *e,ActorElement *actor)
 {
     if (!e)return;
     e->data = (void*)actor;
-    e->draw = actor_draw;
-    e->update = actor_update;
-    e->free_data = actor_free;
+    e->draw = gf2d_element_actor_draw;
+    e->update = gf2d_element_actor_update;
+    e->free_data = gf2d_element_actor_free;
 }
 /*eol@eof*/

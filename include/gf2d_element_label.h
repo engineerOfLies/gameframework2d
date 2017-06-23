@@ -18,7 +18,15 @@ typedef struct
     int justify;        /**<leaning left or right*/
 }LabelElement;
 
-LabelElement *gf2d_label_element_new(char *text,Color color,int style,int justify);
+/**
+ * @brief make a new label element
+ * @param text the label text
+ * @param color the label text color
+ * @param style the font style
+ * @param justify the LabelJustification
+ * @return NULL on error or a new label element
+ */
+LabelElement *gf2d_element_label_new_full(char *text,Color color,int style,int justify);
 
 /**
  * @brief set an element to be the label provided

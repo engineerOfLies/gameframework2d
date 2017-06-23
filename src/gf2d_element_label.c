@@ -1,9 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "gf2d_label_element.h"
+#include "gf2d_element_label.h"
 #include "simple_logger.h"
 
-void label_draw(Element *element,Vector2D offset)
+void gf2d_element_label_draw(Element *element,Vector2D offset)
 {
     LabelElement *label;
     Vector2D position;
@@ -15,12 +15,12 @@ void label_draw(Element *element,Vector2D offset)
     gf2d_text_draw_line(label->text,label->style,label->color, position);
 }
 
-int  label_update(Element *element,Vector2D offset)
+int  gf2d_element_label_update(Element *element,Vector2D offset)
 {
     return 0;
 }
 
-void label_free(Element *element)
+void gf2d_element_label_free(Element *element)
 {
     LabelElement *label;
     if (!element)return;
@@ -31,7 +31,7 @@ void label_free(Element *element)
     }
 }
 
-LabelElement *label_new()
+LabelElement *gf2d_element_label_new()
 {
     LabelElement *label;
     label = (LabelElement *)malloc(sizeof(LabelElement));
@@ -45,10 +45,10 @@ LabelElement *label_new()
 }
 
 
-LabelElement *gf2d_label_element_new(char *text,Color color,int style,int justify)
+LabelElement *gf2d_element_label_new_full(char *text,Color color,int style,int justify)
 {
     LabelElement *label;
-    label = label_new();
+    label = gf2d_element_label_new();
     if (!label)
     {
         return NULL;
@@ -64,8 +64,8 @@ void gf2d_element_make_label(Element *e,LabelElement *label)
 {
     if (!e)return;
     e->data = label;
-    e->draw = label_draw;
-    e->update = label_update;
-    e->free_data = label_free;
+    e->draw = gf2d_element_label_draw;
+    e->update = gf2d_element_label_update;
+    e->free_data = gf2d_element_label_free;
 }
 /*eol@eof*/

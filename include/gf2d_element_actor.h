@@ -10,9 +10,9 @@ typedef struct
     Vector2D scale;
 }ActorElement;
 
-ActorElement *gf2d_actor_element_new();
+ActorElement *gf2d_element_actor_new();
 
-ActorElement *gf2d_actor_element_new_full(char *actorFile);
+ActorElement *gf2d_element_actor_new_full(char *actorFile);
 
 /**
  * @brief set an element to be the actor provided

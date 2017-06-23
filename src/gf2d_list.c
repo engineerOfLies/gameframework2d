@@ -32,14 +32,14 @@ List *gf2d_list_new_size(Uint32 count)
     }
     memset(l,0,sizeof(List));
     l->size = count;
-    l->elements = (ListElement*)malloc(sizeof(ListElement)*count);
+    l->elements = (ListElementData*)malloc(sizeof(ListElementData)*count);
     if (!l->elements)
     {
         slog("failed to allocate space for list elements");
         free(l);
         return NULL;
     }
-    memset(l->elements,0,sizeof(ListElement)*count);
+    memset(l->elements,0,sizeof(ListElementData)*count);
     return l;
 }
 
@@ -70,7 +70,7 @@ List *gf2d_list_expand(List *list)
     }
     if (list->count > 0)
     {
-        memcpy(l->elements,list->elements,sizeof(ListElement)*list->count);
+        memcpy(l->elements,list->elements,sizeof(ListElementData)*list->count);
     }
     l->count = list->count;
     gf2d_list_delete(list);
@@ -119,7 +119,7 @@ List *gf2d_list_insert(List *list,void *data,Uint32 n)
         list = gf2d_list_expand(list);
         if (!list)return NULL;
     }
-    memmove(&list->elements[n+1],&list->elements[n],sizeof(ListElement)*(list->count - n));//copy all elements after n
+    memmove(&list->elements[n+1],&list->elements[n],sizeof(ListElementData)*(list->count - n));//copy all elements after n
     list->elements[n].data = data;
     list->count++;
     return list;
@@ -180,7 +180,7 @@ List *gf2d_list_delete_nth(List *list,Uint32 n)
         list->count--;// last element in the array, this is easy
         return list;
     }
-    memmove(&list->elements[n],&list->elements[n+1],sizeof(ListElement)*(list->count - n));//copy all elements after n
+    memmove(&list->elements[n],&list->elements[n+1],sizeof(ListElementData)*(list->count - n));//copy all elements after n
     list->count--;
     return list;
 }

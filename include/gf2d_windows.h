@@ -4,8 +4,9 @@
 #include "gf2d_sprite.h"
 #include "gf2d_list.h"
 #include "gf2d_elements.h"
-#include "gf2d_label_element.h"
-#include "gf2d_actor_element.h"
+#include "gf2d_element_label.h"
+#include "gf2d_element_actor.h"
+#include "gf2d_element_list.h"
 
 typedef enum
 {
@@ -29,7 +30,7 @@ typedef struct Window_S
     Rect dimensions;        /**<where on the screen*/
     Rect canvas;            /**<Where within the window we draw things*/
     Vector4D color;         /**<color to draw the window with*/
-    int (*update)(struct Window_S *win);
+    int (*update)(struct Window_S *win,List *updateList);
     int (*draw)(struct Window_S *win);
     int (*free_data)(struct Window_S *win);
     void *data;             /**<custom data*/

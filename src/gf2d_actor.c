@@ -353,6 +353,7 @@ void gf2d_actor_load(Actor *actor,char *file)
         actor->al->frameWidth,
         actor->al->frameHeight,
         actor->al->framesPerLine);
+    gf2d_actor_set_action(actor,actor->al->actions[0].name);
 }
 
 void gf2d_actor_set_action(Actor *actor,char *action)

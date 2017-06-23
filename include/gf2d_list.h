@@ -6,7 +6,7 @@
 typedef struct
 {
     void *data;
-}ListElement;
+}ListElementData;
 
 /**
  * @brief the GF2D List is an automatically expanding general purpose list
@@ -14,7 +14,7 @@ typedef struct
  */
 typedef struct
 {
-    ListElement *elements;
+    ListElementData *elements;
     Uint32 size;
     Uint32 count;
 }List;

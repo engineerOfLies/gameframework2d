@@ -194,6 +194,33 @@ void gf2d_window_draw(Window *win)
     }
 }
 
+void gf2d_window_update(Window *win)
+{
+    int count,i;
+    Vector2D offset;
+    List *updateList;
+    Element *e;
+    if (!win)return;
+    updateList = gf2d_list_new();
+    offset.x = win->dimensions.x + win->canvas.x;
+    offset.y = win->dimensions.y + win->canvas.y;
+    count = gf2d_list_get_count(win->elements);
+    for (i = 0;i < count;i++)
+    {
+        e = (Element *)gf2d_list_get_nth(win->elements,i);
+        if (!e)continue;
+        if(gf2d_element_update(e, offset))
+        {
+            updateList = gf2d_list_append(updateList,e);
+        }
+    }
+    if (win->update)
+    {
+        win->update(win,updateList);
+    }
+    gf2d_list_delete(updateList);
+}
+
 Window *gf2d_window_new()
 {
     int i;
@@ -225,6 +252,16 @@ void gf2d_windows_draw_all()
     for (i = 0; i < count; i++)
     {
         gf2d_window_draw((Window*)gf2d_list_get_nth(window_manager.window_deque,i));
+    }
+}
+
+void gf2d_windows_update_all()
+{
+    int i,count;
+    count = gf2d_list_get_count(window_manager.window_deque);
+    for (i = count - 1; i >= 0; i--)
+    {
+        gf2d_window_update((Window*)gf2d_list_get_nth(window_manager.window_deque,i));
     }
 }
 
