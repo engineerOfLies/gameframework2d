@@ -5,6 +5,7 @@
 #include "gf2d_list.h"
 #include "gf2d_elements.h"
 #include "gf2d_label_element.h"
+#include "gf2d_actor_element.h"
 
 typedef enum
 {

@@ -115,6 +115,23 @@ void gf2d_actor_load(Actor *actor,char *file);
  */
 void gf2d_actor_free(Actor *actor);
 
+/**
+ * @brief draw an actor to screen using its current frame
+ * @param actor the actor to draw
+ * @param position where to draw it
+ * @param scale (optional) if provided this factor is applies
+ * @param scaleCenter (optional) if provided this center is used for scaling
+ * @param rotation (option) if provided the actor is rotated
+ * @param flip (optional) if provided the actor is flipped horizontally or vertically
+ */
+void gf2d_actor_draw(
+    Actor *actor,
+    Vector2D position,
+    Vector2D * scale,
+    Vector2D * scaleCenter,
+    Vector3D * rotation,
+    Vector2D * flip
+);
 
 /**
  * @brief set the action and starting frame for an actor

@@ -368,5 +368,32 @@ void gf2d_actor_next_frame(Actor *actor)
     actor->at = gf2d_action_list_get_next_frame(actor->al,&actor->frame,actor->action);
 }
 
+void gf2d_actor_draw(
+    Actor *actor,
+    Vector2D position,
+    Vector2D * scale,
+    Vector2D * scaleCenter,
+    Vector3D * rotation,
+    Vector2D * flip
+)
+{
+    Vector2D drawScale;
+    if (!actor)return;
+    vector2d_copy(drawScale,actor->al->scale);
+    if (scale)
+    {
+        drawScale.x *= scale->x;
+        drawScale.y *= scale->y;
+    }
+    gf2d_sprite_draw(
+    actor->sprite,
+    position,
+    &drawScale,
+    scaleCenter,
+    rotation,
+    flip,
+    &actor->color,
+    (int)actor->frame);
+}
 
 /*eol@eof*/

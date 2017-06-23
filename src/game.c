@@ -13,8 +13,13 @@ void main_menu()
     win = gf2d_window_new();
     win->color = vector4d(0,255,100,255);
     win->dimensions = gf2d_rect(200,200,800,400);
+    
     e = gf2d_element_new();
     gf2d_element_make_label(e,gf2d_label_element_new("Window Heading",gf2d_color8(255,255,255,255),FT_H1,0));
+    gf2d_window_add_element(win,e);
+    
+    e = gf2d_element_new();
+    gf2d_element_make_actor(e,gf2d_actor_element_new_full("actors/charge_bolt.actor"));
     gf2d_window_add_element(win,e);
 }
 
@@ -44,6 +49,7 @@ int main(int argc, char * argv[])
     gf2d_graphics_set_frame_delay(16);
     gf2d_audio_init(256,16,4,1,1,1);
     gf2d_sprite_init(1024);
+    gf2d_action_list_init(128);
     gf2d_text_init("config/font.cfg");
     gf2d_windows_init(128);
     SDL_ShowCursor(SDL_DISABLE);
