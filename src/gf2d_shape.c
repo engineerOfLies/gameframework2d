@@ -331,7 +331,7 @@ Shape gf2d_shape_rect(float x, float y, float w, float h)
 
 Shape gf2d_shape_from_rect(Rect r)
 {
-    Shape shape;
+    Shape shape = {0};
     shape.type = ST_RECT;
     shape.s.r.x = r.x;
     shape.s.r.y = r.y;
@@ -404,8 +404,8 @@ Uint8 gf2d_edge_intersect_poc(
     Vector2D *normal
 )
 {
-    float testx, testy;
-    float Ua,Ub,Uden;
+    float testx = 0, testy = 0;
+    float Ua = 0,Ub =0,Uden = 0;
 
     Uden = ((b.y2 - b.y1)*(a.x2 - a.x1)) - ((b.x2 - b.x1)*(a.y2 - a.y1));
     if(Uden == 0)

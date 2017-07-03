@@ -50,7 +50,7 @@ int level_info_get_spawn_count(FILE *file)
 
 void level_info_parse_file(FILE *file,LevelInfo *info)
 {
-    char buf[512];
+    char buf[512] = {0};
     Spawn *spawn;
     if ((!file)||(!info))return;
     rewind(file);
@@ -297,9 +297,9 @@ void level_start(LevelInfo *info)
 
 void level_spawn_entities(LevelInfo *info)
 {
-    int i,j;
-    Entity *ent;
-    Vector2D startPosition;
+    int i = 0,j = 0;
+    Entity *ent = NULL;
+    Vector2D startPosition = {0};
     if (!info)return;
     /*spawn entities*/
     for (i = 0; i < info->spawnCount; i++)

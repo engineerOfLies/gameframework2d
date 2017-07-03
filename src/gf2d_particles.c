@@ -177,7 +177,7 @@ void gf2d_particle_new_default(
     Vector2D position;
     Vector2D velocity;
     Vector2D acceleration;
-    Color color, colorVariance;
+    Color color = {0}, colorVariance = {0};
     int i;
     if (!pe)
     {

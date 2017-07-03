@@ -362,7 +362,7 @@ Uint8 gf2d_body_collide(Body *a,Body *b,Vector2D *poc, Vector2D *normal)
 
 Uint8 gf2d_body_check_bounds(Body *body,Rect bounds,Vector2D *poc,Vector2D *normal)
 {
-    Shape aS,bs;
+    Shape aS= {0},bs={0};
     if (!body)return 0;
     bs = gf2d_shape_from_rect(bounds);
 

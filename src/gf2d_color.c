@@ -115,7 +115,7 @@ Color gf2d_color_to_float(Color color)
 
 Color gf2d_color_to_int8(Color color)
 {
-    Color nc;
+    Color nc = {0};
     switch (color.ct)
     {
         case CT_HEX:
