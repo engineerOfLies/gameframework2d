@@ -39,7 +39,7 @@ DOXYGEN = doxygen
 #
 
 $(PROJECT): $(OBJECTS)
-	$(CC) $(OBJECTS) $(LFLAGS) $(SDL_LDFLAGS) 
+	$(CC) $(OBJECTS) $(LFLAGS) $(SDL_LDFLAGS)  -L../libs ../libs/libsj.a
 
 docs:
 	$(DOXYGEN) doxygen.cfg

@@ -54,13 +54,13 @@ void gf2d_element_draw(Element *e, Vector2D offset)
     if (e->draw)e->draw(e,offset);
 }
 
-int gf2d_element_update(Element *e, Vector2D offset)
+List * gf2d_element_update(Element *e, Vector2D offset)
 {
     if (!e)
     {
-        return 0;
+        return NULL;
     }
     if (e->draw)return e->update(e,offset);
-    return 0;
+    return NULL;
 }
 /*eol@eof*/

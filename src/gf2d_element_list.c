@@ -60,16 +60,16 @@ void gf2d_element_list_draw(Element *element,Vector2D offset)
     }
 }
 
-int  gf2d_element_list_update(Element *element,Vector2D offset)
+List *gf2d_element_list_update(Element *element,Vector2D offset)
 {
     ListElement *list;
     Vector2D position;
     int count,i;
     Element *e;
     int retval = 0;
-    if (!element)return 0;
+    if (!element)return NULL;
     list = (ListElement*)element->data;
-    if (!list)return 0;
+    if (!list)return NULL;
     vector2d_add(position,offset,element->bounds);
     count = gf2d_list_get_count(list->list);
     for (i = 0; i < count; i++)
@@ -79,7 +79,7 @@ int  gf2d_element_list_update(Element *element,Vector2D offset)
         position = gf2d_element_get_item_position(element,i);
         retval = retval || gf2d_element_update(e, position);
     }
-    return retval;
+    return NULL;//TODO make this return a list
 }
 
 void gf2d_element_list_free(Element *element)

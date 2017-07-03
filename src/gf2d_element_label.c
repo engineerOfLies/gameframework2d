@@ -15,9 +15,9 @@ void gf2d_element_label_draw(Element *element,Vector2D offset)
     gf2d_text_draw_line(label->text,label->style,label->color, position);
 }
 
-int  gf2d_element_label_update(Element *element,Vector2D offset)
+List *gf2d_element_label_update(Element *element,Vector2D offset)
 {
-    return 0;
+    return NULL;
 }
 
 void gf2d_element_label_free(Element *element)

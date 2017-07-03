@@ -8,6 +8,7 @@
  */
 
 #include "gf2d_sprite.h"
+#include "gf2d_list.h"
 #include "gf2d_shape.h"
 #include "gf2d_text.h"
 #include "gf2d_color.h"
@@ -36,9 +37,9 @@ typedef struct Element_S
     Color color;    /**<color for the element*/
     
     int state;      /**<if true, drawn with highlight*/
-    void (*draw)(struct Element_S *element,Vector2D offset); /**<draw function, offset comes from draw position of window*/
-    int  (*update)(struct Element_S *element,Vector2D offset);
-    void (*free_data)(struct Element_S *element);    /**<free function for the element to clean up any loaded custom data*/
+    void (*draw)        (struct Element_S *element,Vector2D offset); /**<draw function, offset comes from draw position of window*/
+    List *(*update)     (struct Element_S *element,Vector2D offset); /**<function called for updates  returns alist of all elements updated with input*/
+    void (*free_data)   (struct Element_S *element);    /**<free function for the element to clean up any loaded custom data*/
     void *data;     /**<custom element data*/
 }Element;
 
@@ -82,8 +83,8 @@ void gf2d_element_draw(Element *element, Vector2D offset);
  * @brief update an element.  checks input
  * @param element the element to draw
  * @param offset comes from parent window position
- * @return the return state of the update
+ * @return NULL if there was nothing to report or a pointer to a List of elements that have been updated.  This list needs to be freed
  */
-int gf2d_element_update(Element *element, Vector2D offset);
+List *gf2d_element_update(Element *element, Vector2D offset);
 
 #endif

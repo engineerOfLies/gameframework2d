@@ -20,14 +20,14 @@ void gf2d_element_actor_draw(Element *element,Vector2D offset)
         NULL);
 }
 
-int  gf2d_element_actor_update(Element *element,Vector2D offset)
+List * gf2d_element_actor_update(Element *element,Vector2D offset)
 {
     ActorElement *actor;
-    if (!element)return 0;
+    if (!element)return NULL;
     actor = (ActorElement*)element->data;
-    if (!actor)return 0;
+    if (!actor)return NULL;
     gf2d_actor_next_frame(&actor->actor);
-    return 0;
+    return NULL;
 }
 
 void gf2d_element_actor_free(Element *element)

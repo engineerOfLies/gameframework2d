@@ -1,10 +1,11 @@
 #include <SDL.h>
 #include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
-#include "simple_logger.h"
 #include "gf2d_list.h"
 #include "gf2d_audio.h"
 #include "gf2d_windows.h"
+#include "simple_logger.h"
+#include "simple_json.h"
 
 void add_menu_item(Element *menu,char *text,int id)
 {
@@ -38,7 +39,21 @@ void main_menu()
 {
     Element *e;
     Element *l;
+    SJson *json = NULL,*window = NULL;
     Window *win;
+    Vector4D color;
+
+//    json = sj_load("config/testfile.json");
+//    json = sj_load("config/testwindow.min");
+//     window = sj_object_get_value(json,"window");
+//     if (window)
+//     {
+//         slog("window loaded");
+//     }
+//     else
+//     {
+//         slog("window failed to load:\n%s",sj_get_error());
+//     }
     win = gf2d_window_new();
     win->color = vector4d(0,255,100,255);
     win->dimensions = gf2d_rect(200,200,800,400);
@@ -52,7 +67,6 @@ void main_menu()
     gf2d_element_make_list(l,gf2d_element_list_new_full(vector2d(100,32),LS_Vertical,0,0));
     gf2d_window_add_element(win,l);
 
-    
     e = gf2d_element_new();
     gf2d_element_make_label(e,gf2d_element_label_new_full("Window Heading",gf2d_color8(255,255,255,255),FT_H1,0));
     gf2d_element_list_add_item(l,e);
@@ -61,6 +75,7 @@ void main_menu()
     add_menu_item(l,"Continue",1);
     add_menu_item(l,"Load Game",2);
     add_menu_item(l,"Quit",3);
+    sj_free(json);
 }
 
 int main(int argc, char * argv[])
