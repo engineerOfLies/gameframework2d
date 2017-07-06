@@ -7,6 +7,7 @@
 #include "gf2d_element_label.h"
 #include "gf2d_element_actor.h"
 #include "gf2d_element_list.h"
+#include <simple_json.h>
 
 typedef enum
 {
@@ -105,5 +106,12 @@ void gf2d_draw_window_border(Sprite *border,Sprite *bg,Rect rect,Vector4D color)
  * @param color the color to draw the window with
  */
 void gf2d_draw_window_border_generic(Rect rect,Vector4D color);
+
+/**
+ * @brief make a new window based on the contents of a json config file
+ * @param json the json file containing a window config
+ * @return NULL on error or the new window otherwise
+ */
+Window *gf2f_window_load_from_json(SJson *json);
 
 #endif

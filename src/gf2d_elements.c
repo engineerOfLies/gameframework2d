@@ -1,6 +1,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include "gf2d_elements.h"
+#include "gf2d_element_actor.h"
+#include "gf2d_element_list.h"
+#include "gf2d_element_label.h"
 #include "simple_logger.h"
 
 Element *gf2d_element_new()
@@ -86,7 +89,7 @@ Element *gf2d_element_load_from_config(SJson *json)
     vector4d_set(vector,255,255,255,255);
     sj_value_as_vector4d(value,&vector);
     e->color = gf2d_color_from_vector4(vector);
-    
+        
     value = sj_object_get_value(json,"bounds");
     sj_value_as_vector4d(value,&vector);
     gf2d_rect_set(e->bounds,vector.x,vector.y,vector.z,vector.w);
@@ -95,10 +98,11 @@ Element *gf2d_element_load_from_config(SJson *json)
     type = sj_get_string_value(value);
     if (strcmp(type,"list") == 0)
     {
-        //parse this as a list
+        gf2d_element_load_list_from_config(e,json);
     }
     else if (strcmp(type,"label") == 0)
     {
+        gf2d_element_load_label_from_config(e,json);
     }
     else if (strcmp(type,"actor") == 0)
     {

@@ -174,25 +174,32 @@ void gf2d_element_load_list_from_config(Element *e,SJson *json)
         slog("call missing parameters");
         return;
     }
-    value = sj_object_get_value(json,"color");
-    sj_value_as_vector2d(value,&vector);
-
+        
+        
     value = sj_object_get_value(json,"style");
     style = sj_get_string_value(value);
-    if (strcmp(style,"horizontal") == 0)
+    slog ("list style set is %s",style);
+    if (style)
     {
-        ls = LS_Horizontal;
-    }
-    if (strcmp(style,"vertical") == 0)
-    {
-        ls = LS_Vertical;
+        if (strcmp(style,"horizontal") == 0)
+        {
+            ls = LS_Horizontal;
+        }
+        if (strcmp(style,"vertical") == 0)
+        {
+            ls = LS_Vertical;
+        }
     }
     value = sj_object_get_value(json,"wraps");
     sj_get_bool_value(value,&wraps);
     value = sj_object_get_value(json,"scrolls");
     sj_get_bool_value(value,&scrolls);
+    
+    value = sj_object_get_value(json,"item_size");
+    sj_value_as_vector2d(value,&vector);
     list = gf2d_element_list_new_full(vector,ls,wraps,scrolls);
     gf2d_element_make_list(e,list);
+    
     value = sj_object_get_value(json,"elements");
     count = sj_array_get_count(value);
     for (i = 0; i < count; i++)

@@ -201,7 +201,7 @@ Uint32 gf2d_color_to_hex(Color color)
 Color gf2d_color_from_vector4(Vector4D vector)
 {
     Color color;
-    color.ct = CT_RGBAf;
+    color.ct = CT_RGBA8;
     color.r = vector.x;
     color.g = vector.y;
     color.b = vector.z;

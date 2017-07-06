@@ -220,7 +220,7 @@ void gf2d_font_draw_line(char *text,Font *font,Color color, Vector2D position)
         slog("cannot draw text, no font provided");
         return;
     }
-
+    
     surface = TTF_RenderUTF8_Blended(font->font, text, gf2d_color_to_sdl(color));
     if (!surface)
     {

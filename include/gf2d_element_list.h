@@ -32,4 +32,11 @@ void gf2d_element_list_add_item(Element *e,Element *item);
  */
 void gf2d_element_make_list(Element *e,ListElement *list);
 
+/**
+ * @brief load list configuration for a list element from config
+ * @param e the element to configure
+ * @param json the json config to use
+ */
+void gf2d_element_load_list_from_config(Element *e,SJson *json);
+
 #endif

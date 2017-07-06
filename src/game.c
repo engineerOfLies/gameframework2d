@@ -37,49 +37,9 @@ void add_menu_item(Element *menu,char *text,int id)
 
 void main_menu()
 {
-    Element *e;
-    Element *l;
-    SJson *json = NULL,*window = NULL;
-    Window *win;
-    Vector4D color = {0};
-
-//    json = sj_load("config/testfile.json");
+    SJson *json = NULL;
     json = sj_load("config/testwindow.cfg");
-//    json = sj_load("config/testwindow.min");
-    window = sj_object_get_value(json,"window");
-    if (window)
-    {
-        slog("window loaded");
-        if (!sj_value_as_vector4d(sj_object_get_value(window,"color"),&color))
-        {
-            slog("color did not load");
-        }
-    }
-    else
-    {
-        slog("window failed to load:\n%s",sj_get_error());
-    }
-    win = gf2d_window_new();
-    win->color = color;
-    win->dimensions = gf2d_rect(200,200,800,400);
-    
-    l = gf2d_element_new_full(
-        0,
-        "list",
-        gf2d_rect(10,10,win->dimensions.w-20,win->dimensions.h-20),
-        gf2d_color8(255,255,255,255),
-        0);
-    gf2d_element_make_list(l,gf2d_element_list_new_full(vector2d(100,32),LS_Vertical,0,0));
-    gf2d_window_add_element(win,l);
-
-    e = gf2d_element_new();
-    gf2d_element_make_label(e,gf2d_element_label_new_full("Window Heading",gf2d_color8(255,255,255,255),FT_H1,0));
-    gf2d_element_list_add_item(l,e);
-
-    add_menu_item(l,"New Game",0);
-    add_menu_item(l,"Continue",1);
-    add_menu_item(l,"Load Game",2);
-    add_menu_item(l,"Quit",3);
+    gf2f_window_load_from_json(json);
     sj_free(json);
 }
 

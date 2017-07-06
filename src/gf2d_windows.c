@@ -265,4 +265,46 @@ void gf2d_windows_update_all()
     }
 }
 
+Window *gf2f_window_load_from_json(SJson *json)
+{
+    Window *win = NULL;
+    int i,count;
+    Vector4D vector = {255,255,255,255};
+    SJson *elements,*value;
+    if (!json)
+    {
+        slog("json not provided");
+        return NULL;
+    }
+    json = sj_object_get_value(json,"window");
+    if (!json)
+    {
+        slog("json does not contain window definition");
+        return NULL;
+    }
+    win = gf2d_window_new();
+    if (!win)
+    {
+        slog("failed to create new window");
+        return NULL;
+    }
+    sj_value_as_vector4d(sj_object_get_value(json,"color"),&vector);
+    win->color = vector;
+    
+    vector4d_clear(vector);
+    sj_value_as_vector4d(sj_object_get_value(json,"dimensions"),&vector);
+    win->dimensions = gf2d_rect(vector.x,vector.y,vector.z,vector.w);
+
+    
+    elements = sj_object_get_value(json,"elements");
+    count = sj_array_get_count(elements);
+    for (i = 0; i< count; i++)
+    {
+        value = sj_array_get_nth(elements,i);
+        if (!value)continue;
+        gf2d_window_add_element(win,gf2d_element_load_from_config(value));
+    }
+    return win;
+}
+
 /*eol@eof*/
