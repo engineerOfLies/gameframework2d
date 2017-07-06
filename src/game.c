@@ -5,7 +5,7 @@
 #include "gf2d_audio.h"
 #include "gf2d_windows.h"
 #include "simple_logger.h"
-#include "simple_json.h"
+#include "gf2d_config.h"
 
 void add_menu_item(Element *menu,char *text,int id)
 {
@@ -41,21 +41,26 @@ void main_menu()
     Element *l;
     SJson *json = NULL,*window = NULL;
     Window *win;
-    Vector4D color;
+    Vector4D color = {0};
 
 //    json = sj_load("config/testfile.json");
+    json = sj_load("config/testwindow.cfg");
 //    json = sj_load("config/testwindow.min");
-//     window = sj_object_get_value(json,"window");
-//     if (window)
-//     {
-//         slog("window loaded");
-//     }
-//     else
-//     {
-//         slog("window failed to load:\n%s",sj_get_error());
-//     }
+    window = sj_object_get_value(json,"window");
+    if (window)
+    {
+        slog("window loaded");
+        if (!sj_value_as_vector4d(sj_object_get_value(window,"color"),&color))
+        {
+            slog("color did not load");
+        }
+    }
+    else
+    {
+        slog("window failed to load:\n%s",sj_get_error());
+    }
     win = gf2d_window_new();
-    win->color = vector4d(0,255,100,255);
+    win->color = color;
     win->dimensions = gf2d_rect(200,200,800,400);
     
     l = gf2d_element_new_full(

@@ -63,4 +63,52 @@ List * gf2d_element_update(Element *e, Vector2D offset)
     if (e->draw)return e->update(e,offset);
     return NULL;
 }
+
+Element *gf2d_element_load_from_config(SJson *json)
+{
+    Element *e = NULL;
+    SJson *value;
+    const char *type;
+    Vector4D vector;
+    if (!sj_is_object(json))return NULL;
+    e = gf2d_element_new();
+    if (!e)return NULL;
+    value = sj_object_get_value(json,"name");
+    gf2d_line_cpy(e->name,sj_get_string_value(value));
+    
+    value = sj_object_get_value(json,"id");
+    sj_get_integer_value(value,&e->index);
+
+    value = sj_object_get_value(json,"state");
+    sj_get_integer_value(value,&e->index);
+
+    value = sj_object_get_value(json,"color");
+    vector4d_set(vector,255,255,255,255);
+    sj_value_as_vector4d(value,&vector);
+    e->color = gf2d_color_from_vector4(vector);
+    
+    value = sj_object_get_value(json,"bounds");
+    sj_value_as_vector4d(value,&vector);
+    gf2d_rect_set(e->bounds,vector.x,vector.y,vector.z,vector.w);
+    
+    value = sj_object_get_value(json,"type");
+    type = sj_get_string_value(value);
+    if (strcmp(type,"list") == 0)
+    {
+        //parse this as a list
+    }
+    else if (strcmp(type,"label") == 0)
+    {
+    }
+    else if (strcmp(type,"actor") == 0)
+    {
+    }
+    else if (strcmp(type,"button") == 0)
+    {
+    }
+    else if (strcmp(type,"percent") == 0)
+    {
+    }
+    return e;
+}
 /*eol@eof*/

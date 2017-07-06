@@ -12,6 +12,7 @@
 #include "gf2d_shape.h"
 #include "gf2d_text.h"
 #include "gf2d_color.h"
+#include "gf2d_config.h"
 
 typedef enum
 {
@@ -28,6 +29,16 @@ typedef enum
     EUR_Handled
 }ElementUpdateReturn;
 
+typedef enum
+{
+    ET_List,
+    ET_Label,
+    ET_Actor,
+    ET_Button,
+    ET_Entry,
+    ET_Percent
+}ElementTypes;
+
 typedef struct Element_S
 {
     int      index; /**<order of highlight in the menu, -1 for does not receive highlight*/
@@ -37,6 +48,7 @@ typedef struct Element_S
     Color color;    /**<color for the element*/
     
     int state;      /**<if true, drawn with highlight*/
+    int type;       /**<which type of element this is*/
     void (*draw)        (struct Element_S *element,Vector2D offset); /**<draw function, offset comes from draw position of window*/
     List *(*update)     (struct Element_S *element,Vector2D offset); /**<function called for updates  returns alist of all elements updated with input*/
     void (*free_data)   (struct Element_S *element);    /**<free function for the element to clean up any loaded custom data*/
@@ -86,5 +98,12 @@ void gf2d_element_draw(Element *element, Vector2D offset);
  * @return NULL if there was nothing to report or a pointer to a List of elements that have been updated.  This list needs to be freed
  */
 List *gf2d_element_update(Element *element, Vector2D offset);
+
+/**
+ * @brief create a new element based on the information from a json config
+ * @param json the json data to use to define the element
+ * @return NULL on error or a newly configured element
+ */
+Element *gf2d_element_load_from_config(SJson *json);
 
 #endif

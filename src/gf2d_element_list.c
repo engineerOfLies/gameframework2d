@@ -158,4 +158,48 @@ void gf2d_element_list_add_item(Element *e,Element *item)
     list = (ListElement *)e->data;
     list->list = gf2d_list_append(list->list,(void*)item);
 }
+
+void gf2d_element_load_list_from_config(Element *e,SJson *json)
+{
+    SJson *value = NULL;
+    SJson *item = NULL;
+    ListElement *list = NULL;
+    Vector2D vector = {0};
+    ListStyle ls = 0;
+    int i,count;
+    const char *style = NULL;
+    short int wraps = 0,scrolls = 0;
+    if ((!e) || (!json))
+    {
+        slog("call missing parameters");
+        return;
+    }
+    value = sj_object_get_value(json,"color");
+    sj_value_as_vector2d(value,&vector);
+
+    value = sj_object_get_value(json,"style");
+    style = sj_get_string_value(value);
+    if (strcmp(style,"horizontal") == 0)
+    {
+        ls = LS_Horizontal;
+    }
+    if (strcmp(style,"vertical") == 0)
+    {
+        ls = LS_Vertical;
+    }
+    value = sj_object_get_value(json,"wraps");
+    sj_get_bool_value(value,&wraps);
+    value = sj_object_get_value(json,"scrolls");
+    sj_get_bool_value(value,&scrolls);
+    list = gf2d_element_list_new_full(vector,ls,wraps,scrolls);
+    gf2d_element_make_list(e,list);
+    value = sj_object_get_value(json,"elements");
+    count = sj_array_get_count(value);
+    for (i = 0; i < count; i++)
+    {
+        item = sj_array_get_nth(value,i);
+        if (!item)continue;
+        gf2d_element_list_add_item(e,gf2d_element_load_from_config(item));
+    }
+}
 /*eol@eof*/
