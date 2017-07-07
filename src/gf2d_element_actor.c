@@ -14,7 +14,7 @@ void gf2d_element_actor_draw(Element *element,Vector2D offset)
     gf2d_actor_draw(
         &actor->actor,
         position,
-        &actor->scale,
+        NULL,
         NULL,
         NULL,
         NULL);
@@ -68,12 +68,36 @@ ActorElement *gf2d_element_actor_new_full(char *actorFile)
     return ae;
 }
 
+Actor *gf2d_element_actor_get_actor(Element *e)
+{
+    ActorElement *ae;
+    if (!e)return NULL;
+    ae = (ActorElement *)e->data;
+    if (!ae)return NULL;
+    return &ae->actor;
+}
+
 void gf2d_element_make_actor(Element *e,ActorElement *actor)
 {
     if (!e)return;
     e->data = (void*)actor;
+    e->type = ET_Actor;
     e->draw = gf2d_element_actor_draw;
     e->update = gf2d_element_actor_update;
     e->free_data = gf2d_element_actor_free;
+}
+
+void gf2d_element_load_actor_from_config(Element *e,SJson *json)
+{
+    SJson *value;
+    const char *buffer;
+    if ((!e) || (!json))
+    {
+        slog("call missing parameters");
+        return;
+    }
+    value = sj_object_get_value(json,"actor");
+    buffer = sj_get_string_value(value);
+    gf2d_element_make_actor(e,gf2d_element_actor_new_full((char *)buffer));
 }
 /*eol@eof*/

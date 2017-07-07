@@ -12,6 +12,7 @@ typedef struct
     Window *window_list;    /**<*/
     int window_max;         /**<how many windows can exist at once*/
     List *window_deque;     /**<draw order is back to front, update order is front to back*/
+    int drawbounds;         /**<if true draw rects around window bounds*/
 }WindowManager;
 
 static WindowManager window_manager = {0};
@@ -118,6 +119,10 @@ void gf2d_draw_window_border(Sprite *border,Sprite *bg,Rect rect,Vector4D color)
         NULL,
         &color,
         BE_BR);
+    if (window_manager.drawbounds)
+    {
+        gf2d_rect_draw(rect,gf2d_color8(255,100,100,255));
+    }
 }
 
 void gf2d_windows_close()
@@ -152,6 +157,7 @@ void gf2d_windows_init(int max_windows)
     window_manager.window_deque = gf2d_list_new();
     window_manager.generic_background = gf2d_sprite_load_image("images/window_background.png");
     window_manager.generic_border = gf2d_sprite_load_all("images/window_border.png",64,64,8);
+    window_manager.drawbounds = 1;
     slog("window system initilized");
     atexit(gf2d_windows_close);
 }
@@ -198,7 +204,8 @@ void gf2d_window_update(Window *win)
 {
     int count,i;
     Vector2D offset;
-    List *updateList;
+    List *updateList = NULL;
+    List *updated = NULL;
     Element *e;
     if (!win)return;
     updateList = gf2d_list_new();
@@ -209,9 +216,14 @@ void gf2d_window_update(Window *win)
     {
         e = (Element *)gf2d_list_get_nth(win->elements,i);
         if (!e)continue;
-        if(gf2d_element_update(e, offset))
+        updated = gf2d_element_update(e, offset);
+        if (updated)
         {
-            updateList = gf2d_list_append(updateList,e);
+            if (!updateList)
+            {
+                updateList = gf2d_list_new();
+            }
+            gf2d_list_concat_free(updateList,updated);
         }
     }
     if (win->update)
@@ -230,7 +242,7 @@ Window *gf2d_window_new()
         if (!window_manager.window_list[i]._inuse)
         {
            window_manager.window_list[i]._inuse = 1;
-           window_manager.window_deque = gf2d_list_append(window_manager.window_deque,&window_manager.window_list[i]);
+           gf2d_list_append(window_manager.window_deque,&window_manager.window_list[i]);
            window_manager.window_list[i].elements = gf2d_list_new();
            return &window_manager.window_list[i];
         }
@@ -242,7 +254,7 @@ void gf2d_window_add_element(Window *win,Element *e)
 {
     if (!win)return;
     if (!e)return;
-    win->elements = gf2d_list_append(win->elements,e);
+    gf2d_list_append(win->elements,e);
 }
 
 void gf2d_windows_draw_all()

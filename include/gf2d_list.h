@@ -50,32 +50,32 @@ void *gf2d_list_get_nth(List *list,Uint32 n);
  * @brief add an element to the end of the list
  * @param list the list to add to
  * @param data the data to assign to the new element
- * @return the address of the list.  In the event that the list needed to expand this will be different from the list provided
+ * @return -1 on error, 0 otherwise
  */
-List *gf2d_list_append(List *list,void *data);
+int gf2d_list_append(List *list,void *data);
 
 /**
  * @brief instert a new element at the position provided
  * @param list the list to insert into
  * @param data the data to assin to the new element
- * @return the address of the list.  In the event that the list needed to expand this will be different from the list provided
+ * @return -1 on error, 0 otherwise
  */
-List *gf2d_list_insert(List *list,void *data,Uint32 n);
+int gf2d_list_insert(List *list,void *data,Uint32 n);
 
 /**
  * @brief delete the element at the nth position in the array
  * @param list the list to delete out of
  * @param n the element to delete.  This is no-op if the nth element is beyond the scope of the list (event is logged)
- * @return the list provided
+ * @return -1 on error, 0 otherwise
  */
-List *gf2d_list_delete_nth(List *list,Uint32 n);
+int gf2d_list_delete_nth(List *list,Uint32 n);
 
 /**
  * @brief delete the first element in the list pointing to the address of data
  * @note does not delete the data itself
  * @param list the list to delete the element from
  * @param data used to match against which element to delete
- * @return 0 on complete, error otherwise
+ * @return -1 on error, 0 otherwise
  */
 int gf2d_list_delete_data(List *list,void *data);
 
@@ -93,5 +93,23 @@ Uint32 gf2d_list_get_count(List *list);
  * @param contextData the data that will also be provided to the function pointer for each element
  */
 void gf2d_list_foreach(List *list,void (*function)(void *data,void *context),void *contextData);
+
+/**
+ * @brief add the elements from b into a
+ * @note the data is not duplicated and b will still point to the same data that is now also referenced in a
+ * @param a the list that will get new items added to it
+ * @param b the list that will provide new items for a
+ * @return 0 on success, -1 otherwise
+ */
+int gf2d_list_concat(List *a,List *b);
+
+/**
+ * @brief same as gf2d_list_concat but b is freed when complete
+ * @param a the list to add items to
+ * @param b the list to provide the items.  This list is freed, but the data referenced is now referenced by a
+ * @return 0 on success, -1 otherwise
+ */
+int gf2d_list_concat_free(List *a,List *b);
+
 
 #endif

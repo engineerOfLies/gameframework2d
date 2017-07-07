@@ -1,0 +1,13 @@
+sprite: images/pointer.png
+frameWidth: 32
+frameHeight: 32
+framesPerLine: 16
+scale: 1,1
+color: 255,100,255,230
+colorSpecial: 255,100,255,230
+
+action: idle
+startFrame: 0
+endFrame: 15
+frameRate: 0.1
+type:   loop

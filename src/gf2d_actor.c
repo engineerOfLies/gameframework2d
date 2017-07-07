@@ -94,6 +94,11 @@ ActionList *gf2d_action_list_new()
 ActionList *gf2d_action_list_get_by_filename(char * filename)
 {
     int i;
+    if (!filename)
+    {
+        slog("no filename provided");
+        return NULL;
+    }
     for (i = 0;i < action_list_manager.maxActionLists;i++)
     {
         if (gf2d_line_cmp(action_list_manager.actionLists[i].filename,filename)==0)

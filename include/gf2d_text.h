@@ -81,4 +81,6 @@ void gf2d_text_draw_line_font(char *text,char *filename,Color color, Vector2D po
 
 void gf2d_text_draw_line(char *text,FontTypes tag,Color color, Vector2D position);
 
+Vector2D gf2d_text_get_bounds(char *text,FontTypes tag);
+
 #endif

@@ -10,12 +10,20 @@ typedef enum
     LJ_Right
 }LabelJustification;
 
+typedef enum
+{
+    LA_Top,
+    LA_Middle,
+    LA_Bottom
+}LabelAlignment;
+
 typedef struct
 {
     TextBlock text;     /**<the label text*/
     Color bgcolor;      /**<background color for the text*/
     int style;          /**<which font style to use*/
     int justify;        /**<leaning left or right*/
+    int alignment;      /**<vertical alignment top, middle or bottom*/
 }LabelElement;
 
 /**
@@ -24,9 +32,10 @@ typedef struct
  * @param color the label text color
  * @param style the font style
  * @param justify the LabelJustification
+ * @param align the vertical alignment
  * @return NULL on error or a new label element
  */
-LabelElement *gf2d_element_label_new_full(char *text,Color color,int style,int justify);
+LabelElement *gf2d_element_label_new_full(char *text,Color color,int style,int justify,int align);
 
 /**
  * @brief set an element to be the label provided

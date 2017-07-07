@@ -2,6 +2,7 @@
 #include <string.h>
 #include "gf2d_elements.h"
 #include "gf2d_element_actor.h"
+#include "gf2d_element_button.h"
 #include "gf2d_element_list.h"
 #include "gf2d_element_label.h"
 #include "simple_logger.h"
@@ -50,11 +51,14 @@ void gf2d_element_free(Element *e)
 
 void gf2d_element_draw(Element *e, Vector2D offset)
 {
+   // Rect rect;
     if (!e)
     {
         return;
     }
     if (e->draw)e->draw(e,offset);
+//    gf2d_rect_set(rect,offset.x + e->bounds.x,offset.y + e->bounds.y,e->bounds.w,e->bounds.h);
+ //   gf2d_rect_draw(rect,gf2d_color8(100,255,100,255));
 }
 
 List * gf2d_element_update(Element *e, Vector2D offset)
@@ -106,13 +110,27 @@ Element *gf2d_element_load_from_config(SJson *json)
     }
     else if (strcmp(type,"actor") == 0)
     {
+        gf2d_element_load_actor_from_config(e,json);
     }
     else if (strcmp(type,"button") == 0)
     {
+        gf2d_element_load_button_from_config(e,json);
     }
     else if (strcmp(type,"percent") == 0)
     {
     }
     return e;
 }
+
+Rect gf2d_element_get_absolute_bounds(Element *element,Vector2D offset)
+{
+    Rect r = {0};
+    if (!element)return r;
+    r.x = element->bounds.x + offset.x;
+    r.y = element->bounds.y + offset.y;
+    r.w = element->bounds.w;
+    r.h = element->bounds.h;
+    return r;
+}
+
 /*eol@eof*/

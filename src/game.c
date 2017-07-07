@@ -6,40 +6,43 @@
 #include "gf2d_windows.h"
 #include "simple_logger.h"
 #include "gf2d_config.h"
+#include "gf2d_mouse.h"
 
-void add_menu_item(Element *menu,char *text,int id)
+int main_menu_update(Window *win,List *updateList)
 {
+    int i,count;
     Element *e;
-    Element *l;
-    l = gf2d_element_new_full(
-        id,
-        text,
-        gf2d_rect(0,0,menu->bounds.w,32),
-        gf2d_color8(255,255,255,255),
-        0);
-    gf2d_element_make_list(l,gf2d_element_list_new_full(vector2d(64,32),LS_Horizontal,0,0));
-    
-    e = gf2d_element_new_full(
-        0,
-        "bullet",
-        gf2d_rect(0,-16,64,32),
-        gf2d_color8(255,255,255,255),
-        0);
-    gf2d_element_make_actor(e,gf2d_element_actor_new_full("actors/charge_bolt.actor"));
-    gf2d_element_list_add_item(l,e);
-    
-    e = gf2d_element_new();
-    gf2d_element_make_label(e,gf2d_element_label_new_full(text,gf2d_color8(255,255,255,255),FT_H3,0));
-    gf2d_element_list_add_item(l,e);
-
-    gf2d_element_list_add_item(menu,l);
+    if (!win)return 0;
+    if (!updateList)return 0;
+    count = gf2d_list_get_count(updateList);
+    for (i = 0; i < count; i++)
+    {
+        e = gf2d_list_get_nth(updateList,i);
+        if (!e)continue;
+        slog("updated element index %i",e->index);
+        switch(e->index)
+        {
+            case 51:
+                slog("ok");
+                break;
+            case 52:
+                slog("cancel");
+                break;
+        }
+    }
+    return 0;
 }
 
 void main_menu()
 {
+    Window *win;
     SJson *json = NULL;
     json = sj_load("config/testwindow.cfg");
-    gf2f_window_load_from_json(json);
+    win = gf2f_window_load_from_json(json);
+    if (win)
+    {
+        win->update = main_menu_update;
+    }
     sj_free(json);
 }
 
@@ -49,11 +52,6 @@ int main(int argc, char * argv[])
     int done = 0;
     const Uint8 * keys;
     Sprite *sprite;
-    
-    int mx,my;
-    float mf = 0;
-    Sprite *mouse;
-    Vector4D mouseColor = {255,100,255,200};
     
     /*program initializtion*/
     init_logger("gf2d.log");
@@ -76,7 +74,7 @@ int main(int argc, char * argv[])
     
     /*demo setup*/
     sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
-    mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16);
+    gf2d_mouse_load("actors/mouse.actor");
     main_menu();
     /*main game loop*/
     while(!done)
@@ -84,9 +82,7 @@ int main(int argc, char * argv[])
         SDL_PumpEvents();   // update SDL's internal event structures
         keys = SDL_GetKeyboardState(NULL); // get the keyboard state for this frame
         /*update things here*/
-        SDL_GetMouseState(&mx,&my);
-        mf+=0.1;
-        if (mf >= 16.0)mf = 0;
+        gf2d_mouse_update();
         gf2d_windows_update_all();
         
         
@@ -97,15 +93,7 @@ int main(int argc, char * argv[])
             
             //UI elements last
             gf2d_windows_draw_all();
-            gf2d_sprite_draw(
-                mouse,
-                vector2d(mx,my),
-                NULL,
-                NULL,
-                NULL,
-                NULL,
-                &mouseColor,
-                (int)mf);
+            gf2d_mouse_draw();
         gf2d_grahics_next_frame();// render current draw frame and skip to the next frame
         
         if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition

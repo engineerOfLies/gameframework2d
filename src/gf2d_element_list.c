@@ -66,7 +66,8 @@ List *gf2d_element_list_update(Element *element,Vector2D offset)
     Vector2D position;
     int count,i;
     Element *e;
-    int retval = 0;
+    List *ret = NULL;
+    List *updated;
     if (!element)return NULL;
     list = (ListElement*)element->data;
     if (!list)return NULL;
@@ -77,9 +78,18 @@ List *gf2d_element_list_update(Element *element,Vector2D offset)
         e = (Element *)gf2d_list_get_nth(list->list,i);
         if (!e)continue;
         position = gf2d_element_get_item_position(element,i);
-        retval = retval || gf2d_element_update(e, position);
+        vector2d_add(position,position,offset);
+        updated = gf2d_element_update(e, position);
+        if (updated != NULL)
+        {
+            if (ret == NULL)
+            {
+                ret = gf2d_list_new();
+            }
+            gf2d_list_concat_free(ret,updated);
+        }
     }
-    return NULL;//TODO make this return a list
+    return ret;
 }
 
 void gf2d_element_list_free(Element *element)
@@ -138,6 +148,7 @@ void gf2d_element_make_list(Element *e,ListElement *list)
 {
     if ((!e)||(!list))return;// no op
     e->data = list;
+    e->type = ET_List;
     e->draw = gf2d_element_list_draw;
     e->update = gf2d_element_list_update;
     e->free_data = gf2d_element_list_free;
@@ -156,7 +167,7 @@ void gf2d_element_list_add_item(Element *e,Element *item)
     ListElement *list;
     if ((!e)||(!item))return;// no op
     list = (ListElement *)e->data;
-    list->list = gf2d_list_append(list->list,(void*)item);
+    gf2d_list_append(list->list,(void*)item);
 }
 
 void gf2d_element_load_list_from_config(Element *e,SJson *json)
@@ -178,7 +189,6 @@ void gf2d_element_load_list_from_config(Element *e,SJson *json)
         
     value = sj_object_get_value(json,"style");
     style = sj_get_string_value(value);
-    slog ("list style set is %s",style);
     if (style)
     {
         if (strcmp(style,"horizontal") == 0)

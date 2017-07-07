@@ -21,6 +21,7 @@ static FontManager font_manager = {0};
 
 void gf2d_font_draw_line(char *text,Font *font,Color color, Vector2D position);
 void gf2d_fonts_load(char *filename);
+Vector2D gf2d_font_get_bounds(char *text,Font *font);
 
 void gf2d_text_close()
 {
@@ -256,6 +257,29 @@ void gf2d_font_draw_line(char *text,Font *font,Color color, Vector2D position)
         &dst);
     SDL_FreeSurface(surface);
     SDL_DestroyTexture(texture);
+}
+
+Vector2D gf2d_text_get_bounds(char *text,FontTypes tag)
+{
+    return gf2d_font_get_bounds(text,gf2d_font_get_by_tag(tag));
+}
+
+Vector2D gf2d_font_get_bounds(char *text,Font *font)
+{
+    int x = -1,y = -1;
+    if (!text)
+    {
+        slog("cannot size text, none provided");
+        return vector2d(-1,-1);
+    }
+    if (!font)
+    {
+        slog("cannot size text, no font provided");
+        return vector2d(-1,-1);
+    }
+    
+    TTF_SizeUTF8(font->font, text, &x,&y);
+    return vector2d(x,y);
 }
 
 /*eol@eof*/

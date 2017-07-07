@@ -106,4 +106,5 @@ List *gf2d_element_update(Element *element, Vector2D offset);
  */
 Element *gf2d_element_load_from_config(SJson *json);
 
+Rect gf2d_element_get_absolute_bounds(Element *element,Vector2D offset);
 #endif
