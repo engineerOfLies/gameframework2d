@@ -47,14 +47,14 @@ int main(int argc, char * argv[])
 		1,
 		0.1);
 
-	shape[0] = gf2d_shape_circle(0,0, 50);
-	shape[1] = gf2d_shape_circle(20,0, 25);
+	shape[0] = gf2d_shape_circle(0,0, 10);
+	shape[1] = gf2d_shape_circle(20,0, 15);
 	shape[2] = gf2d_shape_rect(-32,-32,64,64);
 	shape[3] = gf2d_shape_rect(-16,-16, 32,32);
 
 	gf2d_space_add_static_shape(space,gf2d_shape_rect(200,500, 512,32));
 	/* Stress test*/
-	for (i = 0; i < 100;i++)
+	for (i = 0; i < 500;i++)
 	{
 		gf2d_body_set(
 			&body[i],
