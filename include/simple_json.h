@@ -211,7 +211,20 @@ char *sj_get_error();
 /**
  * @brief used internally to se the error message
  * @param error the error message to set
+ * @param <vargs> variable arguments for the string
  */
-void sj_set_error(char *error);
+void sj_set_error(char *error,...);
+
+/**
+ * @brief enable automatic debug output to stdout
+ * @note it is disabled by default
+ */
+void sj_enable_debug();
+
+/**
+ * @brief disable automatic debug output to stdout
+ * @note it is disabled by default
+ */
+void sj_disable_debug();
 
 #endif
