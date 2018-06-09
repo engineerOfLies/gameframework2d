@@ -10,7 +10,7 @@
 #
 
 # Linux
-PROJECT = gf2d
+PROJECT = glorylike
 CC      = gcc
 #CC      = clang
 MGL_LIBS = 
