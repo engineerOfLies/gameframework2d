@@ -98,6 +98,7 @@ void gf2d_element_make_button(Element *e,ButtonElement *button)
     if (!e)return;
     e->data = button;
     e->type = ET_Button;
+    e->state = ES_idle;
     e->draw = gf2d_element_button_draw;
     e->update = gf2d_element_button_update;
     e->free_data = gf2d_element_button_free;
