@@ -20,12 +20,15 @@ void gf2d_element_button_draw(Element *element,Vector2D offset)
             return;
         case ES_idle:
             gf2d_actor_set_action(actor,"idle");
+            gf2d_element_set_color(button->label,element->color);
             break;
         case ES_highlight:
             gf2d_actor_set_action(actor,"high");
+            gf2d_element_set_color(button->label,button->highColor);
             break;
         case ES_active:
             gf2d_actor_set_action(actor,"press");
+            gf2d_element_set_color(button->label,button->pressColor);
             break;
     }
     gf2d_element_draw(button->actor,position);

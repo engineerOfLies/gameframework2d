@@ -106,5 +106,13 @@ List *gf2d_element_update(Element *element, Vector2D offset);
  */
 Element *gf2d_element_load_from_config(SJson *json);
 
+/**
+ * @brief set the color of the element
+ * @param element the element to change the color of
+ * @param color the color to change to
+ */
+void gf2d_element_set_color(Element *element,Color color);
+
+
 Rect gf2d_element_get_absolute_bounds(Element *element,Vector2D offset);
 #endif

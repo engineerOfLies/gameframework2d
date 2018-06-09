@@ -61,6 +61,12 @@ void gf2d_element_draw(Element *e, Vector2D offset)
  //   gf2d_rect_draw(rect,gf2d_color8(100,255,100,255));
 }
 
+void gf2d_element_set_color(Element *element,Color color)
+{
+    if (!element)return;
+    gf2d_color_copy(element->color,color);
+}
+
 List * gf2d_element_update(Element *e, Vector2D offset)
 {
     if (!e)
