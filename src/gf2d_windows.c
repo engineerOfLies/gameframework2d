@@ -198,6 +198,7 @@ void gf2d_window_draw(Window *win)
     {
         gf2d_element_draw((Element *)gf2d_list_get_nth(win->elements,i), offset);
     }
+    if (win->draw)win->draw(win);
 }
 
 void gf2d_window_update(Window *win)

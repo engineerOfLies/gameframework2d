@@ -8,44 +8,8 @@
 #include "gf2d_config.h"
 #include "gf2d_mouse.h"
 #include "gf2d_input.h"
+#include "combat.h"
 
-int main_menu_update(Window *win,List *updateList)
-{
-    int i,count;
-    Element *e;
-    if (!win)return 0;
-    if (!updateList)return 0;
-    count = gf2d_list_get_count(updateList);
-    for (i = 0; i < count; i++)
-    {
-        e = gf2d_list_get_nth(updateList,i);
-        if (!e)continue;
-        slog("updated element index %i",e->index);
-        switch(e->index)
-        {
-            case 51:
-                slog("ok");
-                break;
-            case 52:
-                slog("cancel");
-                break;
-        }
-    }
-    return 0;
-}
-
-void main_menu()
-{
-    Window *win;
-    SJson *json = NULL;
-    json = sj_load("config/testwindow.cfg");
-    win = gf2f_window_load_from_json(json);
-    if (win)
-    {
-        win->update = main_menu_update;
-    }
-    sj_free(json);
-}
 
 int main(int argc, char * argv[])
 {
@@ -74,11 +38,11 @@ int main(int argc, char * argv[])
     SDL_ShowCursor(SDL_DISABLE);
     
     /*demo setup*/
-    sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
+    sprite = gf2d_sprite_load_image("images/backgrounds/grassbattlefield.png");
     gf2d_mouse_load("actors/mouse.actor");
-    main_menu();
+    combat_init();
     /*main game loop*/
-    while(!done)
+    while(done == 0)
     {
         gf2d_input_update();
         /*update things here*/
