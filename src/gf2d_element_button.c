@@ -2,6 +2,7 @@
 #include "gf2d_mouse.h"
 #include "gf2d_element_actor.h"
 #include "simple_logger.h"
+#include "gf2d_input.h"
 
 void gf2d_element_button_draw(Element *element,Vector2D offset)
 {
@@ -35,6 +36,7 @@ void gf2d_element_button_draw(Element *element,Vector2D offset)
     gf2d_element_draw(button->label,position);
 }
 
+
 List *gf2d_element_button_update(Element *element,Vector2D offset)
 {
     Actor *actor;
@@ -64,6 +66,20 @@ List *gf2d_element_button_update(Element *element,Vector2D offset)
     else
     {
         element->state = ES_idle;
+    }
+    if (gf2d_input_command_pressed(button->hotkey))
+    {
+        element->state = ES_highlight;
+    }
+    else if (gf2d_input_command_held(button->hotkey))
+    {
+        element->state = ES_active;
+    }
+    else if (gf2d_input_command_released(button->hotkey))
+    {
+            list = gf2d_list_new();
+            gf2d_list_append(list,element);
+            return list;
     }
 
     return NULL;
@@ -125,7 +141,8 @@ void gf2d_element_load_button_from_config(Element *e,SJson *json)
     Element *label = NULL;
     Element *actor = NULL;
     SJson *value;
-    
+    ButtonElement *button;
+
     if ((!e) || (!json))
     {
         slog("call missing parameters");
@@ -143,8 +160,7 @@ void gf2d_element_load_button_from_config(Element *e,SJson *json)
     {
         slog("pressColor not provided");
     }
-
-
+    
     value = sj_object_get_value(json,"label");
     if (value)
     {
@@ -156,7 +172,14 @@ void gf2d_element_load_button_from_config(Element *e,SJson *json)
         actor = gf2d_element_load_from_config(value);
     }
     gf2d_element_make_button(e,gf2d_element_button_new_full(label,actor,gf2d_color_from_vector4(highColor),gf2d_color_from_vector4(pressColor)));
-}
+    
+    button = (ButtonElement*)e->data;
 
+    value = sj_object_get_value(json,"hotkey");
+    if (value)
+    {
+        gf2d_line_cpy(button->hotkey,sj_get_string_value(value));
+    }
+}
 
 /*eol@eof*/

@@ -87,10 +87,17 @@ Element *gf2d_element_load_from_config(SJson *json)
     e = gf2d_element_new();
     if (!e)return NULL;
     value = sj_object_get_value(json,"name");
-    gf2d_line_cpy(e->name,sj_get_string_value(value));
+    if (value)
+    {
+        gf2d_line_cpy(e->name,sj_get_string_value(value));
+    }
     
     value = sj_object_get_value(json,"id");
-    sj_get_integer_value(value,&e->index);
+    if (value)
+    {
+        sj_get_integer_value(value,&e->index);
+    }
+    else e->index = -1;
 
     value = sj_object_get_value(json,"state");
     sj_get_integer_value(value,&e->index);

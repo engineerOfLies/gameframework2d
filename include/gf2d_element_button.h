@@ -16,6 +16,7 @@ typedef struct
     Element *label;
     Element *actor;
     BE_Style style;
+    TextLine hotkey;    /**<input used to hotkey the button*/
     // base color comes from element
     Color highColor;    /**<color used when button is in highlight*/
     Color pressColor;   /**<color used while pressed*/
