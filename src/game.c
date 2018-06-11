@@ -9,6 +9,7 @@
 #include "gf2d_mouse.h"
 #include "gf2d_input.h"
 #include "combat.h"
+#include "skills.h"
 
 
 int main(int argc, char * argv[])
@@ -35,6 +36,7 @@ int main(int argc, char * argv[])
     gf2d_text_init("config/font.cfg");
     gf2d_input_init("config/input.cfg");
     gf2d_windows_init(128);
+    skill_list_load("config/skilllist.cfg");
     SDL_ShowCursor(SDL_DISABLE);
     
     /*demo setup*/

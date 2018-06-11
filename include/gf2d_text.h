@@ -72,6 +72,15 @@ typedef enum
 }FontTypes;
 
 /**
+ * @brief allocate memory for and copy text from input
+ * @note slogs and error if out of memory
+ * @note you must free() what is returned by this
+ * @param text the input text to copy.  A no-op if this is NULL or zero length
+ * @returns NULL on error or zero length, an allocated copy of the text otherwise.
+ */
+char *gf2d_text_copy(const char *text);
+
+/**
  * @brief initialized text drawing system
  * @param configFile the file to load font information from
  */

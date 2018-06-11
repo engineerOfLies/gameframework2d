@@ -282,4 +282,15 @@ Vector2D gf2d_font_get_bounds(char *text,Font *font)
     return vector2d(x,y);
 }
 
+char *gf2d_text_copy(const char *text)
+{
+    char *copy;
+    if (!text)return NULL;
+    if (strlen(text) == 0)return NULL;
+    copy = (char *)malloc(sizeof(char)*strlen(text)+1);
+    memcpy(copy,text,sizeof(char)*strlen(text)+1);
+    return copy;
+}
+
+
 /*eol@eof*/
