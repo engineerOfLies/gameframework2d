@@ -85,6 +85,17 @@ List *gf2d_element_button_update(Element *element,Vector2D offset)
     return NULL;
 }
 
+Element *button_get_by_name(Element *e,char *name)
+{
+    ButtonElement *button;
+    Element *r;
+    if (!e)return NULL;
+    button = (ButtonElement*)e->data;
+    r = gf2d_get_element_by_name(button->label,name);
+    if (r)return r;
+    return gf2d_get_element_by_name(button->actor,name);
+}
+
 void gf2d_element_button_free(Element *element)
 {
     ButtonElement *button;
@@ -121,6 +132,7 @@ void gf2d_element_make_button(Element *e,ButtonElement *button)
     e->draw = gf2d_element_button_draw;
     e->update = gf2d_element_button_update;
     e->free_data = gf2d_element_button_free;
+    e->get_by_name = button_get_by_name;
 }
 
 ButtonElement *gf2d_element_button_new_full(Element *label,Element *actor,Color highColor,Color pressColor)

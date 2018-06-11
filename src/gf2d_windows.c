@@ -157,7 +157,7 @@ void gf2d_windows_init(int max_windows)
     window_manager.window_deque = gf2d_list_new();
     window_manager.generic_background = gf2d_sprite_load_image("images/window_background.png");
     window_manager.generic_border = gf2d_sprite_load_all("images/window_border.png",64,64,8);
-    window_manager.drawbounds = 1;
+    window_manager.drawbounds = 0;
     slog("window system initilized");
     atexit(gf2d_windows_close);
 }
@@ -278,7 +278,17 @@ void gf2d_windows_update_all()
     }
 }
 
-Window *gf2f_window_load_from_json(SJson *json)
+Window *gf2d_window_load_from_file(char *filename)
+{
+    Window *win;
+    SJson *json = NULL;
+    json = sj_load(filename);
+    win = gf2d_window_load_from_json(json);
+    sj_free(json);
+    return win;
+}
+
+Window *gf2d_window_load_from_json(SJson *json)
 {
     Window *win = NULL;
     int i,count;
@@ -318,6 +328,28 @@ Window *gf2f_window_load_from_json(SJson *json)
         gf2d_window_add_element(win,gf2d_element_load_from_config(value));
     }
     return win;
+}
+
+void gf2d_window_set_position(Window *win,Vector2D position)
+{
+    if (!win)return;
+    win->dimensions.x = position.x;
+    win->dimensions.y = position.y;
+}
+
+Element *gf2d_window_get_element_by_name(Window *win,char *name)
+{
+    Element *e,*r;
+    int i,count;
+    count = gf2d_list_get_count(win->elements);
+    for (i = 0;i < count;i++)
+    {
+        e = (Element *)gf2d_list_get_nth(win->elements,i);
+        if (!e)continue;
+        r = gf2d_get_element_by_name(e,name);
+        if (r)return r;
+    }
+    return NULL;
 }
 
 /*eol@eof*/

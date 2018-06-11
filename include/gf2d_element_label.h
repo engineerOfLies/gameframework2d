@@ -51,4 +51,10 @@ void gf2d_element_make_label(Element *e,LabelElement *label);
  */
 void gf2d_element_load_label_from_config(Element *e,SJson *json);
 
+/**
+ * @brief set the label text for the element
+ * @param e the element to update
+ * @param text the text to set
+ */
+void gf2d_element_label_set_text(Element *e,char *text);
 #endif

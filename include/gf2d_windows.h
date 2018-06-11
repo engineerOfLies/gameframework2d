@@ -108,10 +108,27 @@ void gf2d_draw_window_border(Sprite *border,Sprite *bg,Rect rect,Vector4D color)
 void gf2d_draw_window_border_generic(Rect rect,Vector4D color);
 
 /**
- * @brief make a new window based on the contents of a json config file
- * @param json the json file containing a window config
+ * @brief make a new window based on the contents of a json config
+ * @param json the json data containing a window config
  * @return NULL on error or the new window otherwise
  */
-Window *gf2f_window_load_from_json(SJson *json);
+Window *gf2d_window_load_from_json(SJson *json);
+
+/**
+ * @brief make a new window based on the contents of a json config file
+ * @param filename the json file containing a window config
+ * @return NULL on error or the new window otherwise
+ */
+Window *gf2d_window_load_from_file(char *filename);
+
+/**
+ * @brief change the upperleft position of the window
+ * @param win the window to move
+ * @param postion the new position
+ */
+void gf2d_window_set_position(Window *win,Vector2D position);
+
+Element *gf2d_window_get_element_by_name(Window *win,char *name);
+Element *gf2d_window_get_element_by_id(Window *win,int id);
 
 #endif

@@ -196,4 +196,12 @@ void gf2d_element_load_label_from_config(Element *e,SJson *json)
     gf2d_element_make_label(e,gf2d_element_label_new_full((char *)buffer,color,style,justify,align));
 }
 
+void gf2d_element_label_set_text(Element *e,char *text)
+{
+    LabelElement *label;
+    if (!e)return;
+    label = (LabelElement*)e->data;
+    gf2d_block_cpy(label->text,text);    
+}
+
 /*eol@eof*/

@@ -52,6 +52,7 @@ typedef struct Element_S
     void (*draw)        (struct Element_S *element,Vector2D offset); /**<draw function, offset comes from draw position of window*/
     List *(*update)     (struct Element_S *element,Vector2D offset); /**<function called for updates  returns alist of all elements updated with input*/
     void (*free_data)   (struct Element_S *element);    /**<free function for the element to clean up any loaded custom data*/
+    struct Element_S *(*get_by_name)(struct Element_S *element,char *name);/**<get element by name, searches sub elements as well*/
     void *data;     /**<custom element data*/
 }Element;
 
@@ -113,6 +114,14 @@ Element *gf2d_element_load_from_config(SJson *json);
  */
 void gf2d_element_set_color(Element *element,Color color);
 
+/**
+ * @brief get this element or any sub element that has the name searching for
+ * @note: matches on the first occurance
+ * @param e the element to check
+ * @param name the name to search for
+ * @returns NULL if not found, or a pointer to the element found
+ */
+Element *gf2d_get_element_by_name(Element *e,char *name);
 
 Rect gf2d_element_get_absolute_bounds(Element *element,Vector2D offset);
 #endif
