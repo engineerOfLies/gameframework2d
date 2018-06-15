@@ -47,4 +47,11 @@ ButtonElement *gf2d_element_button_new_full(Element *label,Element *actor,Color 
  */
 void gf2d_element_load_button_from_config(Element *e,SJson *json);
 
+/**
+ * @brief get the hotkey input name from the button
+ * @param e the element to check
+ * @returns NULL on error or not set, the name of the input used for the hotkey otherwise
+ */
+const char *gf2d_element_button_get_input(Element *e);
+
 #endif

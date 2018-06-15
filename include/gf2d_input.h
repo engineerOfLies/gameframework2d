@@ -58,11 +58,11 @@ void gf2d_input_commands_purge();
  * @param command the name of the command to check
  * @returns true if pressed, false otherwise
  */
-Uint8 gf2d_input_command_pressed(char *command);
-Uint8 gf2d_input_command_held(char *command);
-Uint8 gf2d_input_command_released(char *command);
+Uint8 gf2d_input_command_pressed(const char *command);
+Uint8 gf2d_input_command_held(const char *command);
+Uint8 gf2d_input_command_released(const char *command);
 
-InputEventType gf2d_input_command_get_state(char *command);
+InputEventType gf2d_input_command_get_state(const char *command);
 
 /**
  * @brief configure callbacks for an input

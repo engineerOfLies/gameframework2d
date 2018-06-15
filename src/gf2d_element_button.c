@@ -69,20 +69,22 @@ List *gf2d_element_button_update(Element *element,Vector2D offset)
     }
     if (gf2d_input_command_pressed(button->hotkey))
     {
-        element->state = ES_highlight;
-    }
-    else if (gf2d_input_command_held(button->hotkey))
-    {
         element->state = ES_active;
-    }
-    else if (gf2d_input_command_released(button->hotkey))
-    {
-            list = gf2d_list_new();
-            gf2d_list_append(list,element);
-            return list;
+        list = gf2d_list_new();
+        gf2d_list_append(list,element);
+        return list;
     }
 
     return NULL;
+}
+
+const char *gf2d_element_button_get_input(Element *e)
+{
+    ButtonElement *button;
+    if (!e)return NULL;
+    button = (ButtonElement*)e->data;
+    if (!button)return NULL;
+    return button->hotkey;
 }
 
 Element *button_get_by_name(Element *e,char *name)

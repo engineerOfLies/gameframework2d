@@ -364,6 +364,7 @@ void gf2d_actor_load(Actor *actor,char *file)
 void gf2d_actor_set_action(Actor *actor,char *action)
 {
     if (!actor)return;
+    if (!action)return;
     actor->frame = gf2d_action_set(actor->al,action);
     gf2d_line_cpy(actor->action,action);
 }

@@ -10,7 +10,7 @@ typedef struct
     float       windup;         /**<frames to be in windup state*/
     float       actionTime;     /**<frames to be in action state*/
     float       recover;        /**<frames to be in recovery state before idle again*/
-    TextLine    animation;      /**<which actor action to show*/
+    List    *   animation;      /**<which actor animations to show in the windup, act, and recover*/
     float       staminaCost;    /**<cost of stamina*/
     float       manaCost;
     float       healthCost;     
@@ -29,5 +29,13 @@ void skill_list_load(char *filename);
  * @returns NULL if not found or the first accurance found
  */
 Skill *skill_get_by_name(char *name);
+
+/**
+ * @brief check if a skill contains the tag
+ * @param skill the skill to check
+ * @param check the name of the tag to check for
+ * @returns true or false
+ */
+Uint8 skill_check_tag(Skill *skill, char *check);
 
 #endif

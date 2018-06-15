@@ -20,6 +20,14 @@ void skill_free(Skill *skill)
         free(tag);
     }
     gf2d_list_delete(skill->tags);
+    count = gf2d_list_get_count(skill->animation);
+    for (i = 0; i < count; i++)
+    {
+        tag = gf2d_list_get_nth(skill->animation,i);
+        if (!tag)continue;
+        free(tag);
+    }
+    gf2d_list_delete(skill->animation);
     free(skill);
 }
 
@@ -79,6 +87,7 @@ Skill *skill_new()
     }
     memset(skill,0,sizeof(Skill));
     skill->tags = gf2d_list_new();
+    skill->animation = gf2d_list_new();
     gf2d_list_append(skills_list,skill);
     return skill;
 }
@@ -93,7 +102,6 @@ void skill_parse(SJson *object)
     skill = skill_new();
     if (!skill)return;
     gf2d_line_cpy(skill->name,sj_get_string_value(sj_object_get_value(object,"name")));
-    gf2d_line_cpy(skill->animation,sj_get_string_value(sj_object_get_value(object,"animation")));
     sj_get_float_value(sj_object_get_value(object,"windup"),&skill->windup);
     sj_get_float_value(sj_object_get_value(object,"actionTime"),&skill->actionTime);
     sj_get_float_value(sj_object_get_value(object,"recover"),&skill->recover);
@@ -110,6 +118,16 @@ void skill_parse(SJson *object)
         if (!tag)continue;
         gf2d_list_append(skill->tags,gf2d_text_copy(tag));
     }
+    tags = sj_object_get_value(object,"animation");
+    if (!tags)return;
+    count = sj_array_get_count(tags);
+    for (i = 0; i < count; i++)
+    {
+        tag = sj_get_string_value(sj_array_get_nth(tags,i));
+        if (!tag)continue;
+        gf2d_list_append(skill->animation,gf2d_text_copy(tag));
+    }
+
 }
 
 Skill *skill_get_by_name(char *name)
@@ -125,6 +143,21 @@ Skill *skill_get_by_name(char *name)
         if (gf2d_line_cmp(skill->name,name) == 0)return skill;
     }
     return NULL;
+}
+
+Uint8 skill_check_tag(Skill *skill, char *check)
+{
+    char *tag;
+    int count,i;
+    if (!skill)return 0;
+    count = gf2d_list_get_count(skill->tags);
+    for (i = 0; i < count; i++)
+    {
+        tag = (char *)gf2d_list_get_nth(skill->tags,i);
+        if (!tag)continue;
+        if (gf2d_line_cmp(tag,check) == 0)return 1;
+    }
+    return 0;
 }
 
 

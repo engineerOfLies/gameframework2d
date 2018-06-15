@@ -8,7 +8,7 @@ static const Uint8 * gf2d_input_keys = NULL;
 static Uint8 * gf2d_input_old_keys = NULL;
 static int gf2d_input_key_count = 0;
 
-Input *gf2d_input_get_by_name(char *name);
+Input *gf2d_input_get_by_name(const char *name);
 
 
 void gf2d_input_delete(Input *in)
@@ -129,7 +129,7 @@ void gf2d_input_update_command(Input *command)
     }
 }
 
-Input *gf2d_input_get_by_name(char *name)
+Input *gf2d_input_get_by_name(const char *name)
 {
     Uint32 c,i;
     Input *in;
@@ -150,7 +150,7 @@ Input *gf2d_input_get_by_name(char *name)
     return 0;
 }
 
-Uint8 gf2d_input_command_pressed(char *command)
+Uint8 gf2d_input_command_pressed(const char *command)
 {
     Input *in;
     in = gf2d_input_get_by_name(command);
@@ -158,7 +158,7 @@ Uint8 gf2d_input_command_pressed(char *command)
     return 0;
 }
 
-Uint8 gf2d_input_command_held(char *command)
+Uint8 gf2d_input_command_held(const char *command)
 {
     Input *in;
     in = gf2d_input_get_by_name(command);
@@ -166,7 +166,7 @@ Uint8 gf2d_input_command_held(char *command)
     return 0;
 }
 
-Uint8 gf2d_input_command_released(char *command)
+Uint8 gf2d_input_command_released(const char *command)
 {
     Input *in;
     in = gf2d_input_get_by_name(command);
@@ -174,7 +174,7 @@ Uint8 gf2d_input_command_released(char *command)
     return 0;
 }
 
-InputEventType gf2d_input_command_get_state(char *command)
+InputEventType gf2d_input_command_get_state(const char *command)
 {
     Input *in;
     in = gf2d_input_get_by_name(command);
