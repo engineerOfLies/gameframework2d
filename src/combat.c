@@ -8,42 +8,8 @@
 
 #include "combat.h"
 #include "skills.h"
-
-typedef enum
-{
-    CS_Idle = 0,        // able to perform any action from this state
-    CS_Retreating,      // only able to perform a retreating action from this state Transition to far
-    CS_Advancing,       // only able to perform an advancing action from this state Transition to close
-    CS_Pain,            // cannot act, will automatically return to recover
-    CS_Stun,            // cannot act, different animation from Pain, will automatically return to pain
-    CS_Windup,          // begining of an action.  Committed and vulnerable in this state
-    CS_Action,          // active frames of an action  returns to recover from here
-    CS_Recover,         // Vulnerable, but automatically returns to Idle
-    CS_DodgingLeft,     // Avoids linear attacks and swinging attacks that go right
-    CS_DodgingRight,    // Avoids linear attacks and swinging attacks that go left
-    CS_Blocking,        // blocks incoming attacks
-    CS_Parrying,        // puts melee attacks into parried state
-    CS_Parried,         // vulnerable state after an attack was parried
-    CS_Dying            // triggers death animation
-}CombatState;
-
-typedef struct Combatant_S
-{
-    CombatState state;
-    Actor       actor;
-    TextLine    stateString;
-    float       cooldown;           /**<how long before the player state changes*/
-    float       health,healthMax;
-    float       mana,manaMax;
-    float       stamina,staminaMax;
-    Skill     * actions[CA_MAX];
-    Color       color;
-    Window      *statusMenu;
-    Skill     * currentAction;
-    const char* holdInput;          /**<input to check for held status*/
-    Vector2D    nearPosition,farPosition;
-    void (*stateUpdate)(struct Combatant_S *com);
-}Combatant;
+#include "opponent.h"
+#include "decision.h"
 
 typedef struct
 {
@@ -106,6 +72,36 @@ void recover_state(Combatant *com)
     com->stateUpdate = idle_state;
     com->currentAction = NULL;
     gf2d_actor_set_action(&com->actor,"idle");
+    com->cooldown = 40 + (gf2d_random() *30);
+}
+
+void pain_state(Combatant *com)
+{
+    slog("owww...");
+    if (!com)return;
+    if (com->cooldown != 0)return;
+    com->state = CS_Idle;
+    com->stateUpdate = idle_state;
+    com->currentAction = NULL;
+    gf2d_actor_set_action(&com->actor,"idle");
+    com->cooldown = 40 + (gf2d_random() *30);
+}
+
+void pain(Combatant *com)
+{
+    if (!com)return;
+    com->state = CS_Pain;
+    com->stateUpdate = pain_state;
+    if (gf2d_crandom() > 0)
+    {
+        com->cooldown = 20;
+        gf2d_actor_set_action(&com->actor,"pain1");
+    }
+    else
+    {
+        com->cooldown = 25;
+        gf2d_actor_set_action(&com->actor,"pain2");
+    }
 }
 
 void recover(Combatant *com)
@@ -164,7 +160,22 @@ void dodging_state(Combatant *com)
         slog("dodging right...");
     }
     if (com->cooldown != 0)return;
+    //evaluate success for AI
+    if (com->decisions != NULL)
+    {
+        decision_list_update_choice(com->decisions, com->currentAction->name, 0.5);
+    }
     recover(com);
+}
+
+void deal_damage(Combatant *com,float damage)
+{
+    com->health -= damage;
+    if (com->currentAction)
+    {
+        decision_list_update_choice(com->decisions, com->currentAction->name, 0);
+    }
+    pain(com);
 }
 
 void action_state(Combatant *com)
@@ -189,6 +200,50 @@ void action_state(Combatant *com)
         return;
     }
     if (com->cooldown != 0)return;
+    if (skill_check_tag(com->currentAction, "melee"))
+    {
+        if (combat_info.position > 0.5)
+        {
+            slog("miss");
+            decision_list_update_choice(com->decisions, com->currentAction->name, 0);
+        }
+        else switch (com->other->state)
+        {
+            case CS_Idle:
+            case CS_Dying:
+            case CS_Pain:
+            case CS_Stun:
+            case CS_Recover:
+                slog("HIT");
+                deal_damage(com->other,com->currentAction->damageMod * com->weaponDamage);
+                decision_list_update_choice(com->decisions, com->currentAction->name, 0.9);
+                break;
+            case CS_Advancing:
+            case CS_Retreating:
+            case CS_Windup:
+            case CS_Action:
+            case CS_Parried:
+                slog("Counter HIT");
+                decision_list_update_choice(com->decisions, com->currentAction->name, 1.1);
+                break;
+            case CS_DodgingLeft:
+            case CS_DodgingRight:
+                slog("Dodged!");
+                decision_list_update_choice(com->decisions, com->currentAction->name, 0.1);
+                decision_list_update_choice(com->other->decisions, com->other->currentAction->name, 1);
+                break;
+            case CS_Blocking:
+                slog("blocked");
+                decision_list_update_choice(com->decisions, com->currentAction->name, 0.1);
+                decision_list_update_choice(com->other->decisions, com->other->currentAction->name, 1);
+                break;
+            case CS_Parrying:
+                slog("Parried");
+                decision_list_update_choice(com->decisions, com->currentAction->name, 0.1);
+                decision_list_update_choice(com->other->decisions, com->other->currentAction->name, 1);
+                break;
+        }
+    }
     recover(com);
 }
 
@@ -253,10 +308,15 @@ void combatant_update(Combatant *com)
         }
         else com->cooldown -= 60/gf2d_graphics_get_frames_per_second();
         if (com->cooldown < 0.5)com->cooldown = 0;
+        if (com->decisions)slog("AI Cooling down %f",com->cooldown);
     }
     if (com->stateUpdate != NULL)
     {
         com->stateUpdate(com);
+    }
+    if (com->decisions != NULL)
+    {
+        opponent_think(com->decisions,com,combat_info.position);
     }
 }
 
@@ -499,7 +559,6 @@ void combatant_setup_skills(Combatant *com)
     com->actions[CA_Retreating] = skill_get_by_name("retreat");
     com->actions[CA_DodgingLeft] = skill_get_by_name("dodge_left");
     com->actions[CA_DodgingRight] = skill_get_by_name("dodge_right");
-    com->actions[CA_Retreating] = skill_get_by_name("retreat");
     com->actions[CA_LeftWeak] = skill_get_by_name("shield_block");
     com->actions[CA_LeftStrong] = skill_get_by_name("shield_parry");
     com->actions[CA_DodgingRightAction] = skill_get_by_name("shield_deflect");
@@ -520,8 +579,8 @@ void combat_init()
     combat_info.combatant[0].color = gf2d_color8(0,0,255,255);
     combat_info.combatant[0].statusMenu = statusMenu(vector2d(20,20),&combat_info.combatant[0]);
     combatant_setup_skills(&combat_info.combatant[0]);
-    vector2d_set(combat_info.combatant[0].nearPosition,400,280);
-    vector2d_set(combat_info.combatant[0].farPosition,300,380);
+    vector2d_set(combat_info.combatant[0].nearPosition,375,355);
+    vector2d_set(combat_info.combatant[0].farPosition,250,480);
     e = gf2d_window_get_element_by_name(combat_info.combatant[0].statusMenu,"title");
     if (e)
     {
@@ -529,24 +588,30 @@ void combat_init()
     }
     gf2d_actor_load(&combat_info.combatant[0].actor,"actors/player.actor");
     gf2d_actor_set_action(&combat_info.combatant[0].actor,"idle");
-    
+    combat_info.combatant[0].other = &combat_info.combatant[1];
+
+    combat_info.combatant[1].other = &combat_info.combatant[0];
     combat_info.combatant[1].color = gf2d_color8(255,0,0,255);
     combat_info.combatant[1].statusMenu = statusMenu(vector2d(930,20),&combat_info.combatant[1]);
-    vector2d_set(combat_info.combatant[1].nearPosition,600,100);
-    vector2d_set(combat_info.combatant[1].farPosition,680,40);
+    vector2d_set(combat_info.combatant[1].nearPosition,525,225);
+    vector2d_set(combat_info.combatant[1].farPosition,630,140);
+    gf2d_actor_load(&combat_info.combatant[1].actor,"actors/opponent.actor");
+    gf2d_actor_set_action(&combat_info.combatant[1].actor,"idle");
     e = gf2d_window_get_element_by_name(combat_info.combatant[1].statusMenu,"title");
     if (e)
     {
         gf2d_element_label_set_text(e,"NPC Player");
     }
+    combat_info.combatant[1].decisions = opponent_setup_choices();
 
     for (i = 0;i < 2;i++)
     {
         combat_info.combatant[i].health = combat_info.combatant[i].healthMax = 100;
         combat_info.combatant[i].stamina = combat_info.combatant[i].staminaMax = 100;
         combat_info.combatant[i].mana = combat_info.combatant[i].manaMax = 100;
-        combat_info.combatant[i].cooldown = 0;
+        combat_info.combatant[i].cooldown = 100;
         combat_info.combatant[i].stateUpdate = idle_state;
+        combat_info.combatant[i].weaponDamage = 5;
     }
 }
 

@@ -137,3 +137,15 @@ startFrame: 172
 endFrame: 177
 frameRate: 0.25
 type:   pass
+
+action: pain1
+startFrame: 241
+endFrame: 245
+frameRate: 0.1
+type:   pass
+
+action: pain2
+startFrame: 248
+endFrame: 250
+frameRate: 0.1
+type:   pass

@@ -1,0 +1,151 @@
+sprite: images/opponentsheet.png
+frameWidth: 512
+frameHeight: 512
+framesPerLine: 16
+scale: 1,1
+color: 255,255,255,255
+colorSpecial: 255,255,255,255
+
+action: idle
+startFrame: 0
+endFrame: 32
+frameRate: 0.25
+type:   loop
+
+action: dodge_left
+startFrame: 106
+endFrame: 119
+frameRate: 0.25
+type:   pass
+
+action: dodge_strike
+startFrame: 119
+endFrame: 121
+frameRate: 0.25
+type:   pass
+
+action: dodge_strike_recover
+startFrame: 122
+endFrame: 125
+frameRate: 0.25
+type:   pass
+
+action: dodge_right
+startFrame: 125
+endFrame: 140
+frameRate: 0.25
+type:   pass
+
+action: advance
+startFrame: 146
+endFrame: 162
+frameRate: 0.25
+type:   pass
+
+action: retreat
+startFrame: 193
+endFrame: 210
+frameRate: 0.25
+type:   pass
+
+action: dagger_slash_windup
+startFrame: 63
+endFrame: 72
+frameRate: 0.5
+type:   pass
+
+action: dagger_slash
+startFrame: 73
+endFrame: 76
+frameRate: 0.5
+type:   pass
+
+action: dagger_slash_recover
+startFrame: 77
+endFrame: 84
+frameRate: 0.5
+type:   pass
+
+action: dagger_thrust_windup
+startFrame: 83
+endFrame: 98
+frameRate: 0.5
+type:   pass
+
+action: dagger_thrust
+startFrame: 98
+endFrame: 102
+frameRate: 0.3
+type:   pass
+
+action: dagger_thrust_recover
+startFrame: 103
+endFrame: 104
+frameRate: 0.5
+type:   pass
+
+action: shield_block_windup
+startFrame: 32
+endFrame: 45
+frameRate: 0.5
+type:   pass
+
+action: shield_block
+startFrame: 46
+endFrame: 46
+frameRate: 0.5
+type:   pass
+
+action: shield_block_recover
+startFrame: 47
+endFrame: 51
+frameRate: 0.32
+type:   pass
+
+action: shield_parry
+startFrame: 53
+endFrame: 60
+frameRate: 0.5
+type:   pass
+
+action: shield_parry_recover
+startFrame: 61
+endFrame: 64
+frameRate: 0.2
+type:   pass
+
+action: shield_deflect
+startFrame: 140
+endFrame: 143
+frameRate: 0.25
+type:   pass
+
+action: shield_deflect_recover
+startFrame: 144
+endFrame: 146
+frameRate: 0.2
+type:   pass
+
+action: dagger_lunge
+startFrame: 167
+endFrame: 171
+frameRate: 0.25
+type:   pass
+
+action: dagger_lunge_recover
+startFrame: 172
+endFrame: 177
+frameRate: 0.25
+type:   pass
+
+action: pain1
+startFrame: 241
+endFrame: 245
+frameRate: 0.25
+type:   pass
+
+action: pain2
+startFrame: 248
+endFrame: 250
+frameRate: 0.25
+type:   pass
