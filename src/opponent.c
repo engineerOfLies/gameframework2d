@@ -8,9 +8,7 @@ List *opponent_setup_choices()
     decisions = decision_list_new();
     if (!decisions)return NULL;
     decision_list_insert_choice(decisions,"dagger_thrust");
-    decision_list_insert_choice(decisions,"dagger_thrust");
     decision_list_insert_choice(decisions,"shield_block");
-    decision_list_insert_choice(decisions,"dagger_slash");
     decision_list_insert_choice(decisions,"dagger_slash");
     decision_list_insert_choice(decisions,"dodge_left");
     decision_list_insert_choice(decisions,"dodge_right");
@@ -35,8 +33,9 @@ void opponent_think(List *decisions,Combatant *com,float position)
         choice = decision_list_get_best_choice(decisions);
         if (gf2d_line_cmp(com->lastChoice,choice)==0)
         {
-            decision_list_update_choice(decisions, choice, 0.2);
+            decision_list_update_choice(decisions, choice, 0);
         }
+        gf2d_line_cpy(com->lastChoice,choice);
         skill = skill_get_by_name((char *)choice);
         if (skill_check_tag(skill, "melee") && (position == 1))
         {
