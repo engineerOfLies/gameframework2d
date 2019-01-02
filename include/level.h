@@ -15,16 +15,31 @@
  */
 typedef struct
 {
-    TextLine    backgroundImage;    /**<background music for this level*/
+    TextLine    backgroundImage;    /**<background image for this level*/
     TextLine    backgroundMusic;    /**<background music for this level*/
-    Vector2D    tilesize;           /**<how tile space width & height*/
-    char       *tilemap;            /**<tile data*/
+    TextLine    tileSet;            /**<tiles to use for this level*/
+    Vector2D    tileSize;           /**<how tile space width & height*/
+    int        *tileMap;            /**<tile data*/
     List        SpawnList;          /**<the things that go here*/
-}Level;
+}LevelInfo;
 
+/**
+ * @brief clears all assets loaded for the live level
+ * Called at program exit and before loading the next level
+ */
+void level_clear();
 
-void level_load(char *filename);
-void level_init();
+void level_draw();
 void level_update();
+
+/**
+ * @brief create the live level based on the provided level info
+ * @param linfo the level info to create the level for
+ */
+void level_init(LevelInfo *linfo);
+
+void level_info_free(LevelInfo *linfo);
+LevelInfo *level_info_load(char *filename);
+
 
 #endif

@@ -6,8 +6,7 @@
 #include "gf2d_audio.h"
 #include "gf2d_windows.h"
 #include "simple_logger.h"
-#include "gf2d_config.h"
-#include "gf2d_mouse.h"
+#include "level.h"
 
 
 int main(int argc, char * argv[])
@@ -15,6 +14,7 @@ int main(int argc, char * argv[])
     /*variable declarations*/
     int done = 0;
     const Uint8 * keys;
+    LevelInfo *linfo = NULL;
     
     /*program initializtion*/
     init_logger("gf2d.log");
@@ -34,7 +34,10 @@ int main(int argc, char * argv[])
     gf2d_text_init("config/font.cfg");
     gf2d_windows_init(128);
     SDL_ShowCursor(SDL_DISABLE);
-    
+    // game specific setup
+    linfo = level_info_load("config/testworld.json");
+    level_init(linfo);
+
     /*main game loop*/
     while(!done)
     {
@@ -48,6 +51,7 @@ int main(int argc, char * argv[])
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
                 // DRAW WORLD
+                level_draw();
                 // Draw entities
             //UI elements last
             gf2d_windows_draw_all();
@@ -56,7 +60,10 @@ int main(int argc, char * argv[])
         if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition
    //     slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
-        slog("---==== END ====---");
+    level_info_free(linfo);
+    
+    level_clear();
+    slog("---==== END ====---");
     return 0;
 }
 /*eol@eof*/
