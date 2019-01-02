@@ -107,7 +107,7 @@ void gf2d_space_add_static_shape(Space *space,Shape shape)
         return;
     }
     memcpy(newShape,&shape,sizeof(Shape));
-    space->staticShapes = gf2d_list_append(space->staticShapes,(void *)newShape);
+    gf2d_list_append(space->staticShapes,(void *)newShape);
 }
 
 void gf2d_body_push(Body *body,Vector2D direction,float force)
@@ -154,7 +154,7 @@ void gf2d_space_add_body(Space *space,Body *body)
         slog("no body provided");
         return;
     }
-    space->bodyList = gf2d_list_append(space->bodyList,(void *)body);
+    gf2d_list_append(space->bodyList,(void *)body);
 }
 
 void gf2d_body_draw(Body *body)
@@ -293,7 +293,7 @@ void gf2d_body_adjust_collision_bounds_velocity(Body *a,float slop, Rect bounds,
 {
     Rect r;
     if (!a)return;
-    gf2d_shape_get_bounds(*a->shape);
+    r = gf2d_shape_get_bounds(*a->shape);
     vector2d_add(r,r,a->position);
     vector2d_add(r,r,(*velocity));
     if ((r.x <= bounds.x + slop)&&(velocity->x < 0))velocity->x = 0;

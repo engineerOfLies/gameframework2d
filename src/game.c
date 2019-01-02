@@ -57,9 +57,7 @@ int main(int argc, char * argv[])
         if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition
    //     slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
-    
-    gf2d_space_free(space);
-    slog("---==== END ====---");
+        slog("---==== END ====---");
     return 0;
 }
 /*eol@eof*/
