@@ -24,7 +24,7 @@ void gf2d_body_set(
     int     (*worldTouch)(struct Body_S *self, Collision *collision))
 {
     if (!body)return;
-	body->layer = layer;
+    body->layer = layer;
     body->team = team;
     vector2d_copy(body->position,position);
     vector2d_copy(body->velocity,velocity);
@@ -210,22 +210,22 @@ Vector2D gf2d_body_normal(Body *body,Vector2D poc, Vector2D *normal)
     vector2d_copy(n,(*normal));
     if ((normal->x > 0) && (body->position.x < poc.x))
     {
-        n = vector2d_rotate(n,GF2D_PI);
+        n = vector2d_rotate(n,M_PI);
         return n;
     }
     if ((normal->x < 0) && (body->position.x > poc.x))
     {
-        n = vector2d_rotate(n,GF2D_PI);
+        n = vector2d_rotate(n,M_PI);
         return n;
     }
     if ((normal->y > 0) && (body->position.y < poc.y))
     {
-        n = vector2d_rotate(n,GF2D_PI);
+        n = vector2d_rotate(n,M_PI);
         return n;
     }
     if ((normal->y < 0) && (body->position.y > poc.y))
     {
-        n = vector2d_rotate(n,GF2D_PI);
+        n = vector2d_rotate(n,M_PI);
         return n;
     }
     return n;
@@ -362,7 +362,7 @@ Uint8 gf2d_body_collide(Body *a,Body *b,Vector2D *poc, Vector2D *normal)
 
 Uint8 gf2d_body_check_bounds(Body *body,Rect bounds,Vector2D *poc,Vector2D *normal)
 {
-    Shape aS,bs;
+    Shape aS= {0},bs={0};
     if (!body)return 0;
     bs = gf2d_shape_from_rect(bounds);
 
