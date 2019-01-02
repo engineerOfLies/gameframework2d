@@ -41,7 +41,6 @@ int main(int argc, char * argv[])
         SDL_PumpEvents();   // update SDL's internal event structures
         keys = SDL_GetKeyboardState(NULL); // get the keyboard state for this frame
         /*update things here*/
-        gf2d_mouse_update();
         gf2d_windows_update_all();
         
         
