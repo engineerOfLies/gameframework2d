@@ -19,7 +19,6 @@ void gf2d_audio_init(
         slog("Failed to open audio: %s\n", SDL_GetError());
         return;
     }
-    atexit(Mix_CloseAudio);
     
     if (enableMP3)
     {
