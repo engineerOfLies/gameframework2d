@@ -357,7 +357,8 @@ void gf2d_actor_load(Actor *actor,char *file)
         actor->al->sprite,
         actor->al->frameWidth,
         actor->al->frameHeight,
-        actor->al->framesPerLine);
+        actor->al->framesPerLine,
+        false);
     gf2d_actor_set_action(actor,actor->al->actions[0].name);
 }
 

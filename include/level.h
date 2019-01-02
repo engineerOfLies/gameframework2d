@@ -19,6 +19,7 @@ typedef struct
     TextLine    backgroundMusic;    /**<background music for this level*/
     TextLine    tileSet;            /**<tiles to use for this level*/
     Vector2D    tileSize;           /**<how tile space width & height*/
+    Vector2D    tileMapSize;        /**<how tile space width & height*/
     int        *tileMap;            /**<tile data*/
     List        SpawnList;          /**<the things that go here*/
 }LevelInfo;

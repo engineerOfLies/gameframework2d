@@ -156,7 +156,7 @@ void gf2d_windows_init(int max_windows)
     window_manager.window_max = max_windows;
     window_manager.window_deque = gf2d_list_new();
     window_manager.generic_background = gf2d_sprite_load_image("images/window_background.png");
-    window_manager.generic_border = gf2d_sprite_load_all("images/window_border.png",64,64,8);
+    window_manager.generic_border = gf2d_sprite_load_all("images/window_border.png",64,64,8,false);
     window_manager.drawbounds = 1;
     slog("window system initilized");
     atexit(gf2d_windows_close);
