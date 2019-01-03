@@ -68,12 +68,14 @@ List *gf2d_list_expand(List *list)
     {
         return list;
     }
+    slog("old list count : %i",list->count);
     if (list->count > 0)
     {
         memcpy(l->elements,list->elements,sizeof(ListElementData)*list->count);
     }
     l->count = list->count;
     gf2d_list_delete(list);
+    slog("new list size is %i",l->size);
     return l;
 }
 
@@ -84,16 +86,21 @@ int gf2d_list_append(List *list,void *data)
         slog("no list provided");
         return -1;
     }
+    slog("there are %i items in the list, adding another",list->count);
     if (list->count >= list->size)
     {
+        slog("count is %i, size is %i.  expanding", list->count, list->size);
         list = gf2d_list_expand(list);
         if (!list)
         {
             slog("append failed due to lack of memory");
             return -1;
         }
+        slog("list count after expand is now: %i",list->count);
     }
-    list->elements[list->count++].data = data;
+    list->elements[list->count].data = data;
+    list->count++;
+    slog("added element %i to list",list->count - 1);
     return 0;
 }
 

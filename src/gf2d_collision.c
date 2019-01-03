@@ -107,6 +107,7 @@ void gf2d_space_add_static_shape(Space *space,Shape shape)
         return;
     }
     memcpy(newShape,&shape,sizeof(Shape));
+    slog("adding new static shape");
     gf2d_list_append(space->staticShapes,(void *)newShape);
 }
 
