@@ -54,7 +54,7 @@ List *gf2d_element_button_update(Element *element,Vector2D offset)
         else if (gf2d_mouse_button_released(0))
         {
             list = gf2d_list_new();
-            gf2d_list_append(list,element);
+            list = gf2d_list_append(list,element);
             return list;
         }
     }

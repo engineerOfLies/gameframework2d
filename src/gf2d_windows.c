@@ -223,7 +223,7 @@ void gf2d_window_update(Window *win)
             {
                 updateList = gf2d_list_new();
             }
-            gf2d_list_concat_free(updateList,updated);
+            updateList = gf2d_list_concat_free(updateList,updated);
         }
     }
     if (win->update)
@@ -242,7 +242,7 @@ Window *gf2d_window_new()
         if (!window_manager.window_list[i]._inuse)
         {
            window_manager.window_list[i]._inuse = 1;
-           gf2d_list_append(window_manager.window_deque,&window_manager.window_list[i]);
+           window_manager.window_deque = gf2d_list_append(window_manager.window_deque,&window_manager.window_list[i]);
            window_manager.window_list[i].elements = gf2d_list_new();
            return &window_manager.window_list[i];
         }
@@ -254,7 +254,7 @@ void gf2d_window_add_element(Window *win,Element *e)
 {
     if (!win)return;
     if (!e)return;
-    gf2d_list_append(win->elements,e);
+    win->elements = gf2d_list_append(win->elements,e);
 }
 
 void gf2d_windows_draw_all()

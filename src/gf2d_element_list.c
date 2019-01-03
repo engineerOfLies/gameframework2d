@@ -167,7 +167,7 @@ void gf2d_element_list_add_item(Element *e,Element *item)
     ListElement *list;
     if ((!e)||(!item))return;// no op
     list = (ListElement *)e->data;
-    gf2d_list_append(list->list,(void*)item);
+    list->list = gf2d_list_append(list->list,(void*)item);
 }
 
 void gf2d_element_load_list_from_config(Element *e,SJson *json)

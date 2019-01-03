@@ -108,7 +108,7 @@ void gf2d_space_add_static_shape(Space *space,Shape shape)
     }
     memcpy(newShape,&shape,sizeof(Shape));
     slog("adding new static shape");
-    gf2d_list_append(space->staticShapes,(void *)newShape);
+    space->staticShapes = gf2d_list_append(space->staticShapes,(void *)newShape);
 }
 
 void gf2d_body_push(Body *body,Vector2D direction,float force)
@@ -155,7 +155,7 @@ void gf2d_space_add_body(Space *space,Body *body)
         slog("no body provided");
         return;
     }
-    gf2d_list_append(space->bodyList,(void *)body);
+    space->bodyList = gf2d_list_append(space->bodyList,(void *)body);
 }
 
 void gf2d_body_draw(Body *body)
