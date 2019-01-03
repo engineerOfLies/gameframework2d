@@ -1,4 +1,5 @@
 #include "level.h"
+#include "camera.h"
 #include "simple_json.h"
 #include "simple_logger.h"
 #include "gf2d_graphics.h"
@@ -242,13 +243,16 @@ void level_init(LevelInfo *linfo)
         1,
         0.1);
     level_build_tile_space(linfo);
+    camera_set_bounds(0,0,gamelevel.tileLayer->surface->w,gamelevel.tileLayer->surface->h);
 }
 
 void level_draw()
 {
-    gf2d_sprite_draw_image(gamelevel.backgroundImage,vector2d(0,0));
-    gf2d_sprite_draw_image(gamelevel.tileLayer,vector2d(0,0));
-    gf2d_space_draw(gamelevel.space);
+    Vector2D cam;
+    cam = camera_get_position();
+    gf2d_sprite_draw_image(gamelevel.backgroundImage,vector2d(-cam.x,-cam.y));
+    gf2d_sprite_draw_image(gamelevel.tileLayer,vector2d(-cam.x,-cam.y));
+    gf2d_space_draw(gamelevel.space,vector2d(-cam.x,-cam.y));
 }
 
 void level_update()

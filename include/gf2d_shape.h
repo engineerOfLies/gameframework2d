@@ -246,8 +246,9 @@ Rect gf2d_rect_from_sdl_rect(SDL_Rect r);
  * @brief draw the shape with the color specified
  * @param shape the shape to draw
  * @param color the color to draw with
+ * @param offset a positional offset to draw the space at
  */
-void gf2d_shape_draw(Shape shape,Color color);
+void gf2d_shape_draw(Shape shape,Color color,Vector2D offset);
 
 /**
  * @brief change the position of the shape based on the movement vector

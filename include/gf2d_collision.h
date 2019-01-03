@@ -117,8 +117,10 @@ void gf2d_space_free(Space *space);
 
 /**
  * @brief visualize the space and its contents
+ * @param space the space to draw
+ * @param offset a positional offset applied when drawing.
  */
-void gf2d_space_draw(Space *space);
+void gf2d_space_draw(Space *space,Vector2D offset);
 
 /**
  * @brief add a body to the space simulation

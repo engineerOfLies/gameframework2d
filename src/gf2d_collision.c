@@ -158,7 +158,7 @@ void gf2d_space_add_body(Space *space,Body *body)
     space->bodyList = gf2d_list_append(space->bodyList,(void *)body);
 }
 
-void gf2d_body_draw(Body *body)
+void gf2d_body_draw(Body *body,Vector2D offset)
 {
     Vector4D color;
     Shape shape;
@@ -170,28 +170,31 @@ void gf2d_body_draw(Body *body)
     vector4d_set(color,255,0,255,255);
     gf2d_shape_copy(&shape,*body->shape);
     gf2d_shape_move(&shape,body->position);
-    gf2d_shape_draw(shape,gf2d_color_from_vector4(color));
+    gf2d_shape_draw(shape,gf2d_color_from_vector4(color),offset);
 }
 
 
-void gf2d_space_draw(Space *space)
+void gf2d_space_draw(Space *space,Vector2D offset)
 {
     int i,count;
+    SDL_Rect r;
     if (!space)
     {
         slog("no space provided");
         return;
     }
-    gf2d_draw_rect(gf2d_rect_to_sdl_rect(space->bounds),vector4d(255,0,0,255));
+    r = gf2d_rect_to_sdl_rect(space->bounds);
+    vector2d_add(r,r,offset);    
+    gf2d_draw_rect(r,vector4d(255,0,0,255));
     count = gf2d_list_get_count(space->bodyList);
     for (i = 0; i < count;i++)
     {
-        gf2d_body_draw((Body *)gf2d_list_get_nth(space->bodyList,i));
+        gf2d_body_draw((Body *)gf2d_list_get_nth(space->bodyList,i),offset);
     }
     count = gf2d_list_get_count(space->staticShapes);
     for (i = 0; i < count;i++)
     {
-        gf2d_shape_draw(*(Shape *)gf2d_list_get_nth(space->staticShapes,i),gf2d_color8(0,255,0,255));
+        gf2d_shape_draw(*(Shape *)gf2d_list_get_nth(space->staticShapes,i),gf2d_color8(0,255,0,255),offset);
     }
 }
 

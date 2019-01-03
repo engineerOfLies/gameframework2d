@@ -5,7 +5,9 @@
 #include "gf2d_list.h"
 #include "gf2d_audio.h"
 #include "gf2d_windows.h"
+#include "gf2d_entity.h"
 #include "simple_logger.h"
+#include "camera.h"
 #include "level.h"
 
 
@@ -33,6 +35,10 @@ int main(int argc, char * argv[])
     gf2d_action_list_init(128);
     gf2d_text_init("config/font.cfg");
     gf2d_windows_init(128);
+    gf2d_entity_system_init(1024);
+    
+    camera_set_dimensions(0,0,1200,700);
+    
     SDL_ShowCursor(SDL_DISABLE);
     // game specific setup
     linfo = level_info_load("config/testworld.json");
@@ -46,6 +52,10 @@ int main(int argc, char * argv[])
         /*update things here*/
         gf2d_windows_update_all();
         
+        if (keys[SDL_SCANCODE_RIGHT])camera_move(vector2d(10,0));
+        if (keys[SDL_SCANCODE_LEFT])camera_move(vector2d(-10,0));
+        if (keys[SDL_SCANCODE_DOWN])camera_move(vector2d(0,10));
+        if (keys[SDL_SCANCODE_UP])camera_move(vector2d(0,-10));
         
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame

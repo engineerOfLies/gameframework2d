@@ -345,7 +345,7 @@ void gf2d_particle_draw(Particle *p)
             gf2d_shape_move(&shape,p->position);
             SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),p->mode);
             color = gf2d_color_to_vector4(p->color);
-            gf2d_shape_draw(shape,p->color);
+            gf2d_shape_draw(shape,p->color,vector2d(0,0));
             SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),SDL_BLENDMODE_BLEND);
             break;
         case PT_Sprite:
