@@ -209,7 +209,14 @@ void level_init(LevelInfo *linfo)
     {
         slog("failed to convert tile layer to supported format");
         gf2d_sprite_free(gamelevel.tileLayer);
-    }        
+    }
+    gameleve.space = gf2d_space_new_full(
+        int         precision,
+        Rect        bounds,
+        float       timeStep,
+        Vector2D    gravity,
+        float       dampening,
+        float       slop);
     
 }
 
@@ -217,6 +224,7 @@ void level_draw()
 {
     gf2d_sprite_draw_image(gamelevel.backgroundImage,vector2d(0,0));
     gf2d_sprite_draw_image(gamelevel.tileLayer,vector2d(0,0));
+    gf2d_space_draw(gamelevel.space);
 }
 
 void level_update()
