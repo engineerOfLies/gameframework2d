@@ -107,7 +107,6 @@ void gf2d_space_add_static_shape(Space *space,Shape shape)
         return;
     }
     memcpy(newShape,&shape,sizeof(Shape));
-    slog("adding new static shape");
     space->staticShapes = gf2d_list_append(space->staticShapes,(void *)newShape);
 }
 
@@ -406,8 +405,11 @@ void gf2d_body_post_step(Body *body,Space *space)
     body->newvelocity.x = (body->newvelocity.x * body->elasticity)+(body->velocity.x * resistance);
     body->newvelocity.y = (body->newvelocity.y * body->elasticity)+(body->velocity.y * resistance);
     vector2d_scale(body->newvelocity,body->newvelocity,space->dampening);
+    if (vector2d_magnitude_squared(body->newvelocity) < 0.1)vector2d_clear(body->newvelocity);
+
     vector2d_copy(body->velocity,body->newvelocity);
 }
+
 
 void gf2d_body_step(Body *body,Space *space,float step)
 {
@@ -531,29 +533,18 @@ void gf2d_space_step(Space *space,float t)
     int i= 0;
     Body *body;
     int bodies;
-    Vector2D gravityStep;
-    Vector2D gravityFactor;
     if (!space)return;
-    vector2d_scale(gravityStep,space->gravity,space->timeStep);
     bodies = gf2d_list_get_count(space->bodyList);
-//    slog("updating space step:");
     for (i = 0; i < bodies; i++)
     {
         body = (Body*)gf2d_list_get_nth(space->bodyList,i);
         if (!body)continue;// body already hit something
-        vector2d_scale(gravityFactor,gravityStep,body->gravity);
-        vector2d_add(body->velocity,body->velocity,gravityFactor);
         gf2d_body_pre_step(body,space);
     }
     for (i = 0; i < bodies; i++)
     {
         body = (Body*)gf2d_list_get_nth(space->bodyList,i);
         if ((!body)||(body->inactive))continue;// body already hit something
-        // apply gravity
-//         if (strcmp(body->name,"player")==0)
-//         {
-//                 slog("updating player body");
-//         }
         gf2d_body_step(body,space,t);
     }
     for (i = 0; i < bodies; i++)

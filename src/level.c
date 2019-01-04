@@ -195,13 +195,11 @@ Sprite *level_make_tile_layer(LevelInfo *linfo,Sprite * tileset, Uint32 format)
 void level_build_tile_space(LevelInfo *linfo)
 {
     int i,j;
-    int count = 0;
     for (j = 0;j < linfo->tileMapSize.y;j++)
     {
         for (i = 0; i < linfo->tileMapSize.x;i++)
         {
             if (!linfo->tileMap[j * (Uint32)linfo->tileMapSize.x + i])continue;
-            slog("adding static %i",count++);
             gf2d_space_add_static_shape(gamelevel.space,gf2d_shape_rect(i * linfo->tileSize.x, j * linfo->tileSize.y, linfo->tileSize.x, linfo->tileSize.y));
         }
     }
@@ -239,7 +237,7 @@ void level_init(LevelInfo *linfo)
         3,
         gf2d_rect(0,0,gamelevel.tileLayer->surface->w,gamelevel.tileLayer->surface->h),
         0.1,
-        vector2d(0,0.098),
+        vector2d(0,0),
         1,
         0.1);
     level_build_tile_space(linfo);
@@ -252,12 +250,60 @@ void level_draw()
     cam = camera_get_position();
     gf2d_sprite_draw_image(gamelevel.backgroundImage,vector2d(-cam.x,-cam.y));
     gf2d_sprite_draw_image(gamelevel.tileLayer,vector2d(-cam.x,-cam.y));
+    gf2d_entity_draw_all();
     gf2d_space_draw(gamelevel.space,vector2d(-cam.x,-cam.y));
 }
 
 void level_update()
 {
-    
+    gf2d_entity_pre_sync_all();
+    gf2d_space_update(gamelevel.space);
+    gf2d_entity_post_sync_all();
 }
 
+int body_body_touch(Body *self, Body *other, Collision *collision)
+{
+    Entity *selfEnt,*otherEnt;
+    if ((!self)||(!other))return 0;
+    selfEnt = (Entity *)self->data;
+    if (!selfEnt)return 0;
+    otherEnt = (Entity *)other->data;
+    if (!otherEnt)return 0;
+    if (selfEnt->touch)
+    {
+        slog("%s is touching %s",selfEnt->name,otherEnt->name);
+        return selfEnt->touch(selfEnt,otherEnt);
+    }
+    return 0;
+}
+
+void level_remove_entity(Entity *ent)
+{
+    if (!ent)return;
+    if (!gamelevel.space)
+    {//nothing to do
+        return;
+    }
+    gf2d_space_remove_body(gamelevel.space,&ent->body);
+}
+
+void level_add_entity(Entity *ent)
+{
+    if (!ent)return;
+    if (!gamelevel.space)
+    {
+        slog("cannot add entity %s to level, no space defined!",ent->name);
+        return;
+    }
+    if (ent->body.bodyTouch == NULL)
+    {
+        ent->body.bodyTouch = body_body_touch;
+    }
+    gf2d_space_add_body(gamelevel.space,&ent->body);
+}
+
+Space *level_get_space()
+{
+    return gamelevel.space;
+}
 /*eol@eof*/

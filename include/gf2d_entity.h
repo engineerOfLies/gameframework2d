@@ -64,6 +64,8 @@ typedef struct Entity_S
     int   maxHealth;                        /**<maximum health of entity*/
     int   cooldown;                         /**<useful for timing cooldowns*/
     int   count;                            /**<useful for counting things like ammo count or health ammount*/
+    float jumpcool;
+    int   grounded;             
     void *data;                             /**<any other game specific data can be referenced here*/
 }Entity;
 

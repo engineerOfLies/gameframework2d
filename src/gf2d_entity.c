@@ -120,6 +120,7 @@ void gf2d_entity_pre_sync_body(Entity *self)
 {
     if (!self)return;// nothin to do
     vector2d_copy(self->body.velocity,self->velocity);
+    vector2d_copy(self->body.position,self->position);
 }
 
 void gf2d_entity_post_sync_body(Entity *self)
@@ -127,6 +128,7 @@ void gf2d_entity_post_sync_body(Entity *self)
     if (!self)return;// nothin to do
 //    slog("entity %li : %s old position(%f,%f) => new position (%f,%f)",self->id,self->name,self->position,self->body.position);
     vector2d_copy(self->position,self->body.position);
+    vector2d_copy(self->velocity,self->body.velocity);
 }
 
 void gf2d_entity_update(Entity *self)

@@ -9,6 +9,7 @@
 #include "simple_logger.h"
 #include "camera.h"
 #include "level.h"
+#include "player.h"
 
 
 int main(int argc, char * argv[])
@@ -43,6 +44,8 @@ int main(int argc, char * argv[])
     // game specific setup
     linfo = level_info_load("config/testworld.json");
     level_init(linfo);
+    
+    player_new(vector2d(128,128));
 
     /*main game loop*/
     while(!done)
@@ -57,11 +60,15 @@ int main(int argc, char * argv[])
         if (keys[SDL_SCANCODE_DOWN])camera_move(vector2d(0,10));
         if (keys[SDL_SCANCODE_UP])camera_move(vector2d(0,-10));
         
+        gf2d_entity_think_all();
+        level_update();
+        
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
                 // DRAW WORLD
                 level_draw();
+        gf2d_entity_update_all();
                 // Draw entities
             //UI elements last
             gf2d_windows_draw_all();

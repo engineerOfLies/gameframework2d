@@ -4,6 +4,7 @@
 #include "gf2d_collision.h"
 #include "gf2d_sprite.h"
 #include "gf2d_audio.h"
+#include "gf2d_entity.h"
 
 /**
  * @Purpose game specific level code
@@ -41,6 +42,22 @@ void level_init(LevelInfo *linfo);
 
 void level_info_free(LevelInfo *linfo);
 LevelInfo *level_info_load(char *filename);
+
+/**
+ * @brief adds an entity to the level physics space
+ * @note entity must have a Body defined
+ * @param ent the entity to add to the space
+ */
+void level_add_entity(Entity *ent);
+
+/**
+ * @brief removes an entity from the level physics space
+ * @note this should not be done during a space update (ie: collision callbacks)
+ * @param ent the entity to be removed
+ */
+void level_remove_entity(Entity *ent);
+
+Space *level_get_space();
 
 
 #endif
