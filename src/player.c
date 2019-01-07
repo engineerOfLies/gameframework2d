@@ -58,7 +58,7 @@ Entity *player_new(Vector2D position)
     gf2d_line_cpy(self->name,"player");
     self->parent = NULL;
     
-    self->shape = gf2d_shape_rect(-32, -32, 30, 60);
+    self->shape = gf2d_shape_rect(-16, -16, 30, 60);
     gf2d_body_set(
         &self->body,
         "player",
@@ -75,8 +75,8 @@ Entity *player_new(Vector2D position)
         NULL,
         NULL);
 
-    gf2d_actor_load(&self->actor,"actors/ed210.actor");
-    gf2d_actor_set_action(&self->actor,"stand");
+    gf2d_actor_load(&self->actor,"actors/player.actor");
+    gf2d_actor_set_action(&self->actor,"idle");
 
     self->sound[0] = gf2d_sound_load("sounds/jump_10.wav",1,-1);
 
@@ -111,19 +111,28 @@ void player_think(Entity *self)
 {
     const Uint8 * keys;
     keys = SDL_GetKeyboardState(NULL);
-    if ((keys[SDL_SCANCODE_A]) && (!entity_left_check(self,1)))
-    {   
-        self->velocity.x -= 1.5;
-    }
-    if ((keys[SDL_SCANCODE_D]) && (!entity_right_check(self,1)))
+    if (keys[SDL_SCANCODE_A])
     {
-        self->velocity.x += 1.5;
+        self->flip.x = 1;
+        if (!entity_left_check(self,1))
+        {   
+            self->velocity.x -= 1.5;
+        }
+    }
+    if (keys[SDL_SCANCODE_D])
+    {
+        self->flip.x = 0;
+        if (!entity_right_check(self,1))
+        {
+            self->velocity.x += 1.5;
+        }
     }
     if (((keys[SDL_SCANCODE_SPACE])&&(self->grounded))&&(!self->jumpcool))
     {
         self->velocity.y -= 10;
         self->jumpcool = 5;
         gf2d_sound_play(self->sound[0],0,1,-1,-1);
+        gf2d_actor_set_action(&self->actor,"jump");
     }
 }
 
@@ -131,21 +140,17 @@ void player_update(Entity *self)
 {
     Vector2D camPosition = {0,0};
     if (!self)return;
+    
     camera_set_position(camPosition);
     if (self->jumpcool > 0) self->jumpcool -= 0.2;
     else self->jumpcool = 0;
-    
+    if (self->actor.at == ART_END)
+    {
+        gf2d_actor_set_action(&self->actor,"idle");
+        slog("animation end");
+    }
     //world clipping
-    if (entity_right_check(self,0.1))
-    {
-        self->position.x -= 0.1;
-        slog("right wall");
-    }
-    if (entity_left_check(self,0.1))
-    {
-        self->position.x += 0.1;
-        slog("left wall");
-    }
+
     
     // walk dampening
     if (self->velocity.x)
@@ -165,11 +170,7 @@ void player_update(Entity *self)
         self->grounded = 0;
         slog("in the air");
     }
-    if (entity_ground_check(self,0.1))
-    {
-        self->position.y -= 0.1;
-    }
-    
+    entity_world_snap(self);    // error correction for collision system
     switch (self->state)
     {
         case ES_Idle:

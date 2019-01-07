@@ -2,6 +2,8 @@
 #include "simple_logger.h"
 #include "gf2d_draw.h"
 
+Uint8 gf2d_body_shape_collide(Body *a,Shape *s,Vector2D *poc, Vector2D *normal);
+
 void gf2d_body_clear(Body *body)
 {
     if (!body)return;
@@ -338,7 +340,7 @@ void gf2d_body_adjust_collision_velocity(Body *a,Body *b,Vector2D poc, Vector2D 
     vector2d_copy(a->newvelocity,nv);
 }
 
-Uint8 gf2d_body_static_collide(Body *a,Shape *s,Vector2D *poc, Vector2D *normal)
+Uint8 gf2d_body_shape_collide(Body *a,Shape *s,Vector2D *poc, Vector2D *normal)
 {
     Shape aS;
     if ((!a)||(!s))return 0;
@@ -349,11 +351,14 @@ Uint8 gf2d_body_static_collide(Body *a,Shape *s,Vector2D *poc, Vector2D *normal)
     return gf2d_shape_overlap_poc(aS, *s,poc,normal);
 }
 
-Uint8 gf2d_body_collide(Body *a,Body *b,Vector2D *poc, Vector2D *normal)
+Uint8 gf2d_body_collide_filter(Body *a,Body *b,Vector2D *poc, Vector2D *normal, ClipFilter filter)
 {
     Shape aS,bS;
     if ((!a)||(!b))return 0;
     // set shapes based on each body's current position
+    if (!(b->layer & filter.layer))return 0; // no common layers
+    if ((filter.team)&&(b->team == filter.team)) return 0;  // same team
+    if (b == filter.ignore) return 0;
     gf2d_shape_copy(&aS,*a->shape);
     gf2d_shape_move(&aS,a->position);
 
@@ -361,6 +366,12 @@ Uint8 gf2d_body_collide(Body *a,Body *b,Vector2D *poc, Vector2D *normal)
     gf2d_shape_move(&bS,b->position);
     
     return gf2d_shape_overlap_poc(aS, bS,poc,normal);
+}
+
+Uint8 gf2d_body_collide(Body *a,Body *b,Vector2D *poc, Vector2D *normal)
+{
+    ClipFilter filter = {0};
+    return gf2d_body_collide_filter(a,b,poc, normal, filter);
 }
 
 Uint8 gf2d_body_check_bounds(Body *body,Rect bounds,Vector2D *poc,Vector2D *normal)
@@ -417,9 +428,11 @@ void gf2d_body_step(Body *body,Space *space,float step)
     int attempts = 0;
     int collided = 0;
     Collision collision;
+    ClipFilter filter = {0};
     Vector2D poc, normal;
     Vector2D pocB, normalB;
     Vector2D pocS, normalS;
+    Uint8 world;
     Body *other,*collider = NULL;
     Shape *shape,*collisionShape = NULL;
     int bodies,staticShapes;
@@ -431,18 +444,21 @@ void gf2d_body_step(Body *body,Space *space,float step)
 
     vector2d_scale(velocity,body->velocity,space->timeStep);
     
-//    gf2d_body_adjust_collision_bounds_velocity(body,space->slop,space->bounds,&velocity);
-
     vector2d_add(body->position,body->position,velocity);
     if (space->precision)
     {
         vector2d_scale(velocity,velocity,1.0/space->precision);
     }
 
+    filter.layer = body->layer;
+    filter.team = body->team;
+    world = WORLD_LAYER * body->layer;
+    filter.ignore = body;
+    
     for (attempts = 0;attempts < space->precision;attempts++)
     {
         //bounds check
-        if (gf2d_body_check_bounds(body,space->bounds,&pocB,&normalB))
+        if ((world)&&(gf2d_body_check_bounds(body,space->bounds,&pocB,&normalB)))
         {
             collided = 1;
             goto attempt;
@@ -453,23 +469,23 @@ void gf2d_body_step(Body *body,Space *space,float step)
             other = (Body*)gf2d_list_get_nth(space->bodyList,i);
             if ((!other)||// error check
                 (other == body))continue;//dont self collide
-            if(!(other->layer & body->layer))continue;// only we share a layer
-            if ((body->team)&&(other->team == body->team))// no friendly fire
-                continue;
-            if (gf2d_body_collide(body,other,&poc,&normal))
+            if (gf2d_body_collide_filter(body,other,&poc,&normal,filter))
             {
                 collider = other;
                 goto attempt;
             }
         }
-        for (i = 0; i < staticShapes; i++)
+        if (world)
         {
-            shape = (Shape*)gf2d_list_get_nth(space->staticShapes,i);
-            if (!shape)continue;// error check
-            if (gf2d_body_static_collide(body,shape,&pocS,&normalS))
+            for (i = 0; i < staticShapes; i++)
             {
-                collisionShape = shape;
-                goto attempt;
+                shape = (Shape*)gf2d_list_get_nth(space->staticShapes,i);
+                if (!shape)continue;// error check
+                if (gf2d_body_shape_collide(body,shape,&pocS,&normalS))
+                {
+                    collisionShape = shape;
+                    goto attempt;
+                }
             }
         }
         // this pass collided with no new things
@@ -576,7 +592,7 @@ void gf2d_space_update(Space *space)
     }
 }
 
-void gf2d_space_body_collision_test(Space *space,Shape shape, Collision *collision)
+void gf2d_space_body_collision_test_filter(Space *space,Shape shape, Collision *collision,ClipFilter filter)
 {
     int i,count;
     Body *body;
@@ -586,7 +602,10 @@ void gf2d_space_body_collision_test(Space *space,Shape shape, Collision *collisi
     {
         body = (Body*)gf2d_list_get_nth(space->bodyList,i);
         if (!body)continue;
-        if(gf2d_body_static_collide(body,&shape,&collision->pointOfContact, &collision->normal))
+        if (!(body->layer & filter.layer))continue;
+        if ((filter.team)&&(body->team == filter.team))continue;
+        if (body == filter.ignore)continue;
+        if(gf2d_body_shape_collide(body,&shape,&collision->pointOfContact, &collision->normal))
         {
             collision->collided = 1;
             collision->body = body;
@@ -594,6 +613,12 @@ void gf2d_space_body_collision_test(Space *space,Shape shape, Collision *collisi
             return;
         }
     }
+}
+
+void gf2d_space_body_collision_test(Space *space,Shape shape, Collision *collision)
+{
+    ClipFilter filter = {0};
+    gf2d_space_body_collision_test_filter(space,shape, collision,filter);
 }
 
 void gf2d_space_shape_collision_test(Space *space,Shape shape, Collision *collision)
@@ -617,7 +642,7 @@ void gf2d_space_shape_collision_test(Space *space,Shape shape, Collision *collis
 }
 
 
-Collision gf2d_space_shape_test(Space *space,Shape shape)
+Collision gf2d_space_shape_test_filter(Space *space,Shape shape, ClipFilter filter)
 {
     Collision c;
     c.collided = 0;
@@ -625,8 +650,18 @@ Collision gf2d_space_shape_test(Space *space,Shape shape)
     memset(&c,0,sizeof(Collision));
     gf2d_space_body_collision_test(space,shape, &c);
     if (c.collided)return c;
-    gf2d_space_shape_collision_test(space,shape, &c);
+    if (filter.layer & WORLD_LAYER)
+    {
+        gf2d_space_shape_collision_test(space,shape, &c);
+    }
     return c;
+}
+
+Collision gf2d_space_shape_test(Space *space,Shape shape)
+{
+    ClipFilter filter = {0};
+    filter.layer = WORLD_LAYER;
+    return gf2d_space_shape_test_filter(space,shape, filter);
 }
 
 /*eol@eof*/

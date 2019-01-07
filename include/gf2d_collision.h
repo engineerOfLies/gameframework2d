@@ -6,6 +6,7 @@
 #include "gf2d_text.h"
 
 #define ALL_LAYERS 0xffffffff
+#define WORLD_LAYER 1
 
 typedef struct Collision_S Collision;
 
@@ -26,6 +27,13 @@ typedef struct Body_S
     int       (*bodyTouch)(struct Body_S *self, struct Body_S *other, Collision *collision);/**< function to call when two bodies collide*/
     int       (*worldTouch)(struct Body_S *self, Collision *collision);/**<function to call when a body collides with a static shape*/
 }Body;
+
+typedef struct
+{
+    Uint32      layer;          /**<layer mask to clip against*/
+    Uint32      team;           /**<ignore any team ==*/
+    Body       *ignore;         /**<if not null, the body will be ignored*/
+}ClipFilter;
 
 struct Collision_S
 {
