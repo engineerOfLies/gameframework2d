@@ -5,6 +5,7 @@
 #include "gf2d_sprite.h"
 #include "gf2d_audio.h"
 #include "gf2d_entity.h"
+#include "simple_json.h"
 
 /**
  * @Purpose game specific level code
@@ -22,7 +23,7 @@ typedef struct
     Vector2D    tileSize;           /**<how tile space width & height*/
     Vector2D    tileMapSize;        /**<how tile space width & height*/
     int        *tileMap;            /**<tile data*/
-    List        SpawnList;          /**<the things that go here*/
+    SJson      *spawnList;
 }LevelInfo;
 
 /**

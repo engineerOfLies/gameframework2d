@@ -2,6 +2,7 @@
 #define __PLAYER_H__
 
 #include "gf2d_entity.h"
+#include "simple_json.h"
 
 /**
  * @brief spawn a new player entity
@@ -22,6 +23,9 @@ Entity *player_get();
  * @param position the new position for the player
  */
 void player_set_position(Vector2D position);
+
+void player_spawn(Vector2D position,SJson *args);
+
 
 
 #endif

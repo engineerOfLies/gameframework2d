@@ -9,8 +9,8 @@ colorSpecial: 10,255,100,255
 action: idle
 startFrame: 0
 endFrame: 0
-frameRate: 0
-type:   none
+frameRate: 1
+type:   loop
 
 action: shoot
 startFrame: 2

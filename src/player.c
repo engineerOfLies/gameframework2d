@@ -49,6 +49,17 @@ void player_set_position(Vector2D position)
     vector2d_copy(_player->body.position,position);
 }
 
+void player_spawn(Vector2D position,SJson *args)
+{
+    if (_player != NULL)
+    {
+        vector2d_copy(_player->position,position);
+        level_add_entity(_player);
+        return;
+    }
+    player_new(position);
+}
+
 Entity *player_new(Vector2D position)
 {
     Entity *self;
@@ -63,7 +74,7 @@ Entity *player_new(Vector2D position)
         &self->body,
         "player",
 //        0,//no layer
-        ALL_LAYERS &~ PICKUP_LAYER,//all layers
+        ALL_LAYERS &~ PICKUP_LAYER,//player layers
         1,
         position,
         vector2d(0,0),
@@ -134,7 +145,7 @@ void player_think(Entity *self)
             if (((keys[SDL_SCANCODE_SPACE])&&(self->grounded))&&(!self->jumpcool))
             {
                 self->velocity.y -= 10;
-                self->jumpcool = 5;
+                self->jumpcool = gf2d_actor_get_frames_remaining(&self->actor);
                 gf2d_sound_play(self->sound[0],0,1,-1,-1);
                 gf2d_actor_set_action(&self->actor,"jump");
             }

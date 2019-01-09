@@ -33,8 +33,20 @@
                 [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
             ],
     "spawnList" : [
-        {"className":"player_start",
-         "position":[3,28]}
+        {"name":"player_start",
+         "position":[128,128]},
+        {"name":"monster_start",
+         "position":[990,128]},
+        {"name":"pickup_start",
+         "position":[600,128],
+         "args":{
+            "item":"essence"
+         }},
+        {"name":"pickup_start",
+         "position":[700,128],
+         "args":{
+            "item":"crysalis"
+         }}
     ]
 }
 }

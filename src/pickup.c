@@ -1,4 +1,5 @@
 #include "pickup.h"
+#include "player.h"
 #include "level.h"
 #include "simple_logger.h"
 #include "entity_common.h"
@@ -9,20 +10,38 @@ void pickup_update(Entity *self);
 int  pickup_touch(Entity *self,Entity *other);
 int  pickup_damage(Entity *self,int amount, Entity *source);
 void pickup_die(Entity *self);
+Entity *pickup_new(Vector2D position,const char *name, char *actorFile);
 
-Entity *pickup_spawn(Vector2D position,char *actorFile)
+void pickup_spawn(Vector2D position,SJson *args)
+{
+    const char *item;
+    if (!args)return;
+    item = sj_get_string_value(sj_object_get_value(args,"item"));
+    if (!item)return;
+    // TODO: Make an item system more robust
+    if (strcmp(item,"essence") == 0)
+    {
+        pickup_new(position,item,"actors/essence.actor");
+    }
+    else if (strcmp(item,"crysalis") == 0)
+    {
+        pickup_new(position,item,"actors/crysalis.actor");
+    }
+}
+
+Entity *pickup_new(Vector2D position,const char *name, char *actorFile)
 {
     Entity *self;
     self = gf2d_entity_new();
     if (!self)return NULL;
     
-    gf2d_line_cpy(self->name,"pickup");
+    gf2d_line_cpy(self->name,name);
     self->parent = NULL;
     
     self->shape = gf2d_shape_rect(-15, -15, 30, 30);
     gf2d_body_set(
         &self->body,
-        "pickup",
+        (char *)name,
 //        0,//no layer
         PICKUP_LAYER | WORLD_LAYER,//all layers
         0,
@@ -44,7 +63,7 @@ Entity *pickup_spawn(Vector2D position,char *actorFile)
     vector2d_copy(self->position,position);
     
     vector2d_copy(self->scale,self->actor.al->scale);
-    vector2d_set(self->scaleCenter,64,64);
+    vector2d_set(self->scaleCenter,self->actor.sprite->frame_w/2,self->actor.sprite->frame_h/2);
     vector3d_set(self->rotation,64,64,0);
     vector2d_set(self->flip,0,0);
     
@@ -67,22 +86,30 @@ void pickup_draw(Entity *self)
 
 void pickup_think(Entity *self)
 {
-    Collision c;
+    Collision c = {0};
+    Shape shape;
     Entity *other;
     ClipFilter filter = {0};
     filter.layer = PLAYER_LAYER;
-    
-    gf2d_space_body_collision_test_filter(level_get_space(),gf2d_body_to_shape(&self->body), &c,filter);
+    filter.ignore = &self->body;
+    slog("item %s is thinking...",self->name);
+    shape = gf2d_body_to_shape(&self->body);
+    gf2d_space_body_collision_test_filter(level_get_space(),shape, &c,filter);
     if (c.collided)
     {
         if ((!c.body)||(!c.body->data))
         {
-            slog("error: expected body entity data not found");
             return;
         }
         other = (Entity *)c.body->data;
+        if (other != player_get())
+        {
+            slog("other entity is not a player");
+            return;
+        }
         // TODO: give item to player
         gf2d_sound_play(self->sound[0],0,1,-1,-1);
+        slog("item %s picked up by %s!",self->name,other->name);
         self->dead = 1;
         return;    
     }

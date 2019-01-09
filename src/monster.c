@@ -9,8 +9,15 @@ void monster_update(Entity *self);
 int  monster_touch(Entity *self,Entity *other);
 int  monster_damage(Entity *self,int amount, Entity *source);
 void monster_die(Entity *self);
+Entity *monster_new(Vector2D position,char *actorFile);
 
-Entity *monster_spawn(Vector2D position,char *actorFile)
+void monster_spawn(Vector2D position,SJson *args)
+{
+    monster_new(position,"actors/space_bug.actor");
+}
+
+
+Entity *monster_new(Vector2D position,char *actorFile)
 {
     Entity *self;
     self = gf2d_entity_new();

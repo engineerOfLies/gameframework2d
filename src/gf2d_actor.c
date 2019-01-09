@@ -425,9 +425,7 @@ int gf2d_actor_get_frames_remaining(Actor *actor)
         return 0;
     }
     total = (action->endFrame - action->startFrame)/action->frameRate;
-    slog("total: %f",total);
     passed = (actor->frame - action->startFrame)/action->frameRate;
-    slog("passed: %f",passed);
     return (int)(total - passed);
 }
 

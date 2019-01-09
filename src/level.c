@@ -1,5 +1,6 @@
 #include "level.h"
 #include "camera.h"
+#include "spawn.h"
 #include "simple_json.h"
 #include "simple_logger.h"
 #include "gf2d_graphics.h"
@@ -36,6 +37,7 @@ void level_info_free(LevelInfo *linfo)
     {
         free(linfo->tileMap);
     }
+    sj_free(linfo->spawnList);
     //TODO:free spawn list
     free(linfo);
 }
@@ -118,6 +120,8 @@ LevelInfo *level_info_load(char *filename)
     level_info_tilemap_load(linfo, sj_object_get_value(world,"tileMap"),(Uint32)linfo->tileMapSize.x,(Uint32)linfo->tileMapSize.y);
 
     sj_value_as_vector2d(sj_object_get_value(world,"tileSize"),&linfo->tileSize);
+    
+    linfo->spawnList = sj_copy(sj_object_get_value(world,"spawnList"));
     
     sj_free(json);
     slog("loaded level info for %s",filename);
@@ -205,6 +209,21 @@ void level_build_tile_space(LevelInfo *linfo)
     }
 }
 
+void level_spawn_entities(SJson *spawnList)
+{
+    int i = 0, count = 0;
+    SJson *item;
+    Vector2D position;
+    count  = sj_array_get_count(spawnList);
+    for (i = 0; i < count; i++)
+    {
+        item = sj_array_get_nth(spawnList,i);
+        if (!item)continue;
+        sj_value_as_vector2d(sj_object_get_value(item,"position"),&position);
+        spawn_entity(sj_get_string_value(sj_object_get_value(item,"name")),position,sj_object_get_value(item,"args"));
+    }
+}
+
 void level_init(LevelInfo *linfo)
 {
     Sprite *tileset;
@@ -242,6 +261,7 @@ void level_init(LevelInfo *linfo)
         0.1);
     level_build_tile_space(linfo);
     camera_set_bounds(0,0,gamelevel.tileLayer->surface->w,gamelevel.tileLayer->surface->h);
+    level_spawn_entities(linfo->spawnList);
 }
 
 void level_draw()
