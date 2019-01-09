@@ -10,6 +10,7 @@
 #include "camera.h"
 #include "level.h"
 #include "player.h"
+#include "monster.h"
 
 
 int main(int argc, char * argv[])
@@ -46,6 +47,7 @@ int main(int argc, char * argv[])
     level_init(linfo);
     
     player_new(vector2d(128,128));
+    monster_spawn(vector2d(990,128),"actors/space_bug.actor");
 
     /*main game loop*/
     while(!done)

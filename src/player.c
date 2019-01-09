@@ -111,28 +111,43 @@ void player_think(Entity *self)
 {
     const Uint8 * keys;
     keys = SDL_GetKeyboardState(NULL);
-    if (keys[SDL_SCANCODE_A])
+
+    switch (self->state)
     {
-        self->flip.x = 1;
-        if (!entity_left_check(self,1))
-        {   
-            self->velocity.x -= 1.5;
-        }
-    }
-    if (keys[SDL_SCANCODE_D])
-    {
-        self->flip.x = 0;
-        if (!entity_right_check(self,1))
-        {
-            self->velocity.x += 1.5;
-        }
-    }
-    if (((keys[SDL_SCANCODE_SPACE])&&(self->grounded))&&(!self->jumpcool))
-    {
-        self->velocity.y -= 10;
-        self->jumpcool = 5;
-        gf2d_sound_play(self->sound[0],0,1,-1,-1);
-        gf2d_actor_set_action(&self->actor,"jump");
+        case ES_Idle:
+            if (keys[SDL_SCANCODE_A])
+            {
+                self->flip.x = 1;
+                if (!entity_left_check(self,1))
+                {   
+                    self->velocity.x -= 1.25;
+                }
+            }
+            if (keys[SDL_SCANCODE_D])
+            {
+                self->flip.x = 0;
+                if (!entity_right_check(self,1))
+                {
+                    self->velocity.x += 1.25;
+                }
+            }
+            if (((keys[SDL_SCANCODE_SPACE])&&(self->grounded))&&(!self->jumpcool))
+            {
+                self->velocity.y -= 10;
+                self->jumpcool = 5;
+                gf2d_sound_play(self->sound[0],0,1,-1,-1);
+                gf2d_actor_set_action(&self->actor,"jump");
+            }
+            if (keys[SDL_SCANCODE_RCTRL])
+            {
+                gf2d_actor_set_action(&self->actor,"hack");
+                self->cooldown = gf2d_actor_get_frames_remaining(&self->actor);
+                slog("cooldown set to %i",self->cooldown);
+                self->state = ES_Attacking;
+            }
+            break;
+        default:
+            break;
     }
 }
 
@@ -147,7 +162,6 @@ void player_update(Entity *self)
     if (self->actor.at == ART_END)
     {
         gf2d_actor_set_action(&self->actor,"idle");
-        slog("animation end");
     }
     //world clipping
 
@@ -155,21 +169,10 @@ void player_update(Entity *self)
     // walk dampening
     if (self->velocity.x)
     {
-        self->velocity.x *= 0.9;
+        self->velocity.x *= 0.8;
         if (fabs(self->velocity.x) < 1)self->velocity.x = 0;
     }
-    self->velocity.y += 0.58;
-    if (entity_ground_check(self,1))
-    {
-        slog("on the ground");
-        if (self->velocity.y > 0)self->velocity.y = 0;
-        self->grounded = 1;
-    }
-    else
-    {
-        self->grounded = 0;
-        slog("in the air");
-    }
+    entity_apply_gravity(self);
     entity_world_snap(self);    // error correction for collision system
     switch (self->state)
     {
@@ -178,7 +181,7 @@ void player_update(Entity *self)
         case ES_Seeking:
             break;
         case ES_Charging:
-        case ES_Attacking:
+        case ES_Attacking:            
         case ES_Pain:
         case ES_Cooldown:
             self->cooldown--;

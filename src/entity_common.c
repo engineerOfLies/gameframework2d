@@ -13,6 +13,19 @@ int entity_camera_view(Entity *self)
     return gf2d_rect_overlap(r,c);
 }
 
+void entity_apply_gravity(Entity *self)
+{
+    self->velocity.y += 0.58;
+    if (entity_ground_check(self,1))
+    {
+        if (self->velocity.y > 0)self->velocity.y = 0;
+        self->grounded = 1;
+    }
+    else
+    {
+        self->grounded = 0;
+    }
+}
 
 int entity_roof_check(Entity *self, float width)
 {
