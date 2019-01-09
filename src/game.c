@@ -11,6 +11,7 @@
 #include "level.h"
 #include "player.h"
 #include "monster.h"
+#include "pickup.h"
 
 
 int main(int argc, char * argv[])
@@ -48,7 +49,7 @@ int main(int argc, char * argv[])
     
     player_new(vector2d(128,128));
     monster_spawn(vector2d(990,128),"actors/space_bug.actor");
-
+    pickup_spawn(vector2d(600,128),"actors/essence.actor");
     /*main game loop*/
     while(!done)
     {

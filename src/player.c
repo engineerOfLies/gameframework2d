@@ -63,7 +63,7 @@ Entity *player_new(Vector2D position)
         &self->body,
         "player",
 //        0,//no layer
-        ALL_LAYERS,//all layers
+        ALL_LAYERS &~ PICKUP_LAYER,//all layers
         1,
         position,
         vector2d(0,0),

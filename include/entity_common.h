@@ -11,4 +11,15 @@ int entity_right_check(Entity *self, float width);
 void entity_world_snap(Entity *self);
 void entity_apply_gravity(Entity *self);
 
+/**
+ * @brief push other entity away from self by amount
+ */
+void entity_push(Entity *self,Entity *other,float amount);
+
+/**
+ * @brief damage target entity if possible, applying kick as well
+ */
+void entity_damage(Entity *target,Entity *killer,int damage,float kick);
+
+
 #endif

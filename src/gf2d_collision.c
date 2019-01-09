@@ -340,13 +340,21 @@ void gf2d_body_adjust_collision_velocity(Body *a,Body *b,Vector2D poc, Vector2D 
     vector2d_copy(a->newvelocity,nv);
 }
 
+Shape gf2d_body_to_shape(Body *a)
+{
+    Shape aS = {0};
+    if (!a)return aS;
+    gf2d_shape_copy(&aS,*a->shape);
+    gf2d_shape_move(&aS,a->position);
+    return aS;
+}
+
 Uint8 gf2d_body_shape_collide(Body *a,Shape *s,Vector2D *poc, Vector2D *normal)
 {
     Shape aS;
     if ((!a)||(!s))return 0;
     // set shapes based on each body's current position
-    gf2d_shape_copy(&aS,*a->shape);
-    gf2d_shape_move(&aS,a->position);
+    aS = gf2d_body_to_shape(a);
     
     return gf2d_shape_overlap_poc(aS, *s,poc,normal);
 }
@@ -450,9 +458,9 @@ void gf2d_body_step(Body *body,Space *space,float step)
         vector2d_scale(velocity,velocity,1.0/space->precision);
     }
 
-    filter.layer = body->layer;
+    filter.layer = body->layer &~ WORLD_LAYER;
     filter.team = body->team;
-    world = WORLD_LAYER * body->layer;
+    world = WORLD_LAYER & body->layer;
     filter.ignore = body;
     
     for (attempts = 0;attempts < space->precision;attempts++)
@@ -640,7 +648,6 @@ void gf2d_space_shape_collision_test(Space *space,Shape shape, Collision *collis
         }
     }
 }
-
 
 Collision gf2d_space_shape_test_filter(Space *space,Shape shape, ClipFilter filter)
 {

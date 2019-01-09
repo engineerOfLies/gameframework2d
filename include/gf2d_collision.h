@@ -7,6 +7,9 @@
 
 #define ALL_LAYERS 0xffffffff
 #define WORLD_LAYER 1
+#define PICKUP_LAYER 2
+#define PLAYER_LAYER 4
+#define MONSTER_LAYER 8
 
 typedef struct Collision_S Collision;
 
@@ -169,11 +172,27 @@ void gf2d_space_add_static_shape(Space *space,Shape shape);
 void gf2d_space_update(Space *space);
 
 /**
- * @brief check if a shape intersects with any body or shape within the space
+ * @brief check if a shape intersects with any static shape within the space
  * @param space the space to test
  * @param shape the shape to test with
  * @return the collision information
  */
 Collision gf2d_space_shape_test(Space *space,Shape shape);
+
+/**
+ * @brief check if a shape intersects with any body within the space
+ * @param space the space to test
+ * @param shape the shape to test with
+ * @param filter a filter to limit results
+ * @return the collision information
+ */
+void gf2d_space_body_collision_test_filter(Space *space,Shape shape, Collision *collision,ClipFilter filter);
+
+/**
+ * @brief get the shape, adjusted for position for the provided body
+ * @param a the body to get the shape for
+ * @return an empty {0} shape on error, or the body shape information otherwise
+ */
+Shape gf2d_body_to_shape(Body *a);
 
 #endif

@@ -1,0 +1,13 @@
+sprite: images/essence.png
+frameWidth: 128
+frameHeight: 128
+framesPerLine: 16
+color: 255,255,255,255
+colorSpecial: 10,100,255,255
+scale: 0.5,0.5
+
+action: idle
+startFrame: 0
+endFrame: 15
+frameRate: 0.075
+type:   loop

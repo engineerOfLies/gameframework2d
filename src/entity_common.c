@@ -1,7 +1,36 @@
 #include "gf2d_entity.h"
 #include "camera.h"
+#include "simple_logger.h"
 #include "entity_common.h"
 #include "level.h"
+
+void entity_damage(Entity *target,Entity *killer,int damage,float kick)
+{
+    if ((!target)||(!killer))
+    {
+        slog("missing entity data");
+        return;
+    }
+    if (target->damage != NULL)
+    {
+        target->damage(target,damage,killer);
+        entity_push(killer,target,kick);
+    }
+}
+
+void entity_push(Entity *self,Entity *other,float amount)
+{
+    Vector2D push;
+    if ((!self)||(!other))
+    {
+        slog("missing an entity");
+        return;
+    }
+    vector2d_sub(push,other->position,self->position);
+    vector2d_set_magnitude(&push,amount);
+    vector2d_add(other->velocity,other->velocity,push);
+    vector2d_add(other->body.velocity,other->body.velocity,push);
+}
 
 int entity_camera_view(Entity *self)
 {

@@ -1,5 +1,6 @@
 #include "monster.h"
 #include "level.h"
+#include "simple_logger.h"
 #include "entity_common.h"
 
 void monster_draw(Entity *self);
@@ -77,6 +78,10 @@ void monster_update(Entity *self)
 
 int  monster_touch(Entity *self,Entity *other)
 {
+    slog("monster touch called");
+    if (!other)return 0;
+    if (gf2d_line_cmp(other->name,"player") != 0)return 0;
+    entity_damage(other,self,5,10);
     return 0;
 }
 
