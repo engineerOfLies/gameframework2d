@@ -271,7 +271,7 @@ void level_draw()
     gf2d_sprite_draw_image(gamelevel.backgroundImage,vector2d(-cam.x,-cam.y));
     gf2d_sprite_draw_image(gamelevel.tileLayer,vector2d(-cam.x,-cam.y));
     gf2d_entity_draw_all();
-    gf2d_space_draw(gamelevel.space,vector2d(-cam.x,-cam.y));
+    if (gamelevel.space)gf2d_space_draw(gamelevel.space,vector2d(-cam.x,-cam.y));
 }
 
 void level_update()

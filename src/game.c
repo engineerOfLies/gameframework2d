@@ -6,6 +6,7 @@
 #include "gf2d_audio.h"
 #include "gf2d_windows.h"
 #include "gf2d_entity.h"
+#include "gf2d_mouse.h"
 #include "simple_logger.h"
 #include "camera.h"
 #include "level.h"
@@ -18,8 +19,23 @@ int main(int argc, char * argv[])
 {
     /*variable declarations*/
     int done = 0;
+    int i;
     const Uint8 * keys;
     LevelInfo *linfo = NULL;
+    int editorMode = 0;
+    int fullscreen = 0;
+    /*parse args*/
+    for (i = 1; i < argc; i++)
+    {
+        if (strcmp(argv[i],"--editor") == 0)
+        {
+            editorMode = 1;
+        }
+        else if (strcmp(argv[i],"--fullscreen") == 0)
+        {
+            fullscreen = 1;
+        }
+    }
     
     /*program initializtion*/
     init_logger("gf2d.log");
@@ -31,7 +47,7 @@ int main(int argc, char * argv[])
         1200,
         720,
         vector4d(0,0,0,255),
-        0);
+        fullscreen);
     gf2d_graphics_set_frame_delay(16);
     gf2d_audio_init(256,16,4,1,1,1);
     gf2d_sprite_init(1024);
@@ -44,8 +60,16 @@ int main(int argc, char * argv[])
     
     SDL_ShowCursor(SDL_DISABLE);
     // game specific setup
-    linfo = level_info_load("config/testworld.json");
-    level_init(linfo);
+    if (!editorMode)
+    {
+        linfo = level_info_load("config/testworld.json");
+        level_init(linfo);
+    }
+    else
+    {
+        // init mouse, editor window
+        gf2d_mouse_load("actors/mouse.actor");
+    }
     
     /*main game loop*/
     while(!done)
@@ -60,18 +84,32 @@ int main(int argc, char * argv[])
         if (keys[SDL_SCANCODE_DOWN])camera_move(vector2d(0,10));
         if (keys[SDL_SCANCODE_UP])camera_move(vector2d(0,-10));
         
-        gf2d_entity_think_all();
-        level_update();
+        if (!editorMode)
+        {
+            gf2d_entity_think_all();
+            level_update();
+        }
+        else
+        {
+            gf2d_mouse_update();
+        }
         
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
                 // DRAW WORLD
                 level_draw();
-        gf2d_entity_update_all();
+                if (!editorMode)
+                {
+                    gf2d_entity_update_all();
+                }
                 // Draw entities
             //UI elements last
             gf2d_windows_draw_all();
+            if (editorMode)
+            {
+                gf2d_mouse_draw();
+            }
         gf2d_grahics_next_frame();// render current draw frame and skip to the next frame
         
         if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition
