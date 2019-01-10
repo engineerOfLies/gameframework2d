@@ -10,10 +10,7 @@
 #include "simple_logger.h"
 #include "camera.h"
 #include "level.h"
-#include "player.h"
-#include "monster.h"
-#include "pickup.h"
-
+#include "editor.h"
 
 int main(int argc, char * argv[])
 {
@@ -69,6 +66,7 @@ int main(int argc, char * argv[])
     {
         // init mouse, editor window
         gf2d_mouse_load("actors/mouse.actor");
+        editor_launch();
     }
     
     /*main game loop*/

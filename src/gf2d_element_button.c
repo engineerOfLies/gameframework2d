@@ -115,7 +115,7 @@ ButtonElement *gf2d_element_button_new_full(Element *label,Element *actor,Color 
     return button;
 }
 
-void gf2d_element_load_button_from_config(Element *e,SJson *json)
+void gf2d_element_load_button_from_config(Element *e,SJson *json,Window *win)
 {
     Vector4D highColor = {255,255,255,255},pressColor = {255,255,255,255};
     Element *label = NULL;
@@ -144,12 +144,12 @@ void gf2d_element_load_button_from_config(Element *e,SJson *json)
     value = sj_object_get_value(json,"label");
     if (value)
     {
-        label = gf2d_element_load_from_config(value);
+        label = gf2d_element_load_from_config(value,e,win);
     }
     value = sj_object_get_value(json,"actor");
     if (value)
     {
-        actor = gf2d_element_load_from_config(value);
+        actor = gf2d_element_load_from_config(value,e,win);
     }
     gf2d_element_make_button(e,gf2d_element_button_new_full(label,actor,gf2d_color_from_vector4(highColor),gf2d_color_from_vector4(pressColor)));
 }

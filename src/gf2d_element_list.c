@@ -170,7 +170,7 @@ void gf2d_element_list_add_item(Element *e,Element *item)
     list->list = gf2d_list_append(list->list,(void*)item);
 }
 
-void gf2d_element_load_list_from_config(Element *e,SJson *json)
+void gf2d_element_load_list_from_config(Element *e,SJson *json,Window *win)
 {
     SJson *value = NULL;
     SJson *item = NULL;
@@ -216,7 +216,7 @@ void gf2d_element_load_list_from_config(Element *e,SJson *json)
     {
         item = sj_array_get_nth(value,i);
         if (!item)continue;
-        gf2d_element_list_add_item(e,gf2d_element_load_from_config(item));
+        gf2d_element_list_add_item(e,gf2d_element_load_from_config(item,e,win));
     }
 }
 /*eol@eof*/

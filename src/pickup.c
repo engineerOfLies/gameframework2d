@@ -92,7 +92,6 @@ void pickup_think(Entity *self)
     ClipFilter filter = {0};
     filter.layer = PLAYER_LAYER;
     filter.ignore = &self->body;
-    slog("item %s is thinking...",self->name);
     shape = gf2d_body_to_shape(&self->body);
     gf2d_space_body_collision_test_filter(level_get_space(),shape, &c,filter);
     if (c.collided)
@@ -109,7 +108,6 @@ void pickup_think(Entity *self)
         }
         // TODO: give item to player
         gf2d_sound_play(self->sound[0],0,1,-1,-1);
-        slog("item %s picked up by %s!",self->name,other->name);
         self->dead = 1;
         return;    
     }

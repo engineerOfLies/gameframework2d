@@ -21,11 +21,12 @@ Element *gf2d_element_new()
 }
 
 Element *gf2d_element_new_full(
+    Element *parent,
     int      index,
     TextLine name,
     Rect bounds,
     Color color,
-    int state
+    int state       
 )
 {
     Element *e;
@@ -71,7 +72,12 @@ List * gf2d_element_update(Element *e, Vector2D offset)
     return NULL;
 }
 
-Element *gf2d_element_load_from_config(SJson *json)
+void gf2d_element_calibrate(Element *e)
+{
+    
+}
+
+Element *gf2d_element_load_from_config(SJson *json,Element *parent,Window *win)
 {
     Element *e = NULL;
     SJson *value;
@@ -102,7 +108,7 @@ Element *gf2d_element_load_from_config(SJson *json)
     type = sj_get_string_value(value);
     if (strcmp(type,"list") == 0)
     {
-        gf2d_element_load_list_from_config(e,json);
+        gf2d_element_load_list_from_config(e,json,win);
     }
     else if (strcmp(type,"label") == 0)
     {
@@ -114,7 +120,7 @@ Element *gf2d_element_load_from_config(SJson *json)
     }
     else if (strcmp(type,"button") == 0)
     {
-        gf2d_element_load_button_from_config(e,json);
+        gf2d_element_load_button_from_config(e,json,win);
     }
     else if (strcmp(type,"percent") == 0)
     {

@@ -37,6 +37,6 @@ void gf2d_element_make_list(Element *e,ListElement *list);
  * @param e the element to configure
  * @param json the json config to use
  */
-void gf2d_element_load_list_from_config(Element *e,SJson *json);
+void gf2d_element_load_list_from_config(Element *e,SJson *json,Window *win);
 
 #endif

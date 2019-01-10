@@ -2,7 +2,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "gf2d_graphics.h"
 #include "gf2d_windows.h"
+#include "gf2d_elements.h"
 #include "simple_logger.h"
 
 typedef struct
@@ -16,6 +18,11 @@ typedef struct
 }WindowManager;
 
 static WindowManager window_manager = {0};
+
+
+Window *gf2d_window_load_from_json(SJson *json);
+
+
 
 void gf2d_draw_window_border_generic(Rect rect,Vector4D color)
 {
@@ -277,7 +284,50 @@ void gf2d_windows_update_all()
     }
 }
 
-Window *gf2f_window_load_from_json(SJson *json)
+void gf2d_window_calibrate(Window *win)
+{
+    Vector2D res;
+    if (!win)return;
+    res = gf2d_graphics_get_resolution();
+    if ((win->dimensions.x > 0)&&(win->dimensions.x < 1.0))
+    {
+        win->dimensions.x *= res.x;
+    }
+    if ((win->dimensions.y > 0)&&(win->dimensions.y < 1.0))
+    {
+        win->dimensions.y *= res.y;
+    }
+    if ((win->dimensions.w > 0)&&(win->dimensions.w <= 1.0))
+    {
+        win->dimensions.w *= res.x;
+    }
+    if ((win->dimensions.h > 0)&&(win->dimensions.h <= 1.0))
+    {
+        win->dimensions.h *= res.y;
+    }
+    
+    if (win->dimensions.x < 0)
+    {
+        win->dimensions.x = res.x + win->dimensions.x;
+    }
+    if (win->dimensions.y < 0)
+    {
+        win->dimensions.y = res.y + win->dimensions.y;
+    }
+}
+
+
+Window *gf2d_window_load(char *filename)
+{
+    Window *win = NULL;
+    SJson *json;
+    json = sj_load(filename);
+    win = gf2d_window_load_from_json(json);
+    sj_free(json);
+    return win;
+}
+
+Window *gf2d_window_load_from_json(SJson *json)
 {
     Window *win = NULL;
     int i,count;
@@ -306,7 +356,8 @@ Window *gf2f_window_load_from_json(SJson *json)
     vector4d_clear(vector);
     sj_value_as_vector4d(sj_object_get_value(json,"dimensions"),&vector);
     win->dimensions = gf2d_rect(vector.x,vector.y,vector.z,vector.w);
-
+    
+    gf2d_window_calibrate(win);
     
     elements = sj_object_get_value(json,"elements");
     count = sj_array_get_count(elements);
@@ -314,7 +365,7 @@ Window *gf2f_window_load_from_json(SJson *json)
     {
         value = sj_array_get_nth(elements,i);
         if (!value)continue;
-        gf2d_window_add_element(win,gf2d_element_load_from_config(value));
+        gf2d_window_add_element(win,gf2d_element_load_from_config(value,NULL,win));
     }
     return win;
 }

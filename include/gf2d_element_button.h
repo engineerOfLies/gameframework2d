@@ -43,7 +43,8 @@ ButtonElement *gf2d_element_button_new_full(Element *label,Element *actor,Color 
  * @brief load button configuration for a button element from config
  * @param e the element to configure
  * @param json the json config to use
+ * @param win the parent window
  */
-void gf2d_element_load_button_from_config(Element *e,SJson *json);
+void gf2d_element_load_button_from_config(Element *e,SJson *json,Window *win);
 
 #endif
