@@ -14,10 +14,16 @@
 #include "windows_common.h"
 
 static int _done = 0;
+static Window *_quit = NULL;
 
-void onExit()
+void onCancel(void *data)
+{
+    _quit = NULL;
+}
+void onExit(void *data)
 {
     _done = 1;
+    _quit = NULL;
 }
 
 int main(int argc, char * argv[])
@@ -117,9 +123,9 @@ int main(int argc, char * argv[])
             }
         gf2d_grahics_next_frame();// render current draw frame and skip to the next frame
         
-        if (keys[SDL_SCANCODE_ESCAPE])
+        if ((keys[SDL_SCANCODE_ESCAPE])&&(_quit == NULL))
         {
-            window_yes_no("Exit?",onExit,NULL);
+            _quit = window_yes_no("Exit?",onExit,onCancel,NULL,NULL);
         }
    //     slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }

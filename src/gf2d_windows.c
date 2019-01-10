@@ -164,7 +164,7 @@ void gf2d_windows_init(int max_windows)
     window_manager.window_deque = gf2d_list_new();
     window_manager.generic_background = gf2d_sprite_load_image("images/window_background.png");
     window_manager.generic_border = gf2d_sprite_load_all("images/window_border.png",64,64,8,false);
-    window_manager.drawbounds = 1;
+    window_manager.drawbounds = 0;
     slog("window system initilized");
     atexit(gf2d_windows_close);
 }
@@ -284,6 +284,44 @@ void gf2d_windows_update_all()
     }
 }
 
+void gf2d_window_align(Window *win,int vertical)
+{
+    Vector2D res;
+    if (!win)return;
+    res = gf2d_graphics_get_resolution();
+    if (vertical < 0)
+    {
+        win->dimensions.y = 0;
+    }
+    else if (vertical == 0)
+    {
+        win->dimensions.y = res.y/2 - win->dimensions.h/2;
+    }
+    else
+    {
+        win->dimensions.y = res.y - win->dimensions.h;
+    }
+}
+
+void gf2d_window_justify(Window *win,int horizontal)
+{
+    Vector2D res;
+    if (!win)return;
+    res = gf2d_graphics_get_resolution();
+    if (horizontal < 0)
+    {
+        win->dimensions.x = 0;
+    }
+    else if (horizontal == 0)
+    {
+        win->dimensions.x = res.x/2 - win->dimensions.w/2;
+    }
+    else
+    {
+        win->dimensions.x = res.x - win->dimensions.w;
+    }
+}
+
 void gf2d_window_calibrate(Window *win)
 {
     Vector2D res;
@@ -327,12 +365,15 @@ Window *gf2d_window_load(char *filename)
     return win;
 }
 
+
+
 Window *gf2d_window_load_from_json(SJson *json)
 {
     Window *win = NULL;
     int i,count;
     Vector4D vector = {255,255,255,255};
     SJson *elements,*value;
+    const char *buffer;
     if (!json)
     {
         slog("json not provided");
@@ -356,9 +397,44 @@ Window *gf2d_window_load_from_json(SJson *json)
     vector4d_clear(vector);
     sj_value_as_vector4d(sj_object_get_value(json,"dimensions"),&vector);
     win->dimensions = gf2d_rect(vector.x,vector.y,vector.z,vector.w);
-    
     gf2d_window_calibrate(win);
     
+    value = sj_object_get_value(json,"justify");
+    buffer = sj_get_string_value(value);
+    if (buffer)
+    {
+        if (strcmp(buffer,"left") == 0)
+        {
+            gf2d_window_justify(win,-1);
+        }
+        else if (strcmp(buffer,"center") == 0)
+        {
+            gf2d_window_justify(win,0);
+        }
+        else if (strcmp(buffer,"right") == 0)
+        {
+            gf2d_window_justify(win,1);
+        }
+    }
+
+    value = sj_object_get_value(json,"align");
+    buffer = sj_get_string_value(value);
+    if (buffer)
+    {
+        if (strcmp(buffer,"top") == 0)
+        {
+            gf2d_window_align(win,-1);
+        }
+        else if (strcmp(buffer,"middle") == 0)
+        {
+            gf2d_window_align(win,0);
+        }
+        else if (strcmp(buffer,"bottom") == 0)
+        {
+            gf2d_window_align(win,1);
+        }
+    }
+
     elements = sj_object_get_value(json,"elements");
     count = sj_array_get_count(elements);
     for (i = 0; i< count; i++)
