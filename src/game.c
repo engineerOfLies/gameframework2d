@@ -11,11 +11,18 @@
 #include "camera.h"
 #include "level.h"
 #include "editor.h"
+#include "windows_common.h"
+
+static int _done = 0;
+
+void onExit()
+{
+    _done = 1;
+}
 
 int main(int argc, char * argv[])
 {
     /*variable declarations*/
-    int done = 0;
     int i;
     const Uint8 * keys;
     LevelInfo *linfo = NULL;
@@ -70,7 +77,7 @@ int main(int argc, char * argv[])
     }
     
     /*main game loop*/
-    while(!done)
+    while(!_done)
     {
         SDL_PumpEvents();   // update SDL's internal event structures
         keys = SDL_GetKeyboardState(NULL); // get the keyboard state for this frame
@@ -110,7 +117,10 @@ int main(int argc, char * argv[])
             }
         gf2d_grahics_next_frame();// render current draw frame and skip to the next frame
         
-        if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition
+        if (keys[SDL_SCANCODE_ESCAPE])
+        {
+            window_yes_no("Exit?",onExit,NULL);
+        }
    //     slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
     level_info_free(linfo);

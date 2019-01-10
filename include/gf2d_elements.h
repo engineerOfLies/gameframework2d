@@ -68,7 +68,8 @@ Element *gf2d_element_new();
  * @param index the index of the element
  * @param name the name of the element
  * @param bounds the drawing bounds of the element
- * @param color the draw color of the element
+ * @param color the dra    return NULL;
+w color of the element
  * @param state the initial state of the element
  * @return NULL on error or a new element otherwise;
  */
@@ -112,5 +113,14 @@ List *gf2d_element_update(Element *element, Vector2D offset);
 Element *gf2d_element_load_from_config(SJson *json,Element *parent,Window *win);
 
 Rect gf2d_element_get_absolute_bounds(Element *element,Vector2D offset);
+
+/**
+ * @brief checks element and sub elements for element with the provided id
+ * @param e the element to check
+ * @param id the id to seach for
+ * @return NULL on not found, or error, a pointer to the element with the matching id otherwise
+ */
+Element *gf2d_element_get_by_id(Element *e,int id);
+
 
 #endif

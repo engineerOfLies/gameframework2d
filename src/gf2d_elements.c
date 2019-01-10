@@ -190,4 +190,20 @@ Rect gf2d_element_get_absolute_bounds(Element *element,Vector2D offset)
     return r;
 }
 
+Element *gf2d_element_get_by_id(Element *e,int id)
+{
+    if (!e)return NULL;
+    if (e->index == id)return e;
+    switch(e->type)
+    {
+        case ET_List:
+            return gf2d_element_list_get_item_by_id(e,id);
+            break;
+        case ET_Button:
+        case ET_Entry:
+        default:
+            return NULL;
+    }
+}
+
 /*eol@eof*/

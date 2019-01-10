@@ -99,6 +99,16 @@ void gf2d_element_make_label(Element *e,LabelElement *label)
     e->free_data = gf2d_element_label_free;
 }
 
+void gf2d_element_label_set_text(Element *e,char *text)
+{
+    if (!e)return;
+    if (e->type != ET_Label)return;
+    LabelElement *label;
+    label = (LabelElement *)e->data;
+    if (!label)return;
+    gf2d_block_cpy(label->text,text);
+}
+
 void gf2d_element_load_label_from_config(Element *e,SJson *json)
 {
     SJson *value;

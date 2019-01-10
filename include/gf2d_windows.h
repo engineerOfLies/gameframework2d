@@ -106,4 +106,12 @@ void gf2d_draw_window_border(Sprite *border,Sprite *bg,Rect rect,Vector4D color)
  */
 void gf2d_draw_window_border_generic(Rect rect,Vector4D color);
 
+/**
+ * @brief get the element from the window with the matching id
+ * @param win the window to query
+ * @param id the index to search for
+ * @returns NULL on error or not found, a pointo to the element otherwise
+ */
+Element *gf2d_window_get_element_by_id(Window *win,int id);
+
 #endif

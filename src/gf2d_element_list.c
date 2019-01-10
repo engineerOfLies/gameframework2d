@@ -170,6 +170,26 @@ void gf2d_element_list_add_item(Element *e,Element *item)
     list->list = gf2d_list_append(list->list,(void*)item);
 }
 
+Element *gf2d_element_list_get_item_by_id(Element *e,int id)
+{
+    ListElement *list;
+    Element *item, *q;
+    int count,i;
+    if (!e)return NULL;
+    if (e->type != ET_List)return NULL;
+    list = (ListElement *)e->data;
+    if (!list)return NULL;
+    count = gf2d_list_get_count(list->list);
+    for (i = 0; i < count; i++)
+    {
+        item = (Element *)gf2d_list_get_nth(list->list,i);
+        if (!item)continue;
+        q = gf2d_element_get_by_id(item,id);
+        if (q)return q;
+    }
+    return NULL;
+}
+
 void gf2d_element_load_list_from_config(Element *e,SJson *json,Window *win)
 {
     SJson *value = NULL;

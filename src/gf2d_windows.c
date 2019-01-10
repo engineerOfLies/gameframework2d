@@ -370,4 +370,20 @@ Window *gf2d_window_load_from_json(SJson *json)
     return win;
 }
 
+Element *gf2d_window_get_element_by_id(Window *win,int id)
+{
+    Element *e,*q;
+    int count, i;
+    if (!win)return NULL;
+    count = gf2d_list_get_count(win->elements);
+    for (i = 0;i < count;i++)
+    {
+        e = (Element *)gf2d_list_get_nth(win->elements,i);
+        if (!e)continue;
+        q = gf2d_element_get_by_id(e,id);
+        if (q)return q;
+    }
+    return NULL;
+}
+
 /*eol@eof*/
