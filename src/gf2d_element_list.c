@@ -60,6 +60,25 @@ void gf2d_element_list_draw(Element *element,Vector2D offset)
     }
 }
 
+Element *list_get_by_name(Element *element,char *name)
+{
+    ListElement *list;
+    int count,i;
+    Element *e,*r;
+    if (!element)return NULL;
+    list = (ListElement*)element->data;
+    if (!list)return NULL;
+    count = gf2d_list_get_count(list->list);
+    for (i = 0; i < count; i++)
+    {
+        e = (Element *)gf2d_list_get_nth(list->list,i);
+        if (!e)continue;
+        r = gf2d_get_element_by_name(e,name);
+        if (r)return r;
+    }
+    return NULL;
+}
+
 List *gf2d_element_list_update(Element *element,Vector2D offset)
 {
     ListElement *list;
@@ -152,6 +171,7 @@ void gf2d_element_make_list(Element *e,ListElement *list)
     e->draw = gf2d_element_list_draw;
     e->update = gf2d_element_list_update;
     e->free_data = gf2d_element_list_free;
+    e->get_by_name = list_get_by_name;
 }
 
 void gf2d_element_list_remove_item(Element *e,Element *item)

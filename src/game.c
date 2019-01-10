@@ -3,6 +3,7 @@
 #include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
 #include "gf2d_list.h"
+#include "gf2d_input.h"
 #include "gf2d_audio.h"
 #include "gf2d_windows.h"
 #include "gf2d_entity.h"
@@ -30,7 +31,6 @@ int main(int argc, char * argv[])
 {
     /*variable declarations*/
     int i;
-    const Uint8 * keys;
     LevelInfo *linfo = NULL;
     int editorMode = 0;
     int fullscreen = 0;
@@ -63,6 +63,7 @@ int main(int argc, char * argv[])
     gf2d_sprite_init(1024);
     gf2d_action_list_init(128);
     gf2d_text_init("config/font.cfg");
+    gf2d_input_init("config/input.cfg");
     gf2d_windows_init(128);
     gf2d_entity_system_init(1024);
     
@@ -85,16 +86,10 @@ int main(int argc, char * argv[])
     /*main game loop*/
     while(!_done)
     {
-        SDL_PumpEvents();   // update SDL's internal event structures
-        keys = SDL_GetKeyboardState(NULL); // get the keyboard state for this frame
+        gf2d_input_update();
         /*update things here*/
         gf2d_windows_update_all();
-        
-        if (keys[SDL_SCANCODE_RIGHT])camera_move(vector2d(10,0));
-        if (keys[SDL_SCANCODE_LEFT])camera_move(vector2d(-10,0));
-        if (keys[SDL_SCANCODE_DOWN])camera_move(vector2d(0,10));
-        if (keys[SDL_SCANCODE_UP])camera_move(vector2d(0,-10));
-        
+                
         if (!editorMode)
         {
             gf2d_entity_think_all();
@@ -123,7 +118,7 @@ int main(int argc, char * argv[])
             }
         gf2d_grahics_next_frame();// render current draw frame and skip to the next frame
         
-        if ((keys[SDL_SCANCODE_ESCAPE])&&(_quit == NULL))
+        if ((gf2d_input_command_released("exit"))&&(_quit == NULL))
         {
             _quit = window_yes_no("Exit?",onExit,onCancel,NULL,NULL);
         }

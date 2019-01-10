@@ -206,4 +206,12 @@ Element *gf2d_element_get_by_id(Element *e,int id)
     }
 }
 
+
+Element *gf2d_get_element_by_name(Element *e,char *name)
+{
+    if (!e)return NULL;
+    if (gf2d_line_cmp(e->name,name)==0)return e;
+    if (e->get_by_name)return e->get_by_name(e,name);
+    return NULL;
+}
 /*eol@eof*/

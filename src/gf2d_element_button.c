@@ -2,6 +2,7 @@
 #include "gf2d_mouse.h"
 #include "gf2d_element_actor.h"
 #include "simple_logger.h"
+#include "gf2d_input.h"
 
 void gf2d_element_button_draw(Element *element,Vector2D offset)
 {
@@ -62,8 +63,35 @@ List *gf2d_element_button_update(Element *element,Vector2D offset)
     {
         element->state = ES_idle;
     }
+    if (gf2d_input_command_pressed(button->hotkey))
+    {
+        element->state = ES_active;
+        list = gf2d_list_new();
+        gf2d_list_append(list,element);
+        return list;
+    }
 
     return NULL;
+}
+
+const char *gf2d_element_button_get_input(Element *e)
+{
+    ButtonElement *button;
+    if (!e)return NULL;
+    button = (ButtonElement*)e->data;
+    if (!button)return NULL;
+    return button->hotkey;
+}
+
+Element *button_get_by_name(Element *e,char *name)
+{
+    ButtonElement *button;
+    Element *r;
+    if (!e)return NULL;
+    button = (ButtonElement*)e->data;
+    r = gf2d_get_element_by_name(button->label,name);
+    if (r)return r;
+    return gf2d_get_element_by_name(button->actor,name);
 }
 
 void gf2d_element_button_free(Element *element)
@@ -101,6 +129,7 @@ void gf2d_element_make_button(Element *e,ButtonElement *button)
     e->draw = gf2d_element_button_draw;
     e->update = gf2d_element_button_update;
     e->free_data = gf2d_element_button_free;
+    e->get_by_name = button_get_by_name;
 }
 
 ButtonElement *gf2d_element_button_new_full(Element *label,Element *actor,Color highColor,Color pressColor)
@@ -121,6 +150,7 @@ void gf2d_element_load_button_from_config(Element *e,SJson *json,Window *win)
     Element *label = NULL;
     Element *actor = NULL;
     SJson *value;
+    ButtonElement *button;
     
     if ((!e) || (!json))
     {
@@ -152,6 +182,14 @@ void gf2d_element_load_button_from_config(Element *e,SJson *json,Window *win)
         actor = gf2d_element_load_from_config(value,e,win);
     }
     gf2d_element_make_button(e,gf2d_element_button_new_full(label,actor,gf2d_color_from_vector4(highColor),gf2d_color_from_vector4(pressColor)));
+ 
+    button = (ButtonElement*)e->data;
+
+    value = sj_object_get_value(json,"hotkey");
+    if (value)
+    {
+        gf2d_line_cpy(button->hotkey,sj_get_string_value(value));
+    }
 }
 
 
