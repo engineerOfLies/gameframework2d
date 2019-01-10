@@ -1,0 +1,133 @@
+{
+"window":{
+    "color" : [255,255,255,255],
+    "dimensions" : [-150,0,150,1.0],
+    "elements":
+    [
+      {
+        "type": "list",
+        "name": "list",
+        "id" : 0,
+        "bounds": [0,0,1,1],
+        "color" : [255,255,255,255],
+        "style": "vertical",
+        "item_size" : [1,32],
+        "elements":
+        [
+            {
+                "type": "label",
+                "name": "Welcome",
+                "id" : 1,
+                "bounds": [0,0,1,32],
+                "color" : [255,255,255,255],
+                "text":"GF2D Menu Test",
+                "justify" : "center",
+                "style":"H1"
+            },
+            {
+                "type": "list",
+                "name": "context",
+                "id" : 100,
+                "bounds": [2,32,1,32],
+                "color" : [255,255,255,255],
+                "style": "horizontal",
+                "item_size" : [32,32],
+                "elements":
+                [
+                    {
+                        "type": "button",
+                        "name": "load",
+                        "id" : 110,
+                        "bounds": [0,0,32,32],
+                        "color" : [255,255,255,255],
+                        "highColor" : [255,255,255,255],
+                        "pressColor" : [0,0,0,255],
+                        "label" :
+                            {
+                            "type": "label",
+                            "name": "load_l",
+                            "id" : 111,
+                            "bounds": [0,4,32,32],
+                            "color" : [0,0,0,255],
+                            "text":"Load",
+                            "align" : "middle",
+                            "justify" : "center",
+                            "style":"normal"
+                            },
+                        "actor" :
+                            {
+                            "type": "actor",
+                            "name": "image",
+                            "id" : 112,
+                            "bounds": [0,0,32,32],
+                            "color" : [255,255,255,255],
+                            "actor" : "actors/disk_icon.actor"
+                            }
+                    },
+                    {
+                        "type": "button",
+                        "name": "save",
+                        "id" : 120,
+                        "bounds": [0,0,32,32],
+                        "color" : [255,0,0,255],
+                        "highColor" : [255,0,0,255],
+                        "pressColor" : [255,0,0,255],
+                        "label" :
+                            {
+                            "type": "label",
+                            "name": "save_l",
+                            "id" : 121,
+                            "bounds": [0,4,32,32],
+                            "color" : [0,0,0,255],
+                            "text":"save",
+                            "align" : "middle",
+                            "justify" : "center",
+                            "style":"normal"
+                            },
+                        "actor" :
+                            {
+                            "type": "actor",
+                            "name": "image",
+                            "id" : 122,
+                            "bounds": [0,0,32,32],
+                            "color" : [255,0,0,255],
+                            "actor" : "actors/save_icon.actor"
+                            }
+                    },
+                    {
+                        "type": "button",
+                        "name": "new",
+                        "id" : 130,
+                        "bounds": [0,0,32,32],
+                        "color" : [255,0,0,255],
+                        "highColor" : [255,0,0,255],
+                        "pressColor" : [255,0,0,255],
+                        "label" :
+                            {
+                            "type": "label",
+                            "name": "new_l",
+                            "id" : 131,
+                            "bounds": [0,4,32,32],
+                            "color" : [0,0,0,255],
+                            "text":"save",
+                            "align" : "middle",
+                            "justify" : "center",
+                            "style":"normal"
+                            },
+                        "actor" :
+                            {
+                            "type": "actor",
+                            "name": "image",
+                            "id" : 132,
+                            "bounds": [0,0,32,32],
+                            "color" : [255,0,0,255],
+                            "actor" : "actors/new_icon.actor"
+                            }
+                    }
+                ]
+            }
+        ]
+      }
+    ]
+    }
+}

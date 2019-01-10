@@ -72,9 +72,59 @@ List * gf2d_element_update(Element *e, Vector2D offset)
     return NULL;
 }
 
-void gf2d_element_calibrate(Element *e)
+void gf2d_element_calibrate(Element *e,Element *parent, Window *win)
 {
+    Rect res;
+    int negx = 0,negy = 0;
+    if (!e)return;
+    if (parent != NULL)
+    {
+        gf2d_rect_copy(res,parent->bounds);
+    }
+    else if (win != NULL)
+    {
+        gf2d_rect_copy(res,win->dimensions);
+    }
+    else
+    {
+        slog("error: need a parent element or a window");
+        return;
+    }
+    if (e->bounds.x < 0)
+    {
+        negx = 1;
+        e->bounds.x *= -1;
+    }
+    if (e->bounds.y < 0)
+    {
+        negy = 1;
+        e->bounds.y *= -1;
+    }
+    if ((e->bounds.x > 0)&&(e->bounds.x < 1.0))
+    {
+        e->bounds.x *= res.w;
+    }
+    if ((e->bounds.y > 0)&&(e->bounds.y < 1.0))
+    {
+        e->bounds.y *= res.h;
+    }
+    if ((e->bounds.w > 0)&&(e->bounds.w <= 1.0))
+    {
+        e->bounds.w *= res.w;
+    }
+    if ((e->bounds.h > 0)&&(e->bounds.h <= 1.0))
+    {
+        e->bounds.h *= res.h;
+    }
     
+    if (negx)
+    {
+        e->bounds.x = res.h - e->bounds.x;
+    }
+    if (negy)
+    {
+        e->bounds.y = res.w - e->bounds.y;
+    }
 }
 
 Element *gf2d_element_load_from_config(SJson *json,Element *parent,Window *win)
@@ -103,6 +153,7 @@ Element *gf2d_element_load_from_config(SJson *json,Element *parent,Window *win)
     value = sj_object_get_value(json,"bounds");
     sj_value_as_vector4d(value,&vector);
     gf2d_rect_set(e->bounds,vector.x,vector.y,vector.z,vector.w);
+    gf2d_element_calibrate(e,parent, win);
     
     value = sj_object_get_value(json,"type");
     type = sj_get_string_value(value);
