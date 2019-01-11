@@ -262,7 +262,6 @@ void gf2d_input_parse_command_json(SJson *command)
             slog("error in key list, empty value");
             continue;   //error
         }
-        slog("<%s> found",buffer);
         if (strlen(buffer) == 1)
         {
             //single letter code
@@ -272,22 +271,18 @@ void gf2d_input_parse_command_json(SJson *command)
             }
             else if (buffer[0] == '.')
             {
-                slog("mapped period to action %s",in->command);
                 kc = SDL_SCANCODE_PERIOD;
             }
             else if (buffer[0] == ';')
             {
-                slog("mapped semicolon to action %s",in->command);
                 kc = SDL_SCANCODE_SEMICOLON;
             }
             else if (buffer[0] == '/')
             {
-                slog("mapped slash to action %s",in->command);
                 kc = SDL_SCANCODE_SLASH;
             }
             else if (buffer[0] == '\'')
             {
-                slog("mapped apostrophe to action %s",in->command);
                 kc = SDL_SCANCODE_APOSTROPHE;
             }
             else if ((buffer[0] >= ' ')&&(buffer[0] <= '`'))
