@@ -2,6 +2,7 @@
 #include "simple_logger.h"
 #include "camera.h"
 #include "level.h"
+#include "gf2d_input.h"
 #include "entity_common.h"
 
 static Entity *_player = NULL;
@@ -120,13 +121,10 @@ void player_draw(Entity *self)
 
 void player_think(Entity *self)
 {
-    const Uint8 * keys;
-    keys = SDL_GetKeyboardState(NULL);
-
     switch (self->state)
     {
         case ES_Idle:
-            if (keys[SDL_SCANCODE_A])
+            if (gf2d_input_command_down("walkleft"))
             {
                 self->flip.x = 1;
                 if (!entity_left_check(self,1))
@@ -134,7 +132,7 @@ void player_think(Entity *self)
                     self->velocity.x -= 1.25;
                 }
             }
-            if (keys[SDL_SCANCODE_D])
+            if (gf2d_input_command_down("walkright"))
             {
                 self->flip.x = 0;
                 if (!entity_right_check(self,1))
@@ -142,14 +140,14 @@ void player_think(Entity *self)
                     self->velocity.x += 1.25;
                 }
             }
-            if (((keys[SDL_SCANCODE_SPACE])&&(self->grounded))&&(!self->jumpcool))
+            if (((gf2d_input_command_pressed("jump"))&&(self->grounded))&&(!self->jumpcool))
             {
                 self->velocity.y -= 10;
                 self->jumpcool = gf2d_actor_get_frames_remaining(&self->actor);
                 gf2d_sound_play(self->sound[0],0,1,-1,-1);
                 gf2d_actor_set_action(&self->actor,"jump");
             }
-            if (keys[SDL_SCANCODE_RCTRL])
+            if (gf2d_input_command_released("melee"))
             {
                 gf2d_actor_set_action(&self->actor,"hack");
                 self->cooldown = gf2d_actor_get_frames_remaining(&self->actor);

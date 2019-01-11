@@ -33,5 +33,5 @@ type:   loop
 action: hack
 startFrame: 48
 endFrame: 58
-frameRate: 0.5
+frameRate: 0.60
 type:   pass

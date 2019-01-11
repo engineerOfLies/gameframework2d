@@ -61,6 +61,7 @@ void gf2d_input_commands_purge();
 Uint8 gf2d_input_command_pressed(const char *command);
 Uint8 gf2d_input_command_held(const char *command);
 Uint8 gf2d_input_command_released(const char *command);
+Uint8 gf2d_input_command_down(const char *command);
 
 InputEventType gf2d_input_command_get_state(const char *command);
 

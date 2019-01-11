@@ -174,6 +174,14 @@ Uint8 gf2d_input_command_released(const char *command)
     return 0;
 }
 
+Uint8 gf2d_input_command_down(const char *command)
+{
+    Input *in;
+    in = gf2d_input_get_by_name(command);
+    if ((in)&&((in->state == IET_Hold)||(in->state == IET_Press)))return 1;
+    return 0;
+}
+
 InputEventType gf2d_input_command_get_state(const char *command)
 {
     Input *in;
@@ -243,6 +251,7 @@ void gf2d_input_parse_command_json(SJson *command)
     gf2d_line_cpy(in->command,buffer);
     list = sj_object_get_value(command,"keys");
     count = sj_array_get_count(list);
+    slog("attempting to parse key codes for command %s",in->command);
     for (i = 0; i< count; i++)
     {
         value = sj_array_get_nth(list,i);
@@ -253,6 +262,7 @@ void gf2d_input_parse_command_json(SJson *command)
             slog("error in key list, empty value");
             continue;   //error
         }
+        slog("<%s> found",buffer);
         if (strlen(buffer) == 1)
         {
             //single letter code
@@ -260,11 +270,30 @@ void gf2d_input_parse_command_json(SJson *command)
             {
                 kc = SDL_SCANCODE_A + buffer[0] - 'a';
             }
+            else if (buffer[0] == '.')
+            {
+                slog("mapped period to action %s",in->command);
+                kc = SDL_SCANCODE_PERIOD;
+            }
+            else if (buffer[0] == ';')
+            {
+                slog("mapped semicolon to action %s",in->command);
+                kc = SDL_SCANCODE_SEMICOLON;
+            }
+            else if (buffer[0] == '/')
+            {
+                slog("mapped slash to action %s",in->command);
+                kc = SDL_SCANCODE_SLASH;
+            }
+            else if (buffer[0] == '\'')
+            {
+                slog("mapped apostrophe to action %s",in->command);
+                kc = SDL_SCANCODE_APOSTROPHE;
+            }
             else if ((buffer[0] >= ' ')&&(buffer[0] <= '`'))
             {
                 kc = SDL_SCANCODE_SPACE + buffer[0] - ' ';
             }
-
         }
         else
         {
