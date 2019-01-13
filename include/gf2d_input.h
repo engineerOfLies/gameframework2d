@@ -66,6 +66,14 @@ Uint8 gf2d_input_command_down(const char *command);
 InputEventType gf2d_input_command_get_state(const char *command);
 
 /**
+ * @brief report if the key provided has been pressed this frame
+ * @param key the name of the key to check
+ * @returns true if pressed, false otherwise
+ * 
+ */
+Uint8 gf2d_input_key_pressed(const char *key);
+
+/**
  * @brief configure callbacks for an input
  * @param command the name of the input to configure
  * @param onPress the function to call when the input is pressed

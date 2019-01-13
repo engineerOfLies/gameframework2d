@@ -3,6 +3,7 @@
 #include "gf2d_elements.h"
 #include "gf2d_element_actor.h"
 #include "gf2d_element_button.h"
+#include "gf2d_element_entry.h"
 #include "gf2d_element_list.h"
 #include "gf2d_element_label.h"
 #include "simple_logger.h"
@@ -173,8 +174,9 @@ Element *gf2d_element_load_from_config(SJson *json,Element *parent,Window *win)
     {
         gf2d_element_load_button_from_config(e,json,win);
     }
-    else if (strcmp(type,"percent") == 0)
+    else if (strcmp(type,"entry") == 0)
     {
+        gf2d_element_load_entry_from_config(e,json,win);
     }
     return e;
 }

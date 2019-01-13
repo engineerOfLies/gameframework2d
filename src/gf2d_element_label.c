@@ -11,6 +11,7 @@ void gf2d_element_label_draw(Element *element,Vector2D offset)
     if (!element)return;
     label = (LabelElement*)element->data;
     if (!label)return;
+    if (strlen(label->text) <= 0)return;
     size = gf2d_text_get_bounds(label->text,label->style);
     if (size.x < 0)
     {

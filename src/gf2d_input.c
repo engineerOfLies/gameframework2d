@@ -231,12 +231,111 @@ void gf2d_input_init(char *configFile)
     gf2d_input_commands_load(configFile);
 }
 
+SDL_Scancode gf2d_input_key_to_scancode(const char * buffer)
+{
+    int F = 0;
+    SDL_Scancode kc = -1;
+    if (strlen(buffer) == 1)
+    {
+        //single letter code
+        if ((buffer[0] >= 'a')&&(buffer[0] <= 'z'))
+        {
+            kc = SDL_SCANCODE_A + buffer[0] - 'a';
+        }
+        else if (buffer[0] == '.')
+        {
+            kc = SDL_SCANCODE_PERIOD;
+        }
+        else if (buffer[0] == ';')
+        {
+            kc = SDL_SCANCODE_SEMICOLON;
+        }
+        else if (buffer[0] == '/')
+        {
+            kc = SDL_SCANCODE_SLASH;
+        }
+        else if (buffer[0] == '\'')
+        {
+            kc = SDL_SCANCODE_APOSTROPHE;
+        }
+        else if ((buffer[0] >= ' ')&&(buffer[0] <= '`'))
+        {
+            kc = SDL_SCANCODE_SPACE + buffer[0] - ' ';
+        }
+    }
+    else
+    {
+        if (buffer[0] == 'F')
+        {
+            F = atoi(&buffer[1]);
+            if (F <= 12)
+            {
+                kc = SDL_SCANCODE_F1 + F - 1; 
+            }
+            else if (F <= 24)
+            {
+                kc = SDL_SCANCODE_F13 + F - 1; 
+            }
+        }
+        else if (strcmp(buffer,"LALT") == 0)
+        {
+            kc = SDL_SCANCODE_LALT;
+        }
+        else if (strcmp(buffer,"RALT") == 0)
+        {
+            kc = SDL_SCANCODE_RALT;
+        }
+        else if (strcmp(buffer,"LSHIFT") == 0)
+        {
+            kc = SDL_SCANCODE_LSHIFT;
+        }
+        else if (strcmp(buffer,"RSHIFT") == 0)
+        {
+            kc = SDL_SCANCODE_RSHIFT;
+        }
+        else if (strcmp(buffer,"LCTRL") == 0)
+        {
+            kc = SDL_SCANCODE_LCTRL;
+        }
+        else if (strcmp(buffer,"RCTRL") == 0)
+        {
+            kc = SDL_SCANCODE_RCTRL;
+        }
+        else if (strcmp(buffer,"TAB") == 0)
+        {
+            kc = SDL_SCANCODE_TAB;
+        }
+        else if (strcmp(buffer,"RETURN") == 0)
+        {
+            kc = SDL_SCANCODE_RETURN;
+        }
+        else if (strcmp(buffer,"BACKSPACE") == 0)
+        {
+            kc = SDL_SCANCODE_BACKSPACE;
+        }
+        else if (strcmp(buffer,"ESCAPE") == 0)
+        {
+            kc = SDL_SCANCODE_ESCAPE;
+        }
+    }
+    return kc;
+}
+
+Uint8 gf2d_input_key_pressed(const char *key)
+{
+    SDL_Scancode kc;
+    kc = gf2d_input_key_to_scancode(key);
+    if ((!gf2d_input_old_keys[kc])&&(gf2d_input_keys[kc]))return 1;
+    return 0;
+}
+
+
 void gf2d_input_parse_command_json(SJson *command)
 {
     SJson *value,*list;
     const char * buffer;
     Input *in;
-    int count,i,F;
+    int count,i;
     SDL_Scancode kc = 0;
     if (!command)return;
     value = sj_object_get_value(command,"command");
@@ -251,7 +350,6 @@ void gf2d_input_parse_command_json(SJson *command)
     gf2d_line_cpy(in->command,buffer);
     list = sj_object_get_value(command,"keys");
     count = sj_array_get_count(list);
-    slog("attempting to parse key codes for command %s",in->command);
     for (i = 0; i< count; i++)
     {
         value = sj_array_get_nth(list,i);
@@ -262,89 +360,7 @@ void gf2d_input_parse_command_json(SJson *command)
             slog("error in key list, empty value");
             continue;   //error
         }
-        if (strlen(buffer) == 1)
-        {
-            //single letter code
-            if ((buffer[0] >= 'a')&&(buffer[0] <= 'z'))
-            {
-                kc = SDL_SCANCODE_A + buffer[0] - 'a';
-            }
-            else if (buffer[0] == '.')
-            {
-                kc = SDL_SCANCODE_PERIOD;
-            }
-            else if (buffer[0] == ';')
-            {
-                kc = SDL_SCANCODE_SEMICOLON;
-            }
-            else if (buffer[0] == '/')
-            {
-                kc = SDL_SCANCODE_SLASH;
-            }
-            else if (buffer[0] == '\'')
-            {
-                kc = SDL_SCANCODE_APOSTROPHE;
-            }
-            else if ((buffer[0] >= ' ')&&(buffer[0] <= '`'))
-            {
-                kc = SDL_SCANCODE_SPACE + buffer[0] - ' ';
-            }
-        }
-        else
-        {
-            if (buffer[0] == 'F')
-            {
-                F = atoi(&buffer[1]);
-                if (F <= 12)
-                {
-                   kc = SDL_SCANCODE_F1 + F - 1; 
-                }
-                else if (F <= 24)
-                {
-                   kc = SDL_SCANCODE_F13 + F - 1; 
-                }
-            }
-            else if (strcmp(buffer,"LALT") == 0)
-            {
-                kc = SDL_SCANCODE_LALT;
-            }
-            else if (strcmp(buffer,"RALT") == 0)
-            {
-                kc = SDL_SCANCODE_RALT;
-            }
-            else if (strcmp(buffer,"LSHIFT") == 0)
-            {
-                kc = SDL_SCANCODE_LSHIFT;
-            }
-            else if (strcmp(buffer,"RSHIFT") == 0)
-            {
-                kc = SDL_SCANCODE_RSHIFT;
-            }
-            else if (strcmp(buffer,"LCTRL") == 0)
-            {
-                kc = SDL_SCANCODE_LCTRL;
-            }
-            else if (strcmp(buffer,"RCTRL") == 0)
-            {
-                kc = SDL_SCANCODE_RCTRL;
-            }
-            else if (strcmp(buffer,"TAB") == 0)
-            {
-                kc = SDL_SCANCODE_TAB;
-            }
-            else if (strcmp(buffer,"RETURN") == 0)
-            {
-                kc = SDL_SCANCODE_RETURN;
-            }
-            else if (strcmp(buffer,"BACKSPACE") == 0)
-            {
-                kc = SDL_SCANCODE_BACKSPACE;
-            }
-            else if (strcmp(buffer,"ESCAPE") == 0)
-            {
-                kc = SDL_SCANCODE_ESCAPE;
-            }
-        }
+        kc = gf2d_input_key_to_scancode(buffer);
 #pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
         gf2d_list_append(in->keyCodes,(void *)kc);
     }

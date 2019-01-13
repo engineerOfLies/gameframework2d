@@ -1,6 +1,6 @@
 #include "gf2d_element_button.h"
-#include "gf2d_mouse.h"
 #include "gf2d_element_actor.h"
+#include "gf2d_mouse.h"
 #include "simple_logger.h"
 #include "gf2d_input.h"
 

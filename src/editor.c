@@ -1,8 +1,11 @@
+#include "gf2d_elements.h"
 #include "editor.h"
 #include "level.h"
 #include "simple_logger.h"
+#include "windows_common.h"
 
 static Window *_editor = NULL;
+static TextBlock filename = {0};
 
 int editor_update(Window *win,List *updateList)
 {
@@ -13,17 +16,15 @@ int editor_update(Window *win,List *updateList)
     count = gf2d_list_get_count(updateList);
     for (i = 0; i < count; i++)
     {
-        e = gf2d_list_get_nth(updateList,i);
+        e = (Element *)gf2d_list_get_nth(updateList,i);
         if (!e)continue;
-/*        switch(e->index)
+        switch(e->index)
         {
-            case 51:
-                slog("ok");
+            case 110:
+                slog("load");
+                window_text_entry("enter file to load", filename, GF2DTEXTLEN, NULL, NULL);
                 break;
-            case 52:
-                slog("cancel");
-                break;
-        }*/
+        }
     }
     return 0;
 }
