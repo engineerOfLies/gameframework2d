@@ -20,8 +20,7 @@ typedef struct
 }ListElement;
 
 
-ListElement *gf2d_element_list_new_full(Vector2D itemSize,ListStyle ls,int wraps,int scrolls);
-
+ListElement *gf2d_element_list_new_full(Rect bounds,Vector2D itemSize,ListStyle ls,int wraps,int scrolls);
 
 void gf2d_element_list_add_item(Element *e,Element *item);
 

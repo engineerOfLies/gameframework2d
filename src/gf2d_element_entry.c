@@ -13,6 +13,13 @@ void gf2d_element_entry_draw(Element *element,Vector2D offset)
     if (!entry)return;
     vector2d_add(position,offset,element->bounds);
     gf2d_element_draw(entry->label,position);
+    gf2d_rect_draw(
+        gf2d_rect(
+            element->bounds.x + position.x,
+            element->bounds.y + position.y,
+            element->bounds.w,
+            element->bounds.h),
+        gf2d_color8(200,200,200,255));
 }
 
 List *gf2d_element_entry_update(Element *element,Vector2D offset)
@@ -20,6 +27,8 @@ List *gf2d_element_entry_update(Element *element,Vector2D offset)
     Rect bounds;
     List *list;
     TextLine input = {0};
+    char newLet = 0;
+    SDL_Keymod mods;
     EntryElement *entry;
     if (!element)return NULL;
     entry = (EntryElement*)element->data;
@@ -47,20 +56,180 @@ List *gf2d_element_entry_update(Element *element,Vector2D offset)
     }
     if (entry->has_focus)
     {
+        mods = SDL_GetModState();
         if (entry->cursor_pos < (GF2DTEXTLEN -1))
         {
             for (input[0] = 'a';input[0] <= 'z';input[0]++)
             {
                 if (gf2d_input_key_pressed(input))
                 {
-                    slog("letter <%c> pressed",input[0]);
-                    entry->text[entry->cursor_pos++] = input[0];
-                    entry->text[entry->cursor_pos] = '\0';
-                    gf2d_element_label_set_text(entry->label,entry->text);
-                    list = gf2d_list_new();
-                    gf2d_list_append(list,element);
-                    return list;
+                    if (mods & KMOD_SHIFT)
+                    {
+                        newLet = input[0] - 'a' + 'A';
+                    }
+                    else
+                    {
+                        newLet = input[0];
+                    }
                 }
+            }
+            for (input[0] = '0';input[0] <= '9';input[0]++)
+            {
+                if (gf2d_input_key_pressed(input))
+                {
+                    if (mods & KMOD_SHIFT)
+                    {
+                        switch(input[0])
+                        {
+                            case '0':
+                                newLet = ')';
+                                break;
+                            case '1':
+                                newLet = '!';
+                                break;
+                            case '2':
+                                newLet = '@';
+                                break;
+                            case '3':
+                                newLet = '#';
+                                break;
+                            case '4':
+                                newLet = '$';
+                                break;
+                            case '5':
+                                newLet = '%';
+                                break;
+                            case '6':
+                                newLet = '^';
+                                break;
+                            case '7':
+                                newLet = '&';
+                                break;
+                            case '8':
+                                newLet = '*';
+                                break;
+                            case '9':
+                                newLet = '(';
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        newLet = input[0];
+                    }
+                }
+            }
+            if (gf2d_input_key_pressed("`"))
+            {
+                if (mods & KMOD_SHIFT)
+                {
+                    newLet = '~';
+                }
+                else newLet = '`';
+            }
+            if (gf2d_input_key_pressed(";"))
+            {
+                if (mods & KMOD_SHIFT)
+                {
+                    newLet = ':';
+                }
+                else newLet = ';';
+            }
+            if (gf2d_input_key_pressed("="))
+            {
+                if (mods & KMOD_SHIFT)
+                {
+                    newLet = '+';
+                }
+                else newLet = '=';
+            }
+            if (gf2d_input_key_pressed("-"))
+            {
+                if (mods & KMOD_SHIFT)
+                {
+                    newLet = '_';
+                }
+                else newLet = '-';
+            }
+            if (gf2d_input_key_pressed("["))
+            {
+                if (mods & KMOD_SHIFT)
+                {
+                    newLet = '{';
+                }
+                else newLet = '[';
+            }
+            if (gf2d_input_key_pressed("]"))
+            {
+                if (mods & KMOD_SHIFT)
+                {
+                    newLet = '}';
+                }
+                else newLet = ']';
+            }
+            if (gf2d_input_key_pressed("."))
+            {
+                if (mods & KMOD_SHIFT)
+                {
+                    newLet = '>';
+                }
+                else newLet = '.';
+            }
+            if (gf2d_input_key_pressed(","))
+            {
+                if (mods & KMOD_SHIFT)
+                {
+                    newLet = '<';
+                }
+                else newLet = ',';
+            }
+            if (gf2d_input_key_pressed(" "))
+            {
+                newLet = ' ';
+            }
+            if (gf2d_input_key_pressed("\'"))
+            {
+                if (mods & KMOD_SHIFT)
+                {
+                    newLet = '"';
+                }
+                else newLet = '\'';
+            }
+            if (gf2d_input_key_pressed("\\"))
+            {
+                if (mods & KMOD_SHIFT)
+                {
+                    newLet = '|';
+                }
+                else newLet = '\\';
+            }
+            if (gf2d_input_key_pressed("/"))
+            {
+                if (mods & KMOD_SHIFT)
+                {
+                    newLet = '?';
+                }
+                else newLet = '/';
+            }
+            if (newLet != 0)
+            {
+                entry->text[entry->cursor_pos++] = newLet;
+                entry->text[entry->cursor_pos] = '\0';
+                gf2d_element_label_set_text(entry->label,entry->text);
+                list = gf2d_list_new();
+                gf2d_list_append(list,element);
+                return list;
+            }
+        }
+        if (entry->cursor_pos > 0)
+        {
+            if (gf2d_input_key_pressed("BACKSPACE"))
+            {
+                entry->text[--entry->cursor_pos] = '\0';
+                gf2d_element_label_set_text(entry->label,entry->text);
+                list = gf2d_list_new();
+                gf2d_list_append(list,element);
+                return list;
             }
         }
     }

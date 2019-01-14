@@ -72,6 +72,9 @@ InputEventType gf2d_input_command_get_state(const char *command);
  * 
  */
 Uint8 gf2d_input_key_pressed(const char *key);
+Uint8 gf2d_input_key_released(const char *key);
+Uint8 gf2d_input_key_held(const char *key);
+Uint8 gf2d_input_key_down(const char *key);
 
 /**
  * @brief configure callbacks for an input

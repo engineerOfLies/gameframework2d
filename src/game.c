@@ -118,7 +118,7 @@ int main(int argc, char * argv[])
             }
         gf2d_grahics_next_frame();// render current draw frame and skip to the next frame
         
-        if ((gf2d_input_command_released("exit"))&&(_quit == NULL))
+        if ((gf2d_input_command_down("exit"))&&(_quit == NULL))
         {
             _quit = window_yes_no("Exit?",onExit,onCancel,NULL,NULL);
         }

@@ -95,8 +95,8 @@ void gf2d_input_update_command(Input *command)
 #pragma GCC diagnostic ignored "-Wpointer-to-int-cast"
         kc = (SDL_Scancode)gf2d_list_get_nth(command->keyCodes,i);
         if (!kc)continue;
-        old += gf2d_input_old_keys[kc];
-        new += gf2d_input_keys[kc];
+        if(gf2d_input_old_keys[kc])old++;
+        if(gf2d_input_keys[kc])new++;
     }
     if ((old == c)&&(new == c))
     {
@@ -178,7 +178,10 @@ Uint8 gf2d_input_command_down(const char *command)
 {
     Input *in;
     in = gf2d_input_get_by_name(command);
-    if ((in)&&((in->state == IET_Hold)||(in->state == IET_Press)))return 1;
+    if (in)
+    {
+        if(in->state)return 1;
+    }
     return 0;
 }
 
@@ -242,13 +245,77 @@ SDL_Scancode gf2d_input_key_to_scancode(const char * buffer)
         {
             kc = SDL_SCANCODE_A + buffer[0] - 'a';
         }
+        else if (buffer[0] == '0')
+        {
+            kc = SDL_SCANCODE_0;
+        }
+        else if (buffer[0] == '1')
+        {
+            kc = SDL_SCANCODE_1;
+        }
+        else if (buffer[0] == '2')
+        {
+            kc = SDL_SCANCODE_2;
+        }
+        else if (buffer[0] == '3')
+        {
+            kc = SDL_SCANCODE_3;
+        }
+        else if (buffer[0] == '4')
+        {
+            kc = SDL_SCANCODE_4;
+        }
+        else if (buffer[0] == '5')
+        {
+            kc = SDL_SCANCODE_5;
+        }
+        else if (buffer[0] == '6')
+        {
+            kc = SDL_SCANCODE_6;
+        }
+        else if (buffer[0] == '7')
+        {
+            kc = SDL_SCANCODE_7;
+        }
+        else if (buffer[0] == '8')
+        {
+            kc = SDL_SCANCODE_8;
+        }
+        else if (buffer[0] == '9')
+        {
+            kc = SDL_SCANCODE_9;
+        }
+        else if (buffer[0] == '-')
+        {
+            kc = SDL_SCANCODE_MINUS;
+        }
+        else if (buffer[0] == '=')
+        {
+            kc = SDL_SCANCODE_EQUALS;
+        }
+        else if (buffer[0] == '[')
+        {
+            kc = SDL_SCANCODE_LEFTBRACKET;
+        }
+        else if (buffer[0] == ']')
+        {
+            kc = SDL_SCANCODE_RIGHTBRACKET;
+        }
         else if (buffer[0] == '.')
         {
             kc = SDL_SCANCODE_PERIOD;
         }
+        else if (buffer[0] == ',')
+        {
+            kc = SDL_SCANCODE_COMMA;
+        }
         else if (buffer[0] == ';')
         {
             kc = SDL_SCANCODE_SEMICOLON;
+        }
+        else if (buffer[0] == '\\')
+        {
+            kc = SDL_SCANCODE_BACKSLASH;
         }
         else if (buffer[0] == '/')
         {
@@ -257,6 +324,14 @@ SDL_Scancode gf2d_input_key_to_scancode(const char * buffer)
         else if (buffer[0] == '\'')
         {
             kc = SDL_SCANCODE_APOSTROPHE;
+        }
+        else if (buffer[0] == ';')
+        {
+            kc = SDL_SCANCODE_SEMICOLON;
+        }
+        else if (buffer[0] == '`')
+        {
+            kc = SDL_SCANCODE_GRAVE;
         }
         else if ((buffer[0] >= ' ')&&(buffer[0] <= '`'))
         {
@@ -276,6 +351,10 @@ SDL_Scancode gf2d_input_key_to_scancode(const char * buffer)
             {
                 kc = SDL_SCANCODE_F13 + F - 1; 
             }
+        }
+        else if (strcmp(buffer,"BACKSPACE") == 0)
+        {
+            kc = SDL_SCANCODE_BACKSPACE;
         }
         else if (strcmp(buffer,"LALT") == 0)
         {
@@ -318,6 +397,10 @@ SDL_Scancode gf2d_input_key_to_scancode(const char * buffer)
             kc = SDL_SCANCODE_ESCAPE;
         }
     }
+    if (kc == -1)
+    {
+        slog("no input mapping available for %s",buffer);
+    }
     return kc;
 }
 
@@ -325,10 +408,40 @@ Uint8 gf2d_input_key_pressed(const char *key)
 {
     SDL_Scancode kc;
     kc = gf2d_input_key_to_scancode(key);
+    if (kc == -1)return 0;
     if ((!gf2d_input_old_keys[kc])&&(gf2d_input_keys[kc]))return 1;
     return 0;
 }
 
+Uint8 gf2d_input_key_released(const char *key)
+{
+    SDL_Scancode kc;
+    kc = gf2d_input_key_to_scancode(key);
+    if (kc == -1)return 0;
+    if ((gf2d_input_old_keys[kc])&&(!gf2d_input_keys[kc]))return 1;
+    return 0;
+}
+
+Uint8 gf2d_input_key_held(const char *key)
+{
+    SDL_Scancode kc;
+    kc = gf2d_input_key_to_scancode(key);
+    if (kc == -1)return 0;
+    if ((gf2d_input_old_keys[kc])&&(gf2d_input_keys[kc]))return 1;
+    return 0;
+}
+
+Uint8 gf2d_input_key_down(const char *key)
+{
+    SDL_Scancode kc;
+    kc = gf2d_input_key_to_scancode(key);
+    if (kc == -1)return 0;
+    if (gf2d_input_keys[kc])
+    {
+        return 1;
+    }
+    return 0;
+}
 
 void gf2d_input_parse_command_json(SJson *command)
 {
@@ -362,7 +475,10 @@ void gf2d_input_parse_command_json(SJson *command)
         }
         kc = gf2d_input_key_to_scancode(buffer);
 #pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
-        gf2d_list_append(in->keyCodes,(void *)kc);
+        if (kc != -1)
+        {
+            gf2d_list_append(in->keyCodes,(void *)kc);
+        }
     }
     gf2d_list_append(gf2d_input_list,(void *)in);
 }

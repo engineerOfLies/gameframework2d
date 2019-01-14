@@ -1,7 +1,7 @@
 {
 "window":{
     "color" : [255,255,255, 255],
-    "dimensions" : [0,0,420,150],
+    "dimensions" : [0,0,600,162],
     "justify" : "center",
     "align" : "middle",
     "elements":
@@ -10,10 +10,10 @@
         "type": "list",
         "name": "list",
         "id" : 0,
-        "bounds": [10,10,1,1],
+        "bounds": [0.01,0.01,0.99,0.99],
         "color" : [255,255,255,255],
         "style": "vertical",
-        "item_size" : [100,36],
+        "item_size" : [0.5,42],
         "elements":
         [
             {
@@ -31,14 +31,14 @@
             "type": "entry",
             "name": "entry",
             "id" : 2,
-            "bounds": [0,0,1,40],
+            "bounds": [0,0,0.99,40],
             "color" : [255,255,255,255],
             "label" :
                 {
                 "type": "label",
                 "name": "entry_l",
                 "id" : 21,
-                "bounds": [0,0,168,64],
+                "bounds": [0.01,0,0.98,1],
                 "color" : [255,255,255,255],
                 "text":"?",
                 "justify" : "left",
@@ -50,7 +50,7 @@
             "type": "list",
             "name": "yesno",
             "id" : 50,
-            "bounds": [0,0,200,1],
+            "bounds": [260,0,0.5,64],
             "color" : [255,255,255,255],
             "style": "horizontal",
             "item_size" : [168,64],
@@ -58,10 +58,10 @@
             [
                 {
                 "type": "button",
-                "name": "yes",
+                "name": "OK",
                 "id" : 51,
                 "bounds": [0,0,168,64],
-                "hotkey":"yes",
+                "hotkey":"ok",
                 "color" : [255,255,255,255],
                 "highColor" : [255,255,255,255],
                 "pressColor" : [255,255,255,255],
@@ -72,7 +72,7 @@
                     "id" : 511,
                     "bounds": [0,0,168,64],
                     "color" : [255,255,255,255],
-                    "text":"Yes",
+                    "text":"OK",
                     "justify" : "center",
                     "align" : "middle",
                     "style":"H5"
@@ -89,11 +89,11 @@
                 },
                 {
                 "type": "button",
-                "name": "no",
+                "name": "cancel",
                 "id" : 52,
                 "bounds": [0,0,164,68],
                 "color" : [255,255,255,255],
-                "hotkey":"no",
+                "hotkey":"cancel",
                 "highColor" : [255,255,255,255],
                 "pressColor" : [255,255,255,255],
                 "label" :
@@ -103,7 +103,7 @@
                     "id" : 521,
                     "bounds": [0,0,168,64],
                     "color" : [255,255,255,255],
-                    "text":"No",
+                    "text":"Cancel",
                     "align" : "middle",
                     "justify" : "center",
                     "style":"H5"

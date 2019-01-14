@@ -148,7 +148,7 @@ ListElement *gf2d_element_list_new()
 }
 
 
-ListElement *gf2d_element_list_new_full(Vector2D itemSize,ListStyle ls,int wraps,int scrolls)
+ListElement *gf2d_element_list_new_full(Rect bounds,Vector2D itemSize,ListStyle ls,int wraps,int scrolls)
 {
     ListElement *list;
     list = gf2d_element_list_new();
@@ -156,6 +156,8 @@ ListElement *gf2d_element_list_new_full(Vector2D itemSize,ListStyle ls,int wraps
     {
         return NULL;
     }
+    if (itemSize.x <= 1)itemSize.x *= bounds.w;
+    if (itemSize.y <= 1)itemSize.y *= bounds.h;
     vector2d_copy(list->itemSize,itemSize);
     list->listStyle = ls;
     list->wraps = wraps;
@@ -247,11 +249,13 @@ void gf2d_element_load_list_from_config(Element *e,SJson *json,Window *win)
     
     value = sj_object_get_value(json,"item_size");
     sj_value_as_vector2d(value,&vector);
-    list = gf2d_element_list_new_full(vector,ls,wraps,scrolls);
+    
+    list = gf2d_element_list_new_full(e->bounds,vector,ls,wraps,scrolls);
     gf2d_element_make_list(e,list);
     
     value = sj_object_get_value(json,"elements");
     count = sj_array_get_count(value);
+
     for (i = 0; i < count; i++)
     {
         item = sj_array_get_nth(value,i);

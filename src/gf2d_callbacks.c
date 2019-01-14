@@ -2,6 +2,7 @@
 #include "simple_logger.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h> 
 
 Callback *gf2d_callback_new(void (*callback)(void *data),void *data)
 {
