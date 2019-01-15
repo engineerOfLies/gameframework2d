@@ -267,10 +267,20 @@ void gf2d_window_add_element(Window *win,Element *e)
 void gf2d_windows_draw_all()
 {
     int i,count;
+    Window* win;
     count = gf2d_list_get_count(window_manager.window_deque);
     for (i = 0; i < count; i++)
     {
-        gf2d_window_draw((Window*)gf2d_list_get_nth(window_manager.window_deque,i));
+        win = (Window*)gf2d_list_get_nth(window_manager.window_deque,i);
+        if (!win)continue;
+        if (win->draw)
+        {
+            if (!win->draw(win))
+            {
+                gf2d_window_draw(win);
+            }
+        }
+        else gf2d_window_draw(win);
     }
 }
 

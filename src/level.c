@@ -17,6 +17,8 @@ typedef struct
 
 static Level gamelevel = {0};
 
+int *level_alloc_tilemap(int w,int h);
+
 void level_clear()
 {
     gf2d_space_free(gamelevel.space);
@@ -55,6 +57,44 @@ LevelInfo *level_info_new()
     return linfo;
 }
 
+LevelInfo *level_info_create(
+    const char *backgroundImage,
+    const char *backgroundMusic,
+    const char *tileSet,
+    Vector2D    tileSize,
+    Vector2D    tileMapSize
+)
+{
+    LevelInfo *linfo = NULL;
+    linfo = level_info_new();
+    if (!linfo)return NULL;
+    gf2d_line_cpy(linfo->backgroundImage,backgroundImage);
+    gf2d_line_cpy(linfo->backgroundMusic,backgroundMusic);
+    gf2d_line_cpy(linfo->tileSet,tileSet);
+    vector2d_copy(linfo->tileSize,tileSize);
+    vector2d_copy(linfo->tileMapSize,tileMapSize);
+    linfo->tileMap = level_alloc_tilemap(tileMapSize.x,tileMapSize.y);
+    return linfo;
+}
+
+int *level_alloc_tilemap(int w,int h)
+{
+    int *tileMap;
+    if ((!w) || (!h))
+    {
+        slog("cannot have a zero width or height for tilemap");
+        return NULL;
+    }
+    tileMap = (int *)malloc(sizeof(int)*w*h);
+    if (!tileMap)
+    {
+        slog("failed to allocate tilemap data");
+        return NULL;
+    }
+    memset(tileMap,0,sizeof(int)*w*h);
+    return tileMap;
+}
+
 void level_info_tilemap_load(LevelInfo *linfo, SJson *tilemap,Uint32 w,Uint32 h)
 {
     int i,j;
@@ -64,15 +104,9 @@ void level_info_tilemap_load(LevelInfo *linfo, SJson *tilemap,Uint32 w,Uint32 h)
         slog("missing level info or map object");
         return;
     }
-    if ((!w) || (!h))
-    {
-        slog("cannot have a zero width or height for tilemap");
-        return;
-    }
-    linfo->tileMap = (int *)malloc(sizeof(int)*w*h);
+    linfo->tileMap = level_alloc_tilemap(w,h);
     if (!linfo->tileMap)
     {
-        slog("failed to allocate tilemap data");
         return;
     }
     for (j = 0; j < h;j++)

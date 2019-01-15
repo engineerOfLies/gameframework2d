@@ -45,6 +45,22 @@ void level_info_free(LevelInfo *linfo);
 LevelInfo *level_info_load(char *filename);
 
 /**
+ * @brief create a new level info and populate based on parameters
+ * @param backgroundImage the image file to use as the background
+ * @param backgroundMusic the music the play for this level
+ * @param tileSet the sprite sheet to use for tiles on this level
+ * @param tileSize the size of the tiles to use for the level
+ * @param tileMapSize how many tiles (width & height) to use fo this level
+ */
+LevelInfo *level_info_create(
+    const char *backgroundImage,
+    const char *backgroundMusic,
+    const char *tileSet,
+    Vector2D    tileSize,
+    Vector2D    tileMapSize
+);
+
+/**
  * @brief adds an entity to the level physics space
  * @note entity must have a Body defined
  * @param ent the entity to add to the space

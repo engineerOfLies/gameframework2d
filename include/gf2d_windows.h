@@ -30,6 +30,7 @@ typedef struct Window_S
     Rect dimensions;        /**<where on the screen*/
     Rect canvas;            /**<Where within the window we draw things*/
     Vector4D color;         /**<color to draw the window with*/
+    int blocks_input;       /**<if true, windows below will not be checked for input updates, but will update*/
     int (*update)(struct Window_S *win,List *updateList);
     int (*draw)(struct Window_S *win);
     int (*free_data)(struct Window_S *win);
@@ -85,7 +86,8 @@ void gf2d_window_add_element(Window *win,Element *e);
 void gf2d_window_update(Window *win);
 
 /**
- * @brief draw a window to the screen
+ * @brief draw a window to the screen.  
+ * @note: This is done automatically for windows without a custom draw function or if that function returns 0
  * @param win the window to draw
  */
 void gf2d_window_draw(Window *win);

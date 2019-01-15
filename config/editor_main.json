@@ -25,6 +25,16 @@
                 "style":"H1"
             },
             {
+                "type": "label",
+                "name": "filename",
+                "id" : 2,
+                "bounds": [0,0,1,32],
+                "color" : [255,255,255,255],
+                "text":"untitled file",
+                "justify" : "left",
+                "style":"H2"
+            },
+            {
                 "type": "list",
                 "name": "context",
                 "id" : 100,
@@ -109,7 +119,7 @@
                             "id" : 131,
                             "bounds": [0,4,32,32],
                             "color" : [0,0,0,255],
-                            "text":"save",
+                            "text":"new",
                             "align" : "middle",
                             "justify" : "center",
                             "style":"normal"
