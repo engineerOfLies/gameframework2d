@@ -12,6 +12,7 @@ typedef struct
     Space      *space;
     Sprite     *backgroundImage;
     Sprite     *tileLayer;
+    Sprite     *tileSet;
     Mix_Music  *backgroundMusic;
 }Level;
 
@@ -23,6 +24,7 @@ void level_clear()
 {
     gf2d_space_free(gamelevel.space);
     gf2d_sprite_free(gamelevel.backgroundImage);
+    gf2d_sprite_free(gamelevel.tileSet);
     gf2d_sprite_free(gamelevel.tileLayer);
     if (gamelevel.backgroundMusic)
     {
@@ -162,14 +164,25 @@ LevelInfo *level_info_load(char *filename)
     return linfo;
 }
 
-Sprite *level_make_tile_layer(LevelInfo *linfo,Sprite * tileset, Uint32 format)
+void level_make_tile_layer(LevelInfo *linfo)
 {
     Sprite *sprite;
     Uint32 clear;
+    Uint32 format;
     int i,j;
-    if (!linfo)return NULL;
+    if (!linfo)
+    {
+        slog("no level info provided");
+        return;
+    }
+    if (!gamelevel.tileSet)
+    {
+        slog("no tileset loaded for level");
+        return;
+    }
+    format = gamelevel.tileSet->surface->format->format;
     sprite = gf2d_sprite_new();
-    if (!sprite)return NULL;
+    if (!sprite)return;
     sprite->surface = SDL_CreateRGBSurfaceWithFormat(
         0,
         linfo->tileMapSize.x*linfo->tileSize.x,
@@ -187,7 +200,7 @@ Sprite *level_make_tile_layer(LevelInfo *linfo,Sprite * tileset, Uint32 format)
             if (linfo->tileMap[j*(Uint32)linfo->tileMapSize.x + i])
             {
                 gf2d_sprite_draw_to_surface(
-                tileset,
+                gamelevel.tileSet,
                 vector2d(i*linfo->tileSize.x,j*linfo->tileSize.y),
                 NULL,
                 NULL,
@@ -206,7 +219,7 @@ Sprite *level_make_tile_layer(LevelInfo *linfo,Sprite * tileset, Uint32 format)
         {
             slog("failed to convert tileLayer data to texture");
             gf2d_sprite_free(sprite);
-            return NULL;
+            return;
         }
         SDL_SetTextureBlendMode(sprite->texture,SDL_BLENDMODE_BLEND);        
         SDL_UpdateTexture(
@@ -220,6 +233,7 @@ Sprite *level_make_tile_layer(LevelInfo *linfo,Sprite * tileset, Uint32 format)
         sprite->frames_per_line = 1;
         
         gf2d_line_cpy(sprite->filepath,"tileLayer");
+        gamelevel.tileLayer = sprite;
     }
     else
     {
@@ -227,7 +241,6 @@ Sprite *level_make_tile_layer(LevelInfo *linfo,Sprite * tileset, Uint32 format)
         gf2d_sprite_free(sprite);
     }
     
-    return sprite;
 }
 
 void level_build_tile_space(LevelInfo *linfo)
@@ -291,16 +304,16 @@ Vector2D level_position_to_tile(LevelInfo *linfo, Vector2D position)
     return tile;
 }
 
+
 void level_init(LevelInfo *linfo)
 {
-    Sprite *tileset;
     if (!linfo)
     {
         return;
     }
     level_clear();
     gamelevel.backgroundImage = gf2d_sprite_load_image(linfo->backgroundImage);
-    tileset = gf2d_sprite_load_all(
+    gamelevel.tileSet = gf2d_sprite_load_all(
         linfo->tileSet,
         linfo->tileSize.x,
         linfo->tileSize.y,
@@ -310,24 +323,10 @@ void level_init(LevelInfo *linfo)
     gamelevel.backgroundMusic = Mix_LoadMUS(linfo->backgroundMusic);
     if (gamelevel.backgroundMusic)Mix_PlayMusic(gamelevel.backgroundMusic, -1);
     
-    tileset = gf2d_sprite_load_all(
-        linfo->tileSet,
-        linfo->tileSize.x,
-        linfo->tileSize.y,
-        1,
-        true);
-    gamelevel.tileLayer = level_make_tile_layer(linfo,tileset, tileset->surface->format->format);
-    gf2d_sprite_free(tileset);
-
-    gamelevel.space = gf2d_space_new_full(
-        3,
-        gf2d_rect(0,0,gamelevel.tileLayer->surface->w,gamelevel.tileLayer->surface->h),
-        0.1,
-        vector2d(0,0),
-        1,
-        0.1);
-    level_build_tile_space(linfo);
+    level_make_tile_layer(linfo);
+    
     camera_set_bounds(0,0,gamelevel.tileLayer->surface->w,gamelevel.tileLayer->surface->h);
+    
     level_spawn_entities(linfo->spawnList);
 }
 

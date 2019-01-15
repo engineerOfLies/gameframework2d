@@ -78,6 +78,11 @@ void level_update_tile(LevelInfo *linfo,Vector2D position,Uint32 tile);
 Vector2D level_position_to_tile(LevelInfo *linfo, Vector2D position);
 
 /**
+ * @brief make or remake tile layer for rendering based on level info;
+ */
+void level_make_tile_layer(LevelInfo *linfo);
+
+/**
  * @brief adds an entity to the level physics space
  * @note entity must have a Body defined
  * @param ent the entity to add to the space

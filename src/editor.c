@@ -38,7 +38,6 @@ int editor_draw(Window *win)
 
 void editor_new_map(void *data)
 {
-    level_clear();//cleanup
     editorData.level = level_info_create(
         "images/backgrounds/bg_flat.png",
         "music/old_city_theme.ogg",
@@ -66,7 +65,7 @@ int editor_update(Window *win,List *updateList)
         {
             tile = level_position_to_tile(editorData.level, mouse);
             level_update_tile(editorData.level,tile,1);
-            level_init(editorData.level);
+            level_make_tile_layer(editorData.level);
         }
     }
     
