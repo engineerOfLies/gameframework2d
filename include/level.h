@@ -61,6 +61,23 @@ LevelInfo *level_info_create(
 );
 
 /**
+ * @brief update the tile information in the levelInfo struct provided
+ * @note: does not auto update the internal structures for drawing / collision
+ * @param linfo the pointer to the data to update
+ * @param position the place of the new tile to update If position outside of the range of the map, this will be a no-op and log an error
+ * @param tile what tile to set the data to.  Note that 0 is tile clear
+ */
+void level_update_tile(LevelInfo *linfo,Vector2D position,Uint32 tile);
+
+/**
+ * @brief convert a screen position to a tile
+ * @param linfo pointer to the level info to base the calculation on
+ * @param position the position in world space (camera is not considered)
+ * @returns (-1,-1) on error or the tile position (in integer space) otherwise
+ */
+Vector2D level_position_to_tile(LevelInfo *linfo, Vector2D position);
+
+/**
  * @brief adds an entity to the level physics space
  * @note entity must have a Body defined
  * @param ent the entity to add to the space

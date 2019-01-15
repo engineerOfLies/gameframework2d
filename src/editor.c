@@ -48,12 +48,28 @@ void editor_new_map(void *data)
     level_init(editorData.level);
 }
 
+
+
 int editor_update(Window *win,List *updateList)
 {
     int i,count;
     Element *e;
+    Vector2D mouse,tile;
     if (!win)return 0;
     if (!updateList)return 0;
+    
+    mouse = gf2d_mouse_get_position();
+    
+    if ((gf2d_mouse_button_pressed(0))&&(!gf2d_mouse_in_rect(win->dimensions)))
+    {
+        if (editorData.level != NULL)
+        {
+            tile = level_position_to_tile(editorData.level, mouse);
+            level_update_tile(editorData.level,tile,1);
+            level_init(editorData.level);
+        }
+    }
+    
     count = gf2d_list_get_count(updateList);
     for (i = 0; i < count; i++)
     {

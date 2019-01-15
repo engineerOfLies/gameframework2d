@@ -258,6 +258,39 @@ void level_spawn_entities(SJson *spawnList)
     }
 }
 
+void level_update_tile(LevelInfo *linfo,Vector2D position,Uint32 tile)
+{
+    if (!linfo)
+    {
+        slog("no tile provided");
+        return;
+    }
+    if (!gf2d_point_in_rect(position,gf2d_rect(0,0,linfo->tileMapSize.x,linfo->tileMapSize.y)))
+    {
+        slog("tile position %f,%f is out of bounds of tile map",position.x,position.y);
+        return;
+    }
+    linfo->tileMap[(Uint32)position.y * (Uint32)linfo->tileMapSize.x + (Uint32)position.x] = tile;
+}
+
+Vector2D level_position_to_tile(LevelInfo *linfo, Vector2D position)
+{
+    Vector2D tile = {-1,-1};
+    if (!linfo)
+    {
+        slog("no level info provided");
+        return tile;
+    }
+    if ((!linfo->tileSize.x)||(!linfo->tileSize.y))
+    {
+        slog("level info missing tile size data!");
+        return tile;
+    }
+    tile.x = (Uint32)(position.x / linfo->tileSize.x);
+    tile.y = (Uint32)(position.y / linfo->tileSize.y);
+    return tile;
+}
+
 void level_init(LevelInfo *linfo)
 {
     Sprite *tileset;
