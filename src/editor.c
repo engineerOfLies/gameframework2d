@@ -58,17 +58,21 @@ int editor_update(Window *win,List *updateList)
     if (!updateList)return 0;
     
     mouse = gf2d_mouse_get_position();
-    
-    if ((gf2d_mouse_button_pressed(0))&&(!gf2d_mouse_in_rect(win->dimensions)))
+    if ((editorData.level != NULL)&&(!gf2d_mouse_in_rect(win->dimensions)))
     {
-        if (editorData.level != NULL)
+        if (gf2d_mouse_button_pressed(0) || gf2d_mouse_button_held(0))
         {
             tile = level_position_to_tile(editorData.level, mouse);
             level_update_tile(editorData.level,tile,1);
             level_make_tile_layer(editorData.level);
         }
+        if (gf2d_mouse_button_pressed(2) || gf2d_mouse_button_held(2))
+        {
+            tile = level_position_to_tile(editorData.level, mouse);
+            level_update_tile(editorData.level,tile,0);
+            level_make_tile_layer(editorData.level);
+        }
     }
-    
     count = gf2d_list_get_count(updateList);
     for (i = 0; i < count; i++)
     {
