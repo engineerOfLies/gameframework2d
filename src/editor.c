@@ -2,6 +2,8 @@
 #include "editor.h"
 #include "level.h"
 #include "gf2d_text.h"
+#include "gf2d_mouse.h"
+#include "gf2d_shape.h"
 #include "simple_logger.h"
 #include "simple_json.h"
 #include "windows_common.h"
@@ -18,6 +20,18 @@ static Window *_editor = NULL;
 
 int editor_draw(Window *win)
 {
+    Vector2D mouse;
+    Rect tileHighlight;
+    if (!editorData.level)return 0;
+    
+    mouse = gf2d_mouse_get_position();
+    
+    tileHighlight.x = (Uint32)(mouse.x / editorData.level->tileSize.x) * editorData.level->tileSize.x;
+    tileHighlight.y = (Uint32)(mouse.y / editorData.level->tileSize.y) * editorData.level->tileSize.y;
+    tileHighlight.w = editorData.level->tileSize.x;
+    tileHighlight.h = editorData.level->tileSize.y;
+    gf2d_rect_draw(tileHighlight,gf2d_color(255,200,0,255));
+
     /*draw rects around the tile the mouse is over*/
     return 0; 
 }
