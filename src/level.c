@@ -164,6 +164,17 @@ LevelInfo *level_info_load(char *filename)
     return linfo;
 }
 
+void level_make_space()
+{
+    gamelevel.space = gf2d_space_new_full(
+        3,
+        gf2d_rect(0,0,gamelevel.tileLayer->surface->w,gamelevel.tileLayer->surface->h),
+        0.1,
+        vector2d(0,0),
+        1,
+        0.1);
+}
+
 void level_make_tile_layer(LevelInfo *linfo)
 {
     Sprite *sprite;
@@ -305,7 +316,7 @@ Vector2D level_position_to_tile(LevelInfo *linfo, Vector2D position)
 }
 
 
-void level_init(LevelInfo *linfo)
+void level_init(LevelInfo *linfo,Uint8 space)
 {
     if (!linfo)
     {
@@ -327,6 +338,11 @@ void level_init(LevelInfo *linfo)
     
     camera_set_bounds(0,0,gamelevel.tileLayer->surface->w,gamelevel.tileLayer->surface->h);
     
+    if (space)
+    {
+        level_make_space();
+        level_build_tile_space(linfo);
+    }
     level_spawn_entities(linfo->spawnList);
 }
 

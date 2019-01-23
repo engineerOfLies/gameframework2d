@@ -74,7 +74,7 @@ int main(int argc, char * argv[])
     if (!editorMode)
     {
         linfo = level_info_load("config/testworld.json");
-        level_init(linfo);
+        level_init(linfo,1);
     }
     else
     {

@@ -44,7 +44,7 @@ void editor_new_map(void *data)
         "images/tiles/basetile.png",
         vector2d(32,32),
         vector2d(38,24));
-    level_init(editorData.level);
+    level_init(editorData.level,0);
 }
 
 

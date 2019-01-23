@@ -38,8 +38,9 @@ void level_update();
 /**
  * @brief create the live level based on the provided level info
  * @param linfo the level info to create the level for
+ * @param space if true, create the physical space for the game to run
  */
-void level_init(LevelInfo *linfo);
+void level_init(LevelInfo *linfo,Uint8 space);
 
 void level_info_free(LevelInfo *linfo);
 LevelInfo *level_info_load(char *filename);
@@ -95,6 +96,13 @@ void level_add_entity(Entity *ent);
  * @param ent the entity to be removed
  */
 void level_remove_entity(Entity *ent);
+
+/**
+ * @brief build the collision space 
+ * @note unneeded in editor mode
+ */
+void level_make_space();
+void level_build_tile_space(LevelInfo *linfo);
 
 Space *level_get_space();
 
