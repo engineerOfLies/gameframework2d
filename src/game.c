@@ -29,16 +29,12 @@ int main(int argc, char * argv[])
 {
     /*variable declarations*/
     int i;
-    int editorMode = 0;
     int fullscreen = 0;
+    Sprite *background = NULL;
     /*parse args*/
     for (i = 1; i < argc; i++)
     {
-        if (strcmp(argv[i],"--editor") == 0)
-        {
-            editorMode = 1;
-        }
-        else if (strcmp(argv[i],"--fullscreen") == 0)
+        if (strcmp(argv[i],"--fullscreen") == 0)
         {
             fullscreen = 1;
         }
@@ -65,17 +61,12 @@ int main(int argc, char * argv[])
     gf2d_entity_system_init(1024);
     
     camera_set_dimensions(0,0,1200,700);
+    background = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
     
     SDL_ShowCursor(SDL_DISABLE);
     // game specific setup
-    if (!editorMode)
-    {
-    }
-    else
-    {
         // init mouse, editor window
-        gf2d_mouse_load("actors/mouse.actor");
-    }
+    gf2d_mouse_load("actors/mouse.actor");
     
     /*main game loop*/
     while(!_done)
@@ -84,30 +75,21 @@ int main(int argc, char * argv[])
         /*update things here*/
         gf2d_windows_update_all();
                 
-        if (!editorMode)
-        {
-            gf2d_entity_think_all();
-        }
-        else
-        {
-            gf2d_mouse_update();
-        }
+        gf2d_entity_think_all();
+        gf2d_mouse_update();
         
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
+                gf2d_sprite_draw_image(background,vector2d(0,0));
                 // DRAW WORLD
-                if (!editorMode)
-                {
-                    gf2d_entity_update_all();
-                }
+                gf2d_entity_update_all();
                 // Draw entities
             //UI elements last
+            
+            gf2d_text_draw_line("Press F4 to quit!",FT_H1,gf2d_color(255,255,255,255), vector2d(0,0));
             gf2d_windows_draw_all();
-            if (editorMode)
-            {
-                gf2d_mouse_draw();
-            }
+            gf2d_mouse_draw();
         gf2d_grahics_next_frame();// render current draw frame and skip to the next frame
         
         if ((gf2d_input_command_down("exit"))&&(_quit == NULL))
