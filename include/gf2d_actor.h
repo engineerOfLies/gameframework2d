@@ -144,4 +144,9 @@ void gf2d_actor_set_action(Actor *actor,char *action);
  * @brief based on the actor's current action set the next frame and return type
  */
 void gf2d_actor_next_frame(Actor *actor);
+
+/**
+ * @brief return the number of animation frames (not sprite frames) until the action completes
+ */
+int gf2d_actor_get_frames_remaining(Actor *actor);
 #endif

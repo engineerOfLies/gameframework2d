@@ -2,7 +2,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "gf2d_graphics.h"
 #include "gf2d_windows.h"
+#include "gf2d_elements.h"
 #include "simple_logger.h"
 
 typedef struct
@@ -16,6 +18,11 @@ typedef struct
 }WindowManager;
 
 static WindowManager window_manager = {0};
+
+
+Window *gf2d_window_load_from_json(SJson *json);
+
+
 
 void gf2d_draw_window_border_generic(Rect rect,Vector4D color)
 {
@@ -156,8 +163,8 @@ void gf2d_windows_init(int max_windows)
     window_manager.window_max = max_windows;
     window_manager.window_deque = gf2d_list_new();
     window_manager.generic_background = gf2d_sprite_load_image("images/window_background.png");
-    window_manager.generic_border = gf2d_sprite_load_all("images/window_border.png",64,64,8);
-    window_manager.drawbounds = 1;
+    window_manager.generic_border = gf2d_sprite_load_all("images/window_border.png",64,64,8,false);
+    window_manager.drawbounds = 0;
     slog("window system initilized");
     atexit(gf2d_windows_close);
 }
@@ -223,7 +230,7 @@ void gf2d_window_update(Window *win)
             {
                 updateList = gf2d_list_new();
             }
-            gf2d_list_concat_free(updateList,updated);
+            updateList = gf2d_list_concat_free(updateList,updated);
         }
     }
     if (win->update)
@@ -242,7 +249,7 @@ Window *gf2d_window_new()
         if (!window_manager.window_list[i]._inuse)
         {
            window_manager.window_list[i]._inuse = 1;
-           gf2d_list_append(window_manager.window_deque,&window_manager.window_list[i]);
+           window_manager.window_deque = gf2d_list_append(window_manager.window_deque,&window_manager.window_list[i]);
            window_manager.window_list[i].elements = gf2d_list_new();
            return &window_manager.window_list[i];
         }
@@ -254,16 +261,26 @@ void gf2d_window_add_element(Window *win,Element *e)
 {
     if (!win)return;
     if (!e)return;
-    gf2d_list_append(win->elements,e);
+    win->elements = gf2d_list_append(win->elements,e);
 }
 
 void gf2d_windows_draw_all()
 {
     int i,count;
+    Window* win;
     count = gf2d_list_get_count(window_manager.window_deque);
     for (i = 0; i < count; i++)
     {
-        gf2d_window_draw((Window*)gf2d_list_get_nth(window_manager.window_deque,i));
+        win = (Window*)gf2d_list_get_nth(window_manager.window_deque,i);
+        if (!win)continue;
+        if (win->draw)
+        {
+            if (!win->draw(win))
+            {
+                gf2d_window_draw(win);
+            }
+        }
+        else gf2d_window_draw(win);
     }
 }
 
@@ -277,12 +294,96 @@ void gf2d_windows_update_all()
     }
 }
 
-Window *gf2f_window_load_from_json(SJson *json)
+void gf2d_window_align(Window *win,int vertical)
+{
+    Vector2D res;
+    if (!win)return;
+    res = gf2d_graphics_get_resolution();
+    if (vertical < 0)
+    {
+        win->dimensions.y = 0;
+    }
+    else if (vertical == 0)
+    {
+        win->dimensions.y = res.y/2 - win->dimensions.h/2;
+    }
+    else
+    {
+        win->dimensions.y = res.y - win->dimensions.h;
+    }
+}
+
+void gf2d_window_justify(Window *win,int horizontal)
+{
+    Vector2D res;
+    if (!win)return;
+    res = gf2d_graphics_get_resolution();
+    if (horizontal < 0)
+    {
+        win->dimensions.x = 0;
+    }
+    else if (horizontal == 0)
+    {
+        win->dimensions.x = res.x/2 - win->dimensions.w/2;
+    }
+    else
+    {
+        win->dimensions.x = res.x - win->dimensions.w;
+    }
+}
+
+void gf2d_window_calibrate(Window *win)
+{
+    Vector2D res;
+    if (!win)return;
+    res = gf2d_graphics_get_resolution();
+    if ((win->dimensions.x > 0)&&(win->dimensions.x < 1.0))
+    {
+        win->dimensions.x *= res.x;
+    }
+    if ((win->dimensions.y > 0)&&(win->dimensions.y < 1.0))
+    {
+        win->dimensions.y *= res.y;
+    }
+    if ((win->dimensions.w > 0)&&(win->dimensions.w <= 1.0))
+    {
+        win->dimensions.w *= res.x;
+    }
+    if ((win->dimensions.h > 0)&&(win->dimensions.h <= 1.0))
+    {
+        win->dimensions.h *= res.y;
+    }
+    
+    if (win->dimensions.x < 0)
+    {
+        win->dimensions.x = res.x + win->dimensions.x;
+    }
+    if (win->dimensions.y < 0)
+    {
+        win->dimensions.y = res.y + win->dimensions.y;
+    }
+}
+
+
+Window *gf2d_window_load(char *filename)
+{
+    Window *win = NULL;
+    SJson *json;
+    json = sj_load(filename);
+    win = gf2d_window_load_from_json(json);
+    sj_free(json);
+    return win;
+}
+
+
+
+Window *gf2d_window_load_from_json(SJson *json)
 {
     Window *win = NULL;
     int i,count;
     Vector4D vector = {255,255,255,255};
     SJson *elements,*value;
+    const char *buffer;
     if (!json)
     {
         slog("json not provided");
@@ -306,17 +407,69 @@ Window *gf2f_window_load_from_json(SJson *json)
     vector4d_clear(vector);
     sj_value_as_vector4d(sj_object_get_value(json,"dimensions"),&vector);
     win->dimensions = gf2d_rect(vector.x,vector.y,vector.z,vector.w);
-
+    gf2d_window_calibrate(win);
     
+    value = sj_object_get_value(json,"justify");
+    buffer = sj_get_string_value(value);
+    if (buffer)
+    {
+        if (strcmp(buffer,"left") == 0)
+        {
+            gf2d_window_justify(win,-1);
+        }
+        else if (strcmp(buffer,"center") == 0)
+        {
+            gf2d_window_justify(win,0);
+        }
+        else if (strcmp(buffer,"right") == 0)
+        {
+            gf2d_window_justify(win,1);
+        }
+    }
+
+    value = sj_object_get_value(json,"align");
+    buffer = sj_get_string_value(value);
+    if (buffer)
+    {
+        if (strcmp(buffer,"top") == 0)
+        {
+            gf2d_window_align(win,-1);
+        }
+        else if (strcmp(buffer,"middle") == 0)
+        {
+            gf2d_window_align(win,0);
+        }
+        else if (strcmp(buffer,"bottom") == 0)
+        {
+            gf2d_window_align(win,1);
+        }
+    }
+
     elements = sj_object_get_value(json,"elements");
     count = sj_array_get_count(elements);
     for (i = 0; i< count; i++)
     {
         value = sj_array_get_nth(elements,i);
         if (!value)continue;
-        gf2d_window_add_element(win,gf2d_element_load_from_config(value));
+        gf2d_window_add_element(win,gf2d_element_load_from_config(value,NULL,win));
     }
     return win;
+}
+
+Element *gf2d_window_get_element_by_id(Window *win,int id)
+{
+    Element *e,*q;
+    int count, i;
+    if (!win)return NULL;
+    count = gf2d_list_get_count(win->elements);
+    for (i = 0;i < count;i++)
+    {
+        e = (Element *)gf2d_list_get_nth(win->elements,i);
+        if (!e)continue;
+        q = gf2d_element_get_by_id(e,id);
+        if (q)return q;
+    }
+    return NULL;
 }
 
 /*eol@eof*/

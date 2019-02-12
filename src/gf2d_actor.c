@@ -357,7 +357,8 @@ void gf2d_actor_load(Actor *actor,char *file)
         actor->al->sprite,
         actor->al->frameWidth,
         actor->al->frameHeight,
-        actor->al->framesPerLine);
+        actor->al->framesPerLine,
+        false);
     gf2d_actor_set_action(actor,actor->al->actions[0].name);
 }
 
@@ -400,6 +401,32 @@ void gf2d_actor_draw(
     flip,
     &actor->color,
     (int)actor->frame);
+
+}
+
+int gf2d_actor_get_frames_remaining(Actor *actor)
+{
+    Action *action;
+    float total,passed;
+    if (!actor)
+    {
+        slog("no actor provided");
+        return 0;
+    }
+    action = gf2d_action_list_get_action(actor->al, actor->action);
+    if (!action)
+    {
+        slog("no action names %s",actor->action);
+        return 0;
+    }
+    if (action->frameRate == 0)
+    {
+        slog("frame rate cannot be zero",actor->action);
+        return 0;
+    }
+    total = (action->endFrame - action->startFrame)/action->frameRate;
+    passed = (actor->frame - action->startFrame)/action->frameRate;
+    return (int)(total - passed);
 }
 
 /*eol@eof*/

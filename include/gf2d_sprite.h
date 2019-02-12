@@ -11,6 +11,7 @@ typedef struct Sprite_S
     int ref_count;
     TextLine filepath;
     SDL_Texture *texture;
+    SDL_Surface *surface;
     Uint32 frames_per_line;
     Uint32 frame_w,frame_h;
 }Sprite;
@@ -41,12 +42,14 @@ void gf2d_sprite_draw_image(Sprite *image,Vector2D position);
  * @param frameWidth the width of an individual sprite frame
  * @param frameHeigh the height of an individual sprite frame
  * @param framesPerLine how many frames go in a row in the sprite sheet
+ * @param keepSurface if you plan on doing surface editing with this sprite, set to true otherwise the surface data is cleaned up
  */
 Sprite *gf2d_sprite_load_all(
     char *filename,
     Sint32 frameWidth,
     Sint32 frameHeigh,
-    Sint32 framesPerLine
+    Sint32 framesPerLine,
+    Bool    keepSurface
 );
 
 /**
@@ -83,7 +86,31 @@ void gf2d_sprite_free(Sprite *sprite);
  */
 void gf2d_sprite_clear_all();
 
+/**
+ * @brief draw a sprite to a surface instead of to the screen.
+ * @note sprite must have been loaded with surface data preserved
+ * @param sprite the sprite to draw
+ * @param position where on the target surface to draw it to
+ * @param scale (optional) if provided the sprite will be scaled by this factor
+ * @param scaleCenter (optional) if provided, this will be used to determin the scaling point, (0,0) is default
+ * @param frame the frame to draw to the surface
+ * @param surface the surface to draw to
+ */
+void gf2d_sprite_draw_to_surface(
+    Sprite *sprite,
+    Vector2D position,
+    Vector2D * scale,
+    Vector2D * scaleCenter,
+    Uint32 frame,
+    SDL_Surface *surface
+);
 
+/**
+ * @brief allocate space for a sprite
+ * @note both texture and sprite data is left blank
+ * @return NULL on error or out of memory, a blank sprite otherwise
+ */
+Sprite *gf2d_sprite_new();
 
 
 #endif

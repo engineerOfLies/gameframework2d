@@ -1,13 +1,12 @@
 #ifndef __GF2D_MENUS_H__
 #define __GF2D_MENUS_H__
 
+#include "gf2d_shape.h"
 #include "gf2d_sprite.h"
 #include "gf2d_list.h"
-#include "gf2d_elements.h"
-#include "gf2d_element_label.h"
-#include "gf2d_element_actor.h"
-#include "gf2d_element_list.h"
 #include <simple_json.h>
+
+typedef struct Element_S Element;
 
 typedef enum
 {
@@ -31,6 +30,7 @@ typedef struct Window_S
     Rect dimensions;        /**<where on the screen*/
     Rect canvas;            /**<Where within the window we draw things*/
     Vector4D color;         /**<color to draw the window with*/
+    int blocks_input;       /**<if true, windows below will not be checked for input updates, but will update*/
     int (*update)(struct Window_S *win,List *updateList);
     int (*draw)(struct Window_S *win);
     int (*free_data)(struct Window_S *win);
@@ -86,7 +86,8 @@ void gf2d_window_add_element(Window *win,Element *e);
 void gf2d_window_update(Window *win);
 
 /**
- * @brief draw a window to the screen
+ * @brief draw a window to the screen.  
+ * @note: This is done automatically for windows without a custom draw function or if that function returns 0
  * @param win the window to draw
  */
 void gf2d_window_draw(Window *win);
@@ -108,10 +109,11 @@ void gf2d_draw_window_border(Sprite *border,Sprite *bg,Rect rect,Vector4D color)
 void gf2d_draw_window_border_generic(Rect rect,Vector4D color);
 
 /**
- * @brief make a new window based on the contents of a json config file
- * @param json the json file containing a window config
- * @return NULL on error or the new window otherwise
+ * @brief get the element from the window with the matching id
+ * @param win the window to query
+ * @param id the index to search for
+ * @returns NULL on error or not found, a pointo to the element otherwise
  */
-Window *gf2f_window_load_from_json(SJson *json);
+Element *gf2d_window_get_element_by_id(Window *win,int id);
 
 #endif

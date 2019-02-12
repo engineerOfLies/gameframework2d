@@ -3,6 +3,7 @@
 #include "gf2d_elements.h"
 #include "gf2d_element_actor.h"
 #include "gf2d_element_button.h"
+#include "gf2d_element_entry.h"
 #include "gf2d_element_list.h"
 #include "gf2d_element_label.h"
 #include "simple_logger.h"
@@ -21,11 +22,12 @@ Element *gf2d_element_new()
 }
 
 Element *gf2d_element_new_full(
+    Element *parent,
     int      index,
     TextLine name,
     Rect bounds,
     Color color,
-    int state
+    int state       
 )
 {
     Element *e;
@@ -71,7 +73,62 @@ List * gf2d_element_update(Element *e, Vector2D offset)
     return NULL;
 }
 
-Element *gf2d_element_load_from_config(SJson *json)
+void gf2d_element_calibrate(Element *e,Element *parent, Window *win)
+{
+    Rect res;
+    int negx = 0,negy = 0;
+    if (!e)return;
+    if (parent != NULL)
+    {
+        gf2d_rect_copy(res,parent->bounds);
+    }
+    else if (win != NULL)
+    {
+        gf2d_rect_copy(res,win->dimensions);
+    }
+    else
+    {
+        slog("error: need a parent element or a window");
+        return;
+    }
+    if (e->bounds.x < 0)
+    {
+        negx = 1;
+        e->bounds.x *= -1;
+    }
+    if (e->bounds.y < 0)
+    {
+        negy = 1;
+        e->bounds.y *= -1;
+    }
+    if ((e->bounds.x > 0)&&(e->bounds.x < 1.0))
+    {
+        e->bounds.x *= res.w;
+    }
+    if ((e->bounds.y > 0)&&(e->bounds.y < 1.0))
+    {
+        e->bounds.y *= res.h;
+    }
+    if ((e->bounds.w > 0)&&(e->bounds.w <= 1.0))
+    {
+        e->bounds.w *= res.w;
+    }
+    if ((e->bounds.h > 0)&&(e->bounds.h <= 1.0))
+    {
+        e->bounds.h *= res.h;
+    }
+    
+    if (negx)
+    {
+        e->bounds.x = res.h - e->bounds.x;
+    }
+    if (negy)
+    {
+        e->bounds.y = res.w - e->bounds.y;
+    }
+}
+
+Element *gf2d_element_load_from_config(SJson *json,Element *parent,Window *win)
 {
     Element *e = NULL;
     SJson *value;
@@ -97,12 +154,13 @@ Element *gf2d_element_load_from_config(SJson *json)
     value = sj_object_get_value(json,"bounds");
     sj_value_as_vector4d(value,&vector);
     gf2d_rect_set(e->bounds,vector.x,vector.y,vector.z,vector.w);
+    gf2d_element_calibrate(e,parent, win);
     
     value = sj_object_get_value(json,"type");
     type = sj_get_string_value(value);
     if (strcmp(type,"list") == 0)
     {
-        gf2d_element_load_list_from_config(e,json);
+        gf2d_element_load_list_from_config(e,json,win);
     }
     else if (strcmp(type,"label") == 0)
     {
@@ -114,10 +172,11 @@ Element *gf2d_element_load_from_config(SJson *json)
     }
     else if (strcmp(type,"button") == 0)
     {
-        gf2d_element_load_button_from_config(e,json);
+        gf2d_element_load_button_from_config(e,json,win);
     }
-    else if (strcmp(type,"percent") == 0)
+    else if (strcmp(type,"entry") == 0)
     {
+        gf2d_element_load_entry_from_config(e,json,win);
     }
     return e;
 }
@@ -133,4 +192,28 @@ Rect gf2d_element_get_absolute_bounds(Element *element,Vector2D offset)
     return r;
 }
 
+Element *gf2d_element_get_by_id(Element *e,int id)
+{
+    if (!e)return NULL;
+    if (e->index == id)return e;
+    switch(e->type)
+    {
+        case ET_List:
+            return gf2d_element_list_get_item_by_id(e,id);
+            break;
+        case ET_Button:
+        case ET_Entry:
+        default:
+            return NULL;
+    }
+}
+
+
+Element *gf2d_get_element_by_name(Element *e,char *name)
+{
+    if (!e)return NULL;
+    if (gf2d_line_cmp(e->name,name)==0)return e;
+    if (e->get_by_name)return e->get_by_name(e,name);
+    return NULL;
+}
 /*eol@eof*/

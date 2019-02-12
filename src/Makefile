@@ -10,7 +10,7 @@
 #
 
 # Linux
-PROJECT = ymir
+PROJECT = gf2d
 CC      = gcc
 #CC      = clang
 MGL_LIBS = 

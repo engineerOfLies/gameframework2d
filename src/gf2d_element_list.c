@@ -60,6 +60,25 @@ void gf2d_element_list_draw(Element *element,Vector2D offset)
     }
 }
 
+Element *list_get_by_name(Element *element,char *name)
+{
+    ListElement *list;
+    int count,i;
+    Element *e,*r;
+    if (!element)return NULL;
+    list = (ListElement*)element->data;
+    if (!list)return NULL;
+    count = gf2d_list_get_count(list->list);
+    for (i = 0; i < count; i++)
+    {
+        e = (Element *)gf2d_list_get_nth(list->list,i);
+        if (!e)continue;
+        r = gf2d_get_element_by_name(e,name);
+        if (r)return r;
+    }
+    return NULL;
+}
+
 List *gf2d_element_list_update(Element *element,Vector2D offset)
 {
     ListElement *list;
@@ -129,7 +148,7 @@ ListElement *gf2d_element_list_new()
 }
 
 
-ListElement *gf2d_element_list_new_full(Vector2D itemSize,ListStyle ls,int wraps,int scrolls)
+ListElement *gf2d_element_list_new_full(Rect bounds,Vector2D itemSize,ListStyle ls,int wraps,int scrolls)
 {
     ListElement *list;
     list = gf2d_element_list_new();
@@ -137,6 +156,8 @@ ListElement *gf2d_element_list_new_full(Vector2D itemSize,ListStyle ls,int wraps
     {
         return NULL;
     }
+    if (itemSize.x <= 1)itemSize.x *= bounds.w;
+    if (itemSize.y <= 1)itemSize.y *= bounds.h;
     vector2d_copy(list->itemSize,itemSize);
     list->listStyle = ls;
     list->wraps = wraps;
@@ -152,6 +173,7 @@ void gf2d_element_make_list(Element *e,ListElement *list)
     e->draw = gf2d_element_list_draw;
     e->update = gf2d_element_list_update;
     e->free_data = gf2d_element_list_free;
+    e->get_by_name = list_get_by_name;
 }
 
 void gf2d_element_list_remove_item(Element *e,Element *item)
@@ -167,10 +189,30 @@ void gf2d_element_list_add_item(Element *e,Element *item)
     ListElement *list;
     if ((!e)||(!item))return;// no op
     list = (ListElement *)e->data;
-    gf2d_list_append(list->list,(void*)item);
+    list->list = gf2d_list_append(list->list,(void*)item);
 }
 
-void gf2d_element_load_list_from_config(Element *e,SJson *json)
+Element *gf2d_element_list_get_item_by_id(Element *e,int id)
+{
+    ListElement *list;
+    Element *item, *q;
+    int count,i;
+    if (!e)return NULL;
+    if (e->type != ET_List)return NULL;
+    list = (ListElement *)e->data;
+    if (!list)return NULL;
+    count = gf2d_list_get_count(list->list);
+    for (i = 0; i < count; i++)
+    {
+        item = (Element *)gf2d_list_get_nth(list->list,i);
+        if (!item)continue;
+        q = gf2d_element_get_by_id(item,id);
+        if (q)return q;
+    }
+    return NULL;
+}
+
+void gf2d_element_load_list_from_config(Element *e,SJson *json,Window *win)
 {
     SJson *value = NULL;
     SJson *item = NULL;
@@ -207,16 +249,18 @@ void gf2d_element_load_list_from_config(Element *e,SJson *json)
     
     value = sj_object_get_value(json,"item_size");
     sj_value_as_vector2d(value,&vector);
-    list = gf2d_element_list_new_full(vector,ls,wraps,scrolls);
+    
+    list = gf2d_element_list_new_full(e->bounds,vector,ls,wraps,scrolls);
     gf2d_element_make_list(e,list);
     
     value = sj_object_get_value(json,"elements");
     count = sj_array_get_count(value);
+
     for (i = 0; i < count; i++)
     {
         item = sj_array_get_nth(value,i);
         if (!item)continue;
-        gf2d_element_list_add_item(e,gf2d_element_load_from_config(item));
+        gf2d_element_list_add_item(e,gf2d_element_load_from_config(item,e,win));
     }
 }
 /*eol@eof*/

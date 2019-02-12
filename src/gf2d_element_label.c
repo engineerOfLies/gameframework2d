@@ -11,6 +11,7 @@ void gf2d_element_label_draw(Element *element,Vector2D offset)
     if (!element)return;
     label = (LabelElement*)element->data;
     if (!label)return;
+    if (strlen(label->text) <= 0)return;
     size = gf2d_text_get_bounds(label->text,label->style);
     if (size.x < 0)
     {
@@ -97,6 +98,16 @@ void gf2d_element_make_label(Element *e,LabelElement *label)
     e->draw = gf2d_element_label_draw;
     e->update = gf2d_element_label_update;
     e->free_data = gf2d_element_label_free;
+}
+
+void gf2d_element_label_set_text(Element *e,char *text)
+{
+    if (!e)return;
+    if (e->type != ET_Label)return;
+    LabelElement *label;
+    label = (LabelElement *)e->data;
+    if (!label)return;
+    gf2d_block_cpy(label->text,text);
 }
 
 void gf2d_element_load_label_from_config(Element *e,SJson *json)

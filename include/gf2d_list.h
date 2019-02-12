@@ -48,11 +48,12 @@ void *gf2d_list_get_nth(List *list,Uint32 n);
 
 /**
  * @brief add an element to the end of the list
+ * @note must catch the returned list to replace the list you had
  * @param list the list to add to
  * @param data the data to assign to the new element
- * @return -1 on error, 0 otherwise
+ * @return NULL on error, your list otherwise
  */
-int gf2d_list_append(List *list,void *data);
+List *gf2d_list_append(List *list,void *data);
 
 /**
  * @brief instert a new element at the position provided
@@ -60,7 +61,7 @@ int gf2d_list_append(List *list,void *data);
  * @param data the data to assin to the new element
  * @return -1 on error, 0 otherwise
  */
-int gf2d_list_insert(List *list,void *data,Uint32 n);
+List *gf2d_list_insert(List *list,void *data,Uint32 n);
 
 /**
  * @brief delete the element at the nth position in the array
@@ -97,19 +98,21 @@ void gf2d_list_foreach(List *list,void (*function)(void *data,void *context),voi
 /**
  * @brief add the elements from b into a
  * @note the data is not duplicated and b will still point to the same data that is now also referenced in a
+ * @note the new address of a is returned
  * @param a the list that will get new items added to it
  * @param b the list that will provide new items for a
- * @return 0 on success, -1 otherwise
+ * @return NULL on failure, a pointer to the new list otherwise
  */
-int gf2d_list_concat(List *a,List *b);
+List *gf2d_list_concat(List *a,List *b);
 
 /**
  * @brief same as gf2d_list_concat but b is freed when complete
+ * @note the new address of a is returned
  * @param a the list to add items to
  * @param b the list to provide the items.  This list is freed, but the data referenced is now referenced by a
- * @return 0 on success, -1 otherwise
+ * @return NULL on failure, a pointer to the new list otherwise
  */
-int gf2d_list_concat_free(List *a,List *b);
+List *gf2d_list_concat_free(List *a,List *b);
 
 
 #endif

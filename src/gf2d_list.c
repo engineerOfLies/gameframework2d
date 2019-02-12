@@ -77,12 +77,12 @@ List *gf2d_list_expand(List *list)
     return l;
 }
 
-int gf2d_list_append(List *list,void *data)
+List *gf2d_list_append(List *list,void *data)
 {
     if (!list)
     {
         slog("no list provided");
-        return -1;
+        return NULL;
     }
     if (list->count >= list->size)
     {
@@ -90,64 +90,67 @@ int gf2d_list_append(List *list,void *data)
         if (!list)
         {
             slog("append failed due to lack of memory");
-            return -1;
+            return NULL;
         }
     }
-    list->elements[list->count++].data = data;
-    return 0;
+    list->elements[list->count].data = data;
+    list->count++;
+    return list;
 }
 
-int gf2d_list_concat(List *a,List *b)
+List *gf2d_list_concat(List *a,List *b)
 {
     int i,count;
     void *data;
     if ((!a) || (!b))
     {
         slog("missing list data");
-        return -1;
+        return NULL;
     }
     count = gf2d_list_get_count(b);
     for (i = 0; i < count;i++)
     {
         data = gf2d_list_get_nth(b,i);
-        if (gf2d_list_append(a,data) < 0)return -1;
+        a = gf2d_list_append(a,data);
+        if (a == NULL)return NULL;
     }
-    return 0;
+    return a;
 }
 
-int gf2d_list_concat_free(List *a,List *b)
+List *gf2d_list_concat_free(List *a,List *b)
 {
-    if (gf2d_list_concat(a,b) < 0)return -1;
+    a = gf2d_list_concat(a,b);
+    if (a == NULL)return NULL;
     gf2d_list_delete(b);
-    return 0;
+    return a;
 }
 
-int gf2d_list_prepend(List *list,void *data)
+List *gf2d_list_prepend(List *list,void *data)
 {
     return gf2d_list_insert(list,data,0);
 }
 
-int gf2d_list_insert(List *list,void *data,Uint32 n)
+List *gf2d_list_insert(List *list,void *data,Uint32 n)
 {
     if (!list)
     {
         slog("no list provided");
-        return -1;
+        return NULL;
     }
     if (n > list->size + 1)
     {
         slog("attempting to insert element beyond length of list");
-        return -1;
+        return list;
     }
     if (list->count >= list->size)
     {
         list = gf2d_list_expand(list);
-        if (!list)return -1;
+        if (!list)return NULL;
     }
     memmove(&list->elements[n+1],&list->elements[n],sizeof(ListElementData)*(list->count - n));//copy all elements after n
     list->elements[n].data = data;
     list->count++;
-    return 0;
+    return list;
 }
 
 
