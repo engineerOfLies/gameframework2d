@@ -4,6 +4,7 @@
 #include "level.h"
 #include "gf2d_input.h"
 #include "entity_common.h"
+#include "gui.h"
 
 static Entity *_player = NULL;
 
@@ -109,6 +110,8 @@ Entity *player_new(Vector2D position)
     self->free = level_remove_entity;
 
     self->data = (void*)&playerData;
+    
+    self->health = self->maxHealth = 100;
     _player = self;
     level_add_entity(self);
     return self;
@@ -162,9 +165,12 @@ void player_think(Entity *self)
 
 void player_update(Entity *self)
 {
+    Collision c = {0};
+    Entity *other = NULL;
     Vector2D camPosition = {0,0};
     if (!self)return;
     
+    if (self->maxHealth)gui_set_health(self->health/self->maxHealth);
     camera_set_position(camPosition);
     if (self->jumpcool > 0) self->jumpcool -= 0.2;
     else self->jumpcool = 0;
@@ -189,8 +195,19 @@ void player_update(Entity *self)
             break;
         case ES_Seeking:
             break;
+        case ES_Attacking:
+            if (gf2d_actor_get_frames_remaining(&self->actor) == 2)
+            {
+                c = entity_scan_hit(self,vector2d(self->position.x,self->position.y ),vector2d(self->position.x + (self->flip.x * -100) + 50,self->position.y+20));
+                if (c.collided)
+                {
+                    other = c.body->data;
+                    slog("HIT %s",other->name);
+                    entity_damage(other,self,5,1);
+                    if (other->maxHealth)gui_set_opponent_health(other->health/other->maxHealth);
+                }
+            }
         case ES_Charging:
-        case ES_Attacking:            
         case ES_Pain:
         case ES_Cooldown:
             self->cooldown--;

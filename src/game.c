@@ -9,10 +9,12 @@
 #include "gf2d_entity.h"
 #include "gf2d_mouse.h"
 #include "simple_logger.h"
+#include "windows_common.h"
 #include "camera.h"
 #include "level.h"
 #include "editor.h"
-#include "windows_common.h"
+#include "gui.h"
+
 
 static int _done = 0;
 static Window *_quit = NULL;
@@ -68,6 +70,7 @@ int main(int argc, char * argv[])
     gf2d_entity_system_init(1024);
     
     camera_set_dimensions(0,0,1200,700);
+    gui_setup_hud();
     
     SDL_ShowCursor(SDL_DISABLE);
     // game specific setup
@@ -115,6 +118,10 @@ int main(int argc, char * argv[])
             if (editorMode)
             {
                 gf2d_mouse_draw();
+            }
+            else
+            {
+                gui_draw_hud();
             }
         gf2d_grahics_next_frame();// render current draw frame and skip to the next frame
         

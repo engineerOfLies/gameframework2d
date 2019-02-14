@@ -64,6 +64,7 @@ Entity *monster_new(Vector2D position,char *actorFile)
     self->die = monster_die;
     self->free = level_remove_entity;
 
+    self->health = self->maxHealth = 20;
     level_add_entity(self);
     return self;
 }
@@ -94,11 +95,18 @@ int  monster_touch(Entity *self,Entity *other)
 
 int  monster_damage(Entity *self,int amount, Entity *source)
 {
-    return 0;
+    slog("monster taking %i damage!",amount);
+    self->health -= amount;
+    if (self->health <= 0)
+    {
+        self->health = 0;
+        self->die(self);
+    }
+    return amount;//todo factor in shields}
 }
 
 void monster_die(Entity *self)
 {
-    
+    self->dead = 1;
 }
 /*eol@eof*/

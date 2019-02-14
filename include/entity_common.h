@@ -21,5 +21,13 @@ void entity_push(Entity *self,Entity *other,float amount);
  */
 void entity_damage(Entity *target,Entity *killer,int damage,float kick);
 
+/**
+ * @brief perform a hit scan check against the bodies in the level space
+ * @param self the entity doing the scanning, it will be ignored
+ * @param start the beginning location of the scan
+ * @param end the end point for the scan
+ * @returns collision information
+ */
+Collision entity_scan_hit(Entity *self,Vector2D start,Vector2D end);
 
 #endif
