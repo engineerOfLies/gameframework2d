@@ -10,6 +10,7 @@
 #define PICKUP_LAYER 2
 #define PLAYER_LAYER 4
 #define MONSTER_LAYER 8
+#define OBJECT_LAYER 16
 
 typedef struct Collision_S Collision;
 

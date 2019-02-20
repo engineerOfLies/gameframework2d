@@ -27,6 +27,16 @@ void gf2d_entity_system_close()
     slog("entity system closed");
 }
 
+int gf2d_entity_validate_entity_pointer(void *p)
+{
+    Entity *ent;
+    if (!p)return 0;
+    ent = (Entity *)p;
+    if (ent < entity_manager.entityList)return 0;
+    if (ent >= &entity_manager.entityList[entity_manager.maxEntities])return 0;
+    return 1;
+}
+
 void gf2d_entity_system_init(Uint32 maxEntities)
 {
     if (!maxEntities)

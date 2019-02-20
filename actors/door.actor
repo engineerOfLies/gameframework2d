@@ -14,12 +14,6 @@ type:   loop
 
 action: open
 startFrame: 1
-endFrame: 8
-frameRate: 0.1
-type:   pass
-
-action: close
-startFrame: 9
 endFrame: 15
 frameRate: 0.1
 type:   pass

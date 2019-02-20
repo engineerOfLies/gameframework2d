@@ -9,6 +9,7 @@
 static Entity *_player = NULL;
 
 void player_draw(Entity *self);
+void player_activate(Entity *self,Entity *activator);
 void player_think(Entity *self);
 void player_update(Entity *self);
 int  player_touch(Entity *self,Entity *other);
@@ -76,7 +77,7 @@ Entity *player_new(Vector2D position)
         &self->body,
         "player",
 //        0,//no layer
-        ALL_LAYERS &~ PICKUP_LAYER,//player layers
+        PLAYER_LAYER | MONSTER_LAYER | WORLD_LAYER,//player layers
         1,
         position,
         vector2d(0,0),
@@ -108,6 +109,7 @@ Entity *player_new(Vector2D position)
     self->damage = player_damage;
     self->die = player_die;
     self->free = level_remove_entity;
+    self->activate = player_activate;
 
     self->data = (void*)&playerData;
     
@@ -120,6 +122,29 @@ Entity *player_new(Vector2D position)
 void player_draw(Entity *self)
 {
     //additional player drawings can go here
+}
+
+void player_activation_check(Entity *self)
+{
+    Shape s = {0};
+    Entity *other;
+    Collision c;
+    ClipFilter f = {
+        OBJECT_LAYER,          /**<layer mask to clip against*/
+        self->body.team,           /**<ignore any team ==*/
+        &self->body
+    };
+    s = gf2d_body_to_shape(&self->body);
+    gf2d_shape_slog(s);
+    gf2d_space_body_collision_test_filter(level_get_space(),s, &c,f);
+    gf2d_shape_draw(s,gf2d_color(255,255,0,255),vector2d(0,0));
+    if (c.collided)
+    {
+        other = entity_get_from_body(c.body);
+        if (!other)return;
+        slog("collided with %s",other->name);
+        if (other->activate)other->activate(other,self);
+    }
 }
 
 void player_think(Entity *self)
@@ -149,6 +174,13 @@ void player_think(Entity *self)
                 self->jumpcool = gf2d_actor_get_frames_remaining(&self->actor);
                 gf2d_sound_play(self->sound[0],0,1,-1,-1);
                 gf2d_actor_set_action(&self->actor,"jump");
+            }
+            if (gf2d_input_command_down("activate"))
+            {
+                slog("activating");
+                player_activation_check(self);
+                self->cooldown  = 16;
+                self->state = ES_Cooldown;
             }
             if (gf2d_input_command_released("melee"))
             {
@@ -240,6 +272,11 @@ int player_damage(Entity *self,int amount, Entity *source)
 }
 
 void player_die(Entity *self)
+{
+    
+}
+
+void player_activate(Entity *self,Entity *activator)
 {
     
 }

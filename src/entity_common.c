@@ -183,4 +183,11 @@ void entity_world_snap(Entity *self)
     }    
 }
 
+Entity *entity_get_from_body(Body *body)
+{
+    if (!body) return NULL;
+    if (!gf2d_entity_validate_entity_pointer(body->data))return NULL;
+    return (Entity*)body->data;
+}
+
 /*eol@eof*/

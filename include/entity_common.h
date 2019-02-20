@@ -31,4 +31,11 @@ void entity_damage(Entity *target,Entity *killer,int damage,float kick);
 Collision entity_scan_hit(Entity *self,Vector2D start,Vector2D end);
 Collision entity_block_hit(Entity *self,Rect box);
 
+/**
+ * @brief get the entity associated with the body provided
+ * @param body the body to check
+ * @param return NULL on error or if the body is not part of an entity, the entity pointer otherwise
+ */
+Entity *entity_get_from_body(Body *body);
+
 #endif

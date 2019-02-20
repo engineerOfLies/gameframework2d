@@ -605,6 +605,7 @@ void gf2d_space_body_collision_test_filter(Space *space,Shape shape, Collision *
     int i,count;
     Body *body;
     if ((!space)||(!collision))return;
+    memset(collision,0,sizeof(Collision));
     count = gf2d_list_get_count(space->bodyList);
     for (i = 0; i < count; i++)
     {

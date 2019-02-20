@@ -54,6 +54,7 @@ typedef struct Entity_S
     void (*think)(struct Entity_S *self);   /**<called before system updates to make decisions / hand input*/
     void (*update)(struct Entity_S *self);  /**<called after system entity update*/
     int  (*touch)(struct Entity_S *self,struct Entity_S *other);/**<when this entity touches another entity*/
+    void (*activate)(struct Entity_S *self,struct Entity_S *activator);    /**<some entities can be activated by others, doors opened, levels, etc*/
     int  (*damage)(struct Entity_S *self,int amount, struct Entity_S *source);/**<when this entity takes damage*/
     void (*die)(struct Entity_S *self);     /**<when this entity dies*/
     void (*free)(struct Entity_S *self);     /**<called when the entity is freed for any custom cleanup*/
@@ -133,4 +134,12 @@ void gf2d_entity_post_sync_all();
  * @return true if damage was dealth, false otherwise
  */
 int gf2d_entity_deal_damage(Entity *target, Entity *inflictor, Entity *attacker,int damage,Vector2D kick);
+
+/**
+ * @brief check to see if a given pointer points to an entity in the entity system
+ * @param p a pointer to data to check
+ * @return 0 if the pointer is out of the range of the internal entity manager's list, 1 otherwise
+ */
+int gf2d_entity_validate_entity_pointer(void *p);
+
 #endif
