@@ -29,5 +29,6 @@ void entity_damage(Entity *target,Entity *killer,int damage,float kick);
  * @returns collision information
  */
 Collision entity_scan_hit(Entity *self,Vector2D start,Vector2D end);
+Collision entity_block_hit(Entity *self,Rect box);
 
 #endif
