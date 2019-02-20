@@ -4,6 +4,6 @@
 #include "gf2d_entity.h"
 #include "simple_json.h"
 
-void pickup_spawn(Vector2D position,SJson *args);
+Entity *pickup_spawn(Vector2D position,SJson *args);
 
 #endif

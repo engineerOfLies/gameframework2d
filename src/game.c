@@ -76,7 +76,7 @@ int main(int argc, char * argv[])
     // game specific setup
     if (!editorMode)
     {
-        linfo = level_info_load("config/testworld.json");
+        linfo = level_info_load("levels/testworld.json");
         level_init(linfo,1);
     }
     else

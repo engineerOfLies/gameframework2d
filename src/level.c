@@ -1,6 +1,7 @@
 #include "level.h"
 #include "camera.h"
 #include "spawn.h"
+#include "player.h"
 #include "simple_json.h"
 #include "simple_logger.h"
 #include "gf2d_graphics.h"
@@ -272,13 +273,18 @@ void level_spawn_entities(SJson *spawnList)
     int i = 0, count = 0;
     SJson *item;
     Vector2D position;
+    int id = 0;
     count  = sj_array_get_count(spawnList);
     for (i = 0; i < count; i++)
     {
         item = sj_array_get_nth(spawnList,i);
         if (!item)continue;
         sj_value_as_vector2d(sj_object_get_value(item,"position"),&position);
-        spawn_entity(sj_get_string_value(sj_object_get_value(item,"name")),position,sj_object_get_value(item,"args"));
+        if (!sj_get_integer_value(sj_object_get_value(item,"name"),&id))
+        {
+            id = 0;
+        }
+        spawn_entity(sj_get_string_value(sj_object_get_value(item,"name")),position,id,sj_object_get_value(item,"args"));
     }
 }
 
@@ -353,6 +359,7 @@ void level_draw()
     gf2d_sprite_draw_image(gamelevel.backgroundImage,vector2d(-cam.x,-cam.y));
     gf2d_sprite_draw_image(gamelevel.tileLayer,vector2d(-cam.x,-cam.y));
     gf2d_entity_draw_all();
+    gf2d_entity_draw(player_get());
     if (gamelevel.space)gf2d_space_draw(gamelevel.space,vector2d(-cam.x,-cam.y));
 }
 

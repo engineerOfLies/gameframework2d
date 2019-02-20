@@ -4,6 +4,6 @@
 #include "gf2d_entity.h"
 #include "simple_json.h"
 
-void monster_spawn(Vector2D position,SJson *args);
+Entity *monster_spawn(Vector2D position,SJson *args);
 
 #endif

@@ -11,9 +11,9 @@ int  monster_damage(Entity *self,int amount, Entity *source);
 void monster_die(Entity *self);
 Entity *monster_new(Vector2D position,char *actorFile);
 
-void monster_spawn(Vector2D position,SJson *args)
+Entity *monster_spawn(Vector2D position,SJson *args)
 {
-    monster_new(position,"actors/space_bug.actor");
+    return monster_new(position,"actors/space_bug.actor");
 }
 
 

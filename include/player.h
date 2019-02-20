@@ -24,7 +24,7 @@ Entity *player_get();
  */
 void player_set_position(Vector2D position);
 
-void player_spawn(Vector2D position,SJson *args);
+Entity *player_spawn(Vector2D position,SJson *args);
 
 
 

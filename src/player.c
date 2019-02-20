@@ -51,15 +51,15 @@ void player_set_position(Vector2D position)
     vector2d_copy(_player->body.position,position);
 }
 
-void player_spawn(Vector2D position,SJson *args)
+Entity *player_spawn(Vector2D position,SJson *args)
 {
     if (_player != NULL)
     {
         vector2d_copy(_player->position,position);
         level_add_entity(_player);
-        return;
+        return NULL;
     }
-    player_new(position);
+    return player_new(position);
 }
 
 Entity *player_new(Vector2D position)

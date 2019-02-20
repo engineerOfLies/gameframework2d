@@ -3,6 +3,7 @@
 #include "player.h"
 #include "monster.h"
 #include "pickup.h"
+#include "door.h"
 #include "simple_logger.h"
 
 static Spawn spawnlist[] = 
@@ -19,12 +20,17 @@ static Spawn spawnlist[] =
         "pickup_start",
         pickup_spawn
     },
+    {
+        "door",
+        door_spawn
+    },
     {0}
 };
 
-void spawn_entity(const char *name,Vector2D position,SJson *args)
+void spawn_entity(const char *name,Vector2D position,Uint32 id,SJson *args)
 {
     Spawn *spawn;
+    Entity *ent;
     if (!name)
     {
         slog("no spawn name provided");
@@ -36,7 +42,11 @@ void spawn_entity(const char *name,Vector2D position,SJson *args)
         {
             if (spawn->spawn)
             {
-                spawn->spawn(position,args);
+                ent = spawn->spawn(position,args);
+                if (ent)
+                {
+                    ent->id = id;
+                }
                 return;
             }
         }

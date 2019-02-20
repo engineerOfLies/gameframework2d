@@ -60,6 +60,10 @@ typedef struct Entity_S
     int dead;                               /**<when true, the entity system will delete the entity on the next update*/
 
     /*game specific data*/
+    TextLine    targetLevel;                /*for doors*/
+    TextLine    targetEntity;               
+    Uint32      targetId;                   
+    
     float health;                           /**<health of entity*/
     int   maxHealth;                        /**<maximum health of entity*/
     int   cooldown;                         /**<useful for timing cooldowns*/

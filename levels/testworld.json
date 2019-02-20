@@ -37,6 +37,14 @@
          "position":[128,128]},
         {"name":"monster_start",
          "position":[990,128]},
+        {"name":"door",
+         "position":[64,672],
+         "id":1,
+         "args":{
+            "level":"level2.json",
+            "target":"door",
+            "targetId":1
+         }},
         {"name":"pickup_start",
          "position":[600,128],
          "args":{

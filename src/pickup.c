@@ -12,21 +12,22 @@ int  pickup_damage(Entity *self,int amount, Entity *source);
 void pickup_die(Entity *self);
 Entity *pickup_new(Vector2D position,const char *name, char *actorFile);
 
-void pickup_spawn(Vector2D position,SJson *args)
+Entity *pickup_spawn(Vector2D position,SJson *args)
 {
     const char *item;
-    if (!args)return;
+    if (!args)return NULL;
     item = sj_get_string_value(sj_object_get_value(args,"item"));
-    if (!item)return;
+    if (!item)return NULL;
     // TODO: Make an item system more robust
     if (strcmp(item,"essence") == 0)
     {
-        pickup_new(position,item,"actors/essence.actor");
+        return pickup_new(position,item,"actors/essence.actor");
     }
     else if (strcmp(item,"crysalis") == 0)
     {
-        pickup_new(position,item,"actors/crysalis.actor");
+        return pickup_new(position,item,"actors/crysalis.actor");
     }
+    return NULL;
 }
 
 Entity *pickup_new(Vector2D position,const char *name, char *actorFile)

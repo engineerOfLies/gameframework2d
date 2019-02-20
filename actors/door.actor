@@ -1,0 +1,25 @@
+sprite: images/door.png
+frameWidth: 64
+frameHeight: 64
+framesPerLine: 16
+scale: 1,1
+color: 255,255,255,2255
+colorSpecial: 255,255,255,255
+
+action: idle
+startFrame: 0
+endFrame: 0
+frameRate: 0.1
+type:   loop
+
+action: open
+startFrame: 1
+endFrame: 8
+frameRate: 0.1
+type:   pass
+
+action: close
+startFrame: 9
+endFrame: 15
+frameRate: 0.1
+type:   pass
