@@ -38,4 +38,10 @@ Collision entity_block_hit(Entity *self,Rect box);
  */
 Entity *entity_get_from_body(Body *body);
 
+/**
+ * @brief delete all entities, except the player entity.  Used in level transitions
+ */
+void entity_clear_all_but_player();
+
+
 #endif

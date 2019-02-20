@@ -142,4 +142,28 @@ int gf2d_entity_deal_damage(Entity *target, Entity *inflictor, Entity *attacker,
  */
 int gf2d_entity_validate_entity_pointer(void *p);
 
+/**
+ * @brief search active entities for the one with the provided id
+ * @param id the id to search for
+ * @return NULL if not found, or the first entity with the id specified otherwise
+ */
+Entity *gf2d_entity_get_by_id(Uint32 id);
+
+/**
+ * @brief search active entities for the one with the provided id and name
+ * @param name the name to search for
+ * @param id the id to search for
+ * @return NULL if not found, or the first entity with the id specified otherwise
+ */
+Entity *gf2d_entity_get_by_name_id(const char *name,Uint32 id);
+
+/**
+ * @brief step through the entity list from the starting point provided
+ * @note if start is NULL, it will return the first active entity in the list
+ * @param start the starting position to iterate from
+ * @return the next entity in the list that is active or NULL when there are not more
+ */
+Entity *gf2d_entity_iterate(Entity *start);
+
+
 #endif

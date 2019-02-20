@@ -59,6 +59,22 @@ void gf2d_entity_system_init(Uint32 maxEntities)
     slog("entity system initialized");
 }
 
+Entity *gf2d_entity_iterate(Entity *start)
+{
+    Entity *p = NULL;
+    if (!start)p = entity_manager.entityList;
+    else 
+    {
+        p = start;
+        p++;
+    }
+    for (;p != &entity_manager.entityList[entity_manager.maxEntities];p++)
+    {
+        if (p->inuse)return p;
+    }
+    return NULL;
+}
+
 void gf2d_entity_free(Entity *self)
 {
     int i;
@@ -206,6 +222,35 @@ void gf2d_entity_update_all()
         gf2d_entity_update(&entity_manager.entityList[i]);
     }
 }
+
+Entity *gf2d_entity_get_by_id(Uint32 id)
+{
+    int i;
+    for (i = 0; i < entity_manager.maxEntities;i++)
+    {
+        if (entity_manager.entityList[i].inuse == 0)continue;
+        if (entity_manager.entityList[i].id == id)
+        {
+            return &entity_manager.entityList[i];
+        }
+    }
+    return NULL;
+}
+
+Entity *gf2d_entity_get_by_name_id(const char *name,Uint32 id)
+{
+    int i;
+    for (i = 0; i < entity_manager.maxEntities;i++)
+    {
+        if (entity_manager.entityList[i].inuse == 0)continue;
+        if ((gf2d_line_cmp(entity_manager.entityList[i].name,name) == 0) && (entity_manager.entityList[i].id == id))
+        {
+            return &entity_manager.entityList[i];
+        }
+    }
+    return NULL;
+}
+
 
 int gf2d_entity_deal_damage(Entity *target, Entity *inflictor, Entity *attacker,int damage,Vector2D kick)
 {

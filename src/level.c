@@ -2,6 +2,7 @@
 #include "camera.h"
 #include "spawn.h"
 #include "player.h"
+#include "entity_common.h"
 #include "simple_json.h"
 #include "simple_logger.h"
 #include "gf2d_graphics.h"
@@ -321,6 +322,20 @@ Vector2D level_position_to_tile(LevelInfo *linfo, Vector2D position)
     return tile;
 }
 
+void level_transition(char *filename, const char *playerTarget, Uint32 targetId)
+{
+    Entity *target;
+    TextLine filepath;
+    LevelInfo *linfo = NULL;
+    snprintf(filepath,GF2DLINELEN,"levels/%s",filename);
+    linfo = level_info_load(filepath);
+    if (!linfo)return;
+    entity_clear_all_but_player();
+    level_init(linfo,1);
+    target = gf2d_entity_get_by_name_id(playerTarget,targetId);
+    if (!target)return;
+    player_set_position(target->position);
+}
 
 void level_init(LevelInfo *linfo,Uint8 space)
 {

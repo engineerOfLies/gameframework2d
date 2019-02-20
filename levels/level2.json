@@ -1,0 +1,44 @@
+{
+"world":{
+    "backgroundImage":"images/backgrounds/bg_flat.png",
+    "backgroundMusic":"music/old_city_theme.ogg",
+    "tileSet":"images/tiles/basetile.png",
+    "tileSize" : [32,32],
+    "tileMapSize" : [12,12],
+    "tileMap" : 
+            [
+                [1,0,0,0,0,0,0,0,0,0,0,1],
+                [1,0,0,0,0,0,0,0,0,0,0,1],
+                [1,0,0,0,0,0,0,0,0,0,0,1],
+                [1,0,0,0,0,0,0,0,0,0,0,1],
+                [1,0,0,0,0,0,0,0,0,0,0,1],
+                [1,0,0,0,0,0,0,0,0,0,0,1],
+                [1,0,0,0,0,0,0,0,0,0,0,1],
+                [1,0,0,0,0,0,0,0,0,0,0,1],
+                [1,0,0,0,0,0,0,0,0,0,0,1],
+                [1,0,0,0,0,0,0,0,0,0,0,1],
+                [1,0,0,0,0,0,0,0,0,0,0,1],
+                [1,1,1,1,1,1,1,1,1,1,1,1]
+            ],
+    "spawnList" : [
+        {"name":"player_start",
+         "position":[128,128]},
+        {"name":"door",
+         "position":[64,320],
+         "id":1,
+         "args":{
+            "level":"testworld.json",
+            "target":"door",
+            "targetId":1
+         }},
+        {"name":"monster_start",
+         "position":[320,32]},
+        {"name":"monster_start",
+         "position":[320,64]},
+        {"name":"monster_start",
+         "position":[320,96]},
+        {"name":"monster_start",
+         "position":[320,128]}
+    ]
+}
+}

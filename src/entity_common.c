@@ -3,6 +3,7 @@
 #include "simple_logger.h"
 #include "entity_common.h"
 #include "level.h"
+#include "player.h"
 
 Collision entity_scan_hit(Entity *self,Vector2D start,Vector2D end)
 {
@@ -181,6 +182,16 @@ void entity_world_snap(Entity *self)
     {
         self->position.x += 0.1;
     }    
+}
+
+void entity_clear_all_but_player()
+{
+    Entity *ent = NULL;
+    for (ent = gf2d_entity_iterate(NULL);ent != NULL;ent = gf2d_entity_iterate(ent))
+    {
+        if (ent == player_get())continue;
+        gf2d_entity_free(ent);
+    }
 }
 
 Entity *entity_get_from_body(Body *body)

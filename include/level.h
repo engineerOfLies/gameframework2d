@@ -106,5 +106,11 @@ void level_build_tile_space(LevelInfo *linfo);
 
 Space *level_get_space();
 
+/**
+ * @brief load up a new game level and move the player into it
+ * @param
+ */
+void level_transition(char *filename, const char *playerTarget, Uint32 targetId);
+
 
 #endif

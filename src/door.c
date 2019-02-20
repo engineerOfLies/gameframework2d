@@ -105,6 +105,7 @@ void door_update(Entity *self)
         if (gf2d_actor_get_frames_remaining(&self->actor) == 0)
         {
             slog("transitioning to level %s",self->targetLevel);
+            level_transition(self->targetLevel, self->targetEntity, self->targetId);
             self->state = ES_Idle;
         }
     }
