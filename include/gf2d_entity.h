@@ -11,10 +11,13 @@
 typedef enum
 {
     ES_Idle,
+    ES_Walking,
+    ES_Jumping,
     ES_Seeking,
     ES_Charging,
     ES_Attacking,
     ES_Cooldown,
+    ES_Leaving,
     ES_Pain,
     ES_Dying,
     ES_Dead         //Auto cleaned up

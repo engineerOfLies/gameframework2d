@@ -92,6 +92,9 @@ void door_activate(Entity *self,Entity *activator)
     gf2d_sound_play(self->sound[0],0,1,-1,-1);
     gf2d_actor_set_action(&self->actor,"open");
     self->state = ES_Charging;
+    activator->state = ES_Leaving;
+    activator->cooldown = gf2d_actor_get_frames_remaining(&self->actor);
+    slog("player leaving for %i frames",activator->cooldown);
 }
 
 void door_think(Entity *self)

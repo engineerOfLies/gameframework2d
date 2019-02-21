@@ -326,15 +326,27 @@ void level_transition(char *filename, const char *playerTarget, Uint32 targetId)
 {
     Entity *target;
     TextLine filepath;
+    TextLine targetname;
+    Uint32 id;
     LevelInfo *linfo = NULL;
+    
     snprintf(filepath,GF2DLINELEN,"levels/%s",filename);
+    gf2d_line_cpy(targetname,playerTarget);
+    id = targetId;
+    
     linfo = level_info_load(filepath);
     if (!linfo)return;
+    
     entity_clear_all_but_player();
     level_init(linfo,1);
-    target = gf2d_entity_get_by_name_id(playerTarget,targetId);
-    if (!target)return;
-    player_set_position(target->position);
+    
+    target = gf2d_entity_get_by_name_id(targetname,id);
+    if (!target)
+    {
+        slog("expected target %s, %i not found",target,id);
+        return;
+    }
+    player_set_position(vector2d(target->position.x,target->position.y-16));
 }
 
 void level_init(LevelInfo *linfo,Uint8 space)
@@ -349,7 +361,7 @@ void level_init(LevelInfo *linfo,Uint8 space)
         linfo->tileSet,
         linfo->tileSize.x,
         linfo->tileSize.y,
-        1,
+        16,
         true);
 
     gamelevel.backgroundMusic = Mix_LoadMUS(linfo->backgroundMusic);
@@ -375,7 +387,7 @@ void level_draw()
     gf2d_sprite_draw_image(gamelevel.tileLayer,vector2d(-cam.x,-cam.y));
     gf2d_entity_draw_all();
     gf2d_entity_draw(player_get());
-    if (gamelevel.space)gf2d_space_draw(gamelevel.space,vector2d(-cam.x,-cam.y));
+//    if (gamelevel.space)gf2d_space_draw(gamelevel.space,vector2d(-cam.x,-cam.y));
 }
 
 void level_update()

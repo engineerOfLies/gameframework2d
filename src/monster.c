@@ -89,7 +89,7 @@ int  monster_touch(Entity *self,Entity *other)
     slog("monster touch called");
     if (!other)return 0;
     if (gf2d_line_cmp(other->name,"player") != 0)return 0;
-    entity_damage(other,self,5,10);
+    entity_damage(other,self,5,5);
     return 0;
 }
 

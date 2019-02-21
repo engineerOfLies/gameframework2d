@@ -28,6 +28,12 @@ Rect camera_get_dimensions();
 Vector2D camera_get_position();
 
 /**
+ * @brief get the offset to correctly draw things relative to the camera
+ * @return the negative x,y position of the camera
+ */
+Vector2D camera_get_offset();
+
+/**
  * @brief limit the position of the camera by these bounds
  * @param x the minimum x position for the camera
  * @param y the minimum y position for the camera

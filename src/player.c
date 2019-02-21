@@ -178,9 +178,9 @@ void player_think(Entity *self)
             if (gf2d_input_command_down("activate"))
             {
                 slog("activating");
-                player_activation_check(self);
                 self->cooldown  = 16;
                 self->state = ES_Cooldown;
+                player_activation_check(self);
             }
             if (gf2d_input_command_released("melee"))
             {
@@ -206,10 +206,6 @@ void player_update(Entity *self)
     camera_set_position(camPosition);
     if (self->jumpcool > 0) self->jumpcool -= 0.2;
     else self->jumpcool = 0;
-    if (self->actor.at == ART_END)
-    {
-        gf2d_actor_set_action(&self->actor,"idle");
-    }
     //world clipping
 
     
@@ -240,6 +236,8 @@ void player_update(Entity *self)
                     if (other->maxHealth)gui_set_opponent_health(other->health/other->maxHealth);
                 }
             }
+        case ES_Jumping:
+        case ES_Leaving:
         case ES_Charging:
         case ES_Pain:
         case ES_Cooldown:
@@ -247,8 +245,10 @@ void player_update(Entity *self)
             if (self->cooldown <= 0)
             {
                 self->state = ES_Idle;
+                gf2d_actor_set_action(&self->actor,"idle");
             }
             break;
+        case ES_Walking:
         case ES_Dying:
             return;
         case ES_Dead:
@@ -264,10 +264,25 @@ int player_touch(Entity *self,Entity *other)
 
 int player_damage(Entity *self,int amount, Entity *source)
 {
+    switch(self->state)
+    {
+        case ES_Dying:
+        case ES_Dead:
+        case ES_Leaving:
+        case ES_Pain:
+            slog("player cannot take damage now");
+            return 0;
+        default:
+            break;
+    }
     slog("player taking %i damage!",amount);
     self->health -= amount;
-    if (self->health <= 0)self->health = 0;
-    self->die(self);
+    //play pain sound, set pain state
+    if (self->health <= 0)
+    {
+        self->health = 0;
+        self->die(self);
+    }
     return amount;//todo factor in shields
 }
 

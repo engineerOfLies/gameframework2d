@@ -28,6 +28,12 @@ Vector2D camera_get_position()
     return vector2d(_camera.view.x,_camera.view.y);
 }
 
+Vector2D camera_get_offset()
+{
+    return vector2d(-_camera.view.x,-_camera.view.y);
+}
+
+
 void camera_set_bounds(Sint32 x,Sint32 y,Uint32 w,Uint32 h)
 {
     gf2d_rect_set(_camera.bounds,x,y,w,h);

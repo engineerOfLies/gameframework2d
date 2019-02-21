@@ -16,7 +16,7 @@ Collision entity_scan_hit(Entity *self,Vector2D start,Vector2D end)
     };
     s = gf2d_shape_edge(start.x,start.y,end.x,end.y);
     gf2d_space_body_collision_test_filter(level_get_space(),s, &c,f);
-    gf2d_shape_draw(s,gf2d_color(255,255,0,255),vector2d(0,0));
+    gf2d_shape_draw(s,gf2d_color(255,255,0,255),camera_get_offset());
     return c;
 }
 
@@ -31,7 +31,7 @@ Collision entity_block_hit(Entity *self,Rect box)
     };
     s = gf2d_shape_from_rect(box);
     gf2d_space_body_collision_test_filter(level_get_space(),s, &c,f);
-    gf2d_shape_draw(s,gf2d_color(255,255,0,255),vector2d(0,0));
+    gf2d_shape_draw(s,gf2d_color(255,255,0,255),camera_get_offset());
     return c;
 }
 
@@ -101,7 +101,7 @@ int entity_roof_check(Entity *self, float width)
     c = gf2d_space_shape_test(level_get_space(),gf2d_shape_from_rect(r));
     if (c.shape != NULL)
     {
-        gf2d_shape_draw(*c.shape,gf2d_color(255,255,0,255),vector2d(0,0));
+        gf2d_shape_draw(*c.shape,gf2d_color(255,255,0,255),camera_get_offset());
     }
     return c.collided;
 }
@@ -121,7 +121,7 @@ int entity_ground_check(Entity *self, float width)
     c = gf2d_space_shape_test(level_get_space(),gf2d_shape_from_rect(r));
     if (c.shape != NULL)
     {
-        gf2d_shape_draw(*c.shape,gf2d_color(0,255,255,255),vector2d(0,0));
+        gf2d_shape_draw(*c.shape,gf2d_color(0,255,255,255),camera_get_offset());
     }
     return c.collided;
 }
@@ -140,7 +140,7 @@ int entity_left_check(Entity *self, float width)
     c = gf2d_space_shape_test(level_get_space(),gf2d_shape_from_rect(r));
     if (c.shape != NULL)
     {
-        gf2d_shape_draw(*c.shape,gf2d_color(255,0,255,255),vector2d(0,0));
+        gf2d_shape_draw(*c.shape,gf2d_color(255,0,255,255),camera_get_offset());
     }
     return c.collided;
 }
@@ -159,7 +159,7 @@ int entity_right_check(Entity *self, float width)
     c = gf2d_space_shape_test(level_get_space(),gf2d_shape_from_rect(r));
     if (c.shape != NULL)
     {
-        gf2d_shape_draw(*c.shape,gf2d_color(255,0,0,255),vector2d(0,0));
+        gf2d_shape_draw(*c.shape,gf2d_color(255,0,0,255),camera_get_offset());
     }
     return c.collided;
 }
