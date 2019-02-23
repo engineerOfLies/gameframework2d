@@ -77,7 +77,7 @@ Entity *player_new(Vector2D position)
         &self->body,
         "player",
 //        0,//no layer
-        PLAYER_LAYER | MONSTER_LAYER | WORLD_LAYER,//player layers
+        PLAYER_LAYER | WORLD_LAYER,//player layers
         1,
         position,
         vector2d(0,0),
@@ -226,8 +226,7 @@ void player_update(Entity *self)
         case ES_Attacking:
             if (gf2d_actor_get_frames_remaining(&self->actor) == 2)
             {
-//                c = entity_scan_hit(self,vector2d(self->position.x,self->position.y ),vector2d(self->position.x + (self->flip.x * -100) + 50,self->position.y+20));
-                c = entity_block_hit(self,gf2d_rect(self->position.x + 16 + (self->flip.x * -48),self->position.y+8,16,16));
+                c = entity_block_hit(self,gf2d_rect(self->position.x + 16 + (self->flip.x * -48),self->position.y-8,16,32));
                 if (c.collided)
                 {
                     other = c.body->data;
