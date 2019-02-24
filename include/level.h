@@ -1,7 +1,7 @@
 #ifndef __LEVEL_H__
 #define __LEVEL_H__
 
-#include "gf2d_collision.h"
+#include "gf2d_space.h"
 #include "gf2d_sprite.h"
 #include "gf2d_audio.h"
 #include "gf2d_entity.h"

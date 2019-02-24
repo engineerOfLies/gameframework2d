@@ -39,6 +39,7 @@ Entity *door_new(Vector2D position,const char *nextLevel, const char *target, Ui
         "door",
         OBJECT_LAYER,
         0,
+        0,
         position,
         vector2d(0,0),
         10,

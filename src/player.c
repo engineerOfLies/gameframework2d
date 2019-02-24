@@ -76,8 +76,8 @@ Entity *player_new(Vector2D position)
     gf2d_body_set(
         &self->body,
         "player",
-//        0,//no layer
         PLAYER_LAYER | WORLD_LAYER,//player layers
+        0,
         1,
         position,
         vector2d(0,0),

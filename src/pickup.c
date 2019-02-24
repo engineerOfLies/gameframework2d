@@ -43,8 +43,8 @@ Entity *pickup_new(Vector2D position,const char *name, char *actorFile)
     gf2d_body_set(
         &self->body,
         (char *)name,
-//        0,//no layer
-        PICKUP_LAYER | WORLD_LAYER,//all layers
+        WORLD_LAYER,
+        PLAYER_LAYER,
         0,
         position,
         vector2d(0,0),

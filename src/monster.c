@@ -34,8 +34,8 @@ Entity *monster_new(Vector2D position,char *actorFile)
     gf2d_body_set(
         &self->body,
         "monster",
-//        0,//no layer
-        WORLD_LAYER | MONSTER_LAYER,//all layers
+        WORLD_LAYER,//all layers
+        PLAYER_LAYER,//all layers
         2,
         position,
         vector2d(0,0),
