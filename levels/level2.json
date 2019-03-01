@@ -36,6 +36,21 @@
          "args":{
             "actor":"actors/barrel.actor"
          }},
+        {"name":"breakable",
+         "position":[128,288],
+         "args":{
+            "actor":"actors/barrel.actor"
+         }},
+        {"name":"breakable",
+         "position":[128,256],
+         "args":{
+            "actor":"actors/barrel.actor"
+         }},
+        {"name":"breakable",
+         "position":[128,224],
+         "args":{
+            "actor":"actors/barrel.actor"
+         }},
         {"name":"monster_start",
          "position":[320,32]},
         {"name":"monster_start",
