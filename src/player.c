@@ -76,7 +76,8 @@ Entity *player_new(Vector2D position)
     gf2d_body_set(
         &self->body,
         "player",
-        PLAYER_LAYER | WORLD_LAYER,//player layers
+        1,
+        1,
         0,
         1,
         position,
@@ -86,7 +87,6 @@ Entity *player_new(Vector2D position)
         0,
         &self->shape,
         self,
-        NULL,
         NULL);
 
     gf2d_actor_load(&self->actor,"actors/player.actor");
@@ -126,14 +126,9 @@ void player_draw(Entity *self)
 
 void player_activation_check(Entity *self)
 {
-    Shape s = {0};
+/*    Shape s = {0};
     Entity *other;
     Collision c;
-    ClipFilter f = {
-        OBJECT_LAYER,          /**<layer mask to clip against*/
-        self->body.team,           /**<ignore any team ==*/
-        &self->body
-    };
     s = gf2d_body_to_shape(&self->body);
     gf2d_shape_slog(s);
     gf2d_space_body_collision_test_filter(level_get_space(),s, &c,f);
@@ -144,7 +139,7 @@ void player_activation_check(Entity *self)
         if (!other)return;
         slog("collided with %s",other->name);
         if (other->activate)other->activate(other,self);
-    }
+    }*/
 }
 
 void player_think(Entity *self)
@@ -226,14 +221,14 @@ void player_update(Entity *self)
         case ES_Attacking:
             if (gf2d_actor_get_frames_remaining(&self->actor) == 2)
             {
-                c = entity_block_hit(self,gf2d_rect(self->position.x + 16 + (self->flip.x * -48),self->position.y-8,16,32));
+/*                c = entity_block_hit(self,gf2d_rect(self->position.x + 16 + (self->flip.x * -48),self->position.y-8,16,32));
                 if (c.collided)
                 {
                     other = c.body->data;
                     slog("HIT %s",other->name);
                     entity_damage(other,self,5,1);
                     if (other->maxHealth)gui_set_opponent_health(other->health/other->maxHealth);
-                }
+                }*/
             }
         case ES_Jumping:
         case ES_Leaving:

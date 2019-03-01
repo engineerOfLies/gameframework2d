@@ -206,6 +206,7 @@ int gf2d_list_delete_nth(List *list,Uint32 n)
     if (n == (list->count - 1))
     {
         list->count--;// last element in the array, this is easy
+        list->elements[n].data = NULL;
         return 0;
     }
     memmove(&list->elements[n],&list->elements[n+1],sizeof(ListElementData)*(list->count - n));//copy all elements after n

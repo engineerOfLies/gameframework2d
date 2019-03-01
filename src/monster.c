@@ -34,8 +34,9 @@ Entity *monster_new(Vector2D position,char *actorFile)
     gf2d_body_set(
         &self->body,
         "monster",
-        WORLD_LAYER,//all layers
-        PLAYER_LAYER,//all layers
+        1,//world layer
+        0,
+        0,
         2,
         position,
         vector2d(0,0),
@@ -44,7 +45,6 @@ Entity *monster_new(Vector2D position,char *actorFile)
         0,
         &self->shape,
         self,
-        NULL,
         NULL);
 
     gf2d_actor_load(&self->actor,actorFile);
@@ -81,11 +81,10 @@ void monster_draw(Entity *self)
 
 void monster_think_attacking(Entity *self)
 {
-    Entity *other = NULL;
-    Collision c = {0};
     if (gf2d_actor_get_frames_remaining(&self->actor) == 1)
     {
         slog("checking for hit");
+        /*
         c = entity_block_hit(self,gf2d_rect(self->position.x + 32 + (self->flip.x * -64),self->position.y-8,16,32));
         if (c.collided)
         {
@@ -93,7 +92,7 @@ void monster_think_attacking(Entity *self)
             slog("HIT %s",other->name);
             entity_damage(other,self,5,5);
         }
-
+*/
     }
     if (gf2d_actor_get_frames_remaining(&self->actor) <= 0)
     {

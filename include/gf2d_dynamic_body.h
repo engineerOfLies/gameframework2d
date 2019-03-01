@@ -17,6 +17,13 @@ typedef struct
 
 DynamicBody *gf2d_dynamic_body_new();
 
+/**
+ * @brief get the shape (adjusted for current position) from the dynamic body
+ * @param a the dynamic body to get the shape for
+ * @returns a shape
+ */
+Shape gf2d_dynamic_body_to_shape(DynamicBody *a);
+
 void gf2d_dynamic_body_free(DynamicBody *db);
 
 /**

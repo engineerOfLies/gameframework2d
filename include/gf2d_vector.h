@@ -186,15 +186,15 @@ void vector3d_cross_product(Vector3D *out, Vector3D v1, Vector3D v2);
  * @param src MglVect3D input
  * @Param factpr the scalar value to scale the vector by.
  */
-#define vector2d_scale(dst,src,factor) (dst.x = src.x *factor,\
-                                         dst.y = src.y *factor)
-#define vector3d_scale(dst,src,factor) (dst.x = src.x *factor,\
-                                         dst.y = src.y *factor,\
-                                         dst.z = src.z *factor)
-#define vector4d_scale(dst,src,factor) (dst.x = src.x *factor,\
-                                         dst.y = src.y *factor,\
-                                         dst.z = src.z *factor,\
-                                         dst.w = src.w *factor)
+#define vector2d_scale(dst,src,factor) (dst.x = src.x *(factor),\
+                                         dst.y = src.y *(factor))
+#define vector3d_scale(dst,src,factor) (dst.x = src.x *(factor),\
+                                         dst.y = src.y *(factor),\
+                                         dst.z = src.z *(factor))
+#define vector4d_scale(dst,src,factor) (dst.x = src.x *(factor),\
+                                         dst.y = src.y *(factor),\
+                                         dst.z = src.z *(factor),\
+                                         dst.w = src.w *(factor))
 /**
  * @brief Macro that sets vector to zero.
  * @param a MglVect[2D|3D|4D] input
@@ -255,6 +255,13 @@ float vector2d_magnitude(Vector2D V);
 float vector3d_magnitude(Vector3D V);
 float vector4d_magnitude(Vector4D V);
 
+/**
+ * @brief get the magnitude of the difference of the two vectors
+ */
+double vector2d_magnitude_between(Vector2D a,Vector2D b);
+double vector3d_magnitude_between(Vector3D a,Vector3D b);
+double vector4d_magnitude_between(Vector4D a,Vector4D b);
+
 void vector2d_normalize (Vector2D *V);
 void vector3d_normalize (Vector3D *V);
 void vector4d_normalize (Vector4D *V);
@@ -295,11 +302,11 @@ void vector4d_set_magnitude(Vector4D * V,float magnitude);
  * @param p1 one point for the distance check
  * @param p2 another point for the distance check
  * @param size the value to check against
- * @return MglTrue if the distance between P1 and P2 is less than size, false otherwise
+ * @return true if the distance between P1 and P2 is less than size, false otherwise
  */
-Bool mgl_distance_between_less_than2d(Vector3D p1,Vector3D p2,float size);
-Bool mgl_distance_between_less_than3d(Vector3D p1,Vector3D p2,float size);
-Bool mgl_distance_between_less_than4d(Vector3D p1,Vector3D p2,float size);
+Bool vector2d_distance_between_less_than(Vector2D p1,Vector2D p2,float size);
+Bool vector3d_distance_between_less_than(Vector3D p1,Vector3D p2,float size);
+Bool vector4d_distance_between_less_than(Vector4D p1,Vector4D p2,float size);
 
 /**
  * @brief given a rotation, get the component vectors

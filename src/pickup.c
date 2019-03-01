@@ -3,6 +3,7 @@
 #include "level.h"
 #include "simple_logger.h"
 #include "entity_common.h"
+#include "gf2d_collision.h"
 
 void pickup_draw(Entity *self);
 void pickup_think(Entity *self);
@@ -43,8 +44,9 @@ Entity *pickup_new(Vector2D position,const char *name, char *actorFile)
     gf2d_body_set(
         &self->body,
         (char *)name,
-        WORLD_LAYER,
-        PLAYER_LAYER,
+        1,
+        PICKUP_LAYER,
+        0,
         0,
         position,
         vector2d(0,0),
@@ -53,7 +55,6 @@ Entity *pickup_new(Vector2D position,const char *name, char *actorFile)
         0,
         &self->shape,
         self,
-        NULL,
         NULL);
 
     gf2d_actor_load(&self->actor,actorFile);
@@ -87,29 +88,30 @@ void pickup_draw(Entity *self)
 
 void pickup_think(Entity *self)
 {
-    Collision c = {0};
+    Collision *c = NULL;
+    List *collisionList = NULL;
     Shape shape;
-    Entity *other;
-    ClipFilter filter = {0};
-    filter.layer = PLAYER_LAYER;
+    int i,count;
+    CollisionFilter filter = {0};
+    filter.cliplayer = PLAYER_LAYER;
     filter.ignore = &self->body;
     shape = gf2d_body_to_shape(&self->body);
-    gf2d_space_body_collision_test_filter(level_get_space(),shape, &c,filter);
-    if (c.collided)
+    
+    collisionList = gf2d_collision_check_space_shape(level_get_space(), shape,filter);
+    if (collisionList)
     {
-        if ((!c.body)||(!c.body->data))
+        count = gf2d_list_get_count(collisionList);
+        for (i = 0; i < count; i++)
         {
-            return;
+            c = (Collision *)gf2d_list_get_nth(collisionList,i);
+            if (!c)continue;
+            if (!c->collided)continue;
+            if (!c->body)continue;
+            if (c->body->data != player_get())continue;
+            //TODO give player the item
+            gf2d_sound_play(self->sound[0],0,1,-1,-1);
+            self->dead = 1;            
         }
-        other = (Entity *)c.body->data;
-        if (other != player_get())
-        {
-            slog("other entity is not a player");
-            return;
-        }
-        // TODO: give item to player
-        gf2d_sound_play(self->sound[0],0,1,-1,-1);
-        self->dead = 1;
         return;    
     }
 }

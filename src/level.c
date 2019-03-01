@@ -387,7 +387,7 @@ void level_draw()
     gf2d_sprite_draw_image(gamelevel.tileLayer,vector2d(-cam.x,-cam.y));
     gf2d_entity_draw_all();
     gf2d_entity_draw(player_get());
-//    if (gamelevel.space)gf2d_space_draw(gamelevel.space,vector2d(-cam.x,-cam.y));
+    if (gamelevel.space)gf2d_space_draw(gamelevel.space,vector2d(-cam.x,-cam.y));
 }
 
 void level_update()
@@ -397,18 +397,22 @@ void level_update()
     gf2d_entity_post_sync_all();
 }
 
-int body_body_touch(Body *self, Body *other, Collision *collision)
+int body_body_touch(Body *self, List *collisionList)
 {
-    Entity *selfEnt,*otherEnt;
-    if ((!self)||(!other))return 0;
-    selfEnt = (Entity *)self->data;
-    if (!selfEnt)return 0;
-    otherEnt = (Entity *)other->data;
-    if (!otherEnt)return 0;
-    if (selfEnt->touch)
+    Entity *selfEnt;
+    Collision *c;
+    int i,count;
+    if (!self)return 0;
+    selfEnt = (Entity*)self->data;
+    if (!selfEnt->touch)return 0;
+    count = gf2d_list_get_count(collisionList);
+    for (i = 0; i < count; i++)
     {
-        slog("%s is touching %s",selfEnt->name,otherEnt->name);
-        return selfEnt->touch(selfEnt,otherEnt);
+        c = (Collision *)gf2d_list_get_nth(collisionList,i);
+        if (!c)continue;
+        if (!c->body)continue;
+        if (!c->body->data)continue;
+        selfEnt->touch(selfEnt,(Entity*)c->body->data);
     }
     return 0;
 }
@@ -431,9 +435,9 @@ void level_add_entity(Entity *ent)
         slog("cannot add entity %s to level, no space defined!",ent->name);
         return;
     }
-    if (ent->body.bodyTouch == NULL)
+    if (ent->body.touch == NULL)
     {
-        ent->body.bodyTouch = body_body_touch;
+        ent->body.touch = body_body_touch;
     }
     gf2d_space_add_body(gamelevel.space,&ent->body);
 }

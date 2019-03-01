@@ -37,6 +37,7 @@ Entity *door_new(Vector2D position,const char *nextLevel, const char *target, Ui
     gf2d_body_set(
         &self->body,
         "door",
+        0,
         OBJECT_LAYER,
         0,
         0,
@@ -47,7 +48,6 @@ Entity *door_new(Vector2D position,const char *nextLevel, const char *target, Ui
         0,
         &self->shape,
         self,
-        NULL,
         NULL);
 
     gf2d_actor_load(&self->actor,"actors/door.actor");

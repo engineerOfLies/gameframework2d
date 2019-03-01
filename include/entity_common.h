@@ -28,8 +28,7 @@ void entity_damage(Entity *target,Entity *killer,int damage,float kick);
  * @param end the end point for the scan
  * @returns collision information
  */
-Collision entity_scan_hit(Entity *self,Vector2D start,Vector2D end);
-Collision entity_block_hit(Entity *self,Rect box);
+Collision entity_scan_hit(Entity *self,Vector2D start,Vector2D end, CollisionFilter filter);
 
 /**
  * @brief get the entity associated with the body provided

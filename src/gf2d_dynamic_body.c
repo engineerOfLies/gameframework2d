@@ -85,7 +85,7 @@ Collision *gf2d_dynamic_body_collision_check(DynamicBody *dba,DynamicBody *dbb,f
         slog("cannot do collision check, body missing from one or more DynamicBody");
         return NULL;
     }
-    if ((dba->body->team)&&(dbb->body->team)&&(dba->body->team != dbb->body->team))
+    if ((dba->body->team)&&(dbb->body->team)&&(dba->body->team == dbb->body->team))
     {
         return NULL;
     }
@@ -127,29 +127,15 @@ DynamicBody *gf2d_dynamic_body_new()
 
 void gf2d_dynamic_body_clear_collisions(DynamicBody *db)
 {
-    int i, count;
-    Collision *collision;
     if (!db)return;
-    count = gf2d_list_get_count(db->collisionList);
-    for (i = 0; i < count;i++)
-    {
-        collision = (Collision*)gf2d_list_get_nth(db->collisionList,i);
-        if (!collision)continue;
-        gf2d_collision_free(collision);
-    }
-    if (db->collisionList!= NULL)
-    {
-        gf2d_list_delete(db->collisionList);
-        db->collisionList = NULL;
-    }
-    db->collisionList = gf2d_list_new();
+    gf2d_collision_list_clear(db->collisionList);
 }
 
 void gf2d_dynamic_body_free(DynamicBody *db)
 {
     if (!db)return;
     //cleanup collionList
-    gf2d_dynamic_body_clear_collisions(db);
+    gf2d_collision_list_free(db->collisionList);
     free(db);
 }
 

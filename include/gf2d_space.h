@@ -3,7 +3,6 @@
 
 #include "gf2d_shape.h"
 #include "gf2d_body.h"
-#include "gf2d_collision.h"
 
 typedef struct
 {
