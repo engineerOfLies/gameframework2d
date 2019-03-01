@@ -72,6 +72,14 @@ List *gf2d_list_insert(List *list,void *data,Uint32 n);
 int gf2d_list_delete_nth(List *list,Uint32 n);
 
 /**
+ * @brief delete the item at the end of the list
+ * @note this does not clean up the information that the list is referring to
+ * @param list the list to delete from;
+ * @return 0 if all is well, -1 on error
+ */
+int gf2d_list_delete_last(List *list);
+
+/**
  * @brief delete the first element in the list pointing to the address of data
  * @note does not delete the data itself
  * @param list the list to delete the element from

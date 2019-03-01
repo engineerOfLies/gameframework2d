@@ -1,5 +1,6 @@
 #include "gf2d_collision.h"
 #include "simple_logger.h"
+#include "gf2d_dynamic_body.h"
 #include "gf2d_draw.h"
 #include <stdlib.h>
 
@@ -20,6 +21,24 @@ void gf2d_collision_free(Collision *collision)
 {
     if (!collision)return;
     free(collision);
+}
+
+void gf2d_collision_list_clear(List *list)
+{
+    int i, count;
+    Collision *collision;
+    if (!list)return;
+    count = gf2d_list_get_count(list);
+    for (i = 0; i < count;i++)
+    {
+        collision = (Collision*)gf2d_list_get_nth(list,i);
+        if (!collision)continue;
+        gf2d_collision_free(collision);
+    }
+    for (i = 0; i < count;i++)
+    {
+        gf2d_list_delete_last(list);
+    }
 }
 
 void gf2d_collision_list_free(List *list)
@@ -57,10 +76,35 @@ Collision *gf2d_collision_space_static_shape_clip(Shape a, Shape *s)
     return collision;
 }
 
+Collision *gf2d_collision_space_dynamic_body_clip(Shape a, DynamicBody *d)
+{
+    Shape s;
+    Collision *collision;
+    Vector2D poc,normal;
+    if (!d)return NULL;
+    s = gf2d_dynamic_body_to_shape(d);
+    if (!gf2d_shape_overlap_poc(a, s, &poc, &normal))
+    {
+        return NULL;
+    }
+    collision = gf2d_collision_new();
+    collision->collided = 1;
+    collision->blocked = 1;
+    vector2d_copy(collision->pointOfContact,poc);
+    vector2d_copy(collision->normal,normal);
+    collision->shape = d->body->shape;
+    collision->body = d->body;
+    collision->bounds = 0;
+    collision->timeStep = 0; 
+    return collision;
+}
+
+
 List *gf2d_collision_check_space_shape(Space *space, Shape shape,CollisionFilter filter)
 {
     int i,count;
     Shape *staticShape;
+    DynamicBody *db;
     Collision *collision;
     List *collisionList = NULL;
     collisionList = gf2d_list_new();
@@ -82,6 +126,22 @@ List *gf2d_collision_check_space_shape(Space *space, Shape shape,CollisionFilter
         {
             db->collisionList = gf2d_list_append(db->collisionList,(void*)collision);
         }*/
+    }
+    if (filter.cliplayer)
+    {
+        count = gf2d_list_get_count(space->dynamicBodyList);
+        for (i = 0; i < count;i++)
+        {
+            db = (DynamicBody*)gf2d_list_get_nth(space->dynamicBodyList,i);
+            if (!db)continue;
+            if (db->body == filter.ignore)continue;
+            if (!(filter.cliplayer & db->body->cliplayer))continue;
+            // check for layer compatibility
+            collision = gf2d_collision_space_dynamic_body_clip(shape, db);
+            if (collision == NULL)continue;
+            collisionList = gf2d_list_append(collisionList,(void*)collision);
+        }
+
     }
 
     return collisionList;

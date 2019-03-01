@@ -29,7 +29,7 @@ typedef struct Collision_S
 typedef struct CollisionFilter_S
 {
     Uint8       worldclip;      /**<if this body should clip the world bounds and static shapes*/
-    Uint32      cliplayer;      /**<only bodies that share one or more layers will collide with each other*/
+    Uint32      cliplayer;      /**<only bodies that share one or more layers will collide with each other, zero layer means no dynamic bodies clipped*/
     Uint32      touchlayer;     /**<only bodies that share one or more layers will have their touch functions called*/
     Uint32      team;           /**<bodies that share a team will NOT interact*/
     Body       *ignore;         /**<this body will specifically be skipped in checks*/
@@ -40,6 +40,12 @@ typedef struct CollisionFilter_S
  * @return a new initialized collision or NULL on error
  */
 Collision *gf2d_collision_new();
+
+/**
+ * @brief empty the list, without freeing the data
+ * @param list the collision list to clear
+ */
+void gf2d_collision_list_clear(List *list);
 
 /**
  * @brief free data allocated for a collision
