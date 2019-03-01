@@ -82,7 +82,7 @@ int main(int argc, char * argv[])
         0.1,
         vector2d(0,0.1),
         1,
-        20);
+        1);
     mf = 0;
 
     shape[1] = gf2d_shape_circle(0,0, 10);
