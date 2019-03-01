@@ -238,8 +238,8 @@ void gf2d_space_dynamic_bodies_step(Space *space,DynamicBody *db, float t)
             }
             if (normalCount)
             {
-                vector2d_scale(total,total,1.0/normalCount);
-                db->velocity = total;
+//                vector2d_scale(total,total,(1.0/normalCount)*space->slop);
+//                db->velocity = total;
                 vector2d_set_magnitude(&db->velocity,db->speed);
             }
         }

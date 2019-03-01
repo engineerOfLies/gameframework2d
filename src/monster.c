@@ -129,7 +129,7 @@ void monster_think_hunting(Entity *self)
     slog("moving towards player");
     // jump to player
     self->jumpcool = gf2d_actor_get_frames_remaining(&self->actor);
-    self->velocity.y -= 10;
+    self->velocity.y = -10;
     if (player->position.x < self->position.x)
     {
         self->flip.x = 0;

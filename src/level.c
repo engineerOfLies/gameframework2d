@@ -174,7 +174,7 @@ void level_make_space()
         0.1,
         vector2d(0,0),
         1,
-        0.1);
+        0.001);
 }
 
 void level_make_tile_layer(LevelInfo *linfo)

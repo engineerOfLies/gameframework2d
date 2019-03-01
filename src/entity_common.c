@@ -56,7 +56,7 @@ int entity_camera_view(Entity *self)
 void entity_apply_gravity(Entity *self)
 {
     self->velocity.y += 0.58;
-    if (entity_ground_check(self,1))
+    if (entity_ground_check(self,2))
     {
         if (self->velocity.y > 0)self->velocity.y = 0;
         self->grounded = 1;
@@ -109,7 +109,7 @@ int entity_roof_check(Entity *self, float width)
 
 int entity_ground_check(Entity *self, float width)
 {
-    Rect r;
+    Shape s;
     int i,count;
     Collision *c;
     List *collisionList = NULL;
@@ -118,18 +118,14 @@ int entity_ground_check(Entity *self, float width)
         0,
         0,
         0,
-        NULL
+        &self->body
     };
 
     if (!self)return 0;    
-    r = gf2d_shape_get_bounds(self->shape);
-    r.x += 0.1;
-    r.w -= 0.2;
-    r.y += r.h + 0.1;
-    r.h = width;
-    vector2d_add(r,r,self->position);
+    s = gf2d_body_to_shape(&self->body);
+    gf2d_shape_move(&s,vector2d(0,width));
     
-    collisionList = gf2d_collision_check_space_shape(level_get_space(), gf2d_shape_from_rect(r),filter);
+    collisionList = gf2d_collision_check_space_shape(level_get_space(), s,filter);
     if (collisionList != NULL)
     {
         count = gf2d_list_get_count(collisionList);
@@ -138,7 +134,6 @@ int entity_ground_check(Entity *self, float width)
             c = (Collision*)gf2d_list_get_nth(collisionList,i);
             if (!c)continue;
             if (!c->shape)continue;
-            if (self == player_get())gf2d_shape_slog(*c->shape);
             gf2d_shape_draw(*c->shape,gf2d_color(255,255,0,255),camera_get_offset());
         }
         gf2d_collision_list_free(collisionList);

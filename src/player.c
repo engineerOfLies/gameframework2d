@@ -163,7 +163,7 @@ void player_think(Entity *self)
                     self->velocity.x += 1.25;
                 }
             }
-            if (((gf2d_input_command_pressed("jump"))&&(self->grounded))&&(!self->jumpcool))
+            if (((gf2d_input_command_pressed("jump"))&&(self->grounded))&&(self->jumpcool <= 0))
             {
                 self->velocity.y -= 10;
                 self->jumpcool = gf2d_actor_get_frames_remaining(&self->actor);
@@ -210,8 +210,8 @@ void player_update(Entity *self)
         self->velocity.x *= 0.8;
         if (fabs(self->velocity.x) < 1)self->velocity.x = 0;
     }
+    entity_world_snap(self);    // error correction for collision system
     entity_apply_gravity(self);
-//    entity_world_snap(self);    // error correction for collision system
     switch (self->state)
     {
         case ES_Idle:

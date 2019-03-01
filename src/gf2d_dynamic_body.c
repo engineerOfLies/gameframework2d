@@ -170,6 +170,10 @@ void gf2d_dynamic_body_resolve_overlap(DynamicBody *db,float backoff)
         if (!collision)continue;
         vector2d_add(total,total,collision->normal);
     }
+    if (count)
+    {
+        vector2d_scale(total,total,(1.0/count)*backoff);
+    }
     vector2d_add(db->body->position,db->body->position,total);
 }
 
