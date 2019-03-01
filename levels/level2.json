@@ -31,6 +31,11 @@
             "target":"door",
             "targetId":1
          }},
+        {"name":"breakable",
+         "position":[128,320],
+         "args":{
+            "actor":"actors/barrel.actor"
+         }},
         {"name":"monster_start",
          "position":[320,32]},
         {"name":"monster_start",

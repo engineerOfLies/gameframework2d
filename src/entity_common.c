@@ -75,7 +75,7 @@ int entity_wall_check(Entity *self, Vector2D dir)
     List *collisionList;
     CollisionFilter filter = {
         1,
-        0,
+        WORLD_LAYER,
         0,
         0,
         &self->body

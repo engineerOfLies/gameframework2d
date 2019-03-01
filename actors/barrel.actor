@@ -1,0 +1,25 @@
+sprite: images/barrel.png
+frameWidth: 48
+frameHeight: 48
+framesPerLine: 16
+scale: 1,1
+color: 255,255,255,255
+colorSpecial: 255,100,100,255
+
+action: idle
+startFrame: 0
+endFrame: 0
+frameRate: 0
+type:   loop
+
+action: die
+startFrame: 1
+endFrame: 15
+frameRate: 0.1
+type:   loop
+
+action: dead
+startFrame: 15
+endFrame: 15
+frameRate: 0
+type:   loop

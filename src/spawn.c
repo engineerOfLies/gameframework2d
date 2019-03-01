@@ -4,6 +4,7 @@
 #include "monster.h"
 #include "pickup.h"
 #include "door.h"
+#include "breakable.h"
 #include "simple_logger.h"
 
 static Spawn spawnlist[] = 
@@ -19,6 +20,10 @@ static Spawn spawnlist[] =
     {
         "pickup_start",
         pickup_spawn
+    },
+    {
+        "breakable",
+        breakable_spawn,
     },
     {
         "door",

@@ -77,7 +77,7 @@ Entity *player_new(Vector2D position)
         &self->body,
         "player",
         1,
-        1,
+        WORLD_LAYER,
         0,
         1,
         position,
@@ -168,7 +168,6 @@ void player_think(Entity *self)
             {
                 gf2d_actor_set_action(&self->actor,"hack");
                 self->cooldown = gf2d_actor_get_frames_remaining(&self->actor);
-                slog("cooldown set to %i",self->cooldown);
                 self->state = ES_Attacking;
             }
             break;
@@ -179,12 +178,15 @@ void player_think(Entity *self)
 
 void player_melee(Entity *self)
 {
+    Shape s;
     int i,count;
     Entity *other;
     Collision *c;
     List *collisionList = NULL;
-    collisionList = entity_get_clipped_entities(self,gf2d_body_to_shape(&self->body), MONSTER_LAYER, 0);
+    s = gf2d_shape_rect(self->position.x + (self->flip.x * -48) + 16, self->position.y, 16, 32);
+    collisionList = entity_get_clipped_entities(self,s, MONSTER_LAYER, 0);
     count = gf2d_list_get_count(collisionList);
+    slog("hit %i targets",count);
     for (i = 0; i < count;i++)
     {
         c = (Collision*)gf2d_list_get_nth(collisionList,i);
