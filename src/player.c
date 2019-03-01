@@ -211,7 +211,7 @@ void player_update(Entity *self)
         if (fabs(self->velocity.x) < 1)self->velocity.x = 0;
     }
     entity_apply_gravity(self);
-    entity_world_snap(self);    // error correction for collision system
+//    entity_world_snap(self);    // error correction for collision system
     switch (self->state)
     {
         case ES_Idle:
