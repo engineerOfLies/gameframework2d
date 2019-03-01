@@ -35,7 +35,7 @@ Entity *monster_new(Vector2D position,char *actorFile)
         &self->body,
         "monster",
         1,//world layer
-        0,
+        MONSTER_LAYER,
         0,
         2,
         position,

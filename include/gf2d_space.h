@@ -6,7 +6,7 @@
 
 typedef struct
 {
-    List       *dynamicBodyList;       /**<list of bodies in the space*/
+    List       *dynamicBodyList;/**<list of bodies in the space*/
     List       *staticShapes;   /**<list of shapes that will collide that do not move*/
     int         precision;      /**<number of backoff attempts before giving up*/
     Rect        bounds;         /**<absolute bounds of the space*/

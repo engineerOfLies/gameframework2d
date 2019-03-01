@@ -56,7 +56,7 @@ int entity_camera_view(Entity *self)
 void entity_apply_gravity(Entity *self)
 {
     self->velocity.y += 0.58;
-    if (entity_ground_check(self,2))
+    if (entity_wall_check(self,vector2d(0,2)))
     {
         if (self->velocity.y > 0)self->velocity.y = 0;
         self->grounded = 1;
@@ -67,9 +67,9 @@ void entity_apply_gravity(Entity *self)
     }
 }
 
-int entity_roof_check(Entity *self, float width)
+int entity_wall_check(Entity *self, Vector2D dir)
 {
-    Rect r;
+    Shape s;
     int i,count;
     Collision *c;
     List *collisionList;
@@ -82,49 +82,9 @@ int entity_roof_check(Entity *self, float width)
     };
 
     if (!self)return 0;
-    r = gf2d_shape_get_bounds(self->shape);
-    r.x += 0.1;
-    r.w -= 0.2;
-    r.y -= (0.1 + width);
-    r.h = width;
-    vector2d_add(r,r,self->position);
-
-    collisionList = gf2d_collision_check_space_shape(level_get_space(), gf2d_shape_from_rect(r),filter);
-    if (collisionList != NULL)
-    {
-        count = gf2d_list_get_count(collisionList);
-        for (i = 0;i < count;i++)
-        {
-            c = (Collision*)gf2d_list_get_nth(collisionList,i);
-            if (!c)continue;
-            if (!c->shape)continue;
-            gf2d_shape_draw(*c->shape,gf2d_color(255,255,0,255),camera_get_offset());
-        }
-        gf2d_collision_list_free(collisionList);
-        return 1;
-    }
-    return 0;
-}
-
-
-int entity_ground_check(Entity *self, float width)
-{
-    Shape s;
-    int i,count;
-    Collision *c;
-    List *collisionList = NULL;
-    CollisionFilter filter = {
-        1,
-        0,
-        0,
-        0,
-        &self->body
-    };
-
-    if (!self)return 0;    
     s = gf2d_body_to_shape(&self->body);
-    gf2d_shape_move(&s,vector2d(0,width));
-    
+    gf2d_shape_move(&s,dir);
+
     collisionList = gf2d_collision_check_space_shape(level_get_space(), s,filter);
     if (collisionList != NULL)
     {
@@ -142,99 +102,50 @@ int entity_ground_check(Entity *self, float width)
     return 0;
 }
 
-int entity_left_check(Entity *self, float width)
+List *entity_get_clipped_entities(Entity *self,Shape s, Uint32 layers, Uint32 team)
 {
-    Rect r;
-    int i,count;
-    Collision *c;
-    List *collisionList;
-    CollisionFilter filter = {
-        1,
-        0,
-        0,
-        0,
-        &self->body
-    };
-    
-    if (!self)return 0;
-    r = gf2d_shape_get_bounds(self->shape);
-    r.x -= (0.1 + width);
-    r.w = width;
-    r.y += 0.1;
-    r.h -= 0.2;
-    vector2d_add(r,r,self->position);
-
-    collisionList = gf2d_collision_check_space_shape(level_get_space(), gf2d_shape_from_rect(r),filter);
-    if (collisionList != NULL)
-    {
-        count = gf2d_list_get_count(collisionList);
-        for (i = 0;i < count;i++)
-        {
-            c = (Collision*)gf2d_list_get_nth(collisionList,i);
-            if (!c)continue;
-            if (!c->shape)continue;
-            gf2d_shape_draw(*c->shape,gf2d_color(255,255,0,255),camera_get_offset());
-        }
-        gf2d_collision_list_free(collisionList);
-        return 1;
-    }
-    return 0;
+    CollisionFilter filter = {0};
+    filter.ignore = &self->body;
+    filter.cliplayer = layers;
+    filter.team = team;
+    return gf2d_collision_check_space_shape(level_get_space(), s,filter);
 }
 
-int entity_right_check(Entity *self, float width)
+void entity_activate(Entity *self)
 {
-    Rect r;
     int i,count;
+    Entity *other;
     Collision *c;
-    List *collisionList;
-    CollisionFilter filter = {
-        1,
-        0,
-        0,
-        0,
-        &self->body
-    };
-
-    if (!self)return 0;
-    r = gf2d_shape_get_bounds(self->shape);
-    r.x += r.w + 0.11;
-    r.w = width;
-    r.y += 0.1;
-    r.h -= 0.2;
-    vector2d_add(r,r,self->position);
-
-    collisionList = gf2d_collision_check_space_shape(level_get_space(), gf2d_shape_from_rect(r),filter);
-    if (collisionList != NULL)
+    List *collisionList = NULL;
+    collisionList = entity_get_clipped_entities(self,gf2d_body_to_shape(&self->body), OBJECT_LAYER, 0);
+    count = gf2d_list_get_count(collisionList);
+    for (i = 0; i < count;i++)
     {
-        count = gf2d_list_get_count(collisionList);
-        for (i = 0;i < count;i++)
-        {
-            c = (Collision*)gf2d_list_get_nth(collisionList,i);
-            if (!c)continue;
-            if (!c->shape)continue;
-            gf2d_shape_draw(*c->shape,gf2d_color(255,255,0,255),camera_get_offset());
-        }
-        gf2d_collision_list_free(collisionList);
-        return 1;
+        c = (Collision*)gf2d_list_get_nth(collisionList,i);
+        if (!c)continue;
+        if (!c->body)continue;
+        if (!c->body->data)continue;
+        other = c->body->data;
+        if (other->activate)other->activate(other,self);
     }
-    return 0;
+    gf2d_collision_list_free(collisionList);
 }
 
 void entity_world_snap(Entity *self)
 {
-    if (entity_ground_check(self,0.1))
+    if (entity_wall_check(self, vector2d(0,0.1)))
     {
         self->position.y -= 0.1;
     }
-    if (entity_roof_check(self,0.1))
+    if (entity_wall_check(self, vector2d(0,-0.1)))
     {
         self->position.y += 0.1;
     }
-    if (entity_right_check(self,0.1))
+    if (entity_wall_check(self, vector2d(0.1,0)))
     {
         self->position.x -= 0.1;
     }
-    if (entity_left_check(self,0.1))
+    if (entity_wall_check(self, vector2d(-0.1,0)))
     {
         self->position.x += 0.1;
     }    
@@ -257,4 +168,17 @@ Entity *entity_get_from_body(Body *body)
     return (Entity*)body->data;
 }
 
+
+
+Entity *entity_get_touching_player(Entity *self)
+{
+    Entity *player;
+    player = player_get();
+    if (!player)return NULL;
+    if (gf2d_body_body_collide(&self->body,&player->body))
+    {
+        return player;
+    }
+    return NULL;
+}
 /*eol@eof*/

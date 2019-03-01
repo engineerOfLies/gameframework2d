@@ -126,20 +126,7 @@ void player_draw(Entity *self)
 
 void player_activation_check(Entity *self)
 {
-/*    Shape s = {0};
-    Entity *other;
-    Collision c;
-    s = gf2d_body_to_shape(&self->body);
-    gf2d_shape_slog(s);
-    gf2d_space_body_collision_test_filter(level_get_space(),s, &c,f);
-    gf2d_shape_draw(s,gf2d_color(255,255,0,255),vector2d(0,0));
-    if (c.collided)
-    {
-        other = entity_get_from_body(c.body);
-        if (!other)return;
-        slog("collided with %s",other->name);
-        if (other->activate)other->activate(other,self);
-    }*/
+    entity_activate(self);
 }
 
 void player_think(Entity *self)
@@ -150,7 +137,7 @@ void player_think(Entity *self)
             if (gf2d_input_command_down("walkleft"))
             {
                 self->flip.x = 1;
-                if (!entity_left_check(self,1))
+                if (!entity_wall_check(self,vector2d(-2,0)))
                 {   
                     self->velocity.x -= 1.25;
                 }
@@ -158,7 +145,7 @@ void player_think(Entity *self)
             if (gf2d_input_command_down("walkright"))
             {
                 self->flip.x = 0;
-                if (!entity_right_check(self,1))
+                if (!entity_wall_check(self,vector2d(2,0)))
                 {
                     self->velocity.x += 1.25;
                 }
@@ -190,10 +177,28 @@ void player_think(Entity *self)
     }
 }
 
+void player_melee(Entity *self)
+{
+    int i,count;
+    Entity *other;
+    Collision *c;
+    List *collisionList = NULL;
+    collisionList = entity_get_clipped_entities(self,gf2d_body_to_shape(&self->body), MONSTER_LAYER, 0);
+    count = gf2d_list_get_count(collisionList);
+    for (i = 0; i < count;i++)
+    {
+        c = (Collision*)gf2d_list_get_nth(collisionList,i);
+        if (!c)continue;
+        if (!c->body)continue;
+        if (!c->body->data)continue;
+        other = c->body->data;
+        if (other->damage)other->damage(other,10,self);//TODO: make this based on weapon / player stats
+    }
+    gf2d_collision_list_free(collisionList);
+}
+
 void player_update(Entity *self)
 {
-    Collision c = {0};
-    Entity *other = NULL;
     Vector2D camPosition = {0,0};
     if (!self)return;
     
@@ -221,14 +226,7 @@ void player_update(Entity *self)
         case ES_Attacking:
             if (gf2d_actor_get_frames_remaining(&self->actor) == 2)
             {
-/*                c = entity_block_hit(self,gf2d_rect(self->position.x + 16 + (self->flip.x * -48),self->position.y-8,16,32));
-                if (c.collided)
-                {
-                    other = c.body->data;
-                    slog("HIT %s",other->name);
-                    entity_damage(other,self,5,1);
-                    if (other->maxHealth)gui_set_opponent_health(other->health/other->maxHealth);
-                }*/
+                player_melee(self);
             }
         case ES_Jumping:
         case ES_Leaving:

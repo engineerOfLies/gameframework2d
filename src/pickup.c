@@ -88,31 +88,12 @@ void pickup_draw(Entity *self)
 
 void pickup_think(Entity *self)
 {
-    Collision *c = NULL;
-    List *collisionList = NULL;
-    Shape shape;
-    int i,count;
-    CollisionFilter filter = {0};
-    filter.cliplayer = PLAYER_LAYER;
-    filter.ignore = &self->body;
-    shape = gf2d_body_to_shape(&self->body);
-    
-    collisionList = gf2d_collision_check_space_shape(level_get_space(), shape,filter);
-    if (collisionList)
+    Entity *player;
+    player = entity_get_touching_player(self);
+    if (player != NULL)
     {
-        count = gf2d_list_get_count(collisionList);
-        for (i = 0; i < count; i++)
-        {
-            c = (Collision *)gf2d_list_get_nth(collisionList,i);
-            if (!c)continue;
-            if (!c->collided)continue;
-            if (!c->body)continue;
-            if (c->body->data != player_get())continue;
-            //TODO give player the item
-            gf2d_sound_play(self->sound[0],0,1,-1,-1);
-            self->dead = 1;            
-        }
-        return;    
+        gf2d_sound_play(self->sound[0],0,1,-1,-1);
+        self->dead = 1;            
     }
 }
 
