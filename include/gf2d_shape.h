@@ -7,17 +7,17 @@
 
 typedef struct
 {
-    float x1,y1,x2,y2;
+    double x1,y1,x2,y2;
 }Edge;
 
 typedef struct
 {
-    float       x,y,r;
+    double       x,y,r;
 }Circle;
 
 typedef struct
 {
-    float x,y,w,h;
+    double x,y,w,h;
 }Rect;
 
 typedef enum
@@ -381,6 +381,10 @@ Uint8 gf2d_edge_intersect_shape_poc(Edge e,Shape s,Vector2D *poc,Vector2D *norma
  */
 void gf2d_shape_slog(Shape shape);
 
+void gf2d_edge_slog(Edge e);
+void gf2d_rect_slog(Rect r);
+void gf2d_circle_slog(Circle c);
+
 /**
  * @brief echo out the rect information to log (and stdout)
  * @param r the rect information to echo
@@ -393,5 +397,28 @@ void gf2d_rect_slog(Rect r);
  * @return the bounding rectangle
  */
 Rect gf2d_shape_get_bounds(Shape shape);
+
+/**
+ * @brief get the normal of the shape relative to a reference shape
+ * @param s the shape to get the normal from
+ * @param s2 the normal should be pointing towards this shape
+ * @return an empty vector if the refPoint is in the shape, a unit vector otherwise
+ */
+Vector2D gf2d_shape_get_normal_for_shape(Shape s, Shape s2);
+
+/**
+ * @brief get the normal of the shape relative to a reference for a given circle
+ * @param s the shape to get the normal from
+ * @param c the normal should be pointing towards this shape
+ * @return an empty vector if the refPoint is in the shape, a unit vector otherwise
+ */
+Vector2D gf2d_shape_get_normal_for_cirlce(Shape s, Circle c);
+
+/**
+ * @brief get the center point of a rect
+ * @param r the rectangle to use
+ * @return the center point of the rect
+ */
+Vector2D gf2d_rect_get_center_point(Rect r);
 
 #endif

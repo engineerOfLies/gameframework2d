@@ -24,6 +24,24 @@ Vector4D vector4d(double x, double y, double z, double w)
   return vec;
 }
 
+Bool vector2d_distance_between_less_than(Vector2D p1,Vector2D p2,float size)
+{
+    if (vector2d_magnitude_between(p1,p2) < size)return 1;
+    return 0;
+}
+
+Bool vector3d_distance_between_less_than(Vector3D p1,Vector3D p2,float size)
+{
+    if (vector3d_magnitude_between(p1,p2) < size)return 1;
+    return 0;
+}
+
+Bool vector4d_distance_between_less_than(Vector4D p1,Vector4D p2,float size)
+{
+    if (vector4d_magnitude_between(p1,p2) < size)return 1;
+    return 0;
+}
+
 float vector2d_magnitude (Vector2D V)
 {
   return sqrt (V.x * V.x + V.y * V.y);
@@ -81,6 +99,27 @@ void vector4d_set_magnitude(Vector4D * V,float magnitude)
   V->w *= magnitude;
 }
 
+double vector2d_magnitude_between(Vector2D a,Vector2D b)
+{
+    Vector2D c;
+    vector2d_sub(c,a,b);
+    return vector2d_magnitude(c);
+}
+
+double vector3d_magnitude_between(Vector3D a,Vector3D b)
+{
+    Vector3D c;
+    vector3d_sub(c,a,b);
+    return vector3d_magnitude(c);
+}
+
+double vector4d_magnitude_between(Vector4D a,Vector4D b)
+{
+    Vector4D c;
+    vector4d_sub(c,a,b);
+    return vector4d_magnitude(c);
+}
+
 int vector2d_magnitude_compare(Vector2D V,float size)
 {
     float ms = vector2d_magnitude_squared(V);
@@ -125,7 +164,7 @@ void vector4d_set_angle_by_radians(Vector4D *out,float radians)
 
 void vector2d_normalize (Vector2D *V)
 {
-  float M;
+  double M;
   if (!V)return;
   M = vector2d_magnitude (*V);
   if (M == 0.0f)

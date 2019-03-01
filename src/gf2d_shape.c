@@ -1,6 +1,336 @@
 #include "gf2d_shape.h"
 #include "gf2d_draw.h"
 #include "simple_logger.h"
+#include <assert.h>
+Uint8 gf2d_edge_circle_intersection_poc_old(Edge e,Circle c,Vector2D *poc,Vector2D *normal);
+Uint8 gf2d_edge_to_circle_intersection_poc(Edge e,Circle c,Vector2D *poc,Vector2D *normal);
+Uint8 gf2d_circle_to_edge_intersection_poc(Edge e,Circle c,Vector2D *poc,Vector2D *normal);
+
+Vector2D gf2d_rect_get_center_point(Rect r)
+{
+    return vector2d(r.x + r.w*0.5,r.y + r.h*0.5);
+}
+
+Vector2D gf2d_edge_get_normal_for_rect(Edge e, Rect r)
+{
+    Vector2D out = {0};
+    Vector2D c = {0};
+    Vector2D n1,n2,p1,p2;
+    Vector2D dir = {0};
+    Vector2D parallel = {0};
+    
+    p1 = vector2d(e.x1,e.y1);
+    p2 = vector2d(e.x2,e.y2);
+
+    vector2d_sub(n1,p2,p1);
+    vector2d_copy(parallel,n1);
+    n1.x = p2.y - p1.y;
+    n1.y = p1.x - p2.x;
+    vector2d_scale(parallel,parallel,r.w+r.h);
+    
+    vector2d_normalize(&n1);
+    vector2d_negate(n2,n1);
+    c = gf2d_rect_get_center_point(r);
+    
+    if (gf2d_point_in_rect(vector2d(e.x1,e.y1),r))
+    {
+        out.x = e.x1 - e.x2;
+        out.y = e.y1 - e.y2;
+        vector2d_normalize(&out);
+        return out;
+    }
+    if (gf2d_point_in_rect(vector2d(e.x2,e.y2),r))
+    {
+        out.x = e.x2 - e.x1;
+        out.y = e.y2 - e.y1;
+        vector2d_normalize(&out);
+        return out;
+    }
+    vector2d_scale(dir,n1,(r.w + r.h));
+    if (gf2d_edge_intersect(gf2d_edge(p1.x - parallel.x,p1.y - parallel.y,p2.x + parallel.x,p2.y + parallel.y),
+                            gf2d_edge(c.x, c.y, c.x + dir.x, c.y + dir.y)))
+    {
+        return n2;
+    }
+    vector2d_scale(dir,n2,(r.w + r.h));
+    if (gf2d_edge_intersect(gf2d_edge(p1.x - parallel.x,p1.y - parallel.y,p2.x + parallel.x,p2.y + parallel.y),
+                            gf2d_edge(c.x, c.y, c.x + dir.x, c.y + dir.y)))
+    {
+        return n1;
+    }
+    return out;
+}
+
+Vector2D gf2d_rect_get_normal_for_edge(Rect r,Edge e)
+{
+    Vector2D out = {0};
+    Vector2D c = {0};
+    Vector2D n1,n2,p1,p2;
+    Vector2D dir = {0};
+    Vector2D parallel = {0};
+    
+    p1 = vector2d(e.x1,e.y1);
+    p2 = vector2d(e.x2,e.y2);
+
+    vector2d_sub(n1,p2,p1);
+    vector2d_copy(parallel,n1);
+    n1.x = p2.y - p1.y;
+    n1.y = p1.x - p2.x;
+    vector2d_scale(parallel,parallel,r.w+r.h);
+    
+    vector2d_normalize(&n1);
+    vector2d_negate(n2,n1);
+    c = gf2d_rect_get_center_point(r);
+    
+    if (gf2d_point_in_rect(vector2d(e.x1,e.y1),r))
+    {
+        out.x = e.x1 - e.x2;
+        out.y = e.y1 - e.y2;
+        vector2d_normalize(&out);
+        return out;
+    }
+    if (gf2d_point_in_rect(vector2d(e.x2,e.y2),r))
+    {
+        out.x = e.x2 - e.x1;
+        out.y = e.y2 - e.y1;
+        vector2d_normalize(&out);
+        return out;
+    }
+    vector2d_scale(dir,n1,(r.w + r.h));
+    if (gf2d_edge_intersect(gf2d_edge(p1.x - parallel.x,p1.y - parallel.y,p2.x + parallel.x,p2.y + parallel.y),
+                            gf2d_edge(c.x, c.y, c.x + dir.x, c.y + dir.y)))
+    {
+        return n2;
+    }
+    vector2d_scale(dir,n2,(r.w + r.h));
+    if (gf2d_edge_intersect(gf2d_edge(p1.x - parallel.x,p1.y - parallel.y,p2.x + parallel.x,p2.y + parallel.y),
+                            gf2d_edge(c.x, c.y, c.x + dir.x, c.y + dir.y)))
+    {
+        return n1;
+    }
+    return out;
+}
+
+Vector2D gf2d_circle_get_normal_for_rect(Circle c, Rect r)
+{
+    Vector2D out = {0};
+    Vector2D poc = {0};
+    if (!gf2d_circle_rect_overlap_poc(c, r,&poc,NULL))
+    {
+        slog("can't calculate normal, no collision!");
+        return out;
+    }
+    vector2d_sub(out,poc,c);
+    vector2d_normalize(&out);
+    return out;
+}
+
+Vector2D gf2d_rect_get_normal_for_rect(Rect r, Rect ref)
+{
+    Vector2D out = {0};
+    if (ref.x + 1 >= (r.x + r.w))
+    {
+        out.x = 1;
+        return out;
+    }
+    if ((ref.x + ref.w - 1) <= r.x)
+    {
+        out.x = -1;
+        return out;
+    }
+    if (ref.y + 1 >= (r.y + r.h))
+    {
+        out.y = 1;
+        return out;
+    }
+    if ((ref.y + ref.h - 1) <= r.y)
+    {
+        out.y = -1;
+        return out;
+    }
+    return out;
+}
+
+Vector2D gf2d_rect_get_normal_for_cirlce(Rect r, Circle c)
+{
+    Vector2D out = {0};
+    if (c.x < r.x)out.x = -1;
+    if (c.y < r.y)out.y = -1;
+    if (c.x > r.x + r.w)out.x = 1;
+    if (c.y > r.y + r.h)out.y = 1;
+    if ((out.x != 0)&&(out.y != 0))
+    {
+        if ((out.x < 0)&&(out.y < 0))
+        {
+            out.x = c.x - r.x;
+            out.y = c.y - r.y;
+        }
+        else if ((out.x > 0)&&(out.y < 0))
+        {
+            out.x = c.x - (r.x + r.w);
+            out.y = c.y - r.y;
+        }
+        else if ((out.x < 0)&&(out.y > 0))
+        {
+            out.x = c.x - r.x;
+            out.y = c.y - (r.y + r.h);// this breaks without the parenthesis, I HAVE NO IDEA WHY
+
+        }
+        else if ((out.x > 0)&&(out.y > 0))
+        {
+            out.x = c.x - (r.x + r.w);
+            out.y = c.y - (r.y + r.h);
+        }
+        vector2d_normalize(&out);
+        // edge case where it has to be perfect 
+        // check angle between the corner and the c, if its not damn near perfect 45, pick the dominant side
+    }
+    if ((out.x) ||(out.y))return out;
+    if (gf2d_point_in_rect(vector2d(c.x,c.y),r))
+    {
+        out = gf2d_rect_get_center_point(r);
+        vector2d_sub(out,c,out);
+        return out;
+    }
+    return out;
+}
+
+Vector2D gf2d_circle_get_normal_for_cirlce(Circle c, Circle c2)
+{
+    Vector2D out = {0};
+    vector2d_sub(out,c2,c);
+    vector2d_normalize(&out);
+    return out;
+}
+
+Vector2D gf2d_edge_get_normal_for_cirlce(Edge e, Circle c)
+{
+    Vector2D out = {0};
+    Vector2D dir = {0};
+    Vector2D p1,p2;
+    Vector2D n1,n2;
+    Vector2D parallel = {0};
+    p1 = vector2d(e.x1,e.y1);
+    p2 = vector2d(e.x2,e.y2);
+        
+    vector2d_sub(n1,p2,p1);
+    vector2d_copy(parallel,n1);
+    n1.x = p2.y - p1.y;
+    n1.y = p1.x - p2.x;
+    
+    vector2d_normalize(&n1);
+    vector2d_negate(n2,n1);
+    
+    vector2d_scale(parallel,parallel,c.r-1);
+    vector2d_scale(dir,n1,(c.r));
+    if (gf2d_edge_intersect(gf2d_edge(p1.x - parallel.x,p1.y - parallel.y,p2.x + parallel.x,p2.y + parallel.y),gf2d_edge(c.x, c.y, c.x + dir.x, c.y + dir.y)))
+    {
+        return n2;
+    }
+    vector2d_scale(dir,n2,(c.r));
+    if (gf2d_edge_intersect(gf2d_edge(p1.x - parallel.x,p1.y - parallel.y,p2.x + parallel.x,p2.y + parallel.y),gf2d_edge(c.x, c.y, c.x + dir.x, c.y + dir.y)))
+    {
+        return n1;
+    }
+    c.r += 1;
+    if (gf2d_point_in_cicle(p1,c))
+    {
+        out.x = c.x - p1.x;
+        out.y = c.y - p1.y;
+        vector2d_normalize(&out);
+        return out;
+    }
+    if (gf2d_point_in_cicle(p2,c))
+    {
+        out.x = c.x - p2.x;
+        out.y = c.y - p2.y;
+        vector2d_normalize(&out);
+        return out;
+    }
+    return out;
+}
+
+Vector2D gf2d_edge_get_normal_for_edge(Edge e1,Edge e2)
+{
+    Vector2D out = {0};
+    if (!gf2d_edge_intersect_poc(e1,e2,NULL,&out))
+    {
+        return out;
+    }
+    return out;
+}
+
+Vector2D gf2d_shape_get_normal_for_edge(Shape s, Edge e)
+{
+    Vector2D out = {0};
+    switch(s.type)
+    {
+        case ST_RECT:
+            out = gf2d_edge_get_normal_for_rect(e, s.s.r);
+            break;
+        case ST_CIRCLE:
+            out = gf2d_edge_get_normal_for_cirlce(e, s.s.c);
+            break;
+        case ST_EDGE:
+            out = gf2d_edge_get_normal_for_edge(s.s.e, e);
+            break;
+    }
+    return out;
+}
+
+Vector2D gf2d_shape_get_normal_for_cirlce(Shape s, Circle c)
+{
+    Vector2D out = {0};
+    switch(s.type)
+    {
+        case ST_RECT:
+            out = gf2d_rect_get_normal_for_cirlce(s.s.r, c);
+            break;
+        case ST_CIRCLE:
+            out = gf2d_circle_get_normal_for_cirlce(s.s.c, c);
+            break;
+        case ST_EDGE:
+            out = gf2d_edge_get_normal_for_cirlce(s.s.e, c);
+            break;
+    }
+    return out;
+}
+
+Vector2D gf2d_shape_get_normal_for_rect(Shape s, Rect r)
+{
+    Vector2D out = {0};
+    switch(s.type)
+    {
+        case ST_RECT:
+            out = gf2d_rect_get_normal_for_rect(s.s.r, r);
+            break;
+        case ST_CIRCLE:
+            out = gf2d_circle_get_normal_for_rect(s.s.c, r);
+            break;
+        case ST_EDGE:
+            out = gf2d_edge_get_normal_for_rect(s.s.e, r);
+            break;
+    }
+    return out;
+}
+
+Vector2D gf2d_shape_get_normal_for_shape(Shape s, Shape s2)
+{
+    Vector2D out = {0};
+    switch(s2.type)
+    {
+        case ST_RECT:
+            out = gf2d_shape_get_normal_for_rect(s, s2.s.r);
+            break;
+        case ST_CIRCLE:
+            out = gf2d_shape_get_normal_for_cirlce(s, s2.s.c);
+            break;
+        case ST_EDGE:
+            out = gf2d_shape_get_normal_for_edge(s, s2.s.e);
+            break;
+    }
+    return out;
+}
 
 Rect gf2d_rect(float x, float y, float w, float h)
 {
@@ -288,7 +618,7 @@ Uint8 gf2d_shape_overlap_poc(Shape a, Shape b, Vector2D *poc, Vector2D *normal)
                 case ST_RECT:
                     return gf2d_circle_rect_overlap_poc(a.s.c,b.s.r,poc,normal);
                 case ST_EDGE:
-                    return gf2d_edge_circle_intersection_poc(b.s.e,a.s.c,poc,normal);
+                    return gf2d_circle_to_edge_intersection_poc(b.s.e,a.s.c,poc,normal);
             }
         case ST_RECT:
             switch (b.type)
@@ -306,7 +636,7 @@ Uint8 gf2d_shape_overlap_poc(Shape a, Shape b, Vector2D *poc, Vector2D *normal)
                 case ST_EDGE:
                     return gf2d_edge_intersect_poc(a.s.e,b.s.e,poc,normal);
                 case ST_CIRCLE:
-                    return gf2d_edge_circle_intersection_poc(a.s.e,b.s.c,poc,normal);
+                    return gf2d_edge_to_circle_intersection_poc(a.s.e,b.s.c,poc,normal);
                 case ST_RECT:
                     return gf2d_edge_rect_intersection_poc(a.s.e, b.s.r,poc,normal);
             }
@@ -420,20 +750,20 @@ Uint8 gf2d_edge_intersect_poc(
     testx = a.x1 + (Ua * (a.x2 - a.x1));
     testy = a.y1 + (Ua * (a.y2 - a.y1));
 
-    if(contact != NULL)
-    {
-        contact->x = testx;
-        contact->y = testy;
-    }
-    if (normal != NULL)
-    {
-        normal->x = b.y2 - b.y1;
-        normal->y = b.x2 - b.x1;
-        vector2d_normalize(normal);
-    }
   
     if((Ua >= 0) && (Ua <= 1) && (Ub >= 0) && ( Ub <= 1))
     {
+        if(contact != NULL)
+        {
+            contact->x = testx;
+            contact->y = testy;
+        }
+        if (normal != NULL)
+        {
+            normal->x = b.y2 - b.y1;
+            normal->y = b.x2 - b.x1;
+            vector2d_normalize(normal);
+        }
         return 1;
     }
     return 0;  
@@ -458,59 +788,142 @@ Edge gf2d_edge_from_vectors(Vector2D a,Vector2D b)
     return e;
 }
 
+Uint8 gf2d_rect_to_intersection_poc(Edge e, Rect r,Vector2D *poc,Vector2D *normal)
+{
+    Uint8 ret;
+    Uint8 i;
+    Vector2D contacts[4] = {0};
+    Vector2D normals[4] = {0};
+    Vector2D *best = NULL;
+    Vector2D *bestNormal = NULL;
+    float bestDistance;
+    if (gf2d_edge_intersect_poc(e,gf2d_edge(r.x,r.y,r.x+r.w,r.y),&contacts[0],NULL))//top
+    {
+        ret = 1;
+        normals[0].y = -1;
+    }
+    if (gf2d_edge_intersect_poc(e,gf2d_edge(r.x,r.y,r.x,r.y+r.h),&contacts[1],NULL))//left
+    {
+        ret |= 2;
+        normals[1].x = -1;
+    }
+    if (gf2d_edge_intersect_poc(e,gf2d_edge(r.x,(r.y+r.h),r.x+r.w,(r.y+r.h)),&contacts[2],NULL))//bottom
+    {
+        ret |= 4;
+        normals[2].y = 1;
+    }
+    if (gf2d_edge_intersect_poc(e,gf2d_edge(r.x+r.w,r.y,r.x+r.w,r.y+r.h),&contacts[3],NULL))//right
+    {
+        ret |= 8;
+        normals[3].x = 1;
+    }
+    if (!ret)return 0;
+    if ((!poc)&&(!normal))return 1;// no need to do additional work here
+    for (i = 0;i < 4;i++)
+    {
+        if ((1<<i) & ret)
+        {
+            if (!best)
+            {
+                best = &contacts[i];
+                bestNormal = &normals[i];
+                bestDistance = vector2d_magnitude_squared(vector2d(e.x1-contacts[i].x,e.y1-contacts[i].y));
+                continue;
+            }
+            if (vector2d_magnitude_squared(vector2d(e.x1-contacts[i].x,e.y1-contacts[i].y)) < bestDistance)
+            {
+                best = &contacts[i];
+                bestNormal = &normals[i];
+                bestDistance = vector2d_magnitude_squared(vector2d(e.x1-contacts[i].x,e.y1-contacts[i].y));
+            }
+        }
+    }
+    if (normal)
+    {
+        normal->x = bestNormal->x;
+        normal->y = bestNormal->y;
+    }
+    if (poc)
+    {
+        poc->x = best->x;
+        poc->y = best->y;
+    }
+    return 1;
+}
+
 Uint8 gf2d_edge_rect_intersection_poc(Edge e, Rect r,Vector2D *poc,Vector2D *normal)
 {
     Uint8 ret = 0;
-    if (gf2d_edge_intersect_poc(e,gf2d_edge(r.x,r.y,r.x+r.w,r.y),poc,NULL))//top
+    Uint8 i;
+    Vector2D contacts[4] = {0};
+    Vector2D normals[4] = {0};
+    Vector2D center;
+    Vector2D *best = NULL;
+    Vector2D *bestNormal = NULL;
+    float bestDistance;
+    if (gf2d_edge_intersect_poc(e,gf2d_edge(r.x,r.y,r.x+r.w,r.y),&contacts[0],NULL))//top
     {
         ret = 1;
+        normals[0].y = -1;
     }
-    if (gf2d_edge_intersect_poc(e,gf2d_edge(r.x,r.y,r.x,r.y+r.h),poc,NULL))//left
+    if (gf2d_edge_intersect_poc(e,gf2d_edge(r.x,r.y,r.x,r.y+r.h),&contacts[1],NULL))//left
     {
         ret |= 2;
+        normals[1].x = -1;
     }
-    if (gf2d_edge_intersect_poc(e,gf2d_edge(r.x,r.y+r.h,r.x+r.w,r.y+r.h),poc,NULL))//bottom
+    if (gf2d_edge_intersect_poc(e,gf2d_edge(r.x,(r.y+r.h),r.x+r.w,(r.y+r.h)),&contacts[2],NULL))//bottom
     {
         ret |= 4;
+        normals[2].y = 1;
     }
-    if (gf2d_edge_intersect_poc(e,gf2d_edge(r.x+r.w,r.y,r.x+r.w,r.y+r.h),poc,NULL))//right
+    if (gf2d_edge_intersect_poc(e,gf2d_edge(r.x+r.w,r.y,r.x+r.w,r.y+r.h),&contacts[3],NULL))//right
     {
         ret |= 8;
+        normals[3].x = 1;
     }
-    if (ret)
+    if (!ret)return 0;
+    if ((!poc)&&(!normal))return 1;// no need to do additional work here
+    for (i = 0;i < 4;i++)
     {
-        if (normal)
+        if ((1<<i) & ret)
         {
-            if ((ret & 5)||(ret == 8))// top & bottom or right
+            if (!best)
             {
-                normal->x = 1;
-                normal->y = 0;
+                best = &contacts[i];
+                bestNormal = &normals[i];
+                bestDistance = vector2d_magnitude_squared(vector2d(e.x1-contacts[i].x,e.y1-contacts[i].y));
+                continue;
             }
-            else if ((ret & 10)||(ret == 1))// left & right or top
+            if (vector2d_magnitude_squared(vector2d(e.x1-contacts[i].x,e.y1-contacts[i].y)) < bestDistance)
             {
-                normal->x = 0;
-                normal->y = -1;
+                best = &contacts[i];
+                bestNormal = &normals[i];
+                bestDistance = vector2d_magnitude_squared(vector2d(e.x1-contacts[i].x,e.y1-contacts[i].y));
             }
-            else if (ret & 2)// left
-            {
-                normal->x = -1;
-                normal->y = 0;
-            }
-            else
-            {
-                normal->x = 0;
-                normal->y = 1;
-            }
-        }   
-        return 1;
+        }
     }
-    if ((gf2d_point_in_rect(vector2d(e.x1,e.y1),r))||
-        (gf2d_point_in_rect(vector2d(e.x2,e.y2),r)))
+    if (normal)
     {
-        // if either end point is within the rect, we have a collision
-        return 1;
+        if ((vector2d_distance_between_less_than(*best,vector2d(r.x,r.y),0.1))||// top left corner
+            (vector2d_distance_between_less_than(*best,vector2d(r.x+r.w,r.y),0.1))||
+            (vector2d_distance_between_less_than(*best,vector2d(r.x,r.y+r.h),0.1))||
+            (vector2d_distance_between_less_than(*best,vector2d(r.x+r.w,r.y+r.h),0.1)))
+        {
+            center = gf2d_rect_get_center_point(r);
+            *normal = gf2d_edge_get_normal_for_cirlce(e, gf2d_circle(center.x,center.y,r.w+r.h));
+        }
+        else
+        {
+            normal->x = bestNormal->x;
+            normal->y = bestNormal->y;
+        }
     }
-    return 0;
+    if (poc)
+    {
+        poc->x = best->x;
+        poc->y = best->y;
+    }
+    return 1;
 }
 
 Uint8 gf2d_edge_rect_intersection(Edge e, Rect r)
@@ -528,48 +941,211 @@ Uint8 gf2d_edge_intersect_shape_poc(Edge e,Shape s,Vector2D *poc,Vector2D *norma
     return gf2d_shape_overlap_poc(gf2d_shape_from_edge(e), s,poc,normal);
 }
 
-Uint8 gf2d_edge_circle_intersection_poc(Edge e,Circle c,Vector2D *poc,Vector2D *normal)
+Uint8 gf2d_circle_to_edge_intersection_poc(Edge e,Circle c,Vector2D *poc,Vector2D *normal)
 {
-    float dy = (e.y2 - e.y1);
-    float dx = (e.x1 - e.x2);
-    float C1 = (e.y2 - e.y1) * e.x1 + (e.x1 - e.x2) * e.y1;
-    
-    float C3 = -dx * c.x + dy * c.y;
-    float det = (dy * dy - -dx * dx);
-    float cx2 = 0;
-    float cy2 = 0;
-    if (det != 0)
+    float dx, dy, A, B, C, det, t,t1,t2;
+    Vector2D intersection1, intersection2;
+    dx = e.x2 - e.x1;
+    dy = e.y2 - e.y1;
+
+    A = dx * dx + dy * dy;
+    B = 2 * (dx * (e.x1 - c.x) + dy * (e.y1 - c.y));
+    C = (e.x1 - c.x) * (e.x1 - c.x) +
+        (e.y1 - c.y) * (e.y1 - c.y) -
+        c.r * c.r;
+
+    det = B * B - 4 * A * C;
+    if ((A <= 0.0000001) || (det < 0))
     {
-        cx2 = (dy * C1 - dx * C3) / det;
-        cy2 = (dy * C3 - -dx * C1) / det;
+        // No real solutions.
+        return 0;
     }
-    if (MIN(e.x1, e.x2) <= cx2
-        && cx2 <= MAX(e.x1, e.x2)
-        && MIN(e.y1, e.y2) <= cy2
-        && cy2 <= MAX(e.y1, e.y2))
+    if (det == 0)
     {
-        if (fabs((cx2 - c.x) * (cx2 - c.x) + (cy2 - c.y) * (cy2 - c.y)) < c.r * c.r + 1)
+        // One solution.
+        t = -B / (2 * A);
+        intersection1 = vector2d(e.x1 + t * dx, e.y1 + t * dy);
+        if ((intersection1.x < MIN(e.x1,e.x2))||(intersection1.x > MAX(e.x1,e.x2))||
+            (intersection1.y < MIN(e.y1,e.y2))||(intersection1.y > MAX(e.y1,e.y2)))
         {
-            if (poc)
-            {
-                poc->x = cx2;
-                poc->y = cy2;
-                if (normal)
-                {
-                    normal->x = poc->x - c.x;
-                    normal->y = poc->y - c.y;
-                    vector2d_normalize(normal);
-                }
-            }
-            return 1;
+            //point lies outside of line segment
+            return 0;
         }
+        if (poc)
+        {
+            *poc = intersection1;
+        }
+        if (normal)
+        {
+            *normal = gf2d_edge_get_normal_for_cirlce(e, c);
+        }
+        return 1;
     }
-    return 0;
+    else
+    {
+        // Two solutions. picking the one closer to the first point of the edge
+        t1 = (float)((-B + sqrt(det)) / (2 * A));
+        t2 = (float)((-B - sqrt(det)) / (2 * A));
+        intersection1 = vector2d(e.x1 + t1 * dx, e.y1 + t1 * dy);
+        intersection2 = vector2d(e.x1 + t2 * dx, e.y1 + t2 * dy);
+        if ((intersection1.x < MIN(e.x1,e.x2))||(intersection1.x > MAX(e.x1,e.x2))||
+            (intersection1.y < MIN(e.y1,e.y2))||(intersection1.y > MAX(e.y1,e.y2)))
+        {
+            if ((intersection2.x < MIN(e.x1,e.x2))||(intersection2.x > MAX(e.x1,e.x2))||
+                (intersection2.y < MIN(e.y1,e.y2))||(intersection2.y > MAX(e.y1,e.y2)))
+            {
+                return 0;
+            }
+            t = t2;
+        }
+        else
+        {
+            if ((intersection2.x < MIN(e.x1,e.x2))||(intersection2.x > MAX(e.x1,e.x2))||
+                (intersection2.y < MIN(e.y1,e.y2))||(intersection2.y > MAX(e.y1,e.y2)))
+            {
+                t = t1;
+            }
+            else
+            {
+                t = MIN(t1,t2);
+            }
+        }
+        intersection1 = vector2d(e.x1 + t * dx, e.y1 + t * dy);        
+        if (poc)
+        {
+            *poc = intersection1;
+        }
+        if (normal)
+        {
+            *normal = gf2d_edge_get_normal_for_cirlce(e, c);
+        }
+        return 2;
+    }
+}
+
+Uint8 gf2d_edge_to_circle_intersection_poc(Edge e,Circle c,Vector2D *poc,Vector2D *normal)
+{
+    float dx, dy, A, B, C, det, t,t1,t2;
+    Vector2D intersection1, intersection2;
+    Vector2D cp;
+    dx = e.x2 - e.x1;
+    dy = e.y2 - e.y1;
+
+    cp.x = c.x;
+    cp.y = c.y;
+    A = dx * dx + dy * dy;
+    B = 2 * (dx * (e.x1 - c.x) + dy * (e.y1 - c.y));
+    C = (e.x1 - c.x) * (e.x1 - c.x) +
+        (e.y1 - c.y) * (e.y1 - c.y) -
+        c.r * c.r;
+
+    det = B * B - 4 * A * C;
+    if ((A <= 0.0000001) || (det < 0))
+    {
+        // No real solutions.
+        return 0;
+    }
+    else if (det == 0)
+    {
+        // One solution.
+        t = -B / (2 * A);
+        intersection1 = vector2d(e.x1 + t * dx, e.y1 + t * dy);
+        if ((intersection1.x < MIN(e.x1,e.x2))||(intersection1.x > MAX(e.x1,e.x2))||
+            (intersection1.y < MIN(e.y1,e.y2))||(intersection1.y > MAX(e.y1,e.y2)))
+        {
+            //point lies outside of line segment
+            return 0;
+        }
+        if (poc)
+        {
+            *poc = intersection1;
+        }
+        if (normal)
+        {
+            vector2d_sub(intersection2,cp,intersection1);
+            vector2d_normalize(&intersection2);
+            *normal = intersection2;
+        }
+        return 1;
+    }
+    else
+    {
+        // Two solutions. picking the one closer to the first point of the edge
+        t1 = (float)((-B + sqrt(det)) / (2 * A));
+        t2 = (float)((-B - sqrt(det)) / (2 * A));
+        intersection1 = vector2d(e.x1 + t1 * dx, e.y1 + t1 * dy);
+        intersection2 = vector2d(e.x1 + t2 * dx, e.y1 + t2 * dy);
+        if ((intersection1.x < MIN(e.x1,e.x2))||(intersection1.x > MAX(e.x1,e.x2))||
+            (intersection1.y < MIN(e.y1,e.y2))||(intersection1.y > MAX(e.y1,e.y2)))
+        {
+            if ((intersection2.x < MIN(e.x1,e.x2))||(intersection2.x > MAX(e.x1,e.x2))||
+                (intersection2.y < MIN(e.y1,e.y2))||(intersection2.y > MAX(e.y1,e.y2)))
+            {
+                return 0;
+            }
+            t = t2;
+        }
+        else
+        {
+            if ((intersection2.x < MIN(e.x1,e.x2))||(intersection2.x > MAX(e.x1,e.x2))||
+                (intersection2.y < MIN(e.y1,e.y2))||(intersection2.y > MAX(e.y1,e.y2)))
+            {
+                t = t1;
+            }
+            else
+            {
+                t = MIN(t1,t2);
+            }
+        }
+        intersection1 = vector2d(e.x1 + t * dx, e.y1 + t * dy);        
+        if (poc)
+        {
+            *poc = intersection1;
+        }
+        if (normal)
+        {
+            vector2d_sub(intersection2,cp,intersection1);
+            vector2d_normalize(&intersection2);
+            *normal = intersection2;
+        }
+        return 2;
+    }
 }
 
 Uint8 gf2d_edge_circle_intersection(Edge e,Circle c)
 {
-    return gf2d_edge_circle_intersection_poc(e,c,NULL,NULL);
+    Vector2D dir = {0};
+    Vector2D p1,p2;
+    Vector2D n1,n2;
+    p1 = vector2d(e.x1,e.y1);
+    p2 = vector2d(e.x2,e.y2);
+        
+    vector2d_sub(n1,p2,p1);
+    n1.x = p2.y - p1.y;
+    n1.y = p1.x - p2.x;
+    
+    vector2d_normalize(&n1);
+    vector2d_negate(n2,n1);
+    
+    vector2d_scale(dir,n1,c.r);
+    if (gf2d_edge_intersect(e,gf2d_edge(c.x, c.y, c.x + dir.x, c.y + dir.y)))
+    {
+        return 1;
+    }
+    vector2d_scale(dir,n2,c.r);
+    if (gf2d_edge_intersect(e,gf2d_edge(c.x, c.y, c.x + dir.x, c.y + dir.y)))
+    {
+        return 1;
+    }
+    if (gf2d_point_in_cicle(p1,c))
+    {
+        return 1;
+    }
+    if (gf2d_point_in_cicle(p2,c))
+    {
+        return 1;
+    }
+    return 0;
 }
 
 void gf2d_edge_slog(Edge e)
@@ -629,13 +1205,13 @@ Rect gf2d_shape_get_bounds(Shape shape)
     switch(shape.type)
     {
         case ST_EDGE:
-            gf2d_edge_get_bounds(shape.s.e);
+            r = gf2d_edge_get_bounds(shape.s.e);
             break;
         case ST_RECT:
             return shape.s.r;
             break;
         case ST_CIRCLE:
-            gf2d_circle_get_bounds(shape.s.c);
+            r = gf2d_circle_get_bounds(shape.s.c);
             break;
     }
     return r;

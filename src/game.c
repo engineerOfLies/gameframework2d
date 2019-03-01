@@ -9,8 +9,11 @@
 #include "gf2d_entity.h"
 #include "gf2d_mouse.h"
 #include "simple_logger.h"
+#include "gf2d_draw.h"
 #include "camera.h"
 #include "windows_common.h"
+#include "gf2d_space.h"
+#include "gf2d_collision.h"
 
 static int _done = 0;
 static Window *_quit = NULL;
@@ -31,7 +34,13 @@ int main(int argc, char * argv[])
     int i;
     int fullscreen = 0;
     Sprite *background = NULL;
-    /*parse args*/
+    Space *space = NULL;
+    Collision collision;
+    CollisionFilter filter= {0};
+    int mx,my;
+    float mf;
+    static Body body[10000];// not a pointer!
+    Shape shape[4];// not a pointer!    /*parse args*/
     for (i = 1; i < argc; i++)
     {
         if (strcmp(argv[i],"--fullscreen") == 0)
@@ -67,16 +76,82 @@ int main(int argc, char * argv[])
     // game specific setup
         // init mouse, editor window
     gf2d_mouse_load("actors/mouse.actor");
-    
+        space = gf2d_space_new_full(
+        3,
+        gf2d_rect(0,0,1200,700),
+        0.1,
+        vector2d(0,0.1),
+        1,
+        20);
+    mf = 0;
+
+    shape[1] = gf2d_shape_circle(0,0, 10);
+    shape[2] = gf2d_shape_circle(10,0, 15);
+    shape[3] = gf2d_shape_rect(-32,-32,64,64);
+    shape[0] = gf2d_shape_rect(-16,-16, 32,32);
+
+    gf2d_space_add_static_shape(space,gf2d_shape_rect(200,500, 512,32));
+    gf2d_space_add_static_shape(space,gf2d_shape_rect(610,50, 30,550));
+    gf2d_space_add_static_shape(space,gf2d_shape_circle(300,300, 15));
+    gf2d_space_add_static_shape(space,gf2d_shape_edge(100,200, 255,360));
+    gf2d_space_add_static_shape(space,gf2d_shape_edge(100,400, 255,360));
+    gf2d_space_add_static_shape(space,gf2d_shape_edge(100,200, 100,400));
+    /* Stress test*/
+        gf2d_body_set(
+            &body[0],
+            "body",
+            1,
+            0,
+            0,
+            0,
+            vector2d(256,256),
+            vector2d(2.3,4.4),
+            10,
+            1,
+            1,  //elasticity
+            &shape[0],
+            NULL,
+            NULL);
+        gf2d_space_add_body(space,&body[0]);
+    for (i = 1; i < 100;i++)
+    {
+        gf2d_body_set(
+            &body[i],
+            "body",
+            1,
+            0,
+            0,
+            0,
+            vector2d(256 + 128,256 + 128),
+            vector2d(2.5 * gf2d_crandom(),3 * gf2d_crandom()),
+            10,
+            1,
+            1,  //elasticity
+            &shape[i%2],
+            NULL,
+            NULL);
+        gf2d_space_add_body(space,&body[i]);
+    }
+    /*main game loop*/
+    filter.worldclip = 1;
     /*main game loop*/
     while(!_done)
     {
         gf2d_input_update();
         /*update things here*/
+        SDL_GetMouseState(&mx,&my);
+        mf+=0.1;
+        if (mf >= 16.0)
+        {
+            mf = 0;
+        }
         gf2d_windows_update_all();
                 
         gf2d_entity_think_all();
         gf2d_mouse_update();
+        gf2d_space_update(space);    
+        
+        collision = gf2d_collision_trace_space(space, vector2d(mx,my), vector2d(600,360) ,filter);
         
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
@@ -85,9 +160,19 @@ int main(int argc, char * argv[])
                 // DRAW WORLD
                 gf2d_entity_update_all();
                 // Draw entities
+                gf2d_space_draw(space,vector2d(0,0));
+                if (collision.collided)
+                {
+                    gf2d_draw_line(vector2d(mx,my),collision.pointOfContact, vector4d(255,0,0,255));            
+                }
+                else
+                {
+                    gf2d_draw_line(vector2d(mx,my),vector2d(600,360), vector4d(255,255,0,255));
+                }
             //UI elements last
             
             gf2d_text_draw_line("Press F4 to quit!",FT_H1,gf2d_color(255,255,255,255), vector2d(0,0));
+            
             gf2d_windows_draw_all();
             gf2d_mouse_draw();
         gf2d_grahics_next_frame();// render current draw frame and skip to the next frame
