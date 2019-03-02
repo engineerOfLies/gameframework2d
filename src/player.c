@@ -4,6 +4,7 @@
 #include "level.h"
 #include "gf2d_input.h"
 #include "entity_common.h"
+#include "particle_effects.h"
 #include "gui.h"
 
 static Entity *_player = NULL;
@@ -100,7 +101,8 @@ Entity *player_new(Vector2D position)
     vector2d_copy(self->scale,self->actor.al->scale);
     vector2d_set(self->scaleCenter,64,64);
     vector3d_set(self->rotation,64,64,0);
-    vector2d_set(self->flip,1,0);
+    vector2d_set(self->flip,0,0);
+    vector2d_set(self->facing,1,0);
     
     self->think = player_think;
     self->draw = player_draw;
@@ -137,6 +139,7 @@ void player_think(Entity *self)
             if (gf2d_input_command_down("walkleft"))
             {
                 self->flip.x = 1;
+                self->facing.x = -1;
                 if (!entity_wall_check(self,vector2d(-2,0)))
                 {   
                     self->velocity.x -= 1.25;
@@ -145,6 +148,7 @@ void player_think(Entity *self)
             if (gf2d_input_command_down("walkright"))
             {
                 self->flip.x = 0;
+                self->facing.x = 1;
                 if (!entity_wall_check(self,vector2d(2,0)))
                 {
                     self->velocity.x += 1.25;
@@ -169,6 +173,14 @@ void player_think(Entity *self)
                 gf2d_actor_set_action(&self->actor,"hack");
                 self->cooldown = gf2d_actor_get_frames_remaining(&self->actor);
                 self->state = ES_Attacking;
+                self->attack = 1;
+            }
+            if (gf2d_input_command_released("shoot"))
+            {
+                gf2d_actor_set_action(&self->actor,"shoot");
+                self->cooldown = gf2d_actor_get_frames_remaining(&self->actor);
+                self->state = ES_Attacking;
+                self->attack = 2;
             }
             break;
         default:
@@ -194,7 +206,7 @@ void player_melee(Entity *self)
         if (!c->body)continue;
         if (!c->body->data)continue;
         other = c->body->data;
-        if (other->damage)other->damage(other,10,self);//TODO: make this based on weapon / player stats
+        if (other->damage)other->damage(other,1,self);//TODO: make this based on weapon / player stats
     }
     gf2d_collision_list_free(collisionList);
 }
@@ -228,7 +240,14 @@ void player_update(Entity *self)
         case ES_Attacking:
             if (gf2d_actor_get_frames_remaining(&self->actor) == 2)
             {
-                player_melee(self);
+                if (self->attack == 1)
+                {
+                    player_melee(self);
+                }
+                else
+                {
+                    particle_spray(self->position, vector2d(gf2d_crandom(),gf2d_crandom()),gf2d_color8(255,255,255,255), 100);
+                }
             }
         case ES_Jumping:
         case ES_Leaving:

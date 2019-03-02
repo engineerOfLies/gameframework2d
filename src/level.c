@@ -6,16 +6,18 @@
 #include "simple_json.h"
 #include "simple_logger.h"
 #include "gf2d_graphics.h"
+#include "gf2d_particles.h"
 #include "gf2d_config.h"
 #include <stdio.h>
 
 typedef struct
 {
-    Space      *space;
-    Sprite     *backgroundImage;
-    Sprite     *tileLayer;
-    Sprite     *tileSet;
-    Mix_Music  *backgroundMusic;
+    Space           *space;
+    Sprite          *backgroundImage;
+    Sprite          *tileLayer;
+    Sprite          *tileSet;
+    Mix_Music       *backgroundMusic;
+    ParticleEmitter *pe;
 }Level;
 
 static Level gamelevel = {0};
@@ -28,6 +30,7 @@ void level_clear()
     gf2d_sprite_free(gamelevel.backgroundImage);
     gf2d_sprite_free(gamelevel.tileSet);
     gf2d_sprite_free(gamelevel.tileLayer);
+    gf2d_particle_emitter_free(gamelevel.pe);
     if (gamelevel.backgroundMusic)
     {
         Mix_FreeMusic(gamelevel.backgroundMusic);
@@ -376,18 +379,43 @@ void level_init(LevelInfo *linfo,Uint8 space)
         level_make_space();
         level_build_tile_space(linfo);
     }
+    gamelevel.pe = gf2d_particle_emitter_new_full(
+        2048,
+        10,
+        5,
+        PT_Pixel,
+        vector2d(0,0),
+        vector2d(0,0),
+        vector2d(0,0),
+        vector2d(0,0),
+        vector2d(0,0),
+        vector2d(0,0),
+        gf2d_color(0,0,0,1),
+        gf2d_color(0,0,0,0),
+        gf2d_color(0,0,0,0),
+        NULL,
+        0,
+        0,
+        0,
+        "",
+        0,
+        0,
+        0,
+        0,
+        SDL_BLENDMODE_BLEND);
     level_spawn_entities(linfo->spawnList);
 }
 
 void level_draw()
 {
     Vector2D cam;
-    cam = camera_get_position();
-    gf2d_sprite_draw_image(gamelevel.backgroundImage,vector2d(-cam.x,-cam.y));
-    gf2d_sprite_draw_image(gamelevel.tileLayer,vector2d(-cam.x,-cam.y));
+    cam = camera_get_offset();
+    gf2d_sprite_draw_image(gamelevel.backgroundImage,cam);
+    gf2d_sprite_draw_image(gamelevel.tileLayer,cam);
     gf2d_entity_draw_all();
     gf2d_entity_draw(player_get());
-//    if (gamelevel.space)gf2d_space_draw(gamelevel.space,vector2d(-cam.x,-cam.y));
+    gf2d_particle_emitter_draw(gamelevel.pe,cam);    
+//    if (gamelevel.space)gf2d_space_draw(gamelevel.space,cam);
 }
 
 void level_update()
@@ -395,6 +423,7 @@ void level_update()
     gf2d_entity_pre_sync_all();
     gf2d_space_update(gamelevel.space);
     gf2d_entity_post_sync_all();
+    gf2d_particle_emitter_update(gamelevel.pe);
 }
 
 int body_body_touch(Body *self, List *collisionList)
@@ -445,5 +474,10 @@ void level_add_entity(Entity *ent)
 Space *level_get_space()
 {
     return gamelevel.space;
+}
+
+ParticleEmitter *level_get_particle_emitter()
+{
+    return gamelevel.pe;
 }
 /*eol@eof*/

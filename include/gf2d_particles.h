@@ -88,8 +88,9 @@ void gf2d_particle_emitter_update(ParticleEmitter *pe);
 /**
  * @brief draw all particles to current rendering context
  * @param pe the particle emitter to draw
+ * @param offset offset all drawing by this amount (useful for drawing relative to a camera)
  */
-void gf2d_particle_emitter_draw(ParticleEmitter *pe);
+void gf2d_particle_emitter_draw(ParticleEmitter *pe, Vector2D offset);
 
 /**
  * @brief create a new particle for the provided emitted and get a pointer to it

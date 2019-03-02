@@ -37,7 +37,7 @@ struct ParticleEmitter_S
 };
 
 void gf2d_particle_update(Particle *p,Uint32 now);
-void gf2d_particle_draw(Particle *p);
+void gf2d_particle_draw(Particle *p, Vector2D offset);
 
 void gf2d_particle_free(Particle *p)
 {
@@ -160,13 +160,13 @@ void gf2d_particle_emitter_update(ParticleEmitter *pe)
     }
 }
 
-void gf2d_particle_emitter_draw(ParticleEmitter *pe)
+void gf2d_particle_emitter_draw(ParticleEmitter *pe, Vector2D offset)
 {
     int i;
     if (!pe)return;
     for (i = 0;i < pe->maxParticles;i++)
     {
-        gf2d_particle_draw(&pe->particleList[i]);
+        gf2d_particle_draw(&pe->particleList[i],offset);
     }
 }
 
@@ -327,22 +327,24 @@ Particle * gf2d_particle_new(ParticleEmitter *pe)
     return NULL;
 }
 
-void gf2d_particle_draw(Particle *p)
+void gf2d_particle_draw(Particle *p, Vector2D offset)
 {
     Vector4D color;
+    Vector2D position;
     Shape shape;
     if ((!p)||(p->inuse == 0))return;
+    vector2d_add(position,p->position,offset);
     switch(p->type)
     {
         case PT_Pixel:
             SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),p->mode);
             color = gf2d_color_to_vector4(p->color);
-            gf2d_draw_pixel(p->position,gf2d_color_to_vector4(p->color));
+            gf2d_draw_pixel(position,gf2d_color_to_vector4(p->color));
             SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),SDL_BLENDMODE_BLEND);
             break;
         case PT_Shape:
             gf2d_shape_copy(&shape,p->shape);
-            gf2d_shape_move(&shape,p->position);
+            gf2d_shape_move(&shape,position);
             SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),p->mode);
             color = gf2d_color_to_vector4(p->color);
             gf2d_shape_draw(shape,p->color,vector2d(0,0));
@@ -353,7 +355,7 @@ void gf2d_particle_draw(Particle *p)
             color = gf2d_color_to_vector4(p->color);
             gf2d_sprite_draw(
                 p->sprite,
-                vector2d(p->position.x - (p->sprite->frame_w/2),p->position.y - (p->sprite->frame_h/2)),
+                vector2d(position.x - (p->sprite->frame_w/2),position.y - (p->sprite->frame_h/2)),
                 NULL,
                 NULL,
                 NULL,

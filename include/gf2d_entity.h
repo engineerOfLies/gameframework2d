@@ -45,6 +45,7 @@ typedef struct Entity_S
     Vector2D scaleCenter;                   /**<where to scale sprite from*/
     Vector3D rotation;                      /**<how to rotate the sprite*/
     Vector2D flip;                          /**<if to flip the sprite*/
+    Vector2D facing;                        /**<direction the entity is facing*/
     
     ParticleEmitter *pe;                    /**<if this entity has its own particle emitter*/
 
@@ -71,6 +72,7 @@ typedef struct Entity_S
     float health;                           /**<health of entity*/
     int   maxHealth;                        /**<maximum health of entity*/
     int   cooldown;                         /**<useful for timing cooldowns*/
+    int   attack;                           /**<which attack is being performed*/
     int   count;                            /**<useful for counting things like ammo count or health ammount*/
     float jumpcool;
     int   jumpcount;                        /**<used for multijump*/

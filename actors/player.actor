@@ -15,7 +15,7 @@ type:   loop
 action: shoot
 startFrame: 2
 endFrame: 11
-frameRate: 1
+frameRate: 0.25
 type:   pass
 
 action: jump

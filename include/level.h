@@ -5,6 +5,7 @@
 #include "gf2d_sprite.h"
 #include "gf2d_audio.h"
 #include "gf2d_entity.h"
+#include "gf2d_particles.h"
 #include "simple_json.h"
 
 /**
@@ -112,5 +113,9 @@ Space *level_get_space();
  */
 void level_transition(char *filename, const char *playerTarget, Uint32 targetId);
 
-
+/**
+ * @brief get the particle emitter for the level
+ * @return NULL if not available, or a pointer to the particle emitter
+ */
+ParticleEmitter *level_get_particle_emitter();
 #endif

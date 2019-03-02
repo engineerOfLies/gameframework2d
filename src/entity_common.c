@@ -1,6 +1,7 @@
 #include "gf2d_entity.h"
 #include "camera.h"
 #include "simple_logger.h"
+#include "particle_effects.h"
 #include "entity_common.h"
 #include "level.h"
 #include "player.h"

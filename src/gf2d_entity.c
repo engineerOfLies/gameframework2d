@@ -113,9 +113,9 @@ void gf2d_entity_draw(Entity *self)
     if (!self)return;
     if (!self->inuse)return;
     
-    vector2d_sub(drawPosition,self->position,camera_get_position());
+    vector2d_add(drawPosition,self->position,camera_get_offset());
 
-    gf2d_particle_emitter_draw(self->pe);
+    gf2d_particle_emitter_draw(self->pe,camera_get_offset());
 
     gf2d_sprite_draw(
         self->actor.sprite,

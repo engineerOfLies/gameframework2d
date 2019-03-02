@@ -2,6 +2,7 @@
 #include "level.h"
 #include "player.h"
 #include "simple_logger.h"
+#include "particle_effects.h"
 #include "entity_common.h"
 
 void monster_draw(Entity *self);
@@ -179,9 +180,14 @@ int  monster_touch(Entity *self,Entity *other)
 
 int  monster_damage(Entity *self,int amount, Entity *source)
 {
+    Vector2D dir = {0};
     slog("monster taking %i damage!",amount);
     self->health -= amount;
     gf2d_sound_play(self->sound[1],0,0.1,-1,-1);
+    vector2d_sub(dir,source->position,self->position);
+    vector2d_normalize(&dir);
+    vector2d_scale(dir,dir,3);
+    particle_spray(self->position, dir,gf2d_color8(240,0,0,255), 100);
     if (self->health <= 0)
     {
         self->health = 0;
