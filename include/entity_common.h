@@ -85,4 +85,13 @@ void entity_clear_all_but_player();
  */
 void entity_activate(Entity *self);
 
+/**
+ * @brief check if the entity is about to walk off the edge of a platform
+ * @note useful for AI
+ * @param self the entity to check for
+ * @return 0 if there is no more platform, 1 if there is something there
+ * 
+ */
+int entity_platform_end_check(Entity *self);
+
 #endif

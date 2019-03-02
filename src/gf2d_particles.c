@@ -333,10 +333,10 @@ void gf2d_particle_draw(Particle *p, Vector2D offset)
     Vector2D position;
     Shape shape;
     if ((!p)||(p->inuse == 0))return;
-    vector2d_add(position,p->position,offset);
     switch(p->type)
     {
         case PT_Pixel:
+            vector2d_add(position,p->position,offset);
             SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),p->mode);
             color = gf2d_color_to_vector4(p->color);
             gf2d_draw_pixel(position,gf2d_color_to_vector4(p->color));
@@ -344,13 +344,14 @@ void gf2d_particle_draw(Particle *p, Vector2D offset)
             break;
         case PT_Shape:
             gf2d_shape_copy(&shape,p->shape);
-            gf2d_shape_move(&shape,position);
+            gf2d_shape_move(&shape,p->position);
             SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),p->mode);
             color = gf2d_color_to_vector4(p->color);
-            gf2d_shape_draw(shape,p->color,vector2d(0,0));
+            gf2d_shape_draw(shape,p->color,offset);
             SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),SDL_BLENDMODE_BLEND);
             break;
         case PT_Sprite:
+            vector2d_add(position,p->position,offset);
             SDL_SetTextureBlendMode(p->sprite->texture,p->mode);
             color = gf2d_color_to_vector4(p->color);
             gf2d_sprite_draw(

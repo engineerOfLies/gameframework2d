@@ -13,6 +13,8 @@ int  monster_damage(Entity *self,int amount, Entity *source);
 void monster_die(Entity *self);
 int monster_player_sight_check(Entity *self);
 void monster_think_hunting(Entity *self);
+void monster_turn(Entity *self,int dir);
+void monster_think_patroling(Entity *self);
 
 Entity *monster_new(Vector2D position,char *actorFile);
 
@@ -31,7 +33,7 @@ Entity *monster_new(Vector2D position,char *actorFile)
     gf2d_line_cpy(self->name,"monster");
     self->parent = NULL;
     
-    self->shape = gf2d_shape_rect(-32, -16, 60, 30);
+    self->shape = gf2d_shape_rect(-32, -10, 60, 35);
     gf2d_body_set(
         &self->body,
         "monster",
@@ -49,7 +51,7 @@ Entity *monster_new(Vector2D position,char *actorFile)
         NULL);
 
     gf2d_actor_load(&self->actor,actorFile);
-    gf2d_actor_set_action(&self->actor,"idle");
+    gf2d_actor_set_action(&self->actor,"walk");
     
     self->sound[0] = gf2d_sound_load("sounds/bug_attack1.wav",1,-1);
     self->sound[1] = gf2d_sound_load("sounds/bug_pain1.wav",1,-1);
@@ -61,8 +63,9 @@ Entity *monster_new(Vector2D position,char *actorFile)
     vector2d_set(self->scaleCenter,64,64);
     vector3d_set(self->rotation,64,64,0);
     vector2d_set(self->flip,0,0);
+    vector2d_set(self->facing,-1,0);
     
-    self->think = monster_think;
+    self->think = monster_think_patroling;
     self->draw = monster_draw;
     self->update = monster_update;
     self->touch = monster_touch;
@@ -110,6 +113,29 @@ void monster_attack(Entity *self)
     gf2d_sound_play(self->sound[1],0,1,-1,-1);
 }
 
+void monster_think_patroling(Entity *self)
+{
+    if ((!entity_platform_end_check(self))||entity_wall_check(self, vector2d(3 *self->facing.x,0)))
+    {
+        monster_turn(self,self->facing.x * -1);
+    }
+    self->velocity.x = 2 * self->facing.x;
+}
+
+void monster_turn(Entity *self,int dir)
+{
+    if (dir < 0)
+    {
+        self->facing.x = -1;
+        self->flip.x = 0;
+    }
+    else if (dir > 0)
+    {
+        self->facing.x = 1;
+        self->flip.x = 1;
+    }
+}
+
 void monster_think_hunting(Entity *self)
 {
     Entity *player = player_get();
@@ -133,12 +159,12 @@ void monster_think_hunting(Entity *self)
     self->velocity.y = -10;
     if (player->position.x < self->position.x)
     {
-        self->flip.x = 0;
+        monster_turn(self,-1);
         self->velocity.x -= 15;
     }
     if (player->position.x > self->position.x)
     {
-        self->flip.x = 1;
+        monster_turn(self,1);
         self->velocity.x += 15;
     }
 }

@@ -68,6 +68,33 @@ void entity_apply_gravity(Entity *self)
     }
 }
 
+int entity_platform_end_check(Entity *self)
+{
+    Shape s;
+    Rect r;
+    List *collisionList;
+    CollisionFilter filter = {
+        1,
+        WORLD_LAYER,
+        0,
+        0,
+        &self->body
+    };
+
+    if (!self)return 0;
+    s = gf2d_body_to_shape(&self->body);
+    r = gf2d_shape_get_bounds(s);
+    gf2d_shape_move(&s,vector2d(r.w * self->facing.x,3));
+
+    collisionList = gf2d_collision_check_space_shape(level_get_space(), s,filter);
+    if (collisionList != NULL)
+    {
+        gf2d_collision_list_free(collisionList);
+        return 1;
+    }    
+    return 0;
+}
+
 int entity_wall_check(Entity *self, Vector2D dir)
 {
     Shape s;

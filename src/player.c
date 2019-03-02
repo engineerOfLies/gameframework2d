@@ -188,6 +188,34 @@ void player_think(Entity *self)
     }
 }
 
+void player_shoot(Entity *self)
+{
+    Entity *other;
+    Vector2D start,end;
+    Collision c;
+    CollisionFilter filter = {0};
+    filter.worldclip = 1;
+    filter.cliplayer = MONSTER_LAYER;
+    filter.ignore = &self->body;
+    start.x = self->position.x + (self->facing.x * 25);
+    start.y = self->position.y - 11;
+    end.y = start.y;
+    end.x =  self->position.x + (self->facing.x * 8000);// should be well outside of the level
+    c = gf2d_collision_trace_space(level_get_space(), start, end ,filter);
+    if (c.collided)
+    {
+        if ((c.body != NULL) && (c.body->data != NULL))
+        {
+            other = (Entity *)c.body->data;
+            if (other->damage != NULL)
+            {
+                other->damage(other,5,self);
+            }
+        }
+        particle_trail(start, c.pointOfContact,gf2d_color8(200,200,200,200));
+    }
+}
+
 void player_melee(Entity *self)
 {
     Shape s;
@@ -246,7 +274,7 @@ void player_update(Entity *self)
                 }
                 else
                 {
-                    particle_spray(self->position, vector2d(gf2d_crandom(),gf2d_crandom()),gf2d_color8(255,255,255,255), 100);
+                    player_shoot(self);
                 }
             }
         case ES_Jumping:

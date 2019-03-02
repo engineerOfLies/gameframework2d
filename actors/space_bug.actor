@@ -7,9 +7,15 @@ colorSpecial: 10,100,255,255
 scale: 1,1
 
 action: idle
-startFrame: 0
-endFrame: 8
+startFrame: 80
+endFrame: 88
 frameRate: 0.1
+type:   loop
+
+action: walk
+startFrame: 89
+endFrame: 104
+frameRate: 0.5
 type:   loop
 
 action: attack1
