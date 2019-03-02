@@ -53,8 +53,8 @@ Entity *monster_new(Vector2D position,char *actorFile)
     gf2d_actor_load(&self->actor,actorFile);
     gf2d_actor_set_action(&self->actor,"walk");
     
-    self->sound[0] = gf2d_sound_load("sounds/bug_attack1.wav",1,-1);
-    self->sound[1] = gf2d_sound_load("sounds/bug_pain1.wav",1,-1);
+    self->sound[0] = gf2d_sound_load("sounds/bug_attack1.wav",0.1,-1);
+    self->sound[1] = gf2d_sound_load("sounds/bug_pain1.wav",0.1,-1);
 
     
     vector2d_copy(self->position,position);
@@ -109,17 +109,24 @@ void monster_attack(Entity *self)
 {
     slog("attacking player");
     gf2d_actor_set_action(&self->actor,"attack1");
+    self->cooldown = gf2d_actor_get_frames_remaining(&self->actor);
     self->think = monster_think_attacking;
     gf2d_sound_play(self->sound[1],0,1,-1,-1);
 }
 
 void monster_think_patroling(Entity *self)
 {
+    if (monster_player_sight_check(self))
+    {
+        self->think = monster_think_hunting;
+        return;
+    }
     if ((!entity_platform_end_check(self))||entity_wall_check(self, vector2d(3 *self->facing.x,0)))
     {
         monster_turn(self,self->facing.x * -1);
     }
     self->velocity.x = 2 * self->facing.x;
+    
 }
 
 void monster_turn(Entity *self,int dir)
@@ -139,12 +146,13 @@ void monster_turn(Entity *self,int dir)
 void monster_think_hunting(Entity *self)
 {
     Entity *player = player_get();
-    if (self->jumpcool)return;
+    if ((self->jumpcool) || (self->cooldown))return;
     //monster loses sight of player
     if (vector2d_magnitude_compare(vector2d(self->position.x - player->position.x,self->position.y - player->position.y),500) > 0)
     {
         slog("lost the player");
-        self->think = monster_think;// idle think
+        self->think = monster_think_patroling;// idle think
+        gf2d_actor_set_action(&self->actor,"walk");
         return;
     }
     //monster gets in range of player
@@ -155,7 +163,7 @@ void monster_think_hunting(Entity *self)
     }
     slog("moving towards player");
     // jump to player
-    self->jumpcool = gf2d_actor_get_frames_remaining(&self->actor);
+    self->jumpcool = 20;
     self->velocity.y = -10;
     if (player->position.x < self->position.x)
     {
@@ -182,7 +190,8 @@ void monster_update(Entity *self)
     if (self->jumpcool > 0) self->jumpcool -= 0.2;
     else self->jumpcool = 0;
     //world clipping
-
+    if (self->cooldown > 0) self->cooldown--;
+    if (self->cooldown < 0)self->cooldown = 0;
     
     // walk dampening
     if (self->velocity.x)
@@ -217,7 +226,13 @@ int  monster_damage(Entity *self,int amount, Entity *source)
     if (self->health <= 0)
     {
         self->health = 0;
-        self->die(self);
+        self->think = monster_die;
+        gf2d_actor_set_action(&self->actor,"death1");
+    }
+    else
+    {
+        gf2d_actor_set_action(&self->actor,"pain1");
+        self->cooldown = gf2d_actor_get_frames_remaining(&self->actor);
     }
     return amount;//todo factor in shields}
 }
@@ -236,6 +251,9 @@ int monster_player_sight_check(Entity *self)
 
 void monster_die(Entity *self)
 {
-    self->dead = 1;
+    if (!gf2d_actor_get_frames_remaining(&self->actor))
+    {
+        self->dead = 1;
+    }
 }
 /*eol@eof*/
