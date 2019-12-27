@@ -2,7 +2,9 @@
 #define __CAMERA_H__
 
 #include <SDL.h>
-#include "gf2d_vector.h"
+
+#include "gfc_vector.h"
+
 #include "gf2d_shape.h"
 
 /**

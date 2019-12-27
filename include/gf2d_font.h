@@ -1,7 +1,7 @@
-#ifndef __MGL_TEXT__H__
-#define __MGL_TEXT__H__
+#ifndef __GF2D_FONT_H__
+#define __GF2D_FONT_H__
 /**
- * gf2d_text
+ * gf2d_font
  * @license The MIT License (MIT)
    @copyright Copyright (c) 2015 EngineerOfLies
     Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,41 +22,14 @@
 */
 
 /**
- * @purpose the MGL text library provides common string support for fixed length
+ * @purpose the GF2d text library provides common string support for fixed length
  *  strings.  For use with unlimited strings mgl will use glib's GString type
  */
 #include <string.h>
-#include "gf2d_types.h"
-#include "gf2d_color.h"
-/**
- * constant lenth character buffers.
- * These will be used when the convenience of GString is not needed
- */
+#include <SDL_ttf.h>
 
-/**
- * @brief 16 character buffer used for short tags
- */
-typedef char TextWord[16];
-#define GF2DWORDLEN   16
-#define gf2d_word_cmp(a,b) (strncmp(a,b,GF2DWORDLEN))
-#define gf2d_word_cpy(dst,src) (strncpy(dst,src,GF2DWORDLEN))
-#define gf2d_word_clear(a)  (memset(a,0,sizeof(char)*GF2DWORDLEN))
-/**
- * @brief 128 character buffer used for statements
- */
-typedef char TextLine[128];
-#define GF2DLINELEN   128
-#define gf2d_line_cmp(a,b) (strncmp(a,b,GF2DLINELEN))
-#define gf2d_line_cpy(dst,src) (strncpy(dst,src,GF2DLINELEN))
-#define gf2d_line_clear(a)  (memset(a,0,sizeof(char)*GF2DLINELEN))
-/**
- * @brief 512 character buffer used for text blocks
- */
-typedef char TextBlock[512];
-#define GF2DTEXTLEN   512
-#define gf2d_block_cmp(a,b) (strncmp(a,b,GF2DTEXTLEN))
-#define gf2d_block_cpy(dst,src) (strncpy(dst,src,GF2DTEXTLEN))
-#define gf2d_block_clear(a)  (memset(a,0,sizeof(char)*GF2DTEXTLEN))
+#include "gfc_types.h"
+#include "gfc_color.h"
 
 typedef enum
 {
@@ -71,16 +44,25 @@ typedef enum
     FT_MAX
 }FontTypes;
 
+
+typedef struct
+{
+    TextLine filename;
+    TTF_Font *font;
+    Uint32  pointSize;
+}Font;
+
 /**
  * @brief initialized text drawing system
  * @param configFile the file to load font information from
  */
-void gf2d_text_init(char *configFile);
+void gf2d_font_init(char *configFile);
 
-void gf2d_text_draw_line_font(char *text,char *filename,Color color, Vector2D position);
+void gf2d_font_draw_line_named(char *text,char *filename,Color color, Vector2D position);
+void gf2d_font_draw_line_tag(char *text,FontTypes tag,Color color, Vector2D position);
+void gf2d_font_draw_line(char *text,Font *font,Color color, Vector2D position);
 
-void gf2d_text_draw_line(char *text,FontTypes tag,Color color, Vector2D position);
-
-Vector2D gf2d_text_get_bounds(char *text,FontTypes tag);
+Vector2D gf2d_font_get_bounds_tag(char *text,FontTypes tag);
+Vector2D gf2d_font_get_bounds(char *text,Font *font);
 
 #endif

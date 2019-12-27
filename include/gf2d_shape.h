@@ -1,9 +1,9 @@
 #ifndef __GF2D_SHAPE_H__
 #define __GF2D_SHAPE_H__
 
-#include "gf2d_vector.h"
-#include "gf2d_color.h"
 #include <SDL.h>
+#include "gfc_vector.h"
+#include "gfc_color.h"
 
 typedef struct
 {

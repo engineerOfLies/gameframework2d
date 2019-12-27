@@ -1,7 +1,9 @@
-#include "gf2d_body.h"
-#include "gf2d_draw.h"
-#include "simple_logger.h"
 #include <stdlib.h>
+#include "simple_logger.h"
+
+#include "gf2d_draw.h"
+#include "gf2d_body.h"
+
 
 Uint8 gf2d_body_shape_collide(Body *a,Shape *s,Vector2D *poc, Vector2D *normal);
 
@@ -36,7 +38,7 @@ void gf2d_body_draw(Body *body,Vector2D offset)
     vector4d_set(color,255,0,255,255);
     gf2d_shape_copy(&shape,*body->shape);
     gf2d_shape_move(&shape,body->position);
-    gf2d_shape_draw(shape,gf2d_color_from_vector4(color),offset);
+    gf2d_shape_draw(shape,gfc_color_from_vector4(color),offset);
 }
 
 void gf2d_body_set(
@@ -68,7 +70,7 @@ void gf2d_body_set(
     body->shape = shape;
     body->data = data;
     body->touch = touch;
-    gf2d_word_cpy(body->name,name);
+    gfc_word_cpy(body->name,name);
 }
 
 Shape gf2d_body_to_shape(Body *a)

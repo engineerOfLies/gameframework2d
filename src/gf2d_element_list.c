@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "gf2d_element_list.h"
 #include "simple_logger.h"
+#include "gf2d_element_list.h"
 
 Vector2D gf2d_element_get_item_position(Element *element,int i)
 {
@@ -49,10 +49,10 @@ void gf2d_element_list_draw(Element *element,Vector2D offset)
     if (!element)return;
     list = (ListElement*)element->data;
     if (!list)return;
-    count = gf2d_list_get_count(list->list);
+    count = gfc_list_get_count(list->list);
     for (i = 0; i < count; i++)
     {
-        e = (Element *)gf2d_list_get_nth(list->list,i);
+        e = (Element *)gfc_list_get_nth(list->list,i);
         if (!e)continue;
         position = gf2d_element_get_item_position(element,i);
         vector2d_add(position,position,offset);
@@ -68,10 +68,10 @@ Element *list_get_by_name(Element *element,char *name)
     if (!element)return NULL;
     list = (ListElement*)element->data;
     if (!list)return NULL;
-    count = gf2d_list_get_count(list->list);
+    count = gfc_list_get_count(list->list);
     for (i = 0; i < count; i++)
     {
-        e = (Element *)gf2d_list_get_nth(list->list,i);
+        e = (Element *)gfc_list_get_nth(list->list,i);
         if (!e)continue;
         r = gf2d_get_element_by_name(e,name);
         if (r)return r;
@@ -91,10 +91,10 @@ List *gf2d_element_list_update(Element *element,Vector2D offset)
     list = (ListElement*)element->data;
     if (!list)return NULL;
     vector2d_add(position,offset,element->bounds);
-    count = gf2d_list_get_count(list->list);
+    count = gfc_list_get_count(list->list);
     for (i = 0; i < count; i++)
     {
-        e = (Element *)gf2d_list_get_nth(list->list,i);
+        e = (Element *)gfc_list_get_nth(list->list,i);
         if (!e)continue;
         position = gf2d_element_get_item_position(element,i);
         vector2d_add(position,position,offset);
@@ -103,9 +103,9 @@ List *gf2d_element_list_update(Element *element,Vector2D offset)
         {
             if (ret == NULL)
             {
-                ret = gf2d_list_new();
+                ret = gfc_list_new();
             }
-            gf2d_list_concat_free(ret,updated);
+            gfc_list_concat_free(ret,updated);
         }
     }
     return ret;
@@ -121,14 +121,14 @@ void gf2d_element_list_free(Element *element)
     if (list != NULL)
     {
         /*for each item, free it*/
-        count = gf2d_list_get_count(list->list);
+        count = gfc_list_get_count(list->list);
         for (i = 0; i < count; i++)
         {
-            e = (Element *)gf2d_list_get_nth(list->list,i);
+            e = (Element *)gfc_list_get_nth(list->list,i);
             if (!e)continue;
             gf2d_element_free(e);
         }
-        gf2d_list_delete(list->list);
+        gfc_list_delete(list->list);
         free(list);
     }
 }
@@ -143,7 +143,7 @@ ListElement *gf2d_element_list_new()
         return NULL;
     }
     memset(list,0,sizeof(ListElement));
-    list->list = gf2d_list_new();
+    list->list = gfc_list_new();
     return list;
 }
 
@@ -181,7 +181,7 @@ void gf2d_element_list_remove_item(Element *e,Element *item)
     ListElement *list;
     if ((!e)||(!item))return;// no op
     list = (ListElement *)e->data;
-    gf2d_list_delete_data(list->list,(void*)item);
+    gfc_list_delete_data(list->list,(void*)item);
 }
 
 void gf2d_element_list_add_item(Element *e,Element *item)
@@ -189,7 +189,7 @@ void gf2d_element_list_add_item(Element *e,Element *item)
     ListElement *list;
     if ((!e)||(!item))return;// no op
     list = (ListElement *)e->data;
-    list->list = gf2d_list_append(list->list,(void*)item);
+    list->list = gfc_list_append(list->list,(void*)item);
 }
 
 Element *gf2d_element_list_get_item_by_id(Element *e,int id)
@@ -201,10 +201,10 @@ Element *gf2d_element_list_get_item_by_id(Element *e,int id)
     if (e->type != ET_List)return NULL;
     list = (ListElement *)e->data;
     if (!list)return NULL;
-    count = gf2d_list_get_count(list->list);
+    count = gfc_list_get_count(list->list);
     for (i = 0; i < count; i++)
     {
-        item = (Element *)gf2d_list_get_nth(list->list,i);
+        item = (Element *)gfc_list_get_nth(list->list,i);
         if (!item)continue;
         q = gf2d_element_get_by_id(item,id);
         if (q)return q;

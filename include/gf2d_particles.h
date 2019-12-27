@@ -3,10 +3,11 @@
 
 #include <SDL.h>
 
-#include "gf2d_vector.h"
-#include "gf2d_color.h"
+#include "gfc_vector.h"
+#include "gfc_color.h"
+#include "gfc_text.h"
+
 #include "gf2d_sprite.h"
-#include "gf2d_text.h"
 #include "gf2d_shape.h"
 
 typedef enum

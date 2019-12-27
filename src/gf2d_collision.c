@@ -1,8 +1,10 @@
-#include "gf2d_collision.h"
+#include <stdlib.h>
 #include "simple_logger.h"
+
 #include "gf2d_dynamic_body.h"
 #include "gf2d_draw.h"
-#include <stdlib.h>
+
+#include "gf2d_collision.h"
 
 Collision *gf2d_collision_new()
 {
@@ -28,16 +30,16 @@ void gf2d_collision_list_clear(List *list)
     int i, count;
     Collision *collision;
     if (!list)return;
-    count = gf2d_list_get_count(list);
+    count = gfc_list_get_count(list);
     for (i = 0; i < count;i++)
     {
-        collision = (Collision*)gf2d_list_get_nth(list,i);
+        collision = (Collision*)gfc_list_get_nth(list,i);
         if (!collision)continue;
         gf2d_collision_free(collision);
     }
     for (i = 0; i < count;i++)
     {
-        gf2d_list_delete_last(list);
+        gfc_list_delete_last(list);
     }
 }
 
@@ -46,14 +48,14 @@ void gf2d_collision_list_free(List *list)
     int i, count;
     Collision *collision;
     if (!list)return;
-    count = gf2d_list_get_count(list);
+    count = gfc_list_get_count(list);
     for (i = 0; i < count;i++)
     {
-        collision = (Collision*)gf2d_list_get_nth(list,i);
+        collision = (Collision*)gfc_list_get_nth(list,i);
         if (!collision)continue;
         gf2d_collision_free(collision);
     }
-    gf2d_list_delete(list);
+    gfc_list_delete(list);
 }
 
 Collision *gf2d_collision_space_static_shape_clip(Shape a, Shape *s)
@@ -107,39 +109,39 @@ List *gf2d_collision_check_space_shape(Space *space, Shape shape,CollisionFilter
     DynamicBody *db;
     Collision *collision;
     List *collisionList = NULL;
-    collisionList = gf2d_list_new();
+    collisionList = gfc_list_new();
     if (filter.worldclip)
     {
-        count = gf2d_list_get_count(space->staticShapes);
+        count = gfc_list_get_count(space->staticShapes);
         for (i = 0; i < count;i++)
         {
-            staticShape = (Shape*)gf2d_list_get_nth(space->staticShapes,i);
+            staticShape = (Shape*)gfc_list_get_nth(space->staticShapes,i);
             if (!staticShape)continue;
             // check for layer compatibility
             collision = gf2d_collision_space_static_shape_clip(shape, staticShape);
             if (collision == NULL)continue;
-            collisionList = gf2d_list_append(collisionList,(void*)collision);
+            collisionList = gfc_list_append(collisionList,(void*)collision);
         }
         //check if the shape clips the level bounds
 /*        collision = gf2d_dynamic_body_bounds_collision_check(db,space->bounds,t);
         if (collision != NULL)
         {
-            db->collisionList = gf2d_list_append(db->collisionList,(void*)collision);
+            db->collisionList = gfc_list_append(db->collisionList,(void*)collision);
         }*/
     }
     if (filter.cliplayer)
     {
-        count = gf2d_list_get_count(space->dynamicBodyList);
+        count = gfc_list_get_count(space->dynamicBodyList);
         for (i = 0; i < count;i++)
         {
-            db = (DynamicBody*)gf2d_list_get_nth(space->dynamicBodyList,i);
+            db = (DynamicBody*)gfc_list_get_nth(space->dynamicBodyList,i);
             if (!db)continue;
             if (db->body == filter.ignore)continue;
             if (!(filter.cliplayer & db->body->cliplayer))continue;
             // check for layer compatibility
             collision = gf2d_collision_space_dynamic_body_clip(shape, db);
             if (collision == NULL)continue;
-            collisionList = gf2d_list_append(collisionList,(void*)collision);
+            collisionList = gfc_list_append(collisionList,(void*)collision);
         }
 
     }
@@ -162,10 +164,10 @@ Collision gf2d_collision_trace_space(Space *space, Vector2D start, Vector2D end 
     {
         return out;
     }
-    count = gf2d_list_get_count(collisionList);
+    count = gfc_list_get_count(collisionList);
     for (i =0; i < count;i++)
     {
-        collision = (Collision*)gf2d_list_get_nth(collisionList,i);
+        collision = (Collision*)gfc_list_get_nth(collisionList,i);
         if (!collision)continue;
         if (!best)
         {

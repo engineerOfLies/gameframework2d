@@ -1,14 +1,10 @@
-#include <SDL_ttf.h>
-#include "gf2d_text.h"
-#include "gf2d_graphics.h"
 #include "simple_logger.h"
+#include "gfc_text.h"
+#include "gfc_color.h"
 
-typedef struct
-{
-    TextLine filename;
-    TTF_Font *font;
-    Uint32  pointSize;
-}Font;
+#include "gf2d_graphics.h"
+
+#include "gf2d_font.h"
 
 typedef struct
 {
@@ -19,11 +15,9 @@ typedef struct
 
 static FontManager font_manager = {0};
 
-void gf2d_font_draw_line(char *text,Font *font,Color color, Vector2D position);
 void gf2d_fonts_load(char *filename);
-Vector2D gf2d_font_get_bounds(char *text,Font *font);
 
-void gf2d_text_close()
+void gf2d_font_close()
 {
     int i;
     for (i = 0;i < font_manager.font_max;i++)
@@ -37,7 +31,7 @@ void gf2d_text_close()
     slog("text system closed");
 }
 
-void gf2d_text_init(char *configFile)
+void gf2d_font_init(char *configFile)
 {
     if (TTF_Init() == -1)
     {
@@ -46,7 +40,7 @@ void gf2d_text_init(char *configFile)
     }
     gf2d_fonts_load(configFile);
     slog("text system initialized");
-    atexit(gf2d_text_close);
+    atexit(gf2d_font_close);
 }
 
 int gf2d_fonts_get_count(FILE *file)
@@ -178,7 +172,7 @@ Font *gf2d_font_get_by_filename(char *filename)
     if (!filename)return NULL;
     for (i = 0; i < font_manager.font_max;i++)
     {
-        if (gf2d_line_cmp(font_manager.font_list[i].filename,filename) == 0)
+        if (gfc_line_cmp(font_manager.font_list[i].filename,filename) == 0)
         {
             return &font_manager.font_list[i];
         }
@@ -196,12 +190,12 @@ Font *gf2d_font_get_by_tag(FontTypes tag)
     return font_manager.font_tags[tag];
 }
 
-void gf2d_text_draw_line_font(char *text,char *filename,Color color, Vector2D position)
+void gf2d_font_draw_line_named(char *text,char *filename,Color color, Vector2D position)
 {
     gf2d_font_draw_line(text,gf2d_font_get_by_filename(filename),color, position);
 }
 
-void gf2d_text_draw_line(char *text,FontTypes tag,Color color, Vector2D position)
+void gf2d_font_draw_line_tag(char *text,FontTypes tag,Color color, Vector2D position)
 {
     gf2d_font_draw_line(text,gf2d_font_get_by_tag(tag),color, position);
 }
@@ -222,7 +216,7 @@ void gf2d_font_draw_line(char *text,Font *font,Color color, Vector2D position)
         return;
     }
     
-    surface = TTF_RenderUTF8_Blended(font->font, text, gf2d_color_to_sdl(color));
+    surface = TTF_RenderUTF8_Blended(font->font, text, gfc_color_to_sdl(color));
     if (!surface)
     {
         slog("failed to render text");
@@ -259,7 +253,7 @@ void gf2d_font_draw_line(char *text,Font *font,Color color, Vector2D position)
     SDL_DestroyTexture(texture);
 }
 
-Vector2D gf2d_text_get_bounds(char *text,FontTypes tag)
+Vector2D gf2d_font_get_bounds_tag(char *text,FontTypes tag)
 {
     return gf2d_font_get_bounds(text,gf2d_font_get_by_tag(tag));
 }

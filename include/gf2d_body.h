@@ -1,9 +1,10 @@
 #ifndef __BODY_H__
 #define __BODY_H__
 
+#include "gfc_list.h"
+#include "gfc_text.h"
+
 #include "gf2d_shape.h"
-#include "gf2d_list.h"
-#include "gf2d_text.h"
 
 typedef struct Body_S
 {

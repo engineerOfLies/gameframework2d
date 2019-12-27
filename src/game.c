@@ -1,19 +1,20 @@
 #include <SDL.h>
 #include <stdio.h>
+
+#include <simple_logger.h>
+#include "gfc_input.h"
+
 #include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
-#include "gf2d_list.h"
-#include "gf2d_input.h"
-#include "gf2d_audio.h"
 #include "gf2d_windows.h"
 #include "gf2d_entity.h"
+#include "gf2d_font.h"
 #include "gf2d_mouse.h"
-#include "simple_logger.h"
 #include "gf2d_draw.h"
 #include "camera.h"
-#include "windows_common.h"
 #include "gf2d_space.h"
 #include "gf2d_collision.h"
+#include "windows_common.h"
 
 static int _done = 0;
 static Window *_quit = NULL;
@@ -61,11 +62,11 @@ int main(int argc, char * argv[])
         vector4d(0,0,0,255),
         fullscreen);
     gf2d_graphics_set_frame_delay(16);
-    gf2d_audio_init(256,16,4,1,1,1);
+    gfc_audio_init(256,16,4,1,1,1);
     gf2d_sprite_init(1024);
     gf2d_action_list_init(128);
-    gf2d_text_init("config/font.cfg");
-    gf2d_input_init("config/input.cfg");
+    gf2d_font_init("config/font.cfg");
+    gfc_input_init("config/input.cfg");
     gf2d_windows_init(128);
     gf2d_entity_system_init(1024);
     
@@ -123,7 +124,7 @@ int main(int argc, char * argv[])
             0,
             0,
             vector2d(256 + 128,256 + 128),
-            vector2d(2.5 * gf2d_crandom(),3 * gf2d_crandom()),
+            vector2d(2.5 * gfc_crandom(),3 * gfc_crandom()),
             10,
             1,
             1,  //elasticity
@@ -137,7 +138,7 @@ int main(int argc, char * argv[])
     /*main game loop*/
     while(!_done)
     {
-        gf2d_input_update();
+        gfc_input_update();
         /*update things here*/
         SDL_GetMouseState(&mx,&my);
         mf+=0.1;
@@ -171,13 +172,13 @@ int main(int argc, char * argv[])
                 }
             //UI elements last
             
-            gf2d_text_draw_line("Press F4 to quit!",FT_H1,gf2d_color(255,255,255,255), vector2d(0,0));
+            gf2d_font_draw_line_tag("Press F4 to quit!",FT_H1,gfc_color(255,255,255,255), vector2d(0,0));
             
             gf2d_windows_draw_all();
             gf2d_mouse_draw();
         gf2d_grahics_next_frame();// render current draw frame and skip to the next frame
         
-        if ((gf2d_input_command_down("exit"))&&(_quit == NULL))
+        if ((gfc_input_command_down("exit"))&&(_quit == NULL))
         {
             _quit = window_yes_no("Exit?",onExit,onCancel,NULL,NULL);
         }

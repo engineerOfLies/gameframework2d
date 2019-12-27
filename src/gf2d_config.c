@@ -1,5 +1,5 @@
-#include "gf2d_config.h"
 #include "simple_logger.h"
+#include "gf2d_config.h"
 
 int sj_value_as_vector2d(SJson *json,Vector2D *output)
 {

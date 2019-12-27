@@ -1,8 +1,9 @@
+#include "simple_logger.h"
+#include "gfc_input.h"
+
 #include "gf2d_element_entry.h"
 #include "gf2d_element_label.h"
 #include "gf2d_mouse.h"
-#include "simple_logger.h"
-#include "gf2d_input.h"
 
 void gf2d_element_entry_draw(Element *element,Vector2D offset)
 {
@@ -19,7 +20,7 @@ void gf2d_element_entry_draw(Element *element,Vector2D offset)
             element->bounds.y + position.y,
             element->bounds.w,
             element->bounds.h),
-        gf2d_color8(200,200,200,255));
+        gfc_color8(200,200,200,255));
 }
 
 List *gf2d_element_entry_update(Element *element,Vector2D offset)
@@ -57,11 +58,11 @@ List *gf2d_element_entry_update(Element *element,Vector2D offset)
     if (entry->has_focus)
     {
         mods = SDL_GetModState();
-        if (entry->cursor_pos < (GF2DTEXTLEN -1))
+        if (entry->cursor_pos < (GFCTEXTLEN -1))
         {
             for (input[0] = 'a';input[0] <= 'z';input[0]++)
             {
-                if (gf2d_input_key_pressed(input))
+                if (gfc_input_key_pressed(input))
                 {
                     if (mods & KMOD_SHIFT)
                     {
@@ -75,7 +76,7 @@ List *gf2d_element_entry_update(Element *element,Vector2D offset)
             }
             for (input[0] = '0';input[0] <= '9';input[0]++)
             {
-                if (gf2d_input_key_pressed(input))
+                if (gfc_input_key_pressed(input))
                 {
                     if (mods & KMOD_SHIFT)
                     {
@@ -119,7 +120,7 @@ List *gf2d_element_entry_update(Element *element,Vector2D offset)
                     }
                 }
             }
-            if (gf2d_input_key_pressed("`"))
+            if (gfc_input_key_pressed("`"))
             {
                 if (mods & KMOD_SHIFT)
                 {
@@ -127,7 +128,7 @@ List *gf2d_element_entry_update(Element *element,Vector2D offset)
                 }
                 else newLet = '`';
             }
-            if (gf2d_input_key_pressed(";"))
+            if (gfc_input_key_pressed(";"))
             {
                 if (mods & KMOD_SHIFT)
                 {
@@ -135,7 +136,7 @@ List *gf2d_element_entry_update(Element *element,Vector2D offset)
                 }
                 else newLet = ';';
             }
-            if (gf2d_input_key_pressed("="))
+            if (gfc_input_key_pressed("="))
             {
                 if (mods & KMOD_SHIFT)
                 {
@@ -143,7 +144,7 @@ List *gf2d_element_entry_update(Element *element,Vector2D offset)
                 }
                 else newLet = '=';
             }
-            if (gf2d_input_key_pressed("-"))
+            if (gfc_input_key_pressed("-"))
             {
                 if (mods & KMOD_SHIFT)
                 {
@@ -151,7 +152,7 @@ List *gf2d_element_entry_update(Element *element,Vector2D offset)
                 }
                 else newLet = '-';
             }
-            if (gf2d_input_key_pressed("["))
+            if (gfc_input_key_pressed("["))
             {
                 if (mods & KMOD_SHIFT)
                 {
@@ -159,7 +160,7 @@ List *gf2d_element_entry_update(Element *element,Vector2D offset)
                 }
                 else newLet = '[';
             }
-            if (gf2d_input_key_pressed("]"))
+            if (gfc_input_key_pressed("]"))
             {
                 if (mods & KMOD_SHIFT)
                 {
@@ -167,7 +168,7 @@ List *gf2d_element_entry_update(Element *element,Vector2D offset)
                 }
                 else newLet = ']';
             }
-            if (gf2d_input_key_pressed("."))
+            if (gfc_input_key_pressed("."))
             {
                 if (mods & KMOD_SHIFT)
                 {
@@ -175,7 +176,7 @@ List *gf2d_element_entry_update(Element *element,Vector2D offset)
                 }
                 else newLet = '.';
             }
-            if (gf2d_input_key_pressed(","))
+            if (gfc_input_key_pressed(","))
             {
                 if (mods & KMOD_SHIFT)
                 {
@@ -183,11 +184,11 @@ List *gf2d_element_entry_update(Element *element,Vector2D offset)
                 }
                 else newLet = ',';
             }
-            if (gf2d_input_key_pressed(" "))
+            if (gfc_input_key_pressed(" "))
             {
                 newLet = ' ';
             }
-            if (gf2d_input_key_pressed("\'"))
+            if (gfc_input_key_pressed("\'"))
             {
                 if (mods & KMOD_SHIFT)
                 {
@@ -195,7 +196,7 @@ List *gf2d_element_entry_update(Element *element,Vector2D offset)
                 }
                 else newLet = '\'';
             }
-            if (gf2d_input_key_pressed("\\"))
+            if (gfc_input_key_pressed("\\"))
             {
                 if (mods & KMOD_SHIFT)
                 {
@@ -203,7 +204,7 @@ List *gf2d_element_entry_update(Element *element,Vector2D offset)
                 }
                 else newLet = '\\';
             }
-            if (gf2d_input_key_pressed("/"))
+            if (gfc_input_key_pressed("/"))
             {
                 if (mods & KMOD_SHIFT)
                 {
@@ -216,19 +217,19 @@ List *gf2d_element_entry_update(Element *element,Vector2D offset)
                 entry->text[entry->cursor_pos++] = newLet;
                 entry->text[entry->cursor_pos] = '\0';
                 gf2d_element_label_set_text(entry->label,entry->text);
-                list = gf2d_list_new();
-                gf2d_list_append(list,element);
+                list = gfc_list_new();
+                gfc_list_append(list,element);
                 return list;
             }
         }
         if (entry->cursor_pos > 0)
         {
-            if (gf2d_input_key_pressed("BACKSPACE"))
+            if (gfc_input_key_pressed("BACKSPACE"))
             {
                 entry->text[--entry->cursor_pos] = '\0';
                 gf2d_element_label_set_text(entry->label,entry->text);
-                list = gf2d_list_new();
-                gf2d_list_append(list,element);
+                list = gfc_list_new();
+                gfc_list_append(list,element);
                 return list;
             }
         }

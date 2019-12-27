@@ -7,11 +7,12 @@
  * There are going to be 
  */
 
+#include "gfc_list.h"
+#include "gfc_text.h"
+#include "gfc_color.h"
+
 #include "gf2d_sprite.h"
-#include "gf2d_list.h"
 #include "gf2d_shape.h"
-#include "gf2d_text.h"
-#include "gf2d_color.h"
 #include "gf2d_config.h"
 #include "gf2d_windows.h"
 

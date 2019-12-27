@@ -1,6 +1,6 @@
-#include "gf2d_mouse.h"
-#include "gf2d_actor.h"
 #include <SDL.h>
+#include "gf2d_actor.h"
+#include "gf2d_mouse.h"
 
 typedef struct
 {

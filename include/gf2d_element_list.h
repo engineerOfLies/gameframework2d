@@ -1,7 +1,7 @@
 #ifndef __GF2D_ELEMENT_LIST_H__
 #define __GF2D_ELEMENT_LIST_H__
 
-#include "gf2d_list.h"
+#include "gfc_list.h"
 #include "gf2d_elements.h"
 
 typedef enum

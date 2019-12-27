@@ -1,10 +1,12 @@
 #ifndef __GF2D_COLLISION_H__
 #define __GF2D_COLLISION_H__
 
+#include "gfc_list.h"
+#include "gfc_text.h"
+
 #include "gf2d_shape.h"
 #include "gf2d_space.h"
-#include "gf2d_list.h"
-#include "gf2d_text.h"
+
 #include "gf2d_body.h"
 
 #define ALL_LAYERS 0xffffffff

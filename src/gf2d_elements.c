@@ -1,12 +1,12 @@
 #include <stdlib.h>
 #include <string.h>
+#include "simple_logger.h"
 #include "gf2d_elements.h"
 #include "gf2d_element_actor.h"
 #include "gf2d_element_button.h"
 #include "gf2d_element_entry.h"
 #include "gf2d_element_list.h"
 #include "gf2d_element_label.h"
-#include "simple_logger.h"
 
 Element *gf2d_element_new()
 {
@@ -33,7 +33,7 @@ Element *gf2d_element_new_full(
     Element *e;
     e = gf2d_element_new();
     if (!e)return NULL;
-    gf2d_line_cpy(e->name,name);
+    gfc_line_cpy(e->name,name);
     e->index = index;
     e->color = color;
     e->state = state;
@@ -60,7 +60,7 @@ void gf2d_element_draw(Element *e, Vector2D offset)
     }
     if (e->draw)e->draw(e,offset);
 //    gf2d_rect_set(rect,offset.x + e->bounds.x,offset.y + e->bounds.y,e->bounds.w,e->bounds.h);
- //   gf2d_rect_draw(rect,gf2d_color8(100,255,100,255));
+ //   gf2d_rect_draw(rect,gfc_color8(100,255,100,255));
 }
 
 List * gf2d_element_update(Element *e, Vector2D offset)
@@ -138,7 +138,7 @@ Element *gf2d_element_load_from_config(SJson *json,Element *parent,Window *win)
     e = gf2d_element_new();
     if (!e)return NULL;
     value = sj_object_get_value(json,"name");
-    gf2d_line_cpy(e->name,sj_get_string_value(value));
+    gfc_line_cpy(e->name,sj_get_string_value(value));
     
     value = sj_object_get_value(json,"id");
     sj_get_integer_value(value,&e->index);
@@ -149,7 +149,7 @@ Element *gf2d_element_load_from_config(SJson *json,Element *parent,Window *win)
     value = sj_object_get_value(json,"color");
     vector4d_set(vector,255,255,255,255);
     sj_value_as_vector4d(value,&vector);
-    e->color = gf2d_color_from_vector4(vector);
+    e->color = gfc_color_from_vector4(vector);
         
     value = sj_object_get_value(json,"bounds");
     sj_value_as_vector4d(value,&vector);
@@ -212,7 +212,7 @@ Element *gf2d_element_get_by_id(Element *e,int id)
 Element *gf2d_get_element_by_name(Element *e,char *name)
 {
     if (!e)return NULL;
-    if (gf2d_line_cmp(e->name,name)==0)return e;
+    if (gfc_line_cmp(e->name,name)==0)return e;
     if (e->get_by_name)return e->get_by_name(e,name);
     return NULL;
 }

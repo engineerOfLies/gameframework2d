@@ -2,7 +2,9 @@
 #define __GF2D_CONFIG_H__
 
 #include <simple_json.h>
-#include "gf2d_vector.h"
+
+#include "gfc_vector.h"
+
 #include "gf2d_shape.h"
 
 int sj_value_as_vector2d(SJson *json,Vector2D *output);

@@ -1,11 +1,12 @@
-
 #include <SDL_image.h>
 #include <stdlib.h>
 
 #include "simple_logger.h"
-#include "gf2d_sprite.h"
-#include "gf2d_text.h"
+#include "gfc_text.h"
+
 #include "gf2d_graphics.h"
+
+#include "gf2d_sprite.h"
 
 typedef struct
 {
@@ -106,7 +107,7 @@ Sprite *gf2d_sprite_get_by_filename(char * filename)
     int i;
     for (i = 0;i < sprite_manager.max_sprites;i++)
     {
-        if (gf2d_line_cmp(sprite_manager.sprite_list[i].filepath,filename)==0)
+        if (gfc_line_cmp(sprite_manager.sprite_list[i].filepath,filename)==0)
         {
             return &sprite_manager.sprite_list[i];
         }
@@ -184,7 +185,7 @@ Sprite *gf2d_sprite_load_all(
     }
     else sprite->frame_w = frameWidth;
     sprite->frames_per_line = framesPerLine;
-    gf2d_line_cpy(sprite->filepath,filename);
+    gfc_line_cpy(sprite->filepath,filename);
 
     if(!keepSurface)
     {
@@ -234,13 +235,13 @@ void gf2d_sprite_draw_to_surface(
         vector2d_copy(scaleOffset,(*scaleCenter));
     }
     fpl = (sprite->frames_per_line)?sprite->frames_per_line:1;
-    gf2d_rect_set(
+    gfc_rect_set(
         cell,
         frame%fpl * sprite->frame_w,
         frame/fpl * sprite->frame_h,
         sprite->frame_w,
         sprite->frame_h);
-    gf2d_rect_set(
+    gfc_rect_set(
         target,
         position.x - (scaleFactor.x * scaleOffset.x),
         position.y - (scaleFactor.y * scaleOffset.y),
@@ -319,13 +320,13 @@ void gf2d_sprite_draw(
     }
     
     fpl = (sprite->frames_per_line)?sprite->frames_per_line:1;
-    gf2d_rect_set(
+    gfc_rect_set(
         cell,
         frame%fpl * sprite->frame_w,
         frame/fpl * sprite->frame_h,
         sprite->frame_w,
         sprite->frame_h);
-    gf2d_rect_set(
+    gfc_rect_set(
         target,
         position.x - (scaleFactor.x * scaleOffset.x),
         position.y - (scaleFactor.y * scaleOffset.y),

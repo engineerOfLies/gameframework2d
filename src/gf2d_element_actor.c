@@ -1,7 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "gf2d_element_actor.h"
 #include "simple_logger.h"
+
+#include "gf2d_element_actor.h"
 
 void gf2d_element_actor_draw(Element *element,Vector2D offset)
 {

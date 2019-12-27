@@ -2,7 +2,7 @@
 #define __GF2D_DRAW_H__
 
 #include <SDL.h>
-#include "gf2d_vector.h"
+#include "gfc_vector.h"
 /**
  * @brief draw a pixel to the current rendering context
  * @param pixel the screen position to draw at

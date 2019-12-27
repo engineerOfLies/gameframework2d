@@ -1,11 +1,13 @@
 #ifndef __GF2D_ACTOR_H__
 #define __GF2D_ACTOR_H__
 
-#include "gf2d_sprite.h"
-#include "gf2d_text.h"
-#include "gf2d_vector.h"
-
 #include <SDL.h>
+
+#include "gfc_text.h"
+#include "gfc_vector.h"
+
+#include "gf2d_sprite.h"
+
 
 typedef enum
 {

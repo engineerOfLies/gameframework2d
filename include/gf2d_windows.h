@@ -1,10 +1,11 @@
 #ifndef __GF2D_MENUS_H__
 #define __GF2D_MENUS_H__
 
+#include <simple_json.h>
+#include "gfc_list.h"
+
 #include "gf2d_shape.h"
 #include "gf2d_sprite.h"
-#include "gf2d_list.h"
-#include <simple_json.h>
 
 typedef struct Element_S Element;
 

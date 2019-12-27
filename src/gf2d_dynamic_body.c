@@ -1,7 +1,7 @@
-#include "gf2d_dynamic_body.h"
-#include "gf2d_collision.h"
-#include "simple_logger.h"
 #include <stdlib.h>
+#include "simple_logger.h"
+#include "gf2d_collision.h"
+#include "gf2d_dynamic_body.h"
 
 Shape gf2d_dynamic_body_to_shape(DynamicBody *a)
 {
@@ -121,7 +121,7 @@ DynamicBody *gf2d_dynamic_body_new()
         return NULL;
     }
     memset(db,0,sizeof(DynamicBody));
-    db->collisionList = gf2d_list_new();
+    db->collisionList = gfc_list_new();
     return db;
 }
 
@@ -163,10 +163,10 @@ void gf2d_dynamic_body_resolve_overlap(DynamicBody *db,float backoff)
     Collision *collision;
     Vector2D total = {0};
     if (!db)return;
-    count = gf2d_list_get_count(db->collisionList);
+    count = gfc_list_get_count(db->collisionList);
     for (i = 0; i < count; i++)
     {
-        collision = (Collision*)gf2d_list_get_nth(db->collisionList,i);
+        collision = (Collision*)gfc_list_get_nth(db->collisionList,i);
         if (!collision)continue;
         vector2d_add(total,total,collision->normal);
     }

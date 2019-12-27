@@ -1,8 +1,9 @@
+#include "simple_logger.h"
+#include "gfc_input.h"
+
 #include "gf2d_element_button.h"
 #include "gf2d_element_actor.h"
 #include "gf2d_mouse.h"
-#include "simple_logger.h"
-#include "gf2d_input.h"
 
 void gf2d_element_button_draw(Element *element,Vector2D offset)
 {
@@ -54,8 +55,8 @@ List *gf2d_element_button_update(Element *element,Vector2D offset)
         }
         else if (gf2d_mouse_button_released(0))
         {
-            list = gf2d_list_new();
-            list = gf2d_list_append(list,element);
+            list = gfc_list_new();
+            list = gfc_list_append(list,element);
             return list;
         }
     }
@@ -63,11 +64,11 @@ List *gf2d_element_button_update(Element *element,Vector2D offset)
     {
         element->state = ES_idle;
     }
-    if (gf2d_input_command_pressed(button->hotkey))
+    if (gfc_input_command_pressed(button->hotkey))
     {
         element->state = ES_active;
-        list = gf2d_list_new();
-        gf2d_list_append(list,element);
+        list = gfc_list_new();
+        gfc_list_append(list,element);
         return list;
     }
 
@@ -181,14 +182,14 @@ void gf2d_element_load_button_from_config(Element *e,SJson *json,Window *win)
     {
         actor = gf2d_element_load_from_config(value,e,win);
     }
-    gf2d_element_make_button(e,gf2d_element_button_new_full(label,actor,gf2d_color_from_vector4(highColor),gf2d_color_from_vector4(pressColor)));
+    gf2d_element_make_button(e,gf2d_element_button_new_full(label,actor,gfc_color_from_vector4(highColor),gfc_color_from_vector4(pressColor)));
  
     button = (ButtonElement*)e->data;
 
     value = sj_object_get_value(json,"hotkey");
     if (value)
     {
-        gf2d_line_cpy(button->hotkey,sj_get_string_value(value));
+        gfc_line_cpy(button->hotkey,sj_get_string_value(value));
     }
 }
 

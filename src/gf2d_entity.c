@@ -1,6 +1,8 @@
-#include "gf2d_entity.h"
-#include "camera.h"
 #include "simple_logger.h"
+
+#include "camera.h"
+
+#include "gf2d_entity.h"
 
 
 typedef struct
@@ -56,7 +58,7 @@ void gf2d_entity_free(Entity *self)
     if (self->free)self->free(self);
     for (i = 0;i < EntitySoundMax;i++)
     {
-        gf2d_sound_free(self->sound[i]);
+        gfc_sound_free(self->sound[i]);
     }
     gf2d_actor_free(&self->actor);
     gf2d_particle_emitter_free(self->pe);

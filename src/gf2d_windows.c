@@ -2,10 +2,11 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "simple_logger.h"
+
 #include "gf2d_graphics.h"
 #include "gf2d_windows.h"
 #include "gf2d_elements.h"
-#include "simple_logger.h"
 
 typedef struct
 {
@@ -128,7 +129,7 @@ void gf2d_draw_window_border(Sprite *border,Sprite *bg,Rect rect,Vector4D color)
         BE_BR);
     if (window_manager.drawbounds)
     {
-        gf2d_rect_draw(rect,gf2d_color8(255,100,100,255));
+        gf2d_rect_draw(rect,gfc_color8(255,100,100,255));
     }
 }
 
@@ -142,7 +143,7 @@ void gf2d_windows_close()
             gf2d_window_free(&window_manager.window_list[i]);
         }
     }
-    gf2d_list_delete(window_manager.window_deque);
+    gfc_list_delete(window_manager.window_deque);
     slog("window system closed");
 }
 
@@ -161,7 +162,7 @@ void gf2d_windows_init(int max_windows)
     }
     memset(window_manager.window_list,0,sizeof(Window)*max_windows);
     window_manager.window_max = max_windows;
-    window_manager.window_deque = gf2d_list_new();
+    window_manager.window_deque = gfc_list_new();
     window_manager.generic_background = gf2d_sprite_load_image("images/window_background.png");
     window_manager.generic_border = gf2d_sprite_load_all("images/window_border.png",64,64,8,false);
     window_manager.drawbounds = 0;
@@ -177,13 +178,13 @@ void gf2d_window_free(Window *win)
     {
         win->free_data(win);
     }
-    gf2d_list_delete_data(window_manager.window_deque,win);
-    count = gf2d_list_get_count(win->elements);
+    gfc_list_delete_data(window_manager.window_deque,win);
+    count = gfc_list_get_count(win->elements);
     for (i = 0;i < count;i++)
     {
-        gf2d_element_free((Element*)gf2d_list_get_nth(win->elements,i));
+        gf2d_element_free((Element*)gfc_list_get_nth(win->elements,i));
     }
-    gf2d_list_delete(win->elements);
+    gfc_list_delete(win->elements);
     gf2d_sprite_free(win->background);
     gf2d_sprite_free(win->border);
     memset(win,0,sizeof(Window));
@@ -200,10 +201,10 @@ void gf2d_window_draw(Window *win)
     }
     offset.x = win->dimensions.x + win->canvas.x;
     offset.y = win->dimensions.y + win->canvas.y;
-    count = gf2d_list_get_count(win->elements);
+    count = gfc_list_get_count(win->elements);
     for (i = 0;i < count;i++)
     {
-        gf2d_element_draw((Element *)gf2d_list_get_nth(win->elements,i), offset);
+        gf2d_element_draw((Element *)gfc_list_get_nth(win->elements,i), offset);
     }
 }
 
@@ -215,29 +216,29 @@ void gf2d_window_update(Window *win)
     List *updated = NULL;
     Element *e;
     if (!win)return;
-    updateList = gf2d_list_new();
+    updateList = gfc_list_new();
     offset.x = win->dimensions.x + win->canvas.x;
     offset.y = win->dimensions.y + win->canvas.y;
-    count = gf2d_list_get_count(win->elements);
+    count = gfc_list_get_count(win->elements);
     for (i = 0;i < count;i++)
     {
-        e = (Element *)gf2d_list_get_nth(win->elements,i);
+        e = (Element *)gfc_list_get_nth(win->elements,i);
         if (!e)continue;
         updated = gf2d_element_update(e, offset);
         if (updated)
         {
             if (!updateList)
             {
-                updateList = gf2d_list_new();
+                updateList = gfc_list_new();
             }
-            updateList = gf2d_list_concat_free(updateList,updated);
+            updateList = gfc_list_concat_free(updateList,updated);
         }
     }
     if (win->update)
     {
         win->update(win,updateList);
     }
-    gf2d_list_delete(updateList);
+    gfc_list_delete(updateList);
 }
 
 Window *gf2d_window_new()
@@ -249,8 +250,8 @@ Window *gf2d_window_new()
         if (!window_manager.window_list[i]._inuse)
         {
            window_manager.window_list[i]._inuse = 1;
-           window_manager.window_deque = gf2d_list_append(window_manager.window_deque,&window_manager.window_list[i]);
-           window_manager.window_list[i].elements = gf2d_list_new();
+           window_manager.window_deque = gfc_list_append(window_manager.window_deque,&window_manager.window_list[i]);
+           window_manager.window_list[i].elements = gfc_list_new();
            return &window_manager.window_list[i];
         }
     }
@@ -261,17 +262,17 @@ void gf2d_window_add_element(Window *win,Element *e)
 {
     if (!win)return;
     if (!e)return;
-    win->elements = gf2d_list_append(win->elements,e);
+    win->elements = gfc_list_append(win->elements,e);
 }
 
 void gf2d_windows_draw_all()
 {
     int i,count;
     Window* win;
-    count = gf2d_list_get_count(window_manager.window_deque);
+    count = gfc_list_get_count(window_manager.window_deque);
     for (i = 0; i < count; i++)
     {
-        win = (Window*)gf2d_list_get_nth(window_manager.window_deque,i);
+        win = (Window*)gfc_list_get_nth(window_manager.window_deque,i);
         if (!win)continue;
         if (win->draw)
         {
@@ -287,10 +288,10 @@ void gf2d_windows_draw_all()
 void gf2d_windows_update_all()
 {
     int i,count;
-    count = gf2d_list_get_count(window_manager.window_deque);
+    count = gfc_list_get_count(window_manager.window_deque);
     for (i = count - 1; i >= 0; i--)
     {
-        gf2d_window_update((Window*)gf2d_list_get_nth(window_manager.window_deque,i));
+        gf2d_window_update((Window*)gfc_list_get_nth(window_manager.window_deque,i));
     }
 }
 
@@ -461,10 +462,10 @@ Element *gf2d_window_get_element_by_id(Window *win,int id)
     Element *e,*q;
     int count, i;
     if (!win)return NULL;
-    count = gf2d_list_get_count(win->elements);
+    count = gfc_list_get_count(win->elements);
     for (i = 0;i < count;i++)
     {
-        e = (Element *)gf2d_list_get_nth(win->elements,i);
+        e = (Element *)gfc_list_get_nth(win->elements,i);
         if (!e)continue;
         q = gf2d_element_get_by_id(e,id);
         if (q)return q;

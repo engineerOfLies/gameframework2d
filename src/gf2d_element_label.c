@@ -1,7 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "gf2d_element_label.h"
 #include "simple_logger.h"
+#include "gfc_text.h"
+#include "gf2d_font.h"
+#include "gf2d_element_label.h"
 
 void gf2d_element_label_draw(Element *element,Vector2D offset)
 {
@@ -12,7 +14,7 @@ void gf2d_element_label_draw(Element *element,Vector2D offset)
     label = (LabelElement*)element->data;
     if (!label)return;
     if (strlen(label->text) <= 0)return;
-    size = gf2d_text_get_bounds(label->text,label->style);
+    size = gf2d_font_get_bounds_tag(label->text,label->style);
     if (size.x < 0)
     {
         return;
@@ -41,7 +43,7 @@ void gf2d_element_label_draw(Element *element,Vector2D offset)
             position.y += (element->bounds.h - size.y);
             break;
     }
-    gf2d_text_draw_line(label->text,label->style,element->color, position);
+    gf2d_font_draw_line_tag(label->text,label->style,element->color, position);
 }
 
 List *gf2d_element_label_update(Element *element,Vector2D offset)
@@ -82,7 +84,7 @@ LabelElement *gf2d_element_label_new_full(char *text,Color color,int style,int j
     {
         return NULL;
     }
-    gf2d_block_cpy(label->text,text);
+    gfc_block_cpy(label->text,text);
     label->bgcolor = color;
     label->style = style;
     label->justify = justify;
@@ -107,7 +109,7 @@ void gf2d_element_label_set_text(Element *e,char *text)
     LabelElement *label;
     label = (LabelElement *)e->data;
     if (!label)return;
-    gf2d_block_cpy(label->text,text);
+    gfc_block_cpy(label->text,text);
 }
 
 void gf2d_element_load_label_from_config(Element *e,SJson *json)
@@ -200,7 +202,7 @@ void gf2d_element_load_label_from_config(Element *e,SJson *json)
     value = sj_object_get_value(json,"color");
     vector4d_set(vector,255,255,255,255);
     sj_value_as_vector4d(value,&vector);
-    color = gf2d_color_from_vector4(vector);
+    color = gfc_color_from_vector4(vector);
 
     value = sj_object_get_value(json,"text");
     buffer = sj_get_string_value(value);

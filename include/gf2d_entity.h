@@ -1,10 +1,11 @@
 #ifndef __GF2D_ENTITY_H__
 #define __GF2D_ENTITY_H__
 
-#include "gf2d_text.h"
-#include "gf2d_vector.h"
+#include "gfc_text.h"
+#include "gfc_vector.h"
+#include "gfc_audio.h"
+
 #include "gf2d_actor.h"
-#include "gf2d_audio.h"
 #include "gf2d_particles.h"
 #include "gf2d_collision.h"
 

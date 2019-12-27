@@ -1,7 +1,8 @@
-#include "gf2d_shape.h"
-#include "gf2d_draw.h"
-#include "simple_logger.h"
 #include <assert.h>
+#include "simple_logger.h"
+#include "gf2d_draw.h"
+#include "gf2d_shape.h"
+
 Uint8 gf2d_edge_circle_intersection_poc_old(Edge e,Circle c,Vector2D *poc,Vector2D *normal);
 Uint8 gf2d_edge_to_circle_intersection_poc(Edge e,Circle c,Vector2D *poc,Vector2D *normal);
 Uint8 gf2d_circle_to_edge_intersection_poc(Edge e,Circle c,Vector2D *poc,Vector2D *normal);
@@ -341,7 +342,7 @@ Rect gf2d_rect(float x, float y, float w, float h)
 
 void gf2d_rect_draw(Rect r,Color color)
 {
-    gf2d_draw_rect(gf2d_rect_to_sdl_rect(r),gf2d_color_to_vector4(color));
+    gf2d_draw_rect(gf2d_rect_to_sdl_rect(r),gfc_color_to_vector4(color));
 }
 
 void gf2d_shape_draw(Shape shape,Color color,Vector2D offset)
@@ -353,10 +354,10 @@ void gf2d_shape_draw(Shape shape,Color color,Vector2D offset)
             gf2d_rect_draw(shape.s.r,color);
             break;
         case ST_CIRCLE:
-            gf2d_draw_circle(vector2d(shape.s.c.x + offset.x,shape.s.c.y + offset.y), shape.s.c.r,gf2d_color_to_vector4(color));
+            gf2d_draw_circle(vector2d(shape.s.c.x + offset.x,shape.s.c.y + offset.y), shape.s.c.r,gfc_color_to_vector4(color));
             break;
         case ST_EDGE:
-            gf2d_draw_line(vector2d(shape.s.e.x1 + offset.x,shape.s.e.y1 + offset.y),vector2d(shape.s.e.x2 + offset.x,shape.s.e.y2 + offset.y), gf2d_color_to_vector4(color));
+            gf2d_draw_line(vector2d(shape.s.e.x1 + offset.x,shape.s.e.y1 + offset.y),vector2d(shape.s.e.x2 + offset.x,shape.s.e.y2 + offset.y), gfc_color_to_vector4(color));
             break;
     }
 }

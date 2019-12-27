@@ -1,8 +1,10 @@
-#include "gf2d_space.h"
-#include "gf2d_draw.h"
-#include "simple_logger.h"
-#include "gf2d_dynamic_body.h"
 #include <stdlib.h>
+#include "simple_logger.h"
+
+#include "gf2d_draw.h"
+#include "gf2d_dynamic_body.h"
+
+#include "gf2d_space.h"
 
 
 Uint8 gf2d_body_shape_collide(Body *a,Shape *s,Vector2D *poc, Vector2D *normal);
@@ -26,9 +28,9 @@ void gf2d_space_free(Space *space)
     if (!space)return;
     
     //static shapes ARE owned by the space, so are deleted when the space goes away
-    gf2d_list_foreach(space->staticShapes,gf2d_free_shapes,NULL);
-    gf2d_list_foreach(space->dynamicBodyList,gf2d_free_dynamic_bodies,NULL);
-    gf2d_list_delete(space->staticShapes);
+    gfc_list_foreach(space->staticShapes,gf2d_free_shapes,NULL);
+    gfc_list_foreach(space->dynamicBodyList,gf2d_free_dynamic_bodies,NULL);
+    gfc_list_delete(space->staticShapes);
     free(space);
 }
 
@@ -62,8 +64,8 @@ Space *gf2d_space_new()
         return NULL;
     }
     memset(space,0,sizeof(Space));
-    space->dynamicBodyList = gf2d_list_new();
-    space->staticShapes = gf2d_list_new();
+    space->dynamicBodyList = gfc_list_new();
+    space->staticShapes = gfc_list_new();
     return space;
 }
 
@@ -82,7 +84,7 @@ void gf2d_space_add_static_shape(Space *space,Shape shape)
         return;
     }
     memcpy(newShape,&shape,sizeof(Shape));
-    space->staticShapes = gf2d_list_append(space->staticShapes,(void *)newShape);
+    space->staticShapes = gfc_list_append(space->staticShapes,(void *)newShape);
 }
 
 void gf2d_space_remove_body(Space *space,Body *body)
@@ -101,14 +103,14 @@ void gf2d_space_remove_body(Space *space,Body *body)
     }
     if (space->dynamicBodyList)
     {
-        count = gf2d_list_get_count(space->dynamicBodyList);
+        count = gfc_list_get_count(space->dynamicBodyList);
         for (i = 0; i < count;i++)
         {
-            db = (DynamicBody*)gf2d_list_get_nth(space->dynamicBodyList,i);
+            db = (DynamicBody*)gfc_list_get_nth(space->dynamicBodyList,i);
             if (!db)continue;
             if (db->body != body)continue;
             gf2d_dynamic_body_free(db);
-            gf2d_list_delete_nth(space->dynamicBodyList,i);
+            gfc_list_delete_nth(space->dynamicBodyList,i);
             break;
         }
     }
@@ -131,7 +133,7 @@ void gf2d_space_add_body(Space *space,Body *body)
     if (!db)return;
     db->body = body;
     db->id = space->idpool++;
-    space->dynamicBodyList = gf2d_list_append(space->dynamicBodyList,(void *)db);
+    space->dynamicBodyList = gfc_list_append(space->dynamicBodyList,(void *)db);
 }
 
 void gf2d_space_draw(Space *space,Vector2D offset)
@@ -147,17 +149,17 @@ void gf2d_space_draw(Space *space,Vector2D offset)
     r = gf2d_rect_to_sdl_rect(space->bounds);
     vector2d_add(r,r,offset);    
     gf2d_draw_rect(r,vector4d(255,0,0,255));
-    count = gf2d_list_get_count(space->dynamicBodyList);
+    count = gfc_list_get_count(space->dynamicBodyList);
     for (i = 0; i < count;i++)
     {
-        db = (DynamicBody*)gf2d_list_get_nth(space->dynamicBodyList,i);
+        db = (DynamicBody*)gfc_list_get_nth(space->dynamicBodyList,i);
         if (!db)continue;
         gf2d_body_draw(db->body,offset);
     }
-    count = gf2d_list_get_count(space->staticShapes);
+    count = gfc_list_get_count(space->staticShapes);
     for (i = 0; i < count;i++)
     {
-        gf2d_shape_draw(*(Shape *)gf2d_list_get_nth(space->staticShapes,i),gf2d_color8(0,255,0,255),offset);
+        gf2d_shape_draw(*(Shape *)gfc_list_get_nth(space->staticShapes,i),gfc_color8(0,255,0,255),offset);
     }
 }
 
@@ -166,21 +168,21 @@ void gf2d_space_dynamic_bodies_world_clip(Space *space,DynamicBody *db, float t)
     int i,count;
     Shape *shape;
     Collision *collision;
-    count = gf2d_list_get_count(space->staticShapes);
+    count = gfc_list_get_count(space->staticShapes);
     for (i = 0; i < count;i++)
     {
-        shape = (Shape*)gf2d_list_get_nth(space->staticShapes,i);
+        shape = (Shape*)gfc_list_get_nth(space->staticShapes,i);
         if (!shape)continue;
         // check for layer compatibility
         collision = gf2d_dynamic_body_shape_collision_check(db,shape,t);
         if (collision == NULL)continue;
-        db->collisionList = gf2d_list_append(db->collisionList,(void*)collision);
+        db->collisionList = gfc_list_append(db->collisionList,(void*)collision);
     }
     //check if the dynamic body is leaving the level bounds
     collision = gf2d_dynamic_body_bounds_collision_check(db,space->bounds,t);
     if (collision != NULL)
     {
-        db->collisionList = gf2d_list_append(db->collisionList,(void*)collision);
+        db->collisionList = gfc_list_append(db->collisionList,(void*)collision);
     }
 }
 
@@ -199,16 +201,16 @@ void gf2d_space_dynamic_bodies_step(Space *space,DynamicBody *db, float t)
     
     gf2d_dynamic_body_clear_collisions(db);    
     // check against dynamic bodies
-    count = gf2d_list_get_count(space->dynamicBodyList);
+    count = gfc_list_get_count(space->dynamicBodyList);
     for (i = 0; i < count;i++)
     {
-        other = (DynamicBody*)gf2d_list_get_nth(space->dynamicBodyList,i);
+        other = (DynamicBody*)gfc_list_get_nth(space->dynamicBodyList,i);
         if (!other)continue;
         if (other == db)continue;   // skip checking outself
         // check for layer compatibility
         collision = gf2d_dynamic_body_collision_check(db,other,t);
         if (collision == NULL)continue;
-        db->collisionList = gf2d_list_append(db->collisionList,(void*)collision);
+        db->collisionList = gfc_list_append(db->collisionList,(void*)collision);
     }
 
     if (db->body->worldclip)
@@ -221,12 +223,12 @@ void gf2d_space_dynamic_bodies_step(Space *space,DynamicBody *db, float t)
         gf2d_dynamic_body_resolve_overlap(db,space->slop);
         if (db->body->elasticity > 0)
         {
-            count = gf2d_list_get_count(db->collisionList);
+            count = gfc_list_get_count(db->collisionList);
             vector2d_clear(total);
             normalCount = 0;
             for (i = 0; i < count; i++)
             {
-                collision = (Collision*)gf2d_list_get_nth(db->collisionList,i);
+                collision = (Collision*)gfc_list_get_nth(db->collisionList,i);
                 if (!collision)continue;
                 vector2d_add(db->position,db->position,collision->normal);
                 reflected = gf2d_dynamic_body_bounce(db,collision->normal);
@@ -251,10 +253,10 @@ void gf2d_space_step(Space *space,float t)
     DynamicBody *db = NULL;
     int i,count;
     if (!space)return;
-    count = gf2d_list_get_count(space->dynamicBodyList);
+    count = gfc_list_get_count(space->dynamicBodyList);
     for (i = 0; i < count;i++)
     {
-        db = (DynamicBody*)gf2d_list_get_nth(space->dynamicBodyList,i);
+        db = (DynamicBody*)gfc_list_get_nth(space->dynamicBodyList,i);
         if (!db)continue;
         if (db->blocked)
         {
@@ -268,10 +270,10 @@ void gf2d_space_reset_bodies(Space *space)
 {
     int i,count;
     if (!space)return;
-    count = gf2d_list_get_count(space->dynamicBodyList);
+    count = gfc_list_get_count(space->dynamicBodyList);
     for (i = 0; i < count;i++)
     {
-        gf2d_dynamic_body_reset((DynamicBody*)gf2d_list_get_nth(space->dynamicBodyList,i),space->timeStep);
+        gf2d_dynamic_body_reset((DynamicBody*)gfc_list_get_nth(space->dynamicBodyList,i),space->timeStep);
     }
 }
 
@@ -280,10 +282,10 @@ void gf2d_space_update_bodies(Space *space,float loops)
     DynamicBody *db = NULL;
     int i,count;
     if (!space)return;
-    count = gf2d_list_get_count(space->dynamicBodyList);
+    count = gfc_list_get_count(space->dynamicBodyList);
     for (i = 0; i < count;i++)
     {
-        db = (DynamicBody*)gf2d_list_get_nth(space->dynamicBodyList,i);
+        db = (DynamicBody*)gfc_list_get_nth(space->dynamicBodyList,i);
         if (!db)continue;
         gf2d_dynamic_body_update(db,loops);
     }
@@ -313,13 +315,13 @@ Uint8 gf2d_space_resolve_overlap(Space *space)
     if (!space)return 1;
     gf2d_space_reset_bodies(space);
     // for each dynamic body, get list of staic shapes that are clipped
-    count = gf2d_list_get_count(space->dynamicBodyList);
+    count = gfc_list_get_count(space->dynamicBodyList);
     for (i = 0; i < count;i++)
     {
-        db = (DynamicBody*)gf2d_list_get_nth(space->dynamicBodyList,i);
+        db = (DynamicBody*)gfc_list_get_nth(space->dynamicBodyList,i);
         if (!db)continue;
         gf2d_space_dynamic_bodies_world_clip(space,db, 0);
-        if (gf2d_list_get_count(db->collisionList))
+        if (gfc_list_get_count(db->collisionList))
         {
             gf2d_dynamic_body_resolve_overlap(db,space->slop);
         }

@@ -1,11 +1,14 @@
-#include "gf2d_particles.h"
-#include "gf2d_sprite.h"
-#include "gf2d_vector.h"
-#include "gf2d_types.h"
 #include "simple_logger.h"
-#include "gf2d_text.h"
+
+#include "gfc_vector.h"
+#include "gfc_types.h"
+#include "gfc_text.h"
+
+#include "gf2d_sprite.h"
 #include "gf2d_draw.h"
 #include "gf2d_graphics.h"
+
+#include "gf2d_particles.h"
 
 struct ParticleEmitter_S
 {
@@ -101,13 +104,13 @@ ParticleEmitter *gf2d_particle_emitter_new_full(
     vector2d_copy(pe->velocityVariance,velocityVariance);
     vector2d_copy(pe->acceleration,acceleration);
     vector2d_copy(pe->accelerationVariance,accelerationVariance);
-    gf2d_color_copy(pe->color,color);
-    gf2d_color_copy(pe->colorVector,colorVector);
-    gf2d_color_copy(pe->colorVariance,colorVariance);
+    gfc_color_copy(pe->color,color);
+    gfc_color_copy(pe->colorVector,colorVector);
+    gfc_color_copy(pe->colorVariance,colorVariance);
     pe->startFrame = startFrame;
     pe->endFrame = endFrame;
     frameVariance = frameVariance;
-    gf2d_line_cpy(pe->spriteFile,spriteFile);
+    gfc_line_cpy(pe->spriteFile,spriteFile);
     pe->frameWidth = frameWidth;
     pe->frameHeight = frameHeight;
     pe->framesPerLine = framesPerLine;
@@ -186,20 +189,20 @@ void gf2d_particle_new_default(
     }
     for (i = 0;i < count;i++)
     {
-        colorVariance.r = pe->colorVariance.r * gf2d_crandom();
-        colorVariance.g = pe->colorVariance.g * gf2d_crandom();
-        colorVariance.b = pe->colorVariance.b * gf2d_crandom();
-        colorVariance.a = pe->colorVariance.a * gf2d_crandom();
-        gf2d_color_add(&color,pe->color,colorVariance);
-        position.x = pe->position.x + (pe->positionVariance.x * gf2d_crandom());
-        position.y = pe->position.y + (pe->positionVariance.y * gf2d_crandom());
-        velocity.x = pe->velocity.x + (pe->velocityVariance.x * gf2d_crandom());
-        velocity.y = pe->velocity.y + (pe->velocityVariance.y * gf2d_crandom());
-        acceleration.x = pe->acceleration.x + (pe->accelerationVariance.x * gf2d_crandom());
-        acceleration.y = pe->acceleration.y + (pe->accelerationVariance.y * gf2d_crandom());
+        colorVariance.r = pe->colorVariance.r * gfc_crandom();
+        colorVariance.g = pe->colorVariance.g * gfc_crandom();
+        colorVariance.b = pe->colorVariance.b * gfc_crandom();
+        colorVariance.a = pe->colorVariance.a * gfc_crandom();
+        gfc_color_add(&color,pe->color,colorVariance);
+        position.x = pe->position.x + (pe->positionVariance.x * gfc_crandom());
+        position.y = pe->position.y + (pe->positionVariance.y * gfc_crandom());
+        velocity.x = pe->velocity.x + (pe->velocityVariance.x * gfc_crandom());
+        velocity.y = pe->velocity.y + (pe->velocityVariance.y * gfc_crandom());
+        acceleration.x = pe->acceleration.x + (pe->accelerationVariance.x * gfc_crandom());
+        acceleration.y = pe->acceleration.y + (pe->accelerationVariance.y * gfc_crandom());
         gf2d_particle_new_full(
             pe,
-            pe->ttl + (gf2d_crandom()*pe->ttlVariance) + SDL_GetTicks(),
+            pe->ttl + (gfc_crandom()*pe->ttlVariance) + SDL_GetTicks(),
             (pe->particleType != PT_Sprite)?NULL:gf2d_sprite_load_all(
                 pe->spriteFile,
                 pe->frameWidth,
@@ -213,7 +216,7 @@ void gf2d_particle_new_default(
             color,
             pe->colorVector,
             pe->particleType,
-            pe->startFrame + (gf2d_random() * pe->frameVariance),
+            pe->startFrame + (gfc_random() * pe->frameVariance),
             pe->framerate,
             pe->startFrame,
             pe->endFrame,
@@ -287,8 +290,8 @@ void gf2d_particle_new_full(
     vector2d_copy(p->position,position);
     vector2d_copy(p->velocity,velocity);
     vector2d_copy(p->acceleration,acceleration);
-    gf2d_color_copy(p->color,color);
-    gf2d_color_copy(p->colorVector,colorVector);
+    gfc_color_copy(p->color,color);
+    gfc_color_copy(p->colorVector,colorVector);
     p->type = type;
     p->frame = frame;
     p->framerate = framerate;
@@ -336,21 +339,21 @@ void gf2d_particle_draw(Particle *p)
     {
         case PT_Pixel:
             SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),p->mode);
-            color = gf2d_color_to_vector4(p->color);
-            gf2d_draw_pixel(p->position,gf2d_color_to_vector4(p->color));
+            color = gfc_color_to_vector4(p->color);
+            gf2d_draw_pixel(p->position,gfc_color_to_vector4(p->color));
             SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),SDL_BLENDMODE_BLEND);
             break;
         case PT_Shape:
             gf2d_shape_copy(&shape,p->shape);
             gf2d_shape_move(&shape,p->position);
             SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),p->mode);
-            color = gf2d_color_to_vector4(p->color);
+            color = gfc_color_to_vector4(p->color);
             gf2d_shape_draw(shape,p->color,vector2d(0,0));
             SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),SDL_BLENDMODE_BLEND);
             break;
         case PT_Sprite:
             SDL_SetTextureBlendMode(p->sprite->texture,p->mode);
-            color = gf2d_color_to_vector4(p->color);
+            color = gfc_color_to_vector4(p->color);
             gf2d_sprite_draw(
                 p->sprite,
                 vector2d(p->position.x - (p->sprite->frame_w/2),p->position.y - (p->sprite->frame_h/2)),
@@ -375,7 +378,7 @@ void gf2d_particle_update(Particle *p,Uint32 now)
     }
     vector2d_add(p->position,p->position,p->velocity);
     vector2d_add(p->velocity,p->velocity,p->acceleration);
-    gf2d_color_add(&p->color,p->color,p->colorVector);
+    gfc_color_add(&p->color,p->color,p->colorVector);
     if (p->type == PT_Sprite)
     {
         p->frame += p->framerate;
