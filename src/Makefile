@@ -10,7 +10,7 @@
 #
 
 # Linux
-PROJECT = gf2d
+PROJECT = lotn
 CC      = gcc
 
 LIB_LIST = ../gfc/libs/libgfc.a ../gfc/simple_json/libs/libsj.a ../gfc/simple_logger/libs/libsl.a 

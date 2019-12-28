@@ -82,4 +82,11 @@ Vector2D gf2d_mouse_get_movement();
  * @return 1 if it is within the rect, 0 otherwise
  */
 int gf2d_mouse_in_rect(Rect r);
+
+/**
+ * @brief set the action for the mouse icon
+ * @param action the name of the action to set it to
+ */
+void gf2d_mouse_set_action(char *action);
+
 #endif

@@ -1,0 +1,20 @@
+{
+"window":{
+    "color" : [255,255,255, 255],
+    "dimensions" : [0,0,1,120],
+    "justify" : "center",
+    "align" : "top",
+    "elements":
+    [
+      {
+        "type": "list",
+        "name": "list",
+        "id" : 0,
+        "bounds": [2,2,1,1],
+        "color" : [255,255,255,255],
+        "style": "horizontal",
+        "item_size" : [64,64]
+      }
+    ]
+    }
+}
