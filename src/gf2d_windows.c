@@ -5,6 +5,7 @@
 #include "simple_logger.h"
 
 #include "gf2d_graphics.h"
+#include "gf2d_mouse.h"
 #include "gf2d_windows.h"
 #include "gf2d_elements.h"
 
@@ -20,10 +21,7 @@ typedef struct
 
 static WindowManager window_manager = {0};
 
-
 Window *gf2d_window_load_from_json(SJson *json);
-
-
 
 void gf2d_draw_window_border_generic(Rect rect,Vector4D color)
 {
@@ -471,6 +469,12 @@ Element *gf2d_window_get_element_by_id(Window *win,int id)
         if (q)return q;
     }
     return NULL;
+}
+
+int gf2d_window_mouse_in(Window *win)
+{
+    if (!win)return 0;
+    return gf2d_mouse_in_rect(win->dimensions);
 }
 
 /*eol@eof*/

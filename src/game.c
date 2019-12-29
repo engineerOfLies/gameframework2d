@@ -20,21 +20,28 @@ static int _done = 0;
 static Window *_quit = NULL;
 static int editorMode = 0;
 
-void exitGame()
-{
-    _done = 1;
-}
-
 void init_all(int argc, char *argv[]);
 
 void onCancel(void *data)
 {
     _quit = NULL;
 }
+
 void onExit(void *data)
 {
     _done = 1;
     _quit = NULL;
+}
+
+void exitGame()
+{
+    _done = 1;
+}
+
+void exitCheck()
+{
+    if (_quit)return;
+    _quit = window_yes_no("Exit?",onExit,onCancel,NULL,NULL);
 }
 
 int main(int argc, char * argv[])
@@ -75,7 +82,7 @@ int main(int argc, char * argv[])
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
-            scene_draw(scene);
+            if (!editorMode)scene_draw(scene);
                 // DRAW WORLD
                 // Draw entities
             //UI elements last

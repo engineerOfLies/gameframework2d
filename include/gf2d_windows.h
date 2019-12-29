@@ -117,4 +117,11 @@ void gf2d_draw_window_border_generic(Rect rect,Vector4D color);
  */
 Element *gf2d_window_get_element_by_id(Window *win,int id);
 
+/**
+ * @brief check if the mouse is currently over the window specified
+ * @param win the window to check;
+ * @return 0 if the mouse is over the window, 1 otherwise
+ */
+int gf2d_window_mouse_in(Window *win);
+
 #endif

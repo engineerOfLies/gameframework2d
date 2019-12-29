@@ -1,7 +1,7 @@
 {
 "window":{
     "color" : [255,255,255, 255],
-    "dimensions" : [0,0,1,120],
+    "dimensions" : [0,0,1,80],
     "justify" : "center",
     "align" : "top",
     "elements":
@@ -13,7 +13,196 @@
         "bounds": [2,2,1,1],
         "color" : [255,255,255,255],
         "style": "horizontal",
-        "item_size" : [64,64]
+        "item_size" : [168,64],
+        "elements":
+            [
+                {
+                "type": "button",
+                "name": "Background",
+                "id" : 51,
+                "bounds": [0,0,168,64],
+                "hotkey":"background",
+                "color" : [255,255,255,255],
+                "highColor" : [255,255,255,255],
+                "pressColor" : [255,255,255,255],
+                "label" :
+                    {
+                    "type": "label",
+                    "name": "background",
+                    "id" : 511,
+                    "bounds": [0,0,168,64],
+                    "color" : [255,255,255,255],
+                    "text":"Background",
+                    "justify" : "center",
+                    "align" : "middle",
+                    "style":"H5"
+                    },
+                "actor" :
+                    {
+                    "type": "actor",
+                    "name": "image",
+                    "id" : 512,
+                    "bounds": [0,0,168,64],
+                    "color" : [255,255,255,255],
+                    "actor" : "actors/button.actor"
+                    }
+                },
+                {
+                "type": "button",
+                "name": "mask",
+                "id" : 52,
+                "bounds": [0,0,164,68],
+                "color" : [255,255,255,255],
+                "hotkey":"mask",
+                "highColor" : [255,255,255,255],
+                "pressColor" : [255,255,255,255],
+                "label" :
+                    {
+                    "type": "label",
+                    "name": "mask",
+                    "id" : 521,
+                    "bounds": [0,0,168,64],
+                    "color" : [255,255,255,255],
+                    "text":"Mask",
+                    "align" : "middle",
+                    "justify" : "center",
+                    "style":"H5"
+                    },
+                "actor" :
+                    {
+                    "type": "actor",
+                    "name": "image",
+                    "id" : 522,
+                    "bounds": [0,0,168,64],
+                    "color" : [255,255,255,255],
+                    "actor" : "actors/button.actor"
+                    }
+                },
+                {
+                "type": "button",
+                "name": "New POI",
+                "id" : 53,
+                "bounds": [0,0,164,68],
+                "color" : [255,255,255,255],
+                "hotkey":"mask",
+                "highColor" : [255,255,255,255],
+                "pressColor" : [255,255,255,255],
+                "label" :
+                    {
+                    "type": "label",
+                    "name": "poi_l",
+                    "id" : 521,
+                    "bounds": [0,0,168,64],
+                    "color" : [255,255,255,255],
+                    "text":"New POI",
+                    "align" : "middle",
+                    "justify" : "center",
+                    "style":"H5"
+                    },
+                "actor" :
+                    {
+                    "type": "actor",
+                    "name": "image",
+                    "id" : 522,
+                    "bounds": [0,0,168,64],
+                    "color" : [255,255,255,255],
+                    "actor" : "actors/button.actor"
+                    }
+                },
+                {
+                "type": "button",
+                "name": "Save As",
+                "id" : 54,
+                "bounds": [0,0,164,68],
+                "color" : [255,255,255,255],
+                "hotkey":"save",
+                "highColor" : [255,255,255,255],
+                "pressColor" : [255,255,255,255],
+                "label" :
+                    {
+                    "type": "label",
+                    "name": "save_l",
+                    "id" : 521,
+                    "bounds": [0,0,168,64],
+                    "color" : [255,255,255,255],
+                    "text":"Save As",
+                    "align" : "middle",
+                    "justify" : "center",
+                    "style":"H5"
+                    },
+                "actor" :
+                    {
+                    "type": "actor",
+                    "name": "image",
+                    "id" : 522,
+                    "bounds": [0,0,168,64],
+                    "color" : [255,255,255,255],
+                    "actor" : "actors/button.actor"
+                    }
+                },
+                {
+                "type": "button",
+                "name": "Load",
+                "id" : 55,
+                "bounds": [0,0,164,68],
+                "color" : [255,255,255,255],
+                "hotkey":"load",
+                "highColor" : [255,255,255,255],
+                "pressColor" : [255,255,255,255],
+                "label" :
+                    {
+                    "type": "label",
+                    "name": "load_l",
+                    "id" : 521,
+                    "bounds": [0,0,168,64],
+                    "color" : [255,255,255,255],
+                    "text":"Load",
+                    "align" : "middle",
+                    "justify" : "center",
+                    "style":"H5"
+                    },
+                "actor" :
+                    {
+                    "type": "actor",
+                    "name": "image",
+                    "id" : 522,
+                    "bounds": [0,0,168,64],
+                    "color" : [255,255,255,255],
+                    "actor" : "actors/button.actor"
+                    }
+                },
+                {
+                "type": "button",
+                "name": "Quit",
+                "id" : 56,
+                "bounds": [0,0,164,68],
+                "color" : [255,255,255,255],
+                "hotkey":"quit",
+                "highColor" : [255,255,255,255],
+                "pressColor" : [255,255,255,255],
+                "label" :
+                    {
+                    "type": "label",
+                    "name": "quit_l",
+                    "id" : 521,
+                    "bounds": [0,0,168,64],
+                    "color" : [255,255,255,255],
+                    "text":"Quit",
+                    "align" : "middle",
+                    "justify" : "center",
+                    "style":"H5"
+                    },
+                "actor" :
+                    {
+                    "type": "actor",
+                    "name": "image",
+                    "id" : 522,
+                    "bounds": [0,0,168,64],
+                    "color" : [255,255,255,255],
+                    "actor" : "actors/button.actor"
+                    }
+                }
+            ]
       }
     ]
     }

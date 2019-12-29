@@ -31,6 +31,12 @@ void scene_manager_init(Uint32 sceneMax);
 Scene *scene_load(char *filename);
 
 /**
+ * @brief get a pointer to a new plank scene
+ * @returns NULL on error, or a pointer to an empty scene
+ */
+Scene *scene_new();
+
+/**
  * @brief draw the scene
  * @param scene the scene to draw
  */
@@ -48,5 +54,12 @@ void scene_free(Scene *scene);
  * @param point the point to focus on.
  */
 void scene_camera_focus(Scene *scene, Vector2D point);
+
+/**
+ * @brief Move the camera in the direction specified
+ * @param scene the scene to focus within.
+ * @param direction the vector to move the camera by
+ */
+void scene_camera_move(Scene *scene, Vector2D direction);
 
 #endif
