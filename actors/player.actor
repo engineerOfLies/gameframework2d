@@ -1,0 +1,13 @@
+sprite: images/human_cloaked_135.png
+frameWidth: 128
+frameHeight: 128
+framesPerLine: 16
+scale: 3,3
+color: 255,255,255,255
+colorSpecial: 255,255,255,255
+
+action: idle
+startFrame: 72
+endFrame: 81
+frameRate: 1
+type:   loop
