@@ -11,10 +11,12 @@
 #include "gf2d_font.h"
 #include "gf2d_mouse.h"
 #include "gf2d_draw.h"
+
 #include "windows_common.h"
 #include "camera.h"
 #include "scene.h"
 #include "editor.h"
+#include "player.h"
 
 static int _done = 0;
 static Window *_quit = NULL;
@@ -41,7 +43,7 @@ void exitGame()
 void exitCheck()
 {
     if (_quit)return;
-    _quit = window_yes_no("Exit?",onExit,onCancel,NULL,NULL);
+    _quit = window_yes_no("GTFO?",onExit,onCancel,NULL,NULL);
 }
 
 int main(int argc, char * argv[])
@@ -49,6 +51,7 @@ int main(int argc, char * argv[])
     /*variable declarations*/
     Scene *scene;
     int mx,my;
+    Entity *player;
     
     init_all(argc,argv);
     
@@ -68,6 +71,7 @@ int main(int argc, char * argv[])
 
     scene = scene_load("config/testlevel.json");
     scene_camera_focus(scene,vector2d(1280,768));
+    player = player_spawn(vector2d(600,300));
     /*main game loop*/
     while(!_done)
     {
@@ -82,22 +86,22 @@ int main(int argc, char * argv[])
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
-            if (!editorMode)scene_draw(scene);
                 // DRAW WORLD
+            if (!editorMode)scene_draw(scene);
                 // Draw entities
+            gf2d_entity_draw_all();
             //UI elements last
-            
             gf2d_windows_draw_all();
             gf2d_mouse_draw();
         gf2d_grahics_next_frame();// render current draw frame and skip to the next frame
         
         if ((gfc_input_command_down("exit"))&&(_quit == NULL))
         {
-            _quit = window_yes_no("Exit?",onExit,onCancel,NULL,NULL);
+            _quit = window_yes_no("GTFO?",onExit,onCancel,NULL,NULL);
         }
    //     slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
-    
+    player_free(player);
     slog("---==== END ====---");
     return 0;
 }
