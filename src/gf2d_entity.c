@@ -93,15 +93,13 @@ void gf2d_entity_draw(Entity *self)
 
     gf2d_particle_emitter_draw(self->pe);
 
-    gf2d_sprite_draw(
-        self->actor.sprite,
+    gf2d_actor_draw(
+        &self->actor,
         drawPosition,
         &self->scale,
         &self->scaleCenter,
         &self->rotation,
-        &self->flip,
-        &self->actor.color,
-        (Uint32) self->actor.frame);
+        &self->flip);
     if (self->draw != NULL)
     {
         self->draw(self);

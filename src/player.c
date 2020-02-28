@@ -39,7 +39,7 @@ Entity *player_spawn(Vector2D position)
     }
     player->data = pd;
     vector2d_copy(player->position,position);
-    gf2d_actor_load(&player->actor,"actors/player.actor");
+    gf2d_actor_load(&player->actor,"actors/player.json");
     gf2d_actor_set_action(&player->actor,"idle");
     return player;
 }

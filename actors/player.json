@@ -1,0 +1,22 @@
+{
+    "actor":
+    {
+        "sprite": "images/human_cloaked_45.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "framesPerLine": 16,
+        "scale": [2.5,2.5],
+        "color": [255,255,255,255],
+        "colorSpecial": [255,255,255,255],
+        "actionList":
+        [
+            {
+                "action": "idle",
+                "startFrame": 72,
+                "endFrame": 81,
+                "frameRate": 0.05,
+                "type": "loop"
+            }
+        ]
+    }
+}

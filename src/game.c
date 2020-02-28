@@ -66,12 +66,12 @@ int main(int argc, char * argv[])
     }
     else
     {
-        gf2d_mouse_set_action("look");
+        gf2d_mouse_set_action("walk");
     }
 
     scene = scene_load("config/testlevel.json");
     scene_camera_focus(scene,vector2d(1280,768));
-    player = player_spawn(vector2d(600,300));
+    player = player_spawn(vector2d(600,350));
     /*main game loop*/
     while(!_done)
     {
@@ -80,6 +80,8 @@ int main(int argc, char * argv[])
         SDL_GetMouseState(&mx,&my);
         gf2d_windows_update_all();
                 
+        gf2d_entity_update_all();
+        
         gf2d_entity_think_all();
         gf2d_mouse_update();
                 
