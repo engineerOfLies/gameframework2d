@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include "simple_logger.h"
+#include "simple_json.h"
+#include "gf2d_config.h"
 #include "gf2d_actor.h"
 
 
@@ -217,26 +219,21 @@ void gf2d_action_file_load_actions(FILE *file,ActionList *actionList)
     }
 }
 
-ActionList *gf2d_action_list_load(
+
+ActionList *gf2d_action_list_load_parse(
     char *filename
 )
 {
     FILE *file;
-    ActionList *actionList;
     int count;
-    actionList = gf2d_action_list_get_by_filename(filename);
-    if (actionList != NULL)
-    {
-        // found a copy already in memory
-        actionList->ref_count++;
-        return actionList;
-    }
-    
+    ActionList *actionList;
     actionList = gf2d_action_list_new();
+
     if (!actionList)
     {
         return NULL;
     }
+
     file = fopen(filename,"r");
     if (!file)
     {
@@ -253,13 +250,124 @@ ActionList *gf2d_action_list_load(
         slog("No actions found in file: %s",filename);
         return NULL;
     }
-    actionList->actions = (Action*)malloc(sizeof(Action)*count);
-    memset(actionList->actions,0,sizeof(Action)*count);
+    actionList->actions = (Action*)gfc_allocate_array(sizeof(Action),count);
     actionList->numActions = count;
     gf2d_action_file_load_actions(file,actionList);
     
     fclose(file);
     return actionList;
+}
+
+void gf2d_action_json_parse_action(
+    SJson *actionSJ,
+    Action *actionData
+)
+{
+    int tempInt;
+    float tempFloat;
+    const char *tempStr;
+    if ((!actionSJ)||(!actionData))
+    {
+        return;
+    }
+    tempStr = sj_get_string_value(sj_object_get_value(actionSJ,"action"));
+    gfc_line_cpy(actionData->name,tempStr);
+    tempStr = sj_get_string_value(sj_object_get_value(actionSJ,"type"));
+    if (strcmp(tempStr,"loop")==0)
+    {
+        actionData->type = AT_LOOP;
+    }
+    else if (strcmp(tempStr,"pass")==0)
+    {
+        actionData->type = AT_PASS;
+    }
+    sj_get_integer_value(sj_object_get_value(actionSJ,"startFrame"),&tempInt);
+    actionData->startFrame = tempInt;
+    sj_get_integer_value(sj_object_get_value(actionSJ,"endFrame"),&tempInt);
+    actionData->endFrame = tempInt;
+    sj_get_float_value(sj_object_get_value(actionSJ,"frameRate"),&tempFloat);
+    actionData->frameRate = tempFloat;
+}
+
+ActionList *gf2d_action_list_load_json(
+    SJson *json,
+    char *filename
+)
+{
+    ActionList *actionList;
+    SJson *actor = NULL;
+    SJson *actionListJson = NULL;
+    SJson *item = NULL;
+    int actionCount,i;
+    
+    if ((!json)||(!filename))
+    {
+        slog("missing parameters");
+        return NULL;
+    }
+
+    actor = sj_object_get_value(json,"actor");
+    if (!actor)
+    {
+        slog("missing actor object in actor file");
+        return NULL;
+    }
+    actionListJson = sj_object_get_value(actor,"actionList");
+    if (!actionListJson)
+    {
+        slog("missing actor actionList in actor file");
+        return NULL;
+    }
+
+    actionCount = sj_array_get_count(actionListJson);
+    actionList = gf2d_action_list_new();
+    if (!actionList)
+    {
+        return NULL;
+    }
+    
+    gfc_line_cpy(actionList->filename,filename);
+    gfc_line_cpy(actionList->sprite,sj_get_string_value(sj_object_get_value(actor,"sprite")));
+    sj_get_integer_value(sj_object_get_value(actor,"frameWidth"),&actionList->frameWidth);
+    sj_get_integer_value(sj_object_get_value(actor,"frameHeight"),&actionList->frameHeight);
+    sj_get_integer_value(sj_object_get_value(actor,"framesPerLine"),&actionList->framesPerLine);
+    sj_value_as_vector2d(sj_object_get_value(actor,"scale"),&actionList->scale);
+    sj_value_as_vector4d(sj_object_get_value(actor,"color"),&actionList->color);
+    sj_value_as_vector4d(sj_object_get_value(actor,"colorSpecial"),&actionList->colorSpecial);
+    
+    actionList->actions = (Action*)gfc_allocate_array(sizeof(Action),actionCount);
+    actionList->numActions = actionCount;
+    for (i = 0; i < actionCount; i++)
+    {
+        item = sj_array_get_nth(actionListJson,i);
+        if (!item)continue;
+        gf2d_action_json_parse_action(item,&actionList->actions[i]);
+    }
+    return actionList;
+}
+
+ActionList *gf2d_action_list_load(
+    char *filename
+)
+{
+    SJson *json;
+    ActionList *actionList;
+    actionList = gf2d_action_list_get_by_filename(filename);
+    if (actionList != NULL)
+    {
+        // found a copy already in memory
+        actionList->ref_count++;
+        return actionList;
+    }
+    // check if this is a json file, else use the old parser
+    json = sj_load(filename);
+    if (json)
+    {
+        actionList = gf2d_action_list_load_json(json,filename);
+        sj_free(json);
+        if (actionList)return actionList;
+    }
+    return gf2d_action_list_load_parse(filename);
 }
 
 Action *gf2d_action_list_get_action(ActionList *al, char *name)

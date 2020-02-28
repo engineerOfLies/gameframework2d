@@ -105,6 +105,11 @@ Sprite *gf2d_sprite_new()
 Sprite *gf2d_sprite_get_by_filename(char * filename)
 {
     int i;
+    if (!filename)
+    {
+        slog("cannot find blank filename");
+        return NULL;
+    }
     for (i = 0;i < sprite_manager.max_sprites;i++)
     {
         if (gfc_line_cmp(sprite_manager.sprite_list[i].filepath,filename)==0)
@@ -130,7 +135,12 @@ Sprite *gf2d_sprite_load_all(
 {
     SDL_Surface *surface = NULL;
     Sprite *sprite = NULL;
-    
+    if (!filename)
+    {
+        slog("cannot find blank filename");
+        return NULL;
+    }
+
     sprite = gf2d_sprite_get_by_filename(filename);
     if (sprite != NULL)
     {

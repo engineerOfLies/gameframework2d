@@ -99,6 +99,7 @@ void scene_camera_clamp(Scene *scene)
 {
     Vector2D extent;
     if (!scene)return;
+    if (!scene->background)return;
     extent = gf2d_graphics_get_resolution();
     if (scene->camera.x < 0)scene->camera.x = 0;
     if (scene->camera.x + extent.x > scene->background->frame_w)scene->camera.x = scene->background->frame_w - extent.x;

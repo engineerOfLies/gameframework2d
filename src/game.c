@@ -57,7 +57,7 @@ int main(int argc, char * argv[])
     
     // game specific setup
         // init mouse, editor window
-    gf2d_mouse_load("actors/mouse.actor");
+    gf2d_mouse_load("actors/mouse.json");
     
     if (editorMode)
     {
