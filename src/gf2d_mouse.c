@@ -2,6 +2,7 @@
 #include "gf2d_actor.h"
 #include "gf2d_mouse.h"
 
+
 typedef struct
 {
     Uint32 buttons;     /**<buttons mask*/
@@ -10,8 +11,9 @@ typedef struct
 
 typedef struct
 {
-    MouseState mouse[2];        /**<mouse state for the current and last frames*/
+    MouseState mouse[2]; /**<mouse state for the current and last frames*/
     Actor actor;
+    MouseFunction mf;    /**<current mouse state*/
 }Mouse;
 
 static Mouse _mouse = {0};
@@ -27,6 +29,35 @@ void gf2d_mouse_load(char *actorFile)
     gf2d_actor_load(&_mouse.actor,actorFile);
 }
 
+void gf2d_mouse_set_function(MouseFunction mf)
+{
+    _mouse.mf = mf;
+    switch (mf)
+    {
+        case MF_Pointer:
+            gf2d_mouse_set_action("pointer");
+            break;
+        case MF_Walk:
+            gf2d_mouse_set_action("walk");
+            break;
+        case MF_Look:
+            gf2d_mouse_set_action("look");
+            break;
+        case MF_Interact:
+            gf2d_mouse_set_action("interact");
+            break;
+        case MF_Talk:
+            gf2d_mouse_set_action("talk");
+            break;
+        case MF_Item:
+            gf2d_mouse_set_action("item");
+            break;
+        case MF_Spell:
+            gf2d_mouse_set_action("spell");
+            break;
+    }
+}
+
 void gf2d_mouse_update()
 {
     int x,y;
@@ -34,6 +65,15 @@ void gf2d_mouse_update()
     memcpy(&_mouse.mouse[1],&_mouse.mouse[0],sizeof(MouseState));
     _mouse.mouse[0].buttons = SDL_GetMouseState(&x,&y);
     vector2d_set(_mouse.mouse[0].position,x,y);
+    if(gf2d_mouse_button_released(2))
+    {
+        _mouse.mf++;
+        if (_mouse.mf == MF_Item)
+        {
+            _mouse.mf = MF_Walk;
+        }
+        gf2d_mouse_set_function(_mouse.mf);
+    }
 }
 
 void gf2d_mouse_draw()

@@ -5,6 +5,18 @@
 
 #include "gf2d_shape.h"
 
+
+typedef enum
+{
+    MF_Pointer,
+    MF_Walk,
+    MF_Look,
+    MF_Interact,
+    MF_Talk,
+    MF_Item,
+    MF_Spell
+}MouseFunction;
+
 /**
  * @brief load a mouse graphic from an actor
  * @param actorFile the file to use to load the mouse information
@@ -88,5 +100,11 @@ int gf2d_mouse_in_rect(Rect r);
  * @param action the name of the action to set it to
  */
 void gf2d_mouse_set_action(char *action);
+
+/**
+ * @brief set the action for the mouse icon
+ * @param mf the enum of the function to set it to
+ */
+void gf2d_mouse_set_function(MouseFunction mf);
 
 #endif

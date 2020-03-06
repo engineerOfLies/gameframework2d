@@ -52,8 +52,9 @@ int main(int argc, char * argv[])
     Scene *scene;
     int mx,my;
     Entity *player;
-    
+        
     init_all(argc,argv);
+    
     
     // game specific setup
         // init mouse, editor window
@@ -62,11 +63,11 @@ int main(int argc, char * argv[])
     if (editorMode)
     {
         editor_menu();
-        gf2d_mouse_set_action("pointer");
+        gf2d_mouse_set_function(MF_Pointer);
     }
     else
     {
-        gf2d_mouse_set_action("walk");
+        gf2d_mouse_set_function(MF_Walk);
     }
 
     scene = scene_load("config/testlevel.json");
