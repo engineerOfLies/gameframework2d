@@ -3,6 +3,7 @@
 
 #include "gf2d_graphics.h"
 
+#include "exhibits.h"
 #include "scene.h"
 
 typedef struct
@@ -49,6 +50,7 @@ Scene *scene_new()
     {
         if (scene_manager.sceneList[i]._inuse)continue;
         scene_manager.sceneList[i]._inuse = 1;
+        scene_manager.sceneList[i].exhibits = gfc_list_new();
         return &scene_manager.sceneList[i];
     }
     slog("failed to find a free scene in memory");
@@ -59,6 +61,9 @@ Scene *scene_load(char *filename)
 {
     Scene *scene;
     SJson *json;
+    SJson *exhibits,*exhibitjs;
+    Exhibit *exhibit;
+    int i,count;
     char *imageName;
     
     scene = scene_new();
@@ -72,8 +77,25 @@ Scene *scene_load(char *filename)
     }
     imageName = (char *)sj_get_string_value(sj_object_get_value(json,"background"));
     scene->background = gf2d_sprite_load_image(imageName);
-    imageName = (char *)sj_get_string_value(sj_object_get_value(json,"mask"));
+    imageName = (char *)sj_get_string_value(sj_object_get_value(json,"mask"));    
     scene->mask = gf2d_sprite_load_image(imageName);
+    
+    exhibits = sj_object_get_value(json,"exhibits");
+    if (exhibits)
+    {
+        count = sj_array_get_count(exhibits);
+        for (i = 0;i < count; i++)
+        {
+            exhibitjs = sj_array_get_nth(exhibits,i);
+            if (!exhibitjs)continue;
+            exhibit = exhibit_load(exhibitjs);
+            if (exhibit)
+            {
+                scene->exhibits = gfc_list_append(scene->exhibits,exhibit);
+            }
+        }
+    }
+    
     scene->config = json;
     return scene;
 }
@@ -88,9 +110,20 @@ void scene_draw(Scene *scene)
 
 void scene_free(Scene *scene)
 {
+    int count,i;
+    Exhibit *exhibit;
     if (!scene)return;
     gf2d_sprite_free(scene->background);
     gf2d_sprite_free(scene->mask);
+    
+    count = gfc_list_get_count(scene->exhibits);
+    for (i = 0; i < count; i++)
+    {
+        exhibit = gfc_list_get_nth(scene->exhibits,i);
+        if (!exhibit)continue;
+        exhibit_free(exhibit);
+    }
+    gfc_list_delete(scene->exhibits);
     sj_free(scene->config);
     memset(scene,0,sizeof(Scene));
 }

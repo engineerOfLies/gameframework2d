@@ -1,4 +1,37 @@
 {
     "background":"images/backgrounds/fantasy_scene.png",
-    "mask":"images/backgrounds/fantasy_scene_mask.png"
+    "mask":"images/backgrounds/fantasy_scene_mask.png",
+    "exhibits":
+    [
+        {
+            "name":"Broken Lock",
+            "displayName":true,
+            "rect":[500,250,100,100],
+            "proximity":true,
+            "args":
+            {
+                "description":
+                {
+                    "DEFAULT":"This old lock appears to be made of some sturdy metal, but yet it is still broken."
+                },
+                "action":
+                {
+                    "DEFAULT":"The internal mechanisms are all rusted solid.  Not much you can do with this now."
+                },
+                "talk":
+                {
+                    "DEFAULT":"If this lock was ever able to magically speak before, it can't anymore."
+                },
+                "item":
+                {
+                    "old_key":"This key is way too small to fit this lock even if it wasn't broken",
+                    "DEFAULT":"Nope, that doesn't work."
+                },
+                "spell":
+                {
+                    "DEFAULT":"Your spell fizzles."
+                }
+            }
+        }
+    ]
 }

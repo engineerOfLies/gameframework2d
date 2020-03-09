@@ -13,6 +13,7 @@ typedef struct
     Sprite     *mask;               /**<an image used to determine what positions are walk-able*/
     Vector2D    camera;             /**<draw postion for the scene*/
     SJson      *config;             /**<additional configuration for the scene*/
+    List       *exhibits;           /**<list of exhibits in this scene*/
 }Scene;
 
 
