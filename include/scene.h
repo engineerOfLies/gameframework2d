@@ -14,6 +14,7 @@ typedef struct
     Vector2D    camera;             /**<draw postion for the scene*/
     SJson      *config;             /**<additional configuration for the scene*/
     List       *exhibits;           /**<list of exhibits in this scene*/
+    List       *entities;           /**<list of entities spawned in this scene*/
 }Scene;
 
 
@@ -22,6 +23,13 @@ typedef struct
  * @param sceneMax how many scenes to support in memory at once
  */
 void scene_manager_init(Uint32 sceneMax);
+
+
+/**
+ * @brief spawn all the exhibit entities
+ * @param scene the scene to spawn entities for
+ */
+void scene_spawn_exhibits(Scene *scene);
 
 /**
  * @brief load a scene from a json file

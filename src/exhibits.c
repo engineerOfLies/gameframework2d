@@ -1,5 +1,6 @@
-#include "exhibits.h"
+#include "simple_logger.h"
 #include "gf2d_config.h"
+#include "exhibits.h"
 
 void exhibit_free(Exhibit *exhibit)
 {
@@ -19,7 +20,7 @@ Exhibit *exhibit_load(SJson *json)
 {
     Vector4D vector = {0};
     Exhibit *exhibit = NULL;
-    const char *string;
+    const char *string = NULL;
     if (!json)return NULL;
 
     exhibit = exhibit_new();
@@ -45,6 +46,12 @@ Exhibit *exhibit_load(SJson *json)
     return exhibit;
 }
 
+void exhibit_draw(Entity *ent)
+{
+    if (!ent)return;
+    gf2d_shape_draw(ent->shape,gfc_color(0,1,1,1),ent->position);
+}
+
 Entity *exhibit_entity_spawn(Exhibit *exhibit)
 {
     Entity *ent = NULL;
@@ -53,6 +60,15 @@ Entity *exhibit_entity_spawn(Exhibit *exhibit)
     ent = gf2d_entity_new();
     if (!ent)return NULL;
     
+    gfc_line_sprintf(ent->name,"exhibit");
+    if (strlen(exhibit->actor))
+    {
+        gf2d_actor_load(&ent->actor,exhibit->actor);
+        gf2d_actor_set_action(&ent->actor,exhibit->action);
+    }
+    ent->position.x = exhibit->rect.x;
+    ent->position.y = exhibit->rect.y;
+    ent->shape = gf2d_shape_rect(0,0, exhibit->rect.w, exhibit->rect.h);
     
     
     return ent;

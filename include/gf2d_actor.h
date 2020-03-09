@@ -29,11 +29,11 @@ typedef enum
  */
 typedef struct Action_S
 {
-    TextLine name;
-    int startFrame;
-    int endFrame;
-    float frameRate;
-    ActionType type;
+    TextLine    name;
+    int         startFrame;
+    int         endFrame;
+    float       frameRate;
+    ActionType  type;
 }Action;
 
 /**
@@ -56,6 +56,7 @@ typedef struct
 
 typedef struct
 {
+    int         _inuse;       /**<set if the actor is in use*/
     Sprite     *sprite;       /**<which sprite to draw this entity with*/
     Vector4D    color;        /**<color to shift sprite too*/
     float       frame;        /**<current frame for the sprite*/

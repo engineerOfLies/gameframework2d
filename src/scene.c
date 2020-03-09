@@ -51,6 +51,7 @@ Scene *scene_new()
         if (scene_manager.sceneList[i]._inuse)continue;
         scene_manager.sceneList[i]._inuse = 1;
         scene_manager.sceneList[i].exhibits = gfc_list_new();
+        scene_manager.sceneList[i].entities = gfc_list_new();
         return &scene_manager.sceneList[i];
     }
     slog("failed to find a free scene in memory");
@@ -100,6 +101,21 @@ Scene *scene_load(char *filename)
     return scene;
 }
 
+void scene_spawn_exhibits(Scene *scene)
+{
+    Exhibit *exhibit;
+    int i,count;
+    
+    if (!scene)return;
+    count = gfc_list_get_count(scene->exhibits);
+    for (i = 0; i < count; i++)
+    {
+        exhibit = gfc_list_get_nth(scene->exhibits,i);
+        if (!exhibit)continue;
+        scene->entities = gfc_list_append(scene->entities,exhibit_entity_spawn(exhibit));
+    }
+}
+
 void scene_draw(Scene *scene)
 {
     Vector2D ncam;
@@ -112,6 +128,7 @@ void scene_free(Scene *scene)
 {
     int count,i;
     Exhibit *exhibit;
+    Entity *ent;
     if (!scene)return;
     gf2d_sprite_free(scene->background);
     gf2d_sprite_free(scene->mask);
@@ -124,6 +141,14 @@ void scene_free(Scene *scene)
         exhibit_free(exhibit);
     }
     gfc_list_delete(scene->exhibits);
+    count = gfc_list_get_count(scene->entities);
+    for (i = 0; i < count; i++)
+    {
+        ent = gfc_list_get_nth(scene->entities,i);
+        if (!ent)continue;
+        gf2d_entity_free(ent);
+    }
+    gfc_list_delete(scene->entities);
     sj_free(scene->config);
     memset(scene,0,sizeof(Scene));
 }

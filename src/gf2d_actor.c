@@ -450,6 +450,11 @@ void gf2d_actor_free(Actor *actor)
 
 void gf2d_actor_load(Actor *actor,char *file)
 {
+    if (!file)
+    {
+        slog("no file provided for actor");
+        return;
+    }
     if (!actor)
     {
         slog("no actor specified to load into");
@@ -460,6 +465,7 @@ void gf2d_actor_load(Actor *actor,char *file)
     {
         return;// should have logged the error already
     }
+    actor->_inuse = 1;
     vector4d_copy(actor->color,actor->al->color);
     actor->sprite = gf2d_sprite_load_all(
         actor->al->sprite,
@@ -472,14 +478,14 @@ void gf2d_actor_load(Actor *actor,char *file)
 
 void gf2d_actor_set_action(Actor *actor,char *action)
 {
-    if (!actor)return;
+    if ((!actor)||(!actor->_inuse)||(!action))return;
     actor->frame = gf2d_action_set(actor->al,action);
     gfc_line_cpy(actor->action,action);
 }
 
 void gf2d_actor_next_frame(Actor *actor)
 {
-    if (!actor)return;
+    if ((!actor)||(!actor->_inuse))return;
     actor->at = gf2d_action_list_get_next_frame(actor->al,&actor->frame,actor->action);
 }
 
@@ -493,7 +499,7 @@ void gf2d_actor_draw(
 )
 {
     Vector2D drawScale;
-    if (!actor)return;
+    if ((!actor)||(!actor->_inuse))return;
     vector2d_copy(drawScale,actor->al->scale);
     if (scale)
     {
@@ -501,14 +507,14 @@ void gf2d_actor_draw(
         drawScale.y *= scale->y;
     }
     gf2d_sprite_draw(
-    actor->sprite,
-    position,
-    &drawScale,
-    scaleCenter,
-    rotation,
-    flip,
-    &actor->color,
-    (int)actor->frame);
+        actor->sprite,
+        position,
+        &drawScale,
+        scaleCenter,
+        rotation,
+        flip,
+        &actor->color,
+        (int)actor->frame);
 
 }
 
@@ -516,9 +522,8 @@ int gf2d_actor_get_frames_remaining(Actor *actor)
 {
     Action *action;
     float total,passed;
-    if (!actor)
+    if ((!actor)||(!actor->_inuse))
     {
-        slog("no actor provided");
         return 0;
     }
     action = gf2d_action_list_get_action(actor->al, actor->action);
