@@ -69,7 +69,7 @@ Entity *exhibit_entity_spawn(Exhibit *exhibit)
     ent->position.x = exhibit->rect.x;
     ent->position.y = exhibit->rect.y;
     ent->shape = gf2d_shape_rect(0,0, exhibit->rect.w, exhibit->rect.h);
-    
+    ent->draw = exhibit_draw;
     
     return ent;
 }
