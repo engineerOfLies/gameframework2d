@@ -37,6 +37,7 @@ Entity *player_spawn(Vector2D position)
         gf2d_entity_free(player);
         return NULL;
     }
+    gfc_line_cpy(player->name,"player");
     player->data = pd;
     vector2d_copy(player->position,position);
     gf2d_actor_load(&player->actor,"actors/player.json");

@@ -88,7 +88,7 @@ void gf2d_entity_draw(Entity *self)
     Vector2D drawPosition;
     if (!self)return;
     if (!self->inuse)return;
-    
+
     vector2d_sub(drawPosition,self->position,camera_get_position());
 
     gf2d_particle_emitter_draw(self->pe);

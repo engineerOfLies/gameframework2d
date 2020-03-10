@@ -5,6 +5,7 @@
 
 #include "exhibits.h"
 #include "scene.h"
+#include "camera.h"
 
 typedef struct
 {
@@ -81,6 +82,7 @@ Scene *scene_load(char *filename)
     imageName = (char *)sj_get_string_value(sj_object_get_value(json,"mask"));    
     scene->mask = gf2d_sprite_load_image(imageName);
     
+    camera_set_bounds(0,0,scene->background->frame_w,scene->background->frame_h);
     exhibits = sj_object_get_value(json,"exhibits");
     if (exhibits)
     {
@@ -118,10 +120,8 @@ void scene_spawn_exhibits(Scene *scene)
 
 void scene_draw(Scene *scene)
 {
-    Vector2D ncam;
     if (!scene)return;
-    vector2d_negate(ncam,scene->camera);
-    gf2d_sprite_draw_image(scene->background,ncam);
+    gf2d_sprite_draw_image(scene->background,camera_get_offset());
 }
 
 void scene_free(Scene *scene)
@@ -153,34 +153,5 @@ void scene_free(Scene *scene)
     memset(scene,0,sizeof(Scene));
 }
 
-void scene_camera_clamp(Scene *scene)
-{
-    Vector2D extent;
-    if (!scene)return;
-    if (!scene->background)return;
-    extent = gf2d_graphics_get_resolution();
-    if (scene->camera.x < 0)scene->camera.x = 0;
-    if (scene->camera.x + extent.x > scene->background->frame_w)scene->camera.x = scene->background->frame_w - extent.x;
-    if (scene->camera.y < 0)scene->camera.y = 0;
-    if (scene->camera.y + extent.y > scene->background->frame_h)scene->camera.y = scene->background->frame_h - extent.y;    
-}
-
-void scene_camera_move(Scene *scene, Vector2D direction)
-{
-    if (!scene)return;
-    vector2d_add(scene->camera,scene->camera,direction);
-    scene_camera_clamp(scene);
-}
-
-void scene_camera_focus(Scene *scene, Vector2D point)
-{
-    Vector2D extent;
-    if (!scene)return;
-    extent = gf2d_graphics_get_resolution();
-    slog("window extent: %f,%f",extent.x,extent.y);
-    scene->camera.x = point.x - (extent.x / 2);
-    scene->camera.y = point.y - (extent.y / 2);
-    scene_camera_clamp(scene);
-}
 
 /*eol@eof*/

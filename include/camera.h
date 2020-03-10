@@ -26,8 +26,13 @@ Rect camera_get_dimensions();
  * @brief get the current camera position
  * @return the x,y position of the camera
  */
-
 Vector2D camera_get_position();
+
+/**
+ * @brief get the offset to draw something relative to the camera
+ * @return vector for the offset to draw at (negative camera position)
+ */
+Vector2D camera_get_offset();
 
 /**
  * @brief limit the position of the camera by these bounds
@@ -55,6 +60,12 @@ void camera_move(Vector2D v);
  * @param position the ideal new top left position of the camera
  */
 void camera_set_position(Vector2D position);
+
+/**
+ * @brief move the camera to center on the provided position, but respect bounds
+ * @param position the ideal new center point of the camera
+ */
+void camera_set_focus(Vector2D position);
 
 /**
  * @brief move the camera to ne position, but do not respect bounds

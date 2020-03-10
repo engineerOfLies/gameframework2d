@@ -1,5 +1,6 @@
 #include "simple_logger.h"
 #include "gf2d_config.h"
+#include "camera.h"
 #include "exhibits.h"
 
 void exhibit_free(Exhibit *exhibit)
@@ -48,8 +49,11 @@ Exhibit *exhibit_load(SJson *json)
 
 void exhibit_draw(Entity *ent)
 {
+    Vector2D drawPosition;
     if (!ent)return;
-    gf2d_shape_draw(ent->shape,gfc_color(0,1,1,1),ent->position);
+    vector2d_add(drawPosition,ent->position,camera_get_offset());
+
+    gf2d_shape_draw(ent->shape,gfc_color(0,1,1,1),drawPosition);
 }
 
 Entity *exhibit_entity_spawn(Exhibit *exhibit)

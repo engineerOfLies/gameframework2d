@@ -11,7 +11,6 @@ typedef struct
     Uint8      _inuse;              /**<no touchy*/
     Sprite     *background;         /**<background image*/
     Sprite     *mask;               /**<an image used to determine what positions are walk-able*/
-    Vector2D    camera;             /**<draw postion for the scene*/
     SJson      *config;             /**<additional configuration for the scene*/
     List       *exhibits;           /**<list of exhibits in this scene*/
     List       *entities;           /**<list of entities spawned in this scene*/
@@ -56,19 +55,5 @@ void scene_draw(Scene *scene);
  * @param scene the scene to free
  */
 void scene_free(Scene *scene);
-
-/**
- * @brief center the camera on this point in the scene
- * @param scene the scene to focus within.
- * @param point the point to focus on.
- */
-void scene_camera_focus(Scene *scene, Vector2D point);
-
-/**
- * @brief Move the camera in the direction specified
- * @param scene the scene to focus within.
- * @param direction the vector to move the camera by
- */
-void scene_camera_move(Scene *scene, Vector2D direction);
 
 #endif
