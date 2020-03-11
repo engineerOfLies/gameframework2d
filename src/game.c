@@ -49,8 +49,8 @@ void exitCheck()
 int main(int argc, char * argv[])
 {
     /*variable declarations*/
+    int windowsUpdated = 0;
     Scene *scene;
-    int mx,my;
     Entity *player;
         
     init_all(argc,argv);
@@ -72,20 +72,21 @@ int main(int argc, char * argv[])
 
     scene = scene_load("config/testlevel.json");
     scene_spawn_exhibits(scene);
-    player = player_spawn(vector2d(1200,780));
+    player = player_spawn(vector2d(300,300));
     camera_set_focus(player->position);
     /*main game loop*/
     while(!_done)
     {
         gfc_input_update();
+        gf2d_mouse_update();
         /*update things here*/
-        SDL_GetMouseState(&mx,&my);
-        gf2d_windows_update_all();
+        windowsUpdated = gf2d_windows_update_all();
                 
         gf2d_entity_update_all();
         
         gf2d_entity_think_all();
-        gf2d_mouse_update();
+
+        if ((!editorMode)&&(!windowsUpdated))scene_update(scene);
                 
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame

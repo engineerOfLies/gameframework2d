@@ -30,4 +30,9 @@ Entity *player_load(char *filename);
  */
 void    player_free(Entity *player);
 
+/**
+ * @brief instruct the player to walk to towards the point on the screen.
+ */
+void player_walk_to(Entity *player,Vector2D position);
+
 #endif

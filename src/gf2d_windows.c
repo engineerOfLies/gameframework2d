@@ -206,14 +206,15 @@ void gf2d_window_draw(Window *win)
     }
 }
 
-void gf2d_window_update(Window *win)
+int gf2d_window_update(Window *win)
 {
     int count,i;
+    int retval = 0;
     Vector2D offset;
     List *updateList = NULL;
     List *updated = NULL;
     Element *e;
-    if (!win)return;
+    if (!win)return 0;
     updateList = gfc_list_new();
     offset.x = win->dimensions.x + win->canvas.x;
     offset.y = win->dimensions.y + win->canvas.y;
@@ -234,9 +235,10 @@ void gf2d_window_update(Window *win)
     }
     if (win->update)
     {
-        win->update(win,updateList);
+        retval = win->update(win,updateList);
     }
     gfc_list_delete(updateList);
+    return retval;
 }
 
 Window *gf2d_window_new()
@@ -283,14 +285,17 @@ void gf2d_windows_draw_all()
     }
 }
 
-void gf2d_windows_update_all()
+int gf2d_windows_update_all()
 {
     int i,count;
+    int retval = 0;
     count = gfc_list_get_count(window_manager.window_deque);
     for (i = count - 1; i >= 0; i--)
     {
-        gf2d_window_update((Window*)gfc_list_get_nth(window_manager.window_deque,i));
+        retval = gf2d_window_update((Window*)gfc_list_get_nth(window_manager.window_deque,i));
+        if (retval)break;
     }
+    return retval;
 }
 
 void gf2d_window_align(Window *win,int vertical)

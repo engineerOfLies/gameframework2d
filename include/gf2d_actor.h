@@ -60,6 +60,7 @@ typedef struct
     Sprite     *sprite;       /**<which sprite to draw this entity with*/
     Vector4D    color;        /**<color to shift sprite too*/
     float       frame;        /**<current frame for the sprite*/
+    Vector2D    size;         /**<size of the actor (sprite size times scale*/
     ActionList *al;           /**<action list for managing sprite animations*/
     TextLine    action;       /**<the current action*/
     ActionReturnType at;      /**<set automatically each frame*/
@@ -109,8 +110,9 @@ float gf2d_action_set(ActionList *al,char *name);
  * @brief load actor information from file into the actor provided
  * @param actor a pointer to the actor to populate
  * @param file the file path to load
+ * @returns true on success or false on failure
  */
-void gf2d_actor_load(Actor *actor,char *file);
+int gf2d_actor_load(Actor *actor,char *file);
 
 /**
  * @brief free all assets loaded for the actor and set its data to 0

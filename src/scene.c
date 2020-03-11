@@ -68,6 +68,7 @@ Scene *scene_load(char *filename)
     int i,count;
     char *imageName;
     
+    
     scene = scene_new();
     if (!scene)return NULL;
     json = sj_load(filename);
@@ -78,11 +79,13 @@ Scene *scene_load(char *filename)
         return NULL;
     }
     imageName = (char *)sj_get_string_value(sj_object_get_value(json,"background"));
-    scene->background = gf2d_sprite_load_image(imageName);
-    imageName = (char *)sj_get_string_value(sj_object_get_value(json,"mask"));    
-    scene->mask = gf2d_sprite_load_image(imageName);
+    if (gf2d_actor_load(&scene->background,imageName))
+    {
+        imageName = (char *)sj_get_string_value(sj_object_get_value(json,"action"));
+        gf2d_actor_set_action(&scene->background,imageName);
+    }
     
-    camera_set_bounds(0,0,scene->background->frame_w,scene->background->frame_h);
+    camera_set_bounds(0,0,scene->background.size.x,scene->background.size.y);
     exhibits = sj_object_get_value(json,"exhibits");
     if (exhibits)
     {
@@ -121,8 +124,34 @@ void scene_spawn_exhibits(Scene *scene)
 void scene_draw(Scene *scene)
 {
     if (!scene)return;
-    gf2d_sprite_draw_image(scene->background,camera_get_offset());
+    gf2d_actor_draw(
+        &scene->background,
+        camera_get_offset(),
+        NULL,
+        NULL,
+        NULL,
+        NULL);
 }
+
+void scene_update(Scene *scene)
+{
+    Exhibit *exhibit;
+    int i, count;
+    if (!scene)
+    {
+        slog("no scene provided to update");
+        return;
+    }
+    if (!gf2d_mouse_button_released(0))return;
+    count = gfc_list_get_count(scene->exhibits);
+    for (i = 0; i < count; i++)
+    {
+        exhibit = gfc_list_get_nth(scene->exhibits,i);
+        if (!exhibit)continue;
+        if (exhibit_mouse_check(exhibit))return;
+    }
+}
+
 
 void scene_free(Scene *scene)
 {
@@ -130,8 +159,7 @@ void scene_free(Scene *scene)
     Exhibit *exhibit;
     Entity *ent;
     if (!scene)return;
-    gf2d_sprite_free(scene->background);
-    gf2d_sprite_free(scene->mask);
+    gf2d_actor_free(&scene->background);
     
     count = gfc_list_get_count(scene->exhibits);
     for (i = 0; i < count; i++)

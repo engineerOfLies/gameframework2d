@@ -51,8 +51,9 @@ void gf2d_windows_draw_all();
 
 /**
  * @brief update all active windows
+ * @return 1 if a window handled input or 0 if everything was idle
  */
-void gf2d_windows_update_all();
+int gf2d_windows_update_all();
 
 /**
  * @brief get a new initialized window
@@ -83,8 +84,9 @@ void gf2d_window_add_element(Window *win,Element *e);
 /**
  * @brief update a window and all of its elements
  * @param win the window to update
+ * @return 1 if the window in question should block input to windows below it
  */
-void gf2d_window_update(Window *win);
+int gf2d_window_update(Window *win);
 
 /**
  * @brief draw a window to the screen.  

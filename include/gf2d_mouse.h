@@ -63,7 +63,7 @@ int gf2d_mouse_button_pressed(int button);
 int gf2d_mouse_button_held(int button);
 
 /**
- * @brief check if the mouse button was pressed this frame
+ * @brief check if the mouse button was released this frame
  * @param button the button number to check (left mouse button is 0, right mouse button is 1, etc)
  * @return 1 if it has, 0 otherwise
  */
@@ -106,5 +106,11 @@ void gf2d_mouse_set_action(char *action);
  * @param mf the enum of the function to set it to
  */
 void gf2d_mouse_set_function(MouseFunction mf);
+
+/**
+ * @brief get the current function selected for the mouse
+ * @return a MouseFunction code
+ */
+MouseFunction gf2d_mouse_get_function();
 
 #endif

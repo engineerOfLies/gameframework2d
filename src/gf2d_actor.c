@@ -448,24 +448,26 @@ void gf2d_actor_free(Actor *actor)
     memset(actor,0,sizeof(Actor));
 }
 
-void gf2d_actor_load(Actor *actor,char *file)
+int gf2d_actor_load(Actor *actor,char *file)
 {
     if (!file)
     {
         slog("no file provided for actor");
-        return;
+        return false;
     }
     if (!actor)
     {
         slog("no actor specified to load into");
-        return;
+        return false;
     }
     actor->al = gf2d_action_list_load(file);
     if (!actor->al)
     {
-        return;// should have logged the error already
+        return false;// should have logged the error already
     }
     actor->_inuse = 1;
+    actor->size.x = actor->al->frameWidth * actor->al->scale.x;
+    actor->size.y = actor->al->frameHeight * actor->al->scale.y;
     vector4d_copy(actor->color,actor->al->color);
     actor->sprite = gf2d_sprite_load_all(
         actor->al->sprite,
@@ -474,6 +476,7 @@ void gf2d_actor_load(Actor *actor,char *file)
         actor->al->framesPerLine,
         false);
     gf2d_actor_set_action(actor,actor->al->actions[0].name);
+    return true;
 }
 
 void gf2d_actor_set_action(Actor *actor,char *action)

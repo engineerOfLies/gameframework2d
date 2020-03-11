@@ -1,30 +1,36 @@
 {
-    "background":"images/backgrounds/fantasy_scene.png",
-    "mask":"images/backgrounds/fantasy_scene_mask.png",
+    "background":"actors/town.json",
+    "action":"gate",
     "exhibits":
     [
         {
-            "name":"Broken Lock",
+            "name":"Town Gate",
             "displayName":true,
-            "rect":[500,250,100,100],
+            "rect":[690,200,150,150],
+            "near":[700,350],
             "proximity":true,
             "args":
             {
-                "description":
+                "look":
                 {
-                    "DEFAULT":"This old lock appears to be made of some sturdy metal, but yet it is still broken."
+                    "DEFAULT":"The old gates are closed, but remain unlocked."
                 },
-                "action":
+                "interact":
                 {
-                    "DEFAULT":"The internal mechanisms are all rusted solid.  Not much you can do with this now."
+                    "DEFAULT":"The doors creek open and you enter the town.",
+                    "action":
+                    {
+                        "exit":"config/townsquare.json",
+                        "position":"south_exit"
+                    }
                 },
                 "talk":
                 {
-                    "DEFAULT":"If this lock was ever able to magically speak before, it can't anymore."
+                    "DEFAULT":"If this door was ever able to magically speak before, it can't anymore."
                 },
                 "item":
                 {
-                    "old_key":"This key is way too small to fit this lock even if it wasn't broken",
+                    "old_key":"There is no key hole on this door.",
                     "DEFAULT":"Nope, that doesn't work."
                 },
                 "spell":

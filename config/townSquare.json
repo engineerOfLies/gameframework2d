@@ -1,0 +1,59 @@
+{
+    "background":"actors/town.json",
+    "action":"townSquare",
+    "exhibits":
+    [
+        {
+            "name":"south_exit",
+            "displayName":false,
+            "rect":[600,700,800,100],
+            "near":[700,350],
+            "proximity":true,
+            "args":
+            {
+                "walk":
+                {
+                    "action":
+                    {
+                        "exit":"config/testlevel.json",
+                        "position":"Town Gate"
+                    }
+                }
+            }
+        }
+        {
+            "name":"Monument",
+            "displayName":true,
+            "rect":[340,200,500,300],
+            "near":[350,510],
+            "proximity":true,
+            "args":
+            {
+                "look":
+                {
+                    "DEFAULT":"What looks like an old sculpture is coverd in flowering vines."
+                },
+                "interact":
+                {
+                    "DEFAULT":"You pick a few flowers.",
+                    "action":
+                    {
+                        "give_item":"flowers"
+                    }
+                },
+                "talk":
+                {
+                    "DEFAULT":"No one hears you talking to the flowers... luckily."
+                },
+                "item":
+                {
+                    "DEFAULT":"Nope, that doesn't work."
+                },
+                "spell":
+                {
+                    "DEFAULT":"Your spell fizzles."
+                }
+            }
+        }
+    ]
+}

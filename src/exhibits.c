@@ -1,7 +1,10 @@
 #include "simple_logger.h"
 #include "gf2d_config.h"
+#include "windows_common.h"
 #include "camera.h"
 #include "exhibits.h"
+
+static int exhibit_paused = 0;
 
 void exhibit_free(Exhibit *exhibit)
 {
@@ -15,6 +18,67 @@ Exhibit *exhibit_new()
     Exhibit *exhibit;
     exhibit = gfc_allocate_array(sizeof(Exhibit),1);
     return exhibit;
+}
+
+void exhibit_unpause(void *data)
+{
+    exhibit_paused = 0;
+}
+
+int exhibit_mouse_check(Exhibit *exhibit)
+{
+    Vector2D mp = {0,0};
+    Shape aS = {0};
+    MouseFunction mf;
+    SJson *arg = NULL;
+    const char *defaultText;
+    
+    if (exhibit_paused) return 0;
+    if (!exhibit)return 0;
+    mp = gf2d_mouse_get_position();
+    
+    gf2d_shape_copy(&aS,exhibit->entity->shape);
+    gf2d_shape_move(&aS,exhibit->entity->position);
+    gf2d_shape_move(&aS,camera_get_offset());
+    if (!gf2d_point_in_rect(mp,gf2d_shape_get_bounds(aS)))return 0;
+    
+    mf = gf2d_mouse_get_function();
+    switch(mf)
+    {
+        case MF_Pointer:
+            break;
+        case MF_Walk:
+            break;
+        case MF_Look:
+            arg = sj_object_get_value(exhibit->args,"look");
+            if (!arg)return false;
+            break;
+        case MF_Interact:
+            arg = sj_object_get_value(exhibit->args,"interact");
+            if (!arg)return false;
+            break;
+        case MF_Talk:
+            arg = sj_object_get_value(exhibit->args,"talk");
+            break;
+        case MF_Item:
+            arg = sj_object_get_value(exhibit->args,"item");
+            if (!arg)return false;
+            break;
+        case MF_Spell:
+            arg = sj_object_get_value(exhibit->args,"spell");
+            if (!arg)return false;
+            break;
+
+    }
+    arg = sj_object_get_value(arg,"DEFAULT");
+    defaultText = sj_get_string_value(arg);
+    if (defaultText)
+    {
+        window_alert(exhibit->name, (char *)defaultText,exhibit_unpause ,NULL);
+        exhibit_paused = 1;
+        return 1;
+    }
+    return 0;
 }
 
 Exhibit *exhibit_load(SJson *json)
@@ -74,7 +138,7 @@ Entity *exhibit_entity_spawn(Exhibit *exhibit)
     ent->position.y = exhibit->rect.y;
     ent->shape = gf2d_shape_rect(0,0, exhibit->rect.w, exhibit->rect.h);
     ent->draw = exhibit_draw;
-    
+    exhibit->entity = ent;
     return ent;
 }
 

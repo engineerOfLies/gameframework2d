@@ -18,6 +18,7 @@ typedef struct
     Bool        proximity;      /**<if the player needs to be close to the exhibit to interact with it*/
     Vector2D    near;           /**<where the player needs to stand to interact with it.*/
     SJson      *args;           /**<additional arguments*/
+    Entity     *entity;         /**<pointer to the entity spawned by this exhibit*/
 }Exhibit;
 
 /**
@@ -34,4 +35,11 @@ Exhibit *exhibit_load(SJson *json);
 Entity *exhibit_entity_spawn(Exhibit *exhibit); 
 
 void exhibit_free(Exhibit *exhibit);
+
+/**
+ * @brief check if the exhibit has been interacted with by the mouse
+ * @param exhibit pointer to the exhibit to check
+ * @returns false if no interaction, true if there was an interaction.
+ */
+int exhibit_mouse_check(Exhibit *exhibit);
 #endif

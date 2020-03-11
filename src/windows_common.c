@@ -3,6 +3,7 @@
 #include "gfc_list.h"
 #include "gfc_callbacks.h"
 
+#include "gf2d_mouse.h"
 #include "gf2d_elements.h"
 #include "gf2d_element_label.h"
 #include "gf2d_element_entry.h"
@@ -123,6 +124,47 @@ int ok_update(Window *win,List *updateList)
     return 0;
 }
 
+int alert_update(Window *win,List *updateList)
+{
+    int i,count;
+    Element *e;
+    List *callbacks;
+    Callback *callback;
+    if (!win)return 0;
+    callbacks = (List*)win->data;
+    if (gf2d_mouse_button_released(0))
+    {
+        callback = (Callback*)gfc_list_get_nth(callbacks,0);
+        if (callback)
+        {
+            gfc_callback_call(callback);
+        }
+        gf2d_window_free(win);
+        return 1;
+    }
+    if (!updateList)return 0;
+    count = gfc_list_get_count(updateList);
+    for (i = 0; i < count; i++)
+    {
+        e = gfc_list_get_nth(updateList,i);
+        if (!e)continue;
+        switch(e->index)
+        {
+            case 51:
+                callback = (Callback*)gfc_list_get_nth(callbacks,0);
+                if (callback)
+                {
+                    gfc_callback_call(callback);
+                }
+                gf2d_window_free(win);
+                return 1;
+                break;
+        }
+    }
+    return 0;
+}
+
+
 Window *window_alert(char *title, char *text, void(*onOK)(void *),void *okData)
 {
     Window *win;
@@ -135,7 +177,7 @@ Window *window_alert(char *title, char *text, void(*onOK)(void *),void *okData)
     }
     gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,1),title);
     gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,2),text);
-    win->update = ok_update;
+    win->update = alert_update;
     win->free_data = yes_no_free;
     callbacks = gfc_list_new();
     callbacks = gfc_list_append(callbacks,gfc_callback_new(onOK,okData));

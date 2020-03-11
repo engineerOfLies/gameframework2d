@@ -4,13 +4,12 @@
 #include "simple_json.h"
 #include "gfc_types.h"
 
-#include "gf2d_sprite.h"
+#include "gf2d_actor.h"
 
 typedef struct
 {
     Uint8      _inuse;              /**<no touchy*/
-    Sprite     *background;         /**<background image*/
-    Sprite     *mask;               /**<an image used to determine what positions are walk-able*/
+    Actor      background;         /**<background image*/
     SJson      *config;             /**<additional configuration for the scene*/
     List       *exhibits;           /**<list of exhibits in this scene*/
     List       *entities;           /**<list of entities spawned in this scene*/
@@ -49,6 +48,12 @@ Scene *scene_new();
  * @param scene the scene to draw
  */
 void scene_draw(Scene *scene);
+
+/**
+ * @brief check for interaction with all of the exhibits in the scene
+ * @param scene the scene to update
+ */
+void scene_update(Scene *scene);
 
 /**
  * @brief frees a scene from memory

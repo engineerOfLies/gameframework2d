@@ -158,4 +158,8 @@ int gf2d_mouse_in_rect(Rect r)
     return gf2d_point_in_rect(_mouse.mouse[0].position,r);
 }
 
+MouseFunction gf2d_mouse_get_function()
+{
+    return _mouse.mf;
+}
 /*eol@eof*/
