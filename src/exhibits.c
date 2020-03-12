@@ -7,6 +7,8 @@
 
 static int exhibit_paused = 0;
 
+int exhibit_interact(Exhibit *exhibit);
+
 void exhibit_free(Exhibit *exhibit)
 {
     if (!exhibit)return;
@@ -38,23 +40,59 @@ void exhibit_player_walk_to(Exhibit *exhibit)
     scene_active_player_walk_to(exhibit->scene,exhibit->near);
 }
 
+void do_exit(void *data)
+{
+    Exhibit *exhibit;
+    if (!data)return;
+    exhibit = (Exhibit *)data;
+    exhibit_unpause(NULL);
+    slog("now exiting the scene");
+}
+
+void exhibit_interact_callback(void *data)
+{
+    Exhibit *exhibit;
+    if (!data)return;
+    exhibit = (Exhibit *)data;
+    exhibit_interact(exhibit);
+}
+
 int exhibit_interact(Exhibit *exhibit)
 {
     Bool proximity = 0;
     SJson *arg = NULL,*action = NULL;
     arg = sj_object_get_value(exhibit->args,"interact");
+    const char *actionType = NULL;
+    const char *message = NULL;
     if (!arg)return false;
     sj_get_bool_value(sj_object_get_value(arg,"proximity"),(short int *)&proximity);
     if (proximity)
     {
-        if (!player_near_point(scene_get_active_player(exhibit->scene),exhibit->near))
+        slog("proximity matters for this exhibit");
+        if (player_near_scene_point(scene_get_active_player(exhibit->scene),exhibit->near) == 0)
         {
+            slog("player is not near target, moving to it");
             exhibit_player_walk_to(exhibit);
+            player_set_callback(scene_get_active_player(exhibit->scene),exhibit_interact_callback,exhibit);
             return 1;
         }
     }
+    slog("player is either close enough, or it doesn't matter. interacting");
     // either we don't need to be near it, or we are already here
     action = sj_object_get_value(arg,"action");
+    actionType = sj_get_string_value(sj_object_get_value(action,"type"));
+    if (!actionType)
+    {
+        slog("exhibit_interact: no action type specified for exhibit %s",exhibit->name);
+        return 0;
+    }
+    if (strcmp(actionType,"exit")==0)
+    {
+        message = sj_get_string_value(sj_object_get_value(action,"message"));
+        window_alert(exhibit->name, (char *)message, do_exit,exhibit);
+        exhibit_paused = 1;
+    }
+    return 1;
 }
 
 int exhibit_mouse_check(Exhibit *exhibit)

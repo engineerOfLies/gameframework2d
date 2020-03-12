@@ -36,6 +36,15 @@ int player_near_point(Entity *self,Vector2D position)
     return 0;
 }
 
+int player_near_scene_point(Entity *player,Vector2D position)
+{
+    Rect r;
+    if (!player)return 0;
+    r = gf2d_shape_get_bounds(player->shape);
+    position.y -= r.h;
+    position.x -= (r.w/2);
+    return player_near_point(player,position);
+}
 
 void player_walk(Entity *self)
 {
@@ -43,10 +52,12 @@ void player_walk(Entity *self)
     if (!self)return;
     if (player_near_point(self,self->targetPosition))
     {
+        vector2d_copy(self->position,self->targetPosition);
         self->state = ES_Idle;
         gf2d_actor_set_action(&self->actor,"idle");
         vector2d_set(self->velocity,0,0);
         self->update = player_idle;
+        player_run_callback(self);
         return;
     }
     vector2d_sub(direction,self->targetPosition,self->position);
@@ -124,5 +135,26 @@ void player_walk_to(Entity *player,Vector2D position)
     gf2d_actor_set_action(&player->actor,"walk");
 }
 
+void player_run_callback(Entity *player)
+{
+    Callback *call;
+    if (!player)return;
+    if (!player->nextAction)return;
+    call = player->nextAction;
+    player->nextAction = NULL;
+    gfc_callback_call(call);//just in case the callback sets the player's next callback
+    gfc_callback_free(call);
+}
+
+void player_set_callback(Entity *player,void(*call)(void *),void *data)
+{
+    if (!player)return;
+    if (player->nextAction)
+    {
+        slog("callback already set, overwriting");
+        gfc_callback_free(player->nextAction);
+    }
+    player->nextAction = gfc_callback_new(call,data);
+}
 
 /*eol@eof*/

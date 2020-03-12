@@ -6,6 +6,7 @@
 #include "gfc_text.h"
 #include "gfc_vector.h"
 #include "gfc_audio.h"
+#include "gfc_callbacks.h"
 
 #include "gf2d_actor.h"
 #include "gf2d_particles.h"
@@ -71,6 +72,7 @@ typedef struct Entity_S
     int   jumpcount;                        /**<used for multijump*/
     int   grounded;
     
+    Callback    *nextAction;                /**<command to run after the player completes an action*/
     SJson  *args;                           /**<additional arguments to configure the entity beyond the basics*/
     void   *data;                           /**<any other game specific data can be referenced here*/
 }Entity;

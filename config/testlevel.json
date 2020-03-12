@@ -19,6 +19,7 @@
                     "proximity":true,
                     "action":
                     {
+                        "type":"exit",
                         "message":"The doors creek open and you enter the town.",
                         "exit":"config/townsquare.json",
                         "position":"south_exit"
