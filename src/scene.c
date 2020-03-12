@@ -99,6 +99,7 @@ Scene *scene_load(char *filename)
             if (exhibit)
             {
                 scene->exhibits = gfc_list_append(scene->exhibits,exhibit);
+                exhibit_set_scene(exhibit,scene);
             }
         }
     }
@@ -134,6 +135,12 @@ void scene_draw(Scene *scene)
         NULL);
 }
 
+Entity *scene_get_active_player(Scene *scene)
+{
+    if (!scene)return NULL;
+    return scene->activePlayer;
+}
+
 void scene_set_active_player(Scene *scene,Entity *player)
 {
     if ((!scene)||(!player))return;
@@ -144,6 +151,12 @@ void scene_add_entity(Scene *scene,Entity *entity)
 {
     if ((!scene)||(!entity))return;
     gfc_list_append(scene->entities,entity);
+}
+
+void scene_active_player_walk_to(Scene *scene,Vector2D position)
+{
+    if (!scene)return;
+    player_walk_to(scene->activePlayer,position);
 }
 
 void scene_update(Scene *scene)
@@ -169,13 +182,9 @@ void scene_update(Scene *scene)
         destination = gf2d_mouse_get_position();
         offset = camera_get_position();
         
-        slog("mouse position: %f,%f",destination.x,destination.y);
-        slog("camera position: %f,%f",offset.x,offset.y);
-        
         vector2d_add(destination,destination,offset);
 
-        slog("destination: %f,%f",destination.x,destination.y);
-        player_walk_to(scene->activePlayer,destination);
+        scene_active_player_walk_to(scene,destination);
     }
 }
 

@@ -2,6 +2,7 @@
 #include "gf2d_config.h"
 #include "windows_common.h"
 #include "camera.h"
+#include "player.h"
 #include "exhibits.h"
 
 static int exhibit_paused = 0;
@@ -23,6 +24,37 @@ Exhibit *exhibit_new()
 void exhibit_unpause(void *data)
 {
     exhibit_paused = 0;
+}
+
+void exhibit_set_scene(Exhibit *exhibit,Scene *scene)
+{
+    if ((!exhibit)||(!scene))return;
+    exhibit->scene = scene;
+}
+
+void exhibit_player_walk_to(Exhibit *exhibit)
+{
+    if (!exhibit)return;
+    scene_active_player_walk_to(exhibit->scene,exhibit->near);
+}
+
+int exhibit_interact(Exhibit *exhibit)
+{
+    Bool proximity = 0;
+    SJson *arg = NULL,*action = NULL;
+    arg = sj_object_get_value(exhibit->args,"interact");
+    if (!arg)return false;
+    sj_get_bool_value(sj_object_get_value(arg,"proximity"),(short int *)&proximity);
+    if (proximity)
+    {
+        if (!player_near_point(scene_get_active_player(exhibit->scene),exhibit->near))
+        {
+            exhibit_player_walk_to(exhibit);
+            return 1;
+        }
+    }
+    // either we don't need to be near it, or we are already here
+    action = sj_object_get_value(arg,"action");
 }
 
 int exhibit_mouse_check(Exhibit *exhibit)
@@ -48,14 +80,15 @@ int exhibit_mouse_check(Exhibit *exhibit)
         case MF_Pointer:
             break;
         case MF_Walk:
-            break;
+            exhibit_player_walk_to(exhibit);
+            return 1;
         case MF_Look:
             arg = sj_object_get_value(exhibit->args,"look");
             if (!arg)return false;
             break;
         case MF_Interact:
+            if (exhibit_interact(exhibit))return 1;
             arg = sj_object_get_value(exhibit->args,"interact");
-            if (!arg)return false;
             break;
         case MF_Talk:
             arg = sj_object_get_value(exhibit->args,"talk");
@@ -96,8 +129,6 @@ Exhibit *exhibit_load(SJson *json)
     
     sj_value_as_vector4d(sj_object_get_value(json,"rect"),&vector);
     exhibit->rect = gf2d_rect(vector.x,vector.y,vector.z,vector.w);
-
-    sj_get_bool_value(sj_object_get_value(json,"proximity"),(short int *)&exhibit->proximity);
 
     sj_value_as_vector2d(sj_object_get_value(json,"near"),&exhibit->near);
 

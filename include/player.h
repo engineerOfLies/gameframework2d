@@ -35,4 +35,8 @@ void    player_free(Entity *player);
  */
 void player_walk_to(Entity *player,Vector2D position);
 
+/**
+ * @brief check if the player is near a point in the scene
+ */
+int player_near_point(Entity *player,Vector2D position);
 #endif

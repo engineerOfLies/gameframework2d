@@ -29,10 +29,19 @@ void player_idle(Entity *self)
     if (!self)return;
 }
 
+int player_near_point(Entity *self,Vector2D position)
+{
+    if (!self)return 0;
+    if (vector2d_magnitude_between(self->position,position) <= self->walkingSpeed)return 1;
+    return 0;
+}
+
+
 void player_walk(Entity *self)
 {
     Vector2D direction;
-    if (vector2d_magnitude_between(self->position,self->targetPosition) <= self->walkingSpeed)
+    if (!self)return;
+    if (player_near_point(self,self->targetPosition))
     {
         self->state = ES_Idle;
         gf2d_actor_set_action(&self->actor,"idle");
@@ -40,12 +49,11 @@ void player_walk(Entity *self)
         self->update = player_idle;
         return;
     }
-    slog("player's current position: %f,%f",self->position.x,self->position.y);
-    slog("player's target position: %f,%f",self->targetPosition.x,self->targetPosition.y);
     vector2d_sub(direction,self->targetPosition,self->position);
     vector2d_set_magnitude(&direction,self->walkingSpeed);
     vector2d_copy(self->velocity,direction);
-    
+    if (self->velocity.x < 0)self->flip.x = 1;
+    if (self->velocity.x > 0)self->flip.x = 0;
 }
 
 Entity *player_spawn(Vector2D position)

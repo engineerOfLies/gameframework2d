@@ -70,4 +70,13 @@ void scene_free(Scene *scene);
  */
 void scene_set_active_player(Scene *scene,Entity *player);
 
+Entity *scene_get_active_player(Scene *scene);
+
+/**
+ * @brief issue a walk command to the active player to walk towards the specified position in the scene
+ * @param scene the scene to address
+ * @param position the position in the scene to walk to
+ */
+void scene_active_player_walk_to(Scene *scene,Vector2D position);
+
 #endif

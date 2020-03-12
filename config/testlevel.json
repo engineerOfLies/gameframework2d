@@ -7,8 +7,7 @@
             "name":"Town Gate",
             "displayName":true,
             "rect":[690,200,150,150],
-            "near":[700,350],
-            "proximity":true,
+            "near":[720,355],
             "args":
             {
                 "look":
@@ -17,12 +16,14 @@
                 },
                 "interact":
                 {
-                    "DEFAULT":"The doors creek open and you enter the town.",
+                    "proximity":true,
                     "action":
                     {
+                        "message":"The doors creek open and you enter the town.",
                         "exit":"config/townsquare.json",
                         "position":"south_exit"
-                    }
+                    },
+                    "DEFAULT":"The old gates feel smooth and warn from years of weathering."
                 },
                 "talk":
                 {
@@ -30,7 +31,11 @@
                 },
                 "item":
                 {
-                    "old_key":"There is no key hole on this door.",
+                    "old_key":
+                    {
+                        "proximity":true,
+                        "message":"There is no key hole on this door."
+                    }
                     "DEFAULT":"Nope, that doesn't work."
                 },
                 "spell":
