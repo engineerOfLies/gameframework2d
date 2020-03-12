@@ -1,0 +1,18 @@
+{
+    "entity":
+    {
+        "id":100,
+        "name":"player",
+        "shape":
+        {
+          "type":"rect",
+          "dimensions":[0,0,90,170]
+        },
+        "walkingSpeed":3,
+        "actor":"actors/player.json",
+        "action":"idle",
+        "offset":[-140,-110],
+        "health":100,
+        "maxHealth":100
+    }
+}

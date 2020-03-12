@@ -16,6 +16,13 @@
                 "endFrame": 81,
                 "frameRate": 0.05,
                 "type": "loop"
+            },
+            {
+                "action": "walk",
+                "startFrame": 52,
+                "endFrame": 58,
+                "frameRate": 0.05,
+                "type": "loop"
             }
         ]
     }

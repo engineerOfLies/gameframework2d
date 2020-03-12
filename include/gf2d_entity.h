@@ -1,6 +1,8 @@
 #ifndef __GF2D_ENTITY_H__
 #define __GF2D_ENTITY_H__
 
+#include "simple_json.h"
+
 #include "gfc_text.h"
 #include "gfc_vector.h"
 #include "gfc_audio.h"
@@ -12,11 +14,7 @@
 typedef enum
 {
     ES_Idle,
-    ES_Seeking,
-    ES_Charging,
-    ES_Attacking,
-    ES_Cooldown,
-    ES_Pain,
+    ES_Walking,
     ES_Dying,
     ES_Dead         //Auto cleaned up
 }EntityState;
@@ -37,7 +35,11 @@ typedef struct Entity_S
     Vector2D velocity;                      /**<desired movement direction*/
     Vector2D acceleration;                  /**<acceleration*/
     
+    Vector2D targetPosition;                /**<walk target for the game world*/
+    float    walkingSpeed;                  /**<how fast the player walks*/
         /*graphics*/
+        
+    Vector2D offset;                        /**<offset from position to draw the actor at*/
     Actor actor;                            /**<animated sprite information*/
     Vector2D scale;                         /**<scale to draw sprite at*/
     Vector2D scaleCenter;                   /**<where to scale sprite from*/
@@ -67,8 +69,10 @@ typedef struct Entity_S
     int   count;                            /**<useful for counting things like ammo count or health ammount*/
     float jumpcool;
     int   jumpcount;                        /**<used for multijump*/
-    int   grounded;             
-    void *data;                             /**<any other game specific data can be referenced here*/
+    int   grounded;
+    
+    SJson  *args;                           /**<additional arguments to configure the entity beyond the basics*/
+    void   *data;                           /**<any other game specific data can be referenced here*/
 }Entity;
 
 /**
@@ -82,6 +86,13 @@ void gf2d_entity_system_init(Uint32 maxEntities);
  * @returns NULL when no more entities, or a new valid entity ready to be given data
  */
 Entity *gf2d_entity_new();
+
+/**
+ * @brief set default parameters for the entity from a json file
+ * @param file the file to load config from
+ * @return NULL on error or a preconfigured entity otherwise
+ */
+Entity *gf2d_entity_load(const char *file);
 
 /**
  * @brief returns an entity back to the system for recycling

@@ -2,6 +2,7 @@
 #define __GF2D_SHAPE_H__
 
 #include <SDL.h>
+#include "simple_json.h"
 #include "gfc_vector.h"
 #include "gfc_color.h"
 
@@ -38,6 +39,14 @@ typedef struct
         Edge e;
     }s;
 }Shape;
+
+/**
+ * @brief parse a shape out of json
+ * @param json the json object to parse
+ * @param shape pointer to the shape to store the information into
+ * @return 0 on error or 1 on success
+ */
+int gf2d_shape_from_json(SJson *json,Shape *shape);
 
 /**
  * @brief make a GF2D Rect
@@ -382,7 +391,6 @@ Uint8 gf2d_edge_intersect_shape_poc(Edge e,Shape s,Vector2D *poc,Vector2D *norma
 void gf2d_shape_slog(Shape shape);
 
 void gf2d_edge_slog(Edge e);
-void gf2d_rect_slog(Rect r);
 void gf2d_circle_slog(Circle c);
 
 /**

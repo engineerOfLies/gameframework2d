@@ -1,5 +1,6 @@
 #include <assert.h>
 #include "simple_logger.h"
+#include "gf2d_config.h"
 #include "gf2d_draw.h"
 #include "gf2d_shape.h"
 
@@ -1217,4 +1218,41 @@ Rect gf2d_shape_get_bounds(Shape shape)
     }
     return r;
 }
+
+int gf2d_shape_from_json(SJson *json,Shape *shape)
+{
+    const char *type;
+    Vector4D dimensions;
+    Vector2D point,point2;
+    float radius;
+    if ((!json)||(!shape))return 0;
+    type = sj_get_string_value(sj_object_get_value(json,"type"));
+    if (!type)
+    {
+        slog("gf2d_shape_from_json: json missing type specifier, expect [edge,rect,circle]");
+        return 0;
+    }
+    if (strcmp(type,"circle")== 0)
+    {
+        sj_value_as_vector2d(sj_object_get_value(json,"center"),&point);
+        sj_get_float_value(sj_object_get_value(json,"radius"),&radius);
+        *shape = gf2d_shape_circle(point.x, point.y, radius);
+        return 1;
+    }
+    if (strcmp(type,"rect")== 0)
+    {
+        sj_value_as_vector4d(sj_object_get_value(json,"dimensions"),&dimensions);
+        *shape = gf2d_shape_rect(dimensions.x, dimensions.y, dimensions.z, dimensions.w);
+        return 1;
+    }
+    if (strcmp(type,"edge")== 0)
+    {
+        sj_value_as_vector2d(sj_object_get_value(json,"point1"),&point);
+        sj_value_as_vector2d(sj_object_get_value(json,"point2"),&point2);
+        *shape = gf2d_shape_edge(point.x,point.y,point2.x,point2.y);
+        return 1;
+    }
+    return 0;
+}
+
 /*eol@eof*/

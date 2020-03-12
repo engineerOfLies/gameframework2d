@@ -4,15 +4,17 @@
 #include "simple_json.h"
 #include "gfc_types.h"
 
+#include "gf2d_entity.h"
 #include "gf2d_actor.h"
 
 typedef struct
 {
     Uint8      _inuse;              /**<no touchy*/
-    Actor      background;         /**<background image*/
+    Actor      background;          /**<background image*/
     SJson      *config;             /**<additional configuration for the scene*/
     List       *exhibits;           /**<list of exhibits in this scene*/
     List       *entities;           /**<list of entities spawned in this scene*/
+    Entity     *activePlayer;       /**<active player entity*/
 }Scene;
 
 
@@ -60,5 +62,12 @@ void scene_update(Scene *scene);
  * @param scene the scene to free
  */
 void scene_free(Scene *scene);
+
+/**
+ * @brief set the active player for the scene
+ * @param scene the scene to modify
+ * @param player the player to make the active player for
+ */
+void scene_set_active_player(Scene *scene,Entity *player);
 
 #endif

@@ -3,9 +3,10 @@
 
 #include "gf2d_graphics.h"
 
-#include "exhibits.h"
 #include "scene.h"
 #include "camera.h"
+#include "player.h"
+#include "exhibits.h"
 
 typedef struct
 {
@@ -133,10 +134,23 @@ void scene_draw(Scene *scene)
         NULL);
 }
 
+void scene_set_active_player(Scene *scene,Entity *player)
+{
+    if ((!scene)||(!player))return;
+    scene->activePlayer = player;
+}
+
+void scene_add_entity(Scene *scene,Entity *entity)
+{
+    if ((!scene)||(!entity))return;
+    gfc_list_append(scene->entities,entity);
+}
+
 void scene_update(Scene *scene)
 {
     Exhibit *exhibit;
     int i, count;
+    Vector2D destination,offset;
     if (!scene)
     {
         slog("no scene provided to update");
@@ -149,6 +163,19 @@ void scene_update(Scene *scene)
         exhibit = gfc_list_get_nth(scene->exhibits,i);
         if (!exhibit)continue;
         if (exhibit_mouse_check(exhibit))return;
+    }
+    if (gf2d_mouse_get_function() == MF_Walk)
+    {
+        destination = gf2d_mouse_get_position();
+        offset = camera_get_position();
+        
+        slog("mouse position: %f,%f",destination.x,destination.y);
+        slog("camera position: %f,%f",offset.x,offset.y);
+        
+        vector2d_add(destination,destination,offset);
+
+        slog("destination: %f,%f",destination.x,destination.y);
+        player_walk_to(scene->activePlayer,destination);
     }
 }
 

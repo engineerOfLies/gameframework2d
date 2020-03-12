@@ -73,7 +73,11 @@ int main(int argc, char * argv[])
     scene = scene_load("config/testlevel.json");
     scene_spawn_exhibits(scene);
     player = player_spawn(vector2d(300,300));
-    camera_set_focus(player->position);
+    if (player)
+    {
+        camera_set_focus(player->position);
+        scene_set_active_player(scene,player);
+    }
     /*main game loop*/
     while(!_done)
     {
