@@ -1,6 +1,7 @@
 #include "simple_logger.h"
 #include "simple_json.h"
 #include "gf2d_config.h"
+#include "camera.h"
 #include "player.h"
 
 typedef struct
@@ -50,6 +51,7 @@ void player_walk(Entity *self)
 {
     Vector2D direction;
     if (!self)return;
+    camera_set_focus(self->position);
     if (player_near_point(self,self->targetPosition))
     {
         vector2d_copy(self->position,self->targetPosition);

@@ -217,5 +217,10 @@ void scene_free(Scene *scene)
     memset(scene,0,sizeof(Scene));
 }
 
+void scene_next_scene(char *nextScene, char *position)
+{
+    
+}
+
 
 /*eol@eof*/

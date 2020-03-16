@@ -135,10 +135,10 @@ void init_all(int argc, char *argv[])
     slog("---==== BEGIN ====---");
     gf2d_graphics_initialize(
         "gf2d",
-        1200,
-        720,
-        1200,
-        720,
+        1366,
+        768,
+        1366,
+        768,
         vector4d(0,0,0,255),
         fullscreen);
     gf2d_graphics_set_frame_delay(16);
@@ -151,7 +151,7 @@ void init_all(int argc, char *argv[])
     gf2d_entity_system_init(1024);
     
     scene_manager_init(10);
-    camera_set_dimensions(0,0,1200,700);
+    camera_set_dimensions(0,0,1366,768);
     
     SDL_ShowCursor(SDL_DISABLE);
 }
