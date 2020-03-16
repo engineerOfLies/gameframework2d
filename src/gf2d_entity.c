@@ -77,6 +77,7 @@ Entity *gf2d_entity_new()
             memset(&entity_manager.entityList[i],0,sizeof(Entity));
             entity_manager.entityList[i].id = entity_manager.autoincrement++;
             entity_manager.entityList[i].inuse = 1;
+            entity_manager.entityList[i].drawColor = gfc_color(1,1,1,1);
             vector2d_set(entity_manager.entityList[i].scale,1,1);
             entity_manager.entityList[i].actor.color = vector4d(1,1,1,1);// no color shift, opaque
             return &entity_manager.entityList[i];

@@ -50,11 +50,23 @@ void exhibit_set_scene(Exhibit *exhibit,Scene *scene);
 int exhibit_mouse_check(Exhibit *exhibit);
 
 /**
+ * @brief check if the mouse is over the exhibit in question
+ */
+int exhibit_mouse_over(Exhibit *exhibit);
+
+/**
  * @brief search a scene for an exhibit by name
  * @param scene the scene to search
  * @param name the name to search for
  * @return NULL on error or not found, or a pointer to the exhibit data otherwise
  */
 Exhibit *exhibit_get_from_scene(Scene *scene,char *name);
+
+/**
+ * @brief get the exhibit currently under the mouse;
+ * @param scene the scene to search
+ * @return NULL on error or not found, an exhibit the mouse is over otherwise
+ */
+Exhibit *exhibit_get_mouse_over_from_scene(Scene *scene);
 
 #endif

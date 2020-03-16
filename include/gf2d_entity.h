@@ -71,6 +71,7 @@ typedef struct Entity_S
     float jumpcool;
     int   jumpcount;                        /**<used for multijump*/
     int   grounded;
+    Color   drawColor;                      /**<color to draw the entity with*/
     
     Callback    *nextAction;                /**<command to run after the player completes an action*/
     SJson  *args;                           /**<additional arguments to configure the entity beyond the basics*/

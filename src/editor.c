@@ -5,6 +5,7 @@
 #include "gf2d_elements.h"
 #include "gf2d_mouse.h"
 #include "windows_common.h"
+#include "exhibits.h"
 #include "scene.h"
 
 extern void exitGame();
@@ -14,6 +15,7 @@ typedef struct
 {
     TextLine    filename;
     Scene      *scene;
+    Exhibit    *selectedExhibit;
 }EditorData;
 
 int editor_window_draw(Window *win)
@@ -22,6 +24,7 @@ int editor_window_draw(Window *win)
     if (!win->data)return 0;
     data = win->data;
     scene_draw(data->scene);
+    gf2d_entity_draw_all();
     return 0;
 }
 
@@ -35,13 +38,34 @@ int editor_window_free(Window *win)
     return 0;
 }
 
+void editor_deselect_exhibit(Window *win)
+{
+    EditorData *data;
+    if (!win)return;
+    data = (EditorData *)win->data;
+    if ((!data)||(!data->selectedExhibit)||(!data->selectedExhibit->entity))return;
+    data->selectedExhibit->entity->drawColor = gfc_color(0,0.5,0.5,1);
+    data->selectedExhibit = NULL;
+}
+void editor_select_exhibit(Window *win, Exhibit *exhibit)
+{
+    EditorData *data;
+    if ((!win)||(!exhibit))return;
+    editor_deselect_exhibit(win);
+    data = (EditorData *)win->data;
+    data->selectedExhibit = exhibit;
+    exhibit->entity->drawColor = gfc_color(0,1,1,1);
+}
+
 int editor_window_update(Window *win,List *updateList)
 {
     int i,count;
     Element *e;
+    Exhibit *exhibit = NULL;
+    EditorData *data;
     Vector2D mouse;
     if (!win)return 0;
-    if (!updateList)return 0;
+    data = (EditorData *)win->data;
     mouse = gf2d_mouse_get_position();
     if (mouse.y < 8)
     {
@@ -63,6 +87,18 @@ int editor_window_update(Window *win,List *updateList)
                 return 1;
         }
     }
+    if (gf2d_mouse_button_released(2))
+    {
+        exhibit = exhibit_get_mouse_over_from_scene(data->scene);
+        if (exhibit != NULL)
+        {
+            editor_select_exhibit(win, exhibit);
+        }
+        else
+        {
+            editor_deselect_exhibit(win);
+        }
+    }
     return 0;
 }
 
@@ -82,6 +118,7 @@ Window *editor_window(Scene * scene)
     data = (EditorData*)gfc_allocate_array(sizeof(EditorData),1);
     win->data = data;
     data->scene = scene;
+
     return win;
 }
 
@@ -132,7 +169,8 @@ void onFileNameOk(void *Data)
         return;
     }
     editor_window(scene);
-    
+    scene_spawn_exhibits(scene);
+
     gf2d_window_free(data->editorMenu);
     return;
 }

@@ -65,7 +65,7 @@ void gf2d_mouse_update()
     memcpy(&_mouse.mouse[1],&_mouse.mouse[0],sizeof(MouseState));
     _mouse.mouse[0].buttons = SDL_GetMouseState(&x,&y);
     vector2d_set(_mouse.mouse[0].position,x,y);
-    if(gf2d_mouse_button_released(2))
+    if((gf2d_mouse_button_released(2))&&(_mouse.mf != MF_Pointer))
     {
         _mouse.mf++;
         if (_mouse.mf == MF_Item)

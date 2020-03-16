@@ -306,6 +306,7 @@ void gf2d_element_entry_set_text_pointer(Element *e,char *text,size_t len)
     entry->text = text;
     entry->max_len = len;
     gf2d_element_label_set_text(entry->label,text);
+    entry->cursor_pos = strlen(text);
 }
 
 void gf2d_element_load_entry_from_config(Element *e,SJson *json,Window *win)

@@ -84,6 +84,7 @@ Entity *player_spawn(Vector2D position)
     }
     player->update = player_idle;
     player->data = pd;
+    player->drawColor = gfc_color(1,0,0,1);
     vector2d_copy(player->position,position);
     return player;
 }

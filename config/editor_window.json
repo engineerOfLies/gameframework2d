@@ -80,7 +80,7 @@
                 },
                 {
                 "type": "button",
-                "name": "New POI",
+                "name": "New Exhibit",
                 "id" : 53,
                 "bounds": [0,0,164,68],
                 "color" : [255,255,255,255],
@@ -90,11 +90,11 @@
                 "label" :
                     {
                     "type": "label",
-                    "name": "poi_l",
+                    "name": "exhbit_l",
                     "id" : 521,
                     "bounds": [0,0,168,64],
                     "color" : [255,255,255,255],
-                    "text":"New POI",
+                    "text":"New Exhibit",
                     "align" : "middle",
                     "justify" : "center",
                     "style":"H5"

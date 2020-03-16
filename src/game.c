@@ -67,12 +67,12 @@ int main(int argc, char * argv[])
     else
     {
         gf2d_mouse_set_function(MF_Walk);
+        player = player_spawn(vector2d(300,300));
+        scene_next_scene("config/testlevel.json", player, "player_start");
     }
 
     
     
-    player = player_spawn(vector2d(300,300));
-    scene_next_scene("config/testlevel.json", player, "player_start");
     /*main game loop*/
     while(!_done)
     {
@@ -91,9 +91,11 @@ int main(int argc, char * argv[])
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
                 // DRAW WORLD
-            if (!editorMode)scene_draw(scene_get_active());
-                // Draw entities
-            gf2d_entity_draw_all();
+            if (!editorMode)
+            {   
+                scene_draw(scene_get_active());
+                gf2d_entity_draw_all();
+            }
             //UI elements last
             gf2d_windows_draw_all();
             gf2d_mouse_draw();

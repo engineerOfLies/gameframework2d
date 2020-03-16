@@ -119,15 +119,10 @@ int exhibit_do_action(Exhibit *exhibit,char * command)
     return 1;
 }
 
-int exhibit_mouse_check(Exhibit *exhibit)
+int exhibit_mouse_over(Exhibit *exhibit)
 {
     Vector2D mp = {0,0};
     Shape aS = {0};
-    MouseFunction mf;
-    SJson *arg = NULL;
-    const char *defaultText;
-    
-    if (exhibit_paused) return 0;
     if (!exhibit)return 0;
     mp = gf2d_mouse_get_position();
     
@@ -135,6 +130,18 @@ int exhibit_mouse_check(Exhibit *exhibit)
     gf2d_shape_move(&aS,exhibit->entity->position);
     gf2d_shape_move(&aS,camera_get_offset());
     if (!gf2d_point_in_rect(mp,gf2d_shape_get_bounds(aS)))return 0;
+    return 1;
+}
+
+int exhibit_mouse_check(Exhibit *exhibit)
+{
+    MouseFunction mf;
+    SJson *arg = NULL;
+    const char *defaultText;
+    
+    if (exhibit_paused) return 0;
+    if (!exhibit)return 0;
+    if (!exhibit_mouse_over(exhibit))return 0;
     
     mf = gf2d_mouse_get_function();
     switch(mf)
@@ -218,7 +225,7 @@ void exhibit_draw(Entity *ent)
     if (!ent)return;
     vector2d_add(drawPosition,ent->position,camera_get_offset());
 
-    gf2d_shape_draw(ent->shape,gfc_color(0,1,1,1),drawPosition);
+    gf2d_shape_draw(ent->shape,ent->drawColor,drawPosition);
 }
 
 Entity *exhibit_entity_spawn(Exhibit *exhibit)
@@ -237,12 +244,31 @@ Entity *exhibit_entity_spawn(Exhibit *exhibit)
     }
     ent->position.x = exhibit->rect.x;
     ent->position.y = exhibit->rect.y;
+    ent->drawColor = gfc_color(0,0.5,0.5,1);
     ent->shape = gf2d_shape_rect(0,0, exhibit->rect.w, exhibit->rect.h);
     ent->draw = exhibit_draw;
     exhibit->entity = ent;
     return ent;
 }
 
+
+Exhibit *exhibit_get_mouse_over_from_scene(Scene *scene)
+{
+    Exhibit *exhibit;
+    int i,count;
+    if (!scene)return NULL;
+    count = gfc_list_get_count(scene->exhibits);
+    for (i = 0; i < count; i++)
+    {
+        exhibit = gfc_list_get_nth(scene->exhibits,i);
+        if (!exhibit)continue;
+        if (exhibit_mouse_over(exhibit))
+        {
+            return exhibit;
+        }
+    }
+    return NULL;
+}
 
 Exhibit *exhibit_get_from_scene(Scene *scene,char *name)
 {
@@ -265,7 +291,7 @@ Exhibit *exhibit_get_from_scene(Scene *scene,char *name)
             return exhibit;
         }
     }
-    return exhibit;
+    return NULL;
 }
 
 
