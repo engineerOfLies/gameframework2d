@@ -22,6 +22,7 @@ typedef struct
     SJson      *args;           /**<additional arguments*/
     Entity     *entity;         /**<pointer to the entity spawned by this exhibit*/
     Scene      *scene;          /**<the scene this exhibit is attached to*/
+    TextLine    command;        /**<when interacting with the exhibit this commend is the active one*/
 }Exhibit;
 
 /**

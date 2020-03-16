@@ -6,25 +6,29 @@
         {
             "name":"south_exit",
             "displayName":false,
-            "rect":[600,700,800,100],
-            "near":[700,350],
+            "rect":[300,700,700,68],
+            "near":[500,760],
             "proximity":true,
             "args":
             {
+                "exit":
+                {
+                    "scene":"config/testlevel.json",
+                    "position":"Town Gate"
+                },
                 "walk":
                 {
                     "action":
                     {
-                        "exit":"config/testlevel.json",
-                        "position":"Town Gate"
+                        "type":"exit"
                     }
                 }
             }
-        }
+        },
         {
             "name":"Monument",
             "displayName":true,
-            "rect":[340,200,500,300],
+            "rect":[420,200,400,250],
             "near":[350,510],
             "proximity":true,
             "args":

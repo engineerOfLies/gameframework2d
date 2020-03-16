@@ -7,7 +7,7 @@
 
 static int exhibit_paused = 0;
 
-int exhibit_interact(Exhibit *exhibit);
+int exhibit_do_action(Exhibit *exhibit, char *command);
 
 void exhibit_free(Exhibit *exhibit)
 {
@@ -68,17 +68,20 @@ void exhibit_interact_callback(void *data)
     Exhibit *exhibit;
     if (!data)return;
     exhibit = (Exhibit *)data;
-    exhibit_interact(exhibit);
+    exhibit_do_action(exhibit,exhibit->command);
 }
 
-int exhibit_interact(Exhibit *exhibit)
+int exhibit_do_action(Exhibit *exhibit,char * command)
 {
     Bool proximity = 0;
-    SJson *arg = NULL,*action = NULL;
-    arg = sj_object_get_value(exhibit->args,"interact");
     const char *actionType = NULL;
     const char *message = NULL;
+    SJson *arg = NULL,*action = NULL;
+
+    gfc_line_cpy(exhibit->command,command);
+    arg = sj_object_get_value(exhibit->args,command);
     if (!arg)return false;
+
     sj_get_bool_value(sj_object_get_value(arg,"proximity"),(short int *)&proximity);
     if (proximity)
     {
@@ -103,8 +106,15 @@ int exhibit_interact(Exhibit *exhibit)
     if (strcmp(actionType,"exit")==0)
     {
         message = sj_get_string_value(sj_object_get_value(action,"message"));
-        window_alert(exhibit->name, (char *)message, do_exit,exhibit);
-        exhibit_paused = 1;
+        if (message)
+        {   
+            window_alert(exhibit->name, (char *)message, do_exit,exhibit);
+            exhibit_paused = 1;
+        }
+        else
+        {
+            do_exit(exhibit);
+        }
     }
     return 1;
 }
@@ -132,14 +142,22 @@ int exhibit_mouse_check(Exhibit *exhibit)
         case MF_Pointer:
             break;
         case MF_Walk:
-            exhibit_player_walk_to(exhibit);
+            arg = sj_object_get_value(exhibit->args,"walk");
+            if (arg != NULL)
+            {
+                if (exhibit_do_action(exhibit,"walk"))return 1;
+            }
+            else
+            {
+                exhibit_player_walk_to(exhibit);
+            }
             return 1;
         case MF_Look:
             arg = sj_object_get_value(exhibit->args,"look");
             if (!arg)return false;
             break;
         case MF_Interact:
-            if (exhibit_interact(exhibit))return 1;
+            if (exhibit_do_action(exhibit,"interact"))return 1;
             arg = sj_object_get_value(exhibit->args,"interact");
             break;
         case MF_Talk:
