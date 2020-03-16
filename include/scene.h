@@ -79,4 +79,24 @@ Entity *scene_get_active_player(Scene *scene);
  */
 void scene_active_player_walk_to(Scene *scene,Vector2D position);
 
+/**
+ * @brief transition into the next scene
+ * @param nextScene the name of the file that describes the next scene
+ * @param player the active player that will be placed into the new scene
+ * @param positionExhibit the exhibit that will be used as a reference to place the player at
+ */
+void scene_next_scene(char *nextScene, Entity *player, char *positionExhibit);
+
+/**
+ * @brief set a scene to be the active scene
+ * @param scene the scene to set as active
+ */
+void scene_set_active(Scene *scene);
+
+/**
+ * @brief get a pointer to the active scene
+ * @return NULL if not set, or the pointer otherwise
+ */
+Scene *scene_get_active();
+
 #endif

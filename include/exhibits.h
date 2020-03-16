@@ -47,4 +47,13 @@ void exhibit_set_scene(Exhibit *exhibit,Scene *scene);
  * @returns false if no interaction, true if there was an interaction.
  */
 int exhibit_mouse_check(Exhibit *exhibit);
+
+/**
+ * @brief search a scene for an exhibit by name
+ * @param scene the scene to search
+ * @param name the name to search for
+ * @return NULL on error or not found, or a pointer to the exhibit data otherwise
+ */
+Exhibit *exhibit_get_from_scene(Scene *scene,char *name);
+
 #endif

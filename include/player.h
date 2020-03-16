@@ -49,6 +49,13 @@ int player_near_scene_point(Entity *player,Vector2D position);
 void player_set_callback(Entity *player,void(*call)(void *),void *data);
 
 /**
+ * @brief set the player to stand at a specific position
+ * @param player the player to set the position for
+ * @param position the position where the player should be standing
+ */
+void player_set_position(Entity *player,Vector2D position);
+
+/**
  * @brief run the set callback if there is one
  * @param player the player to run the callback for
  */

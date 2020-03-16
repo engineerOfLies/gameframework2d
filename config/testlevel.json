@@ -4,12 +4,22 @@
     "exhibits":
     [
         {
+            "name":"player_start",
+            "rect":[300,340,60,120],
+            "near":[330,460]
+        },
+        {
             "name":"Town Gate",
             "displayName":true,
             "rect":[690,200,150,150],
             "near":[720,355],
             "args":
             {
+                "exit":
+                {
+                    "scene":"config/townSquare.json",
+                    "position":"south_exit"
+                },
                 "look":
                 {
                     "DEFAULT":"The old gates are closed, but remain unlocked."
@@ -20,9 +30,7 @@
                     "action":
                     {
                         "type":"exit",
-                        "message":"The doors creek open and you enter the town.",
-                        "exit":"config/townsquare.json",
-                        "position":"south_exit"
+                        "message":"The doors creek open and you enter the town."
                     },
                     "DEFAULT":"The old gates feel smooth and warn from years of weathering."
                 },
@@ -36,7 +44,7 @@
                     {
                         "proximity":true,
                         "message":"There is no key hole on this door."
-                    }
+                    },
                     "DEFAULT":"Nope, that doesn't work."
                 },
                 "spell":

@@ -5,7 +5,7 @@
         "frameWidth": 128,
         "frameHeight": 128,
         "framesPerLine": 16,
-        "scale": [3,3],
+        "scale": [2,2],
         "color": [255,255,255,255],
         "colorSpecial": [255,255,255,255],
         "actionList":

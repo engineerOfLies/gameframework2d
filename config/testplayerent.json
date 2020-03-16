@@ -6,12 +6,12 @@
         "shape":
         {
           "type":"rect",
-          "dimensions":[0,0,90,170]
+          "dimensions":[0,0,60,120]
         },
         "walkingSpeed":3,
         "actor":"actors/player.json",
         "action":"idle",
-        "offset":[-140,-110],
+        "offset":[-90,-70],
         "health":100,
         "maxHealth":100
     }

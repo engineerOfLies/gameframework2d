@@ -50,7 +50,6 @@ int main(int argc, char * argv[])
 {
     /*variable declarations*/
     int windowsUpdated = 0;
-    Scene *scene;
     Entity *player;
         
     init_all(argc,argv);
@@ -70,14 +69,10 @@ int main(int argc, char * argv[])
         gf2d_mouse_set_function(MF_Walk);
     }
 
-    scene = scene_load("config/testlevel.json");
-    scene_spawn_exhibits(scene);
+    
+    
     player = player_spawn(vector2d(300,300));
-    if (player)
-    {
-        camera_set_focus(player->position);
-        scene_set_active_player(scene,player);
-    }
+    scene_next_scene("config/testlevel.json", player, "player_start");
     /*main game loop*/
     while(!_done)
     {
@@ -90,13 +85,13 @@ int main(int argc, char * argv[])
         
         gf2d_entity_think_all();
 
-        if ((!editorMode)&&(!windowsUpdated))scene_update(scene);
+        if ((!editorMode)&&(!windowsUpdated))scene_update(scene_get_active());
                 
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
                 // DRAW WORLD
-            if (!editorMode)scene_draw(scene);
+            if (!editorMode)scene_draw(scene_get_active());
                 // Draw entities
             gf2d_entity_draw_all();
             //UI elements last

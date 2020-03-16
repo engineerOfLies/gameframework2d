@@ -16,6 +16,8 @@ typedef struct
 
 static SceneManager scene_manager = {0};
 
+static Scene *_active_scene = NULL;
+
 void scene_manager_close()
 {
     int i;
@@ -170,6 +172,17 @@ void scene_update(Scene *scene)
         return;
     }
     if (!gf2d_mouse_button_released(0))return;
+    
+    //get the mouse click position in scene relative space
+    destination = gf2d_mouse_get_position();
+    offset = camera_get_position();
+    vector2d_add(destination,destination,offset);
+    
+    if (!(gf2d_point_in_rect(destination,gf2d_rect(0,0,scene->background.size.x,scene->background.size.y))))
+    {
+        return;// clicked out of the scene
+    }
+
     count = gfc_list_get_count(scene->exhibits);
     for (i = 0; i < count; i++)
     {
@@ -179,10 +192,6 @@ void scene_update(Scene *scene)
     }
     if (gf2d_mouse_get_function() == MF_Walk)
     {
-        destination = gf2d_mouse_get_position();
-        offset = camera_get_position();
-        
-        vector2d_add(destination,destination,offset);
 
         scene_active_player_walk_to(scene,destination);
     }
@@ -217,9 +226,47 @@ void scene_free(Scene *scene)
     memset(scene,0,sizeof(Scene));
 }
 
-void scene_next_scene(char *nextScene, char *position)
+
+void scene_set_active(Scene *scene)
 {
+    _active_scene = scene;
+}
+
+Scene *scene_get_active()
+{
+    return _active_scene;
+}
+
+void scene_next_scene(char *nextScene, Entity *player, char *positionExhibit)
+{
+    Exhibit *exhibit;
+    Scene *scene;
+    if (!player)
+    {
+        slog("no player entity!");
+        return;
+    }
     
+    
+    //load the new scene
+    scene = scene_load(nextScene);
+    scene_set_active_player(scene,player);
+    
+    scene_spawn_exhibits(scene);
+    
+    exhibit = exhibit_get_from_scene(scene,positionExhibit);
+    if (!exhibit)
+    {
+        slog("failed to find exhibit %s, cannot place player!",positionExhibit);
+        return;
+    }
+
+    player_set_position(player,exhibit->near);
+    camera_set_focus(player->position);
+    
+    //free up the last scene
+    scene_free(scene_get_active());
+    scene_set_active(scene);
 }
 
 

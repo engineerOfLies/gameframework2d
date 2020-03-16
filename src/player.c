@@ -88,6 +88,16 @@ Entity *player_spawn(Vector2D position)
     return player;
 }
 
+void player_set_position(Entity *player,Vector2D position)
+{
+    Rect r;
+    if (!player)return;
+    vector2d_copy(player->position,position);
+    r = gf2d_shape_get_bounds(player->shape);
+    player->position.y -= r.h;
+    player->position.x -= (r.w/2);
+}
+
 void player_save(Entity *player)
 {
     if (!player)return;

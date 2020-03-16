@@ -43,10 +43,24 @@ void exhibit_player_walk_to(Exhibit *exhibit)
 void do_exit(void *data)
 {
     Exhibit *exhibit;
+    SJson *arg = NULL;
+    const char *nextScene,*positionExhibit;
     if (!data)return;
+
     exhibit = (Exhibit *)data;
     exhibit_unpause(NULL);
     slog("now exiting the scene");
+
+    arg = sj_object_get_value(exhibit->args,"exit");
+    if (!arg)
+    {
+        slog("cannot exit, no exit information specified");
+        return;
+    }
+    nextScene = sj_get_string_value(sj_object_get_value(arg,"scene"));
+    positionExhibit = sj_get_string_value(sj_object_get_value(arg,"position"));
+    //this destroys the exhibit we are in, so must be the last thing done here
+    scene_next_scene((char *)nextScene, scene_get_active_player(exhibit->scene), (char *)positionExhibit);
 }
 
 void exhibit_interact_callback(void *data)
@@ -211,6 +225,30 @@ Entity *exhibit_entity_spawn(Exhibit *exhibit)
     return ent;
 }
 
+
+Exhibit *exhibit_get_from_scene(Scene *scene,char *name)
+{
+    Exhibit *exhibit;
+    int i,count;
+    if (!scene)return NULL;
+    if (!name)
+    {
+        slog("empty string for exhibit name");
+        return NULL;
+    }
+    count = gfc_list_get_count(scene->exhibits);
+    for (i = 0; i < count; i++)
+    {
+        exhibit = gfc_list_get_nth(scene->exhibits,i);
+        if (!exhibit)continue;
+        if (gfc_line_cmp(name,exhibit->name)==0)
+        {
+            //found it!
+            return exhibit;
+        }
+    }
+    return exhibit;
+}
 
 
 /*eol@eof*/
