@@ -7,16 +7,37 @@
 #include "gf2d_entity.h"
 #include "gf2d_actor.h"
 
+
+// NOTE: this forward declaration is necessary because Exhibits need to know about Scenes and Scenes need to know about exhibits.
+// This is how you become your own grandfather
+typedef struct Exhibit_S Exhibit;
+
 typedef struct
 {
     Uint8      _inuse;              /**<no touchy*/
-    Actor      background;          /**<background image*/
+    TextLine    filename;           /**<name of the file loaded*/
+    Actor       background;         /**<background actor*/
+    TextLine    action;             /**<action to take for the background actor*/
     SJson      *config;             /**<additional configuration for the scene*/
     List       *exhibits;           /**<list of exhibits in this scene*/
     List       *entities;           /**<list of entities spawned in this scene*/
     Entity     *activePlayer;       /**<active player entity*/
 }Scene;
 
+
+/**
+ * @brief add a new exhibit to the scene
+ * @param scene the scene to add the exhibit to.
+ * @param exhibit the exhibit to add
+ */
+void scene_add_exhibit(Scene *scene,Exhibit *exhibit);
+
+/**
+ * @brief add a new entity to the scene
+ * @param scene the scene to add the entity to
+ * @param enityt the entity to add
+ */
+void scene_add_entity(Scene *scene, Entity *entity);
 
 /**
  * @brief initialize scene manager subsystem
@@ -38,6 +59,13 @@ void scene_spawn_exhibits(Scene *scene);
  * @note: free with scene_free()
  */
 Scene *scene_load(char *filename);
+
+/**
+ * @brief save a scene to json file
+ * @param scene the scene to save
+ * @param filename the name of the file to save to
+ */
+void scene_save(Scene *scene, char *filename);
 
 /**
  * @brief get a pointer to a new plank scene

@@ -191,6 +191,32 @@ int exhibit_mouse_check(Exhibit *exhibit)
     return 0;
 }
 
+SJson *exhibit_to_json(Exhibit *exhibit)
+{
+    SJson *json;
+    if (!exhibit)
+    {
+        slog("no exhibit provided to convert to json");
+        return NULL;
+    }
+    
+    json = sj_object_new();
+    if (!json)
+    {
+        slog("failed to make json object for exhibit");
+        return NULL;
+    }
+    sj_object_insert(json,"name",sj_new_str(exhibit->name));
+    sj_object_insert(json,"displayName",sj_new_bool(exhibit->displayName));
+    sj_object_insert(json,"actor",sj_new_str(exhibit->actor));
+    sj_object_insert(json,"action",sj_new_str(exhibit->action));
+    sj_object_insert(json,"rect",sj_vector4d_new(gf2d_rect_to_vector4d(exhibit->rect)));
+    sj_object_insert(json,"near",sj_vector2d_new(exhibit->near));
+    sj_object_insert(json,"args",sj_copy(exhibit->args));
+
+    return json;
+}
+
 Exhibit *exhibit_load(SJson *json)
 {
     Vector4D vector = {0};

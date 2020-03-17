@@ -68,6 +68,13 @@ Rect gf2d_rect(float x, float y, float w, float h);
 Shape gf2d_shape_rect(float x, float y, float w, float h);
 
 /**
+ * @brief convert a rect to a vector4d
+ * @param r the rect to convert
+ * @returns a vector4f
+ */
+Vector4D gf2d_rect_to_vector4d(Rect r);
+
+/**
  * @brief make a shape based on a gf2d rect
  * @param r the rect to base it on
  */

@@ -21,6 +21,29 @@ typedef struct
     Window     *exhibitEditor;
 }EditorData;
 
+
+void onFileSaveCancel(void *Data)
+{
+    EditorData* data;
+    if (!Data)return;
+    data = Data;
+    gfc_line_cpy(data->filename,data->scene->filename);
+    return;
+}
+
+void onFileSaveOk(void *Data)
+{
+    EditorData* data;
+    if (!Data)return;
+    data = Data;
+    gfc_line_cpy(data->scene->filename,data->filename);
+    
+    scene_save(data->scene, data->filename);
+    
+    return;
+}
+
+
 int editor_window_draw(Window *win)
 {
     EditorData *data;
@@ -71,7 +94,7 @@ void editor_select_exhibit(Window *win, Exhibit *exhibit)
     }
     else
     {
-        data->exhibitEditor = exhibit_editor(exhibit,vector2d(resolution.x - win->dimensions.w,80));
+        data->exhibitEditor = exhibit_editor(exhibit,vector2d(resolution.x - 200,80));
     }
 }
 
@@ -100,7 +123,19 @@ int editor_window_update(Window *win,List *updateList)
         if (!e)continue;
         switch(e->index)
         {
+            case 53:
+                // new exhibit
+                exhibit = exhibit_new();
+                scene_add_exhibit(data->scene,exhibit);
+                scene_add_entity(data->scene, exhibit_entity_spawn(exhibit));
+                editor_select_exhibit(win, exhibit);
+                break;
+            case 54:
+                // save
+                window_text_entry("Enter Scene to Load", data->filename, win->data, GFCLINELEN, onFileSaveOk,onFileSaveCancel);
+                break;
             case 56:
+                //exit
                 exitCheck();
                 return 1;
         }
@@ -134,6 +169,7 @@ Window *editor_window(Scene * scene)
     win->free_data = editor_window_free;
     win->draw = editor_window_draw;
     data = (EditorData*)gfc_allocate_array(sizeof(EditorData),1);
+    gfc_line_cpy(data->filename,scene->filename);
     win->data = data;
     data->scene = scene;
 

@@ -62,6 +62,56 @@ Scene *scene_new()
     return NULL;
 }
 
+void scene_add_exhibit(Scene *scene,Exhibit *exhibit)
+{
+    if ((!scene)||(!exhibit))return;
+    scene->exhibits = gfc_list_append(scene->exhibits,exhibit);
+    exhibit_set_scene(exhibit,scene);
+}
+
+void scene_add_entity(Scene *scene, Entity *entity)
+{
+    if ((!scene)||(!entity))return;
+    scene->entities = gfc_list_append(scene->entities,entity);
+}
+
+void scene_save(Scene *scene, char *filename)
+{
+    SJson *json = NULL, *array = NULL, *item = NULL;
+    Exhibit *exhibit = NULL;
+    int i,count;
+    if ((!scene)||(!filename))
+    {
+        slog("missing scene or filename for scene_save");
+        return;
+    }
+    
+    json = sj_object_new();
+    if (!json)
+    {
+        slog("failed to make base json object for file safe");
+        return;
+    }
+    
+    sj_object_insert(json,"background",sj_new_str(scene->background.al->filename));
+    sj_object_insert(json,"action",sj_new_str(scene->action));
+    array = sj_array_new();
+    sj_object_insert(json,"exhibits",array);
+    count = gfc_list_get_count(scene->exhibits);
+    for (i = 0; i < count;i++)
+    {
+        exhibit = (Exhibit*)gfc_list_get_nth(scene->exhibits,i);
+        if (!exhibit)continue;
+        item = exhibit_to_json(exhibit);
+        if (!item)continue;
+        sj_array_append(array,item);
+    }
+    
+    sj_save(json,filename);
+    
+    sj_free(json);
+}
+
 Scene *scene_load(char *filename)
 {
     Scene *scene;
@@ -85,9 +135,10 @@ Scene *scene_load(char *filename)
     if (gf2d_actor_load(&scene->background,imageName))
     {
         imageName = (char *)sj_get_string_value(sj_object_get_value(json,"action"));
+        gfc_line_cpy(scene->action,imageName);
         gf2d_actor_set_action(&scene->background,imageName);
     }
-    
+    gfc_line_cpy(scene->filename,filename);
     camera_set_bounds(0,0,scene->background.size.x,scene->background.size.y);
     exhibits = sj_object_get_value(json,"exhibits");
     if (exhibits)
@@ -100,8 +151,7 @@ Scene *scene_load(char *filename)
             exhibit = exhibit_load(exhibitjs);
             if (exhibit)
             {
-                scene->exhibits = gfc_list_append(scene->exhibits,exhibit);
-                exhibit_set_scene(exhibit,scene);
+                scene_add_exhibit(scene,exhibit);
             }
         }
     }
@@ -121,7 +171,7 @@ void scene_spawn_exhibits(Scene *scene)
     {
         exhibit = gfc_list_get_nth(scene->exhibits,i);
         if (!exhibit)continue;
-        scene->entities = gfc_list_append(scene->entities,exhibit_entity_spawn(exhibit));
+        scene_add_entity(scene, exhibit_entity_spawn(exhibit));
     }
 }
 
@@ -147,12 +197,6 @@ void scene_set_active_player(Scene *scene,Entity *player)
 {
     if ((!scene)||(!player))return;
     scene->activePlayer = player;
-}
-
-void scene_add_entity(Scene *scene,Entity *entity)
-{
-    if ((!scene)||(!entity))return;
-    gfc_list_append(scene->entities,entity);
 }
 
 void scene_active_player_walk_to(Scene *scene,Vector2D position)

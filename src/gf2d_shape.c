@@ -334,6 +334,11 @@ Vector2D gf2d_shape_get_normal_for_shape(Shape s, Shape s2)
     return out;
 }
 
+Vector4D gf2d_rect_to_vector4d(Rect r)
+{
+    return vector4d(r.x,r.y,r.w,r.h);
+}
+
 Rect gf2d_rect(float x, float y, float w, float h)
 {
     Rect r;

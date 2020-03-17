@@ -11,7 +11,7 @@
 #include "gf2d_shape.h"
 #include "scene.h"
 
-typedef struct
+struct Exhibit_S
 {
     TextLine    name;           /**<exhibit name*/
     Bool        displayName;    /**<if the interaction needs to be displayed.*/
@@ -23,7 +23,7 @@ typedef struct
     Entity     *entity;         /**<pointer to the entity spawned by this exhibit*/
     Scene      *scene;          /**<the scene this exhibit is attached to*/
     TextLine    command;        /**<when interacting with the exhibit this commend is the active one*/
-}Exhibit;
+};
 
 /**
  * Allocate a new exhibit
@@ -75,5 +75,13 @@ Exhibit *exhibit_get_mouse_over_from_scene(Scene *scene);
  * @param rect the new rect for the exhibit
  */
 void exhibit_set_rect(Exhibit *exhibit,Rect rect);
+
+/**
+ * @brief get the json that will describe the exhibit
+ * @note must be freed with sj_free();
+ * @param exhibit the exhibit to convert
+ * @returns NULL on error or a formatted json pointer (must be freed)
+ */
+SJson *exhibit_to_json(Exhibit *exhibit);
 
 #endif
