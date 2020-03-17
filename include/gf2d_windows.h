@@ -126,4 +126,11 @@ Element *gf2d_window_get_element_by_id(Window *win,int id);
  */
 int gf2d_window_mouse_in(Window *win);
 
+/**
+ * @brief set the upper left position of a window
+ * @param win the window to move
+ * @param position the place to the move the window to
+ */
+void gf2d_window_set_position(Window *win,Vector2D position);
+
 #endif

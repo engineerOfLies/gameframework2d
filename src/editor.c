@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include "simple_logger.h"
 #include "gfc_types.h"
+#include "gf2d_graphics.h"
 #include "gf2d_windows.h"
 #include "gf2d_elements.h"
 #include "gf2d_mouse.h"
 #include "windows_common.h"
 #include "exhibits.h"
+#include "exhibit_editor.h"
 #include "scene.h"
 
 extern void exitGame();
@@ -16,6 +18,7 @@ typedef struct
     TextLine    filename;
     Scene      *scene;
     Exhibit    *selectedExhibit;
+    Window     *exhibitEditor;
 }EditorData;
 
 int editor_window_draw(Window *win)
@@ -46,15 +49,30 @@ void editor_deselect_exhibit(Window *win)
     if ((!data)||(!data->selectedExhibit)||(!data->selectedExhibit->entity))return;
     data->selectedExhibit->entity->drawColor = gfc_color(0,0.5,0.5,1);
     data->selectedExhibit = NULL;
+    if (data->exhibitEditor)
+    {
+        gf2d_window_free(data->exhibitEditor);
+        data->exhibitEditor = NULL;
+    }
 }
 void editor_select_exhibit(Window *win, Exhibit *exhibit)
 {
     EditorData *data;
+    Vector2D resolution;
     if ((!win)||(!exhibit))return;
+    resolution = gf2d_graphics_get_resolution();
     editor_deselect_exhibit(win);
     data = (EditorData *)win->data;
     data->selectedExhibit = exhibit;
     exhibit->entity->drawColor = gfc_color(0,1,1,1);
+    if (exhibit->rect.x > resolution.x / 2)
+    {
+        data->exhibitEditor = exhibit_editor(exhibit,vector2d(0,80));
+    }
+    else
+    {
+        data->exhibitEditor = exhibit_editor(exhibit,vector2d(resolution.x - win->dimensions.w,80));
+    }
 }
 
 int editor_window_update(Window *win,List *updateList)

@@ -69,4 +69,11 @@ Exhibit *exhibit_get_from_scene(Scene *scene,char *name);
  */
 Exhibit *exhibit_get_mouse_over_from_scene(Scene *scene);
 
+/**
+ * @brief set the rect for the exhibit
+ * @param exhibit the exhibit to edit
+ * @param rect the new rect for the exhibit
+ */
+void exhibit_set_rect(Exhibit *exhibit,Rect rect);
+
 #endif

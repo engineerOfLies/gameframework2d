@@ -102,6 +102,16 @@ void gf2d_element_make_label(Element *e,LabelElement *label)
     e->free_data = gf2d_element_label_free;
 }
 
+const char *gf2d_element_label_get_text(Element *e)
+{
+    if (!e)return NULL;
+    if (e->type != ET_Label)return NULL;
+    LabelElement *label;
+    label = (LabelElement *)e->data;
+    if (!label)return NULL;
+    return label->text;
+}
+
 void gf2d_element_label_set_text(Element *e,char *text)
 {
     if (!e)return;

@@ -188,6 +188,12 @@ void gf2d_window_free(Window *win)
     memset(win,0,sizeof(Window));
 }
 
+void gf2d_window_set_position(Window *win,Vector2D position)
+{
+    if (!win)return;
+    vector2d_copy(win->dimensions,position);
+}
+
 void gf2d_window_draw(Window *win)
 {
     int count,i;

@@ -131,7 +131,7 @@ void init_all(int argc, char *argv[])
     init_logger("gf2d.log");
     slog("---==== BEGIN ====---");
     gf2d_graphics_initialize(
-        "gf2d",
+        "Legacy of the Necromancer",
         1366,
         768,
         1366,

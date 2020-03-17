@@ -58,5 +58,10 @@ void gf2d_element_load_label_from_config(Element *e,SJson *json);
  */
 void gf2d_element_label_set_text(Element *e,char *text);
 
-
+/**
+ * @brief get the label text
+ * @param e the element to get the text from
+ * @return a pointer to the label text
+ */
+const char *gf2d_element_label_get_text(Element *e);
 #endif

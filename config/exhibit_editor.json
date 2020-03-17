@@ -1,0 +1,253 @@
+{
+"window":{
+    "color" : [255,255,255, 255],
+    "dimensions" : [0,80,200,1],
+    "justify" : "center",
+    "align" : "top",
+    "elements":
+    [
+      {
+        "type": "list",
+        "name": "list",
+        "id" : 0,
+        "bounds": [2,2,1,1],
+        "color" : [255,255,255,255],
+        "style": "vertical",
+        "item_size" : [168,64],
+        "elements":
+            [
+                {
+                "type": "label",
+                "name": "title",
+                "id" : 1,
+                "bounds": [0,0,1,40],
+                "color" : [255,255,255,255],
+                "text":"exhibit name",
+                "justify" : "center",
+                "align" : "middle",
+                "style":"H5"
+                },
+                {
+                "type": "button",
+                "name": "name",
+                "id" : 51,
+                "bounds": [0,0,168,64],
+                "hotkey":"none",
+                "color" : [255,255,255,255],
+                "highColor" : [255,255,255,255],
+                "pressColor" : [255,255,255,255],
+                "label" :
+                    {
+                    "type": "label",
+                    "name": "Set_Name",
+                    "id" : 511,
+                    "bounds": [0,0,168,64],
+                    "color" : [255,255,255,255],
+                    "text":"set name",
+                    "justify" : "center",
+                    "align" : "middle",
+                    "style":"H5"
+                    },
+                "actor" :
+                    {
+                    "type": "actor",
+                    "name": "image",
+                    "id" : 512,
+                    "bounds": [0,0,168,64],
+                    "color" : [255,255,255,255],
+                    "actor" : "actors/button.actor"
+                    }
+                },
+                {
+                "type": "label",
+                "name": "display_name_toggle",
+                "id" : 2,
+                "bounds": [0,0,1,40],
+                "color" : [255,255,255,255],
+                "text":"display name off",
+                "justify" : "center",
+                "align" : "middle",
+                "style":"H5"
+                },
+                {
+                "type": "button",
+                "name": "display_button",
+                "id" : 52,
+                "bounds": [0,0,164,68],
+                "color" : [255,255,255,255],
+                "hotkey":"mask",
+                "highColor" : [255,255,255,255],
+                "pressColor" : [255,255,255,255],
+                "label" :
+                    {
+                    "type": "label",
+                    "name": "display",
+                    "id" : 521,
+                    "bounds": [0,0,168,64],
+                    "color" : [255,255,255,255],
+                    "text":"Toggle Display",
+                    "align" : "middle",
+                    "justify" : "center",
+                    "style":"H6"
+                    },
+                "actor" :
+                    {
+                    "type": "actor",
+                    "name": "image",
+                    "id" : 522,
+                    "bounds": [0,0,168,64],
+                    "color" : [255,255,255,255],
+                    "actor" : "actors/button.actor"
+                    }
+                },
+                {
+                "type": "label",
+                "name": "actor file",
+                "id" : 3,
+                "bounds": [0,0,1,40],
+                "color" : [255,255,255,255],
+                "text":"actors/",
+                "justify" : "center",
+                "align" : "middle",
+                "style":"H5"
+                },
+                {
+                "type": "button",
+                "name": "actor",
+                "id" : 53,
+                "bounds": [0,0,164,68],
+                "color" : [255,255,255,255],
+                "hotkey":"mask",
+                "highColor" : [255,255,255,255],
+                "pressColor" : [255,255,255,255],
+                "label" :
+                    {
+                    "type": "label",
+                    "name": "Set_Actor",
+                    "id" : 531,
+                    "bounds": [0,0,168,64],
+                    "color" : [255,255,255,255],
+                    "text":"Set Actor",
+                    "align" : "middle",
+                    "justify" : "center",
+                    "style":"H5"
+                    },
+                "actor" :
+                    {
+                    "type": "actor",
+                    "name": "image",
+                    "id" : 532,
+                    "bounds": [0,0,168,64],
+                    "color" : [255,255,255,255],
+                    "actor" : "actors/button.actor"
+                    }
+                },
+                {
+                "type": "label",
+                "name": "action",
+                "id" : 4,
+                "bounds": [0,0,1,40],
+                "color" : [255,255,255,255],
+                "text":"none",
+                "justify" : "center",
+                "align" : "middle",
+                "style":"H5"
+                },
+                {
+                "type": "button",
+                "name": "set Action",
+                "id" : 54,
+                "bounds": [0,0,164,68],
+                "color" : [255,255,255,255],
+                "hotkey":"save",
+                "highColor" : [255,255,255,255],
+                "pressColor" : [255,255,255,255],
+                "label" :
+                    {
+                    "type": "label",
+                    "name": "Set_Action",
+                    "id" : 541,
+                    "bounds": [0,0,168,64],
+                    "color" : [255,255,255,255],
+                    "text":"Set Action",
+                    "align" : "middle",
+                    "justify" : "center",
+                    "style":"H5"
+                    },
+                "actor" :
+                    {
+                    "type": "actor",
+                    "name": "image",
+                    "id" : 542,
+                    "bounds": [0,0,168,64],
+                    "color" : [255,255,255,255],
+                    "actor" : "actors/button.actor"
+                    }
+                },
+                {
+                "type": "button",
+                "name": "rect",
+                "id" : 55,
+                "bounds": [0,0,164,68],
+                "color" : [255,255,255,255],
+                "hotkey":"load",
+                "highColor" : [255,255,255,255],
+                "pressColor" : [255,255,255,255],
+                "label" :
+                    {
+                    "type": "label",
+                    "name": "load_l",
+                    "id" : 551,
+                    "bounds": [0,0,168,64],
+                    "color" : [255,255,255,255],
+                    "text":"Set Rect",
+                    "align" : "middle",
+                    "justify" : "center",
+                    "style":"H5"
+                    },
+                "actor" :
+                    {
+                    "type": "actor",
+                    "name": "image",
+                    "id" : 552,
+                    "bounds": [0,0,168,64],
+                    "color" : [255,255,255,255],
+                    "actor" : "actors/button.actor"
+                    }
+                },
+                {
+                "type": "button",
+                "name": "near",
+                "id" : 56,
+                "bounds": [0,0,164,68],
+                "color" : [255,255,255,255],
+                "hotkey":"load",
+                "highColor" : [255,255,255,255],
+                "pressColor" : [255,255,255,255],
+                "label" :
+                    {
+                    "type": "label",
+                    "name": "load_l",
+                    "id" : 561,
+                    "bounds": [0,0,168,64],
+                    "color" : [255,255,255,255],
+                    "text":"Set Near Point",
+                    "align" : "middle",
+                    "justify" : "center",
+                    "style":"H6"
+                    },
+                "actor" :
+                    {
+                    "type": "actor",
+                    "name": "image",
+                    "id" : 562,
+                    "bounds": [0,0,168,64],
+                    "color" : [255,255,255,255],
+                    "actor" : "actors/button.actor"
+                    }
+                }
+            ]
+      }
+    ]
+    }
+}

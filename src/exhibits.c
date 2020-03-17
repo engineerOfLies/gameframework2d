@@ -222,10 +222,26 @@ Exhibit *exhibit_load(SJson *json)
 void exhibit_draw(Entity *ent)
 {
     Vector2D drawPosition;
-    if (!ent)return;
+    Exhibit *exhibit;
+    if ((!ent)||(!ent->data))return;
+    exhibit = (Exhibit*)ent->data;
+    
     vector2d_add(drawPosition,ent->position,camera_get_offset());
 
     gf2d_shape_draw(ent->shape,ent->drawColor,drawPosition);
+    vector2d_add(drawPosition,exhibit->near,camera_get_offset());
+    
+    gf2d_shape_draw(gf2d_shape_circle(0,0, 5),ent->drawColor,drawPosition);
+}
+
+void exhibit_set_rect(Exhibit *exhibit,Rect rect)
+{
+    if ((!exhibit)||(!exhibit->entity))return;
+    
+    exhibit->entity->position.x = rect.x;
+    exhibit->entity->position.y = rect.y;
+    exhibit->entity->shape = gf2d_shape_rect(0,0, rect.w, rect.h);
+    exhibit->rect = rect;
 }
 
 Entity *exhibit_entity_spawn(Exhibit *exhibit)
@@ -247,6 +263,7 @@ Entity *exhibit_entity_spawn(Exhibit *exhibit)
     ent->drawColor = gfc_color(0,0.5,0.5,1);
     ent->shape = gf2d_shape_rect(0,0, exhibit->rect.w, exhibit->rect.h);
     ent->draw = exhibit_draw;
+    ent->data = exhibit;
     exhibit->entity = ent;
     return ent;
 }
