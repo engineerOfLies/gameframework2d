@@ -479,6 +479,37 @@ int gf2d_actor_load(Actor *actor,char *file)
     return true;
 }
 
+const char *gf2d_actor_get_action_name(Actor *actor)
+{
+    if (!actor)return NULL;
+    return actor->action;
+}
+
+Action *gf2d_actor_get_current_action(Actor *actor)
+{
+    if (!actor)return NULL;
+    return gf2d_action_list_get_action(actor->al, (char *)gf2d_actor_get_action_name(actor));
+}
+
+void gf2d_actor_next_action(Actor *actor)
+{
+    Action *action;
+    if ((!actor)||(!actor->_inuse)||(!actor->al))return;
+    action = gf2d_actor_get_current_action(actor);
+    if (!action)
+    {
+        slog("No action found for the actor");
+        return;
+    }
+    action++;// iterate to the next action;
+    if (action >= &actor->al->actions[actor->al->numActions])
+    {
+        // if we are past the amount of action, loop back to the original
+        action = &actor->al->actions[0];
+    }
+    gf2d_actor_set_action(actor,action->name);
+}
+
 void gf2d_actor_set_action(Actor *actor,char *action)
 {
     if ((!actor)||(!actor->_inuse)||(!action))return;

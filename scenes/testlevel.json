@@ -17,7 +17,7 @@
             {
                 "exit":
                 {
-                    "scene":"config/townSquare.json",
+                    "scene":"scenes/townSquare.json",
                     "position":"south_exit"
                 },
                 "look":

@@ -13,7 +13,7 @@
             {
                 "exit":
                 {
-                    "scene":"config/testlevel.json",
+                    "scene":"scenes/testlevel.json",
                     "position":"Town Gate"
                 },
                 "walk":

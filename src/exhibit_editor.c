@@ -6,6 +6,7 @@
 
 #include "camera.h"
 #include "windows_common.h"
+#include "actor_editor.h"
 #include "exhibit_editor.h"
 
 typedef enum

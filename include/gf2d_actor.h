@@ -151,6 +151,34 @@ void gf2d_actor_set_action(Actor *actor,char *action);
 void gf2d_actor_next_frame(Actor *actor);
 
 /**
+ * @brief change the action to the next action in the list
+ * @note loops
+ * @param actor the actor to change
+ */
+void gf2d_actor_next_action(Actor *actor);
+
+/**
+ * @brief change the action to the previous action in the list
+ * @note loops
+ * @param actor the actor to change
+ */
+void gf2d_actor_prev_action(Actor *actor);
+
+/**
+ * @brief get the name of the current action for the actor
+ * @param actor the actor to get the current action for
+ * @return NULL on error or not set, a pointer to the name otherwise
+ */
+const char *gf2d_actor_get_action_name(Actor *actor);
+
+/**
+ * @brief get the current action for the given actor
+ * @param actor the actor to get the action for
+ * @return NULL on error or not set, a pointer to the action data otherwise
+ */
+Action *gf2d_actor_get_current_action(Actor *actor);
+
+/**
  * @brief return the number of animation frames (not sprite frames) until the action completes
  */
 int gf2d_actor_get_frames_remaining(Actor *actor);

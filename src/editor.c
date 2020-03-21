@@ -5,6 +5,7 @@
 #include "gf2d_windows.h"
 #include "gf2d_elements.h"
 #include "gf2d_mouse.h"
+#include "actor_editor.h"
 #include "windows_common.h"
 #include "exhibits.h"
 #include "exhibit_editor.h"
@@ -19,6 +20,9 @@ typedef struct
     Scene      *scene;
     Exhibit    *selectedExhibit;
     Window     *exhibitEditor;
+    TextLine    backgroundFileName;
+    TextLine    backgroundActionName;
+    Window     *subwindow;
 }EditorData;
 
 
@@ -78,6 +82,7 @@ void editor_deselect_exhibit(Window *win)
         data->exhibitEditor = NULL;
     }
 }
+
 void editor_select_exhibit(Window *win, Exhibit *exhibit)
 {
     EditorData *data;
@@ -96,6 +101,34 @@ void editor_select_exhibit(Window *win, Exhibit *exhibit)
     {
         data->exhibitEditor = exhibit_editor(exhibit,vector2d(resolution.x - 200,80));
     }
+}
+
+void onBackgroundActorChange(void *data)
+{
+    Window *win;
+    EditorData *editor;
+    if (!data)return;
+    win = data;
+    if (!win)return;
+    editor = win->data;
+    if (!editor)return;
+    gf2d_actor_free(&editor->scene->background);
+    gfc_line_cpy(editor->scene->action,editor->backgroundActionName);
+    gf2d_actor_load(&editor->scene->background,editor->backgroundFileName);
+    gf2d_actor_set_action(&editor->scene->background,editor->scene->action);
+    editor->subwindow = NULL;
+}
+
+void onBackgroundCancel(void *data)
+{
+    Window *win;
+    EditorData *editor;
+    if (!data)return;
+    win = data;
+    if (!win)return;
+    editor = win->data;
+    if (!editor)return;
+    editor->subwindow = NULL;    
 }
 
 int editor_window_update(Window *win,List *updateList)
@@ -123,6 +156,16 @@ int editor_window_update(Window *win,List *updateList)
         if (!e)continue;
         switch(e->index)
         {
+            case 51:
+                //background selector
+                if (data->subwindow)break;
+                if (data->scene->background.al != NULL)
+                {
+                    gfc_line_cpy(data->backgroundFileName,data->scene->background.al->filename);
+                    gfc_line_cpy(data->backgroundActionName,gf2d_actor_get_action_name(&data->scene->background));
+                }
+                data->subwindow = actor_editor_menu(data->backgroundFileName,data->backgroundActionName,win, onBackgroundActorChange,onBackgroundCancel);
+                break;
             case 53:
                 // new exhibit
                 exhibit = exhibit_new();

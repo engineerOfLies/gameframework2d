@@ -68,7 +68,7 @@ int main(int argc, char * argv[])
     {
         gf2d_mouse_set_function(MF_Walk);
         player = player_spawn(vector2d(300,300));
-        scene_next_scene("config/testlevel.json", player, "player_start");
+        scene_next_scene("scenes/testlevel.json", player, "player_start");
     }
 
     

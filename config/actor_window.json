@@ -1,0 +1,267 @@
+{
+"window":{
+    "color" : [255,255,255, 255],
+    "dimensions" : [0,200,800,0.5],
+    "justify" : "center",
+    "align" : "middle",
+    "elements":
+    [
+      {
+        "type": "list",
+        "name": "list",
+        "id" : 0,
+        "bounds": [0,0,1,1],
+        "color" : [255,255,255,255],
+        "style": "vertical",
+        "item_size" : [1,64],
+        "elements":
+            [
+                {
+                "type": "label",
+                "name": "title",
+                "id" : 1,
+                "bounds": [2,0,1,40],
+                "color" : [255,255,255,255],
+                "text":"Actor View",
+                "justify" : "center",
+                "align" : "middle",
+                "style":"H5"
+                },
+                {
+                "type": "actor",
+                "name": "preview",
+                "id" : 2,
+                "bounds": [336,0,128,128],
+                "color" : [255,255,255,255]
+                },
+                {
+                "type": "label",
+                "name": "empty",
+                "id" : 0,
+                "bounds": [2,0,1,40],
+                "color" : [255,255,255,255],
+                "text":"",
+                "justify" : "center",
+                "align" : "middle",
+                "style":"H5"
+                },
+                {
+                "type": "list",
+                "name": "list",
+                "id" : 3,
+                "bounds": [0,0,1,1],
+                "color" : [255,255,255,255],
+                "style": "horizontal",
+                "item_size" : [0.8,1],
+                "elements":
+                    [
+                        {
+                        "type": "label",
+                        "name": "title",
+                        "id" : 31,
+                        "bounds": [1,0,180,40],
+                        "color" : [255,255,255,255],
+                        "text":"Actor file:",
+                        "justify" : "left",
+                        "align" : "middle",
+                        "style":"H5"
+                        },
+                        {
+                        "type": "button",
+                        "name": "load",
+                        "id" : 350,
+                        "bounds": [0,0,168,64],
+                        "hotkey":"none",
+                        "color" : [255,255,255,255],
+                        "highColor" : [255,255,255,255],
+                        "pressColor" : [255,255,255,255],
+                        "label" :
+                            {
+                            "type": "label",
+                            "name": "load",
+                            "id" : 3501,
+                            "bounds": [0,0,168,64],
+                            "color" : [255,255,255,255],
+                            "text":"Load",
+                            "justify" : "center",
+                            "align" : "middle",
+                            "style":"H5"
+                            },
+                        "actor" :
+                            {
+                            "type": "actor",
+                            "name": "load",
+                            "id" : 3502,
+                            "bounds": [0,0,168,64],
+                            "color" : [255,255,255,255],
+                            "actor" : "actors/button.actor"
+                            }
+                        }
+                    ]
+                },
+                {
+                "type": "list",
+                "name": "list",
+                "id" : 4,
+                "bounds": [0,0,1,64],
+                "color" : [255,255,255,255],
+                "style": "horizontal",
+                "item_size" : [200,64],
+                "elements":
+                    [
+                        {
+                        "type": "button",
+                        "name": "prev",
+                        "id" : 451,
+                        "bounds": [0,0,168,64],
+                        "hotkey":"none",
+                        "color" : [255,255,255,255],
+                        "highColor" : [255,255,255,255],
+                        "pressColor" : [255,255,255,255],
+                        "label" :
+                            {
+                            "type": "label",
+                            "name": "prev_action",
+                            "id" : 4511,
+                            "bounds": [0,0,168,64],
+                            "color" : [255,255,255,255],
+                            "text":"Prev Action",
+                            "justify" : "center",
+                            "align" : "middle",
+                            "style":"H5"
+                            },
+                        "actor" :
+                            {
+                            "type": "actor",
+                            "name": "image",
+                            "id" : 4512,
+                            "bounds": [0,0,168,64],
+                            "color" : [255,255,255,255],
+                            "actor" : "actors/button.actor"
+                            }
+                        },
+                        {
+                        "type": "button",
+                        "name": "next_action",
+                        "id" : 452,
+                        "bounds": [0,0,164,68],
+                        "color" : [255,255,255,255],
+                        "hotkey":"mask",
+                        "highColor" : [255,255,255,255],
+                        "pressColor" : [255,255,255,255],
+                        "label" :
+                            {
+                            "type": "label",
+                            "name": "next",
+                            "id" : 4521,
+                            "bounds": [0,0,168,64],
+                            "color" : [255,255,255,255],
+                            "text":"Next Action",
+                            "align" : "middle",
+                            "justify" : "center",
+                            "style":"H5"
+                            },
+                        "actor" :
+                            {
+                            "type": "actor",
+                            "name": "image",
+                            "id" : 4522,
+                            "bounds": [0,0,168,64],
+                            "color" : [255,255,255,255],
+                            "actor" : "actors/button.actor"
+                            }
+                        },
+                        {
+                        "type": "label",
+                        "name": "action",
+                        "id" : 41,
+                        "bounds": [0,0,200,1],
+                        "color" : [255,255,255,255],
+                        "text":"Action:",
+                        "justify" : "center",
+                        "align" : "middle",
+                        "style":"H5"
+                        }
+                    ]
+                },
+                ,
+                {
+                "type": "list",
+                "name": "list",
+                "id" : 5,
+                "bounds": [0.5,0,1,64],
+                "color" : [255,255,255,255],
+                "style": "horizontal",
+                "item_size" : [200,64],
+                "elements":
+                    [
+                        {
+                        "type": "button",
+                        "name": "done",
+                        "id" : 55,
+                        "bounds": [0,0,164,68],
+                        "color" : [255,255,255,255],
+                        "hotkey":"done",
+                        "highColor" : [255,255,255,255],
+                        "pressColor" : [255,255,255,255],
+                        "label" :
+                            {
+                            "type": "label",
+                            "name": "done",
+                            "id" : 551,
+                            "bounds": [0,0,168,64],
+                            "color" : [255,255,255,255],
+                            "text":"Done",
+                            "align" : "middle",
+                            "justify" : "center",
+                            "style":"H5"
+                            },
+                        "actor" :
+                            {
+                            "type": "actor",
+                            "name": "image",
+                            "id" : 552,
+                            "bounds": [0,0,168,64],
+                            "color" : [255,255,255,255],
+                            "actor" : "actors/button.actor"
+                            }
+                        },
+                        {
+                        "type": "button",
+                        "name": "cancel",
+                        "id" : 56,
+                        "bounds": [0,0,164,68],
+                        "color" : [255,255,255,255],
+                        "hotkey":"cancel",
+                        "highColor" : [255,255,255,255],
+                        "pressColor" : [255,255,255,255],
+                        "label" :
+                            {
+                            "type": "label",
+                            "name": "cancel",
+                            "id" : 561,
+                            "bounds": [0,0,168,64],
+                            "color" : [255,255,255,255],
+                            "text":"Cancel",
+                            "align" : "middle",
+                            "justify" : "center",
+                            "style":"H5"
+                            },
+                        "actor" :
+                            {
+                            "type": "actor",
+                            "name": "image",
+                            "id" : 562,
+                            "bounds": [0,0,168,64],
+                            "color" : [255,255,255,255],
+                            "actor" : "actors/button.actor"
+                            }
+                        }
+
+                    ]
+                }
+            ]
+      }
+    ]
+    }
+}
