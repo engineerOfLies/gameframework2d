@@ -48,4 +48,13 @@ ButtonElement *gf2d_element_button_new_full(Element *label,Element *actor,Color 
  */
 void gf2d_element_load_button_from_config(Element *e,SJson *json,Window *win);
 
+/**
+ * @brief search the sub elements of the button for the given id
+ * @param e the element to search
+ * @param id the id to search for
+ * @return NULL on error or not found, the search item otherwise
+ */
+Element *gf2d_element_button_get_by_id(Element *e,int id);
+
+
 #endif

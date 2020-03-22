@@ -84,6 +84,17 @@ const char *gf2d_element_button_get_input(Element *e)
     return button->hotkey;
 }
 
+Element *gf2d_element_button_get_by_id(Element *e,int id)
+{
+    ButtonElement *button;
+    Element *r;
+    if (!e)return NULL;
+    button = (ButtonElement*)e->data;
+    r = gf2d_element_get_by_id(button->label,id);
+    if (r)return r;
+    return gf2d_element_get_by_id(button->actor,id);
+}
+
 Element *button_get_by_name(Element *e,char *name)
 {
     ButtonElement *button;

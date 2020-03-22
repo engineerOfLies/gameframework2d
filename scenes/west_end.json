@@ -1,1 +1,86 @@
-{"background":"actors/town.json","action":"westEnd","exhibits":[{"name":"sheriff_exit","displayName":"false","actor":"","action":"","rect":["834.000000","364.000000","95.000000","196.000000"],"near":["869.000000","566.000000"]},{"name":"general_store_exit","displayName":"false","actor":"","action":"","rect":["671.000000","323.000000","68.000000","185.000000"],"near":["699.000000","515.000000"]},{"name":"inn_exit","displayName":"false","actor":"","action":"","rect":["266.000000","299.000000","76.000000","176.000000"],"near":["299.000000","479.000000"]},{"name":"north_end_exit","displayName":"false","actor":"","action":"","rect":["0.000000","240.000000","206.000000","204.000000"],"near":["84.000000","438.000000"]},{"name":"town_square_exit","displayName":"false","actor":"","action":"","rect":["600.000000","649.000000","735.000000","118.000000"],"near":["962.000000","741.000000"]}]}
+{
+  "background": "actors/town.json",
+  "action": "westEnd",
+  "exhibits": [
+    {
+      "name": "sheriff_exit",
+      "displayName": "false",
+      "actor": "",
+      "action": "",
+      "rect": [
+        "834.000000",
+        "364.000000",
+        "95.000000",
+        "196.000000"
+      ],
+      "near": [
+        "869.000000",
+        "566.000000"
+      ]
+    },
+    {
+      "name": "general_store_exit",
+      "displayName": "false",
+      "actor": "",
+      "action": "",
+      "rect": [
+        "671.000000",
+        "323.000000",
+        "68.000000",
+        "185.000000"
+      ],
+      "near": [
+        "699.000000",
+        "515.000000"
+      ]
+    },
+    {
+      "name": "inn_exit",
+      "displayName": "false",
+      "actor": "",
+      "action": "",
+      "rect": [
+        "266.000000",
+        "299.000000",
+        "76.000000",
+        "176.000000"
+      ],
+      "near": [
+        "299.000000",
+        "479.000000"
+      ]
+    },
+    {
+      "name": "north_end_exit",
+      "displayName": "false",
+      "actor": "",
+      "action": "",
+      "rect": [
+        "0.000000",
+        "240.000000",
+        "206.000000",
+        "204.000000"
+      ],
+      "near": [
+        "84.000000",
+        "438.000000"
+      ]
+    },
+    {
+      "name": "town_square_exit",
+      "displayName": "false",
+      "actor": "",
+      "action": "",
+      "rect": [
+        "600.000000",
+        "649.000000",
+        "735.000000",
+        "118.000000"
+      ],
+      "near": [
+        "962.000000",
+        "741.000000"
+      ]
+    }
+  ]
+}

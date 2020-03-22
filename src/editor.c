@@ -1,10 +1,15 @@
 #include <stdio.h>
+
 #include "simple_logger.h"
+
 #include "gfc_types.h"
 #include "gf2d_graphics.h"
 #include "gf2d_windows.h"
 #include "gf2d_elements.h"
+#include "gf2d_element_label.h"
 #include "gf2d_mouse.h"
+
+#include "camera.h"
 #include "actor_editor.h"
 #include "windows_common.h"
 #include "exhibits.h"
@@ -13,6 +18,14 @@
 
 extern void exitGame();
 extern void exitCheck();
+
+typedef enum
+{
+    EM_Exhibit,
+    EM_Mask,
+    EM_Layers,
+    EM_MAX
+}EditorModes;
 
 typedef struct
 {
@@ -23,6 +36,7 @@ typedef struct
     TextLine    backgroundFileName;
     TextLine    backgroundActionName;
     Window     *subwindow;
+    EditorModes editorMode;
 }EditorData;
 
 
@@ -107,6 +121,7 @@ void onBackgroundActorChange(void *data)
 {
     Window *win;
     EditorData *editor;
+    Vector2D zero = {0};
     if (!data)return;
     win = data;
     if (!win)return;
@@ -116,6 +131,8 @@ void onBackgroundActorChange(void *data)
     gfc_line_cpy(editor->scene->action,editor->backgroundActionName);
     gf2d_actor_load(&editor->scene->background,editor->backgroundFileName);
     gf2d_actor_set_action(&editor->scene->background,editor->scene->action);
+    camera_set_bounds(0,0,editor->scene->background.size.x,editor->scene->background.size.y);
+    camera_set_focus(zero);
     editor->subwindow = NULL;
 }
 
@@ -136,6 +153,7 @@ int editor_window_update(Window *win,List *updateList)
     int i,count;
     Element *e;
     Exhibit *exhibit = NULL;
+    TextLine label;
     EditorData *data;
     Vector2D mouse;
     if (!win)return 0;
@@ -156,6 +174,23 @@ int editor_window_update(Window *win,List *updateList)
         if (!e)continue;
         switch(e->index)
         {
+            case 1000:
+                data->editorMode = (data->editorMode + 1) % EM_MAX;
+                switch (data->editorMode)
+                {
+                    case EM_MAX:
+                    case EM_Exhibit:
+                        gfc_line_sprintf(label, "Mode: Exhibit");
+                        break;
+                    case EM_Mask:
+                        gfc_line_sprintf(label, "Mode: Mask");
+                        break;
+                    case EM_Layers:
+                        gfc_line_sprintf(label, "Mode: Layers");
+                        break;
+                }
+                gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,1001),label);
+                break;
             case 51:
                 //background selector
                 if (data->subwindow)break;
@@ -183,16 +218,29 @@ int editor_window_update(Window *win,List *updateList)
                 return 1;
         }
     }
-    if (gf2d_mouse_button_released(2))
+    if (gf2d_mouse_button_held(1))
     {
-        exhibit = exhibit_get_mouse_over_from_scene(data->scene);
-        if (exhibit != NULL)
+        camera_set_focus(mouse);
+    }
+    else if (gf2d_mouse_button_released(2))
+    {
+        switch (data->editorMode)
         {
-            editor_select_exhibit(win, exhibit);
-        }
-        else
-        {
-            editor_deselect_exhibit(win);
+            case EM_Exhibit:
+                exhibit = exhibit_get_mouse_over_from_scene(data->scene);
+                if (exhibit != NULL)
+                {
+                    editor_select_exhibit(win, exhibit);
+                }
+                else
+                {
+                    editor_deselect_exhibit(win);
+                }
+                break;
+            case EM_Mask:
+                break;
+            default:
+                break;
         }
     }
     return 0;
@@ -247,7 +295,7 @@ void onFileNameCancel(void *Data)
     EditorMenuData* data;
     if (!Data)return;
     data = Data;
-    gfc_line_cpy(data->filename,"config/");
+    gfc_line_cpy(data->filename,"scenes/");
     return;
 }
 
@@ -319,7 +367,7 @@ Window *editor_menu()
     win->free_data = editor_menu_free;
     data = (EditorMenuData*)gfc_allocate_array(sizeof(EditorMenuData),1);
     data->editorMenu = win;
-    gfc_line_cpy(data->filename,"config/");
+    gfc_line_cpy(data->filename,"scenes/");
     win->data = data;
     return win;
 }

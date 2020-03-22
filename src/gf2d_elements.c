@@ -202,6 +202,8 @@ Element *gf2d_element_get_by_id(Element *e,int id)
             return gf2d_element_list_get_item_by_id(e,id);
             break;
         case ET_Button:
+            return gf2d_element_button_get_by_id(e,id);
+            break;
         case ET_Entry:
         default:
             return NULL;

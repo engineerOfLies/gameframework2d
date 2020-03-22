@@ -99,7 +99,6 @@ void gf2d_element_actor_auto_scale(Element *e)
     ae = (ActorElement *)e->data;
     ae->scale.x = e->bounds.w/ ae->actor.size.x ;
     ae->scale.y = e->bounds.h /ae->actor.size.y;
-    slog("scale factor: %f, %f",ae->scale.x,ae->scale.y);
 }
 
 void gf2d_element_actor_set_actor(Element *e, char *actorFile)
