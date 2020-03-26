@@ -6,6 +6,7 @@
 
 #include "gf2d_entity.h"
 #include "gf2d_actor.h"
+#include "walkmask.h"
 
 
 // NOTE: this forward declaration is necessary because Exhibits need to know about Scenes and Scenes need to know about exhibits.
@@ -21,9 +22,16 @@ typedef struct
     SJson      *config;             /**<additional configuration for the scene*/
     List       *exhibits;           /**<list of exhibits in this scene*/
     List       *entities;           /**<list of entities spawned in this scene*/
+    List       *walkmasks;          /**<bounds for where a player can walk in a scene*/
     Entity     *activePlayer;       /**<active player entity*/
 }Scene;
 
+/**
+ * @brief add a walkmask to the scene
+ * @param scene the scene to add the mask to
+ * @param mask the mask to add
+ */
+void scene_add_walkmask(Scene *scene,Walkmask *mask);
 
 /**
  * @brief add a new exhibit to the scene
@@ -79,7 +87,7 @@ Scene *scene_new();
  */
 void scene_draw(Scene *scene);
 
-/**
+/**Walkmask *walkmask
  * @brief check for interaction with all of the exhibits in the scene
  * @param scene the scene to update
  */
@@ -126,5 +134,14 @@ void scene_set_active(Scene *scene);
  * @return NULL if not set, or the pointer otherwise
  */
 Scene *scene_get_active();
+
+/**
+ * @brief search a scene for a walkmask by the reference point
+ * @param scene the scene to search
+ * @param point the reference point to search by
+ * @return NULL on error or no results, the first walkmask that contains the reference point otherwise
+ */
+Walkmask *scene_get_walkmask_by_point(Scene *scene, Vector2D point);
+
 
 #endif

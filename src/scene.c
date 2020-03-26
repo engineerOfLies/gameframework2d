@@ -8,6 +8,9 @@
 #include "player.h"
 #include "exhibits.h"
 
+extern int editorMode;
+extern int debugMode;
+
 typedef struct
 {
     Scene * sceneList;
@@ -54,6 +57,7 @@ Scene *scene_new()
     {
         if (scene_manager.sceneList[i]._inuse)continue;
         scene_manager.sceneList[i]._inuse = 1;
+        scene_manager.sceneList[i].walkmasks = gfc_list_new();
         scene_manager.sceneList[i].exhibits = gfc_list_new();
         scene_manager.sceneList[i].entities = gfc_list_new();
         return &scene_manager.sceneList[i];
@@ -67,6 +71,12 @@ void scene_add_exhibit(Scene *scene,Exhibit *exhibit)
     if ((!scene)||(!exhibit))return;
     scene->exhibits = gfc_list_append(scene->exhibits,exhibit);
     exhibit_set_scene(exhibit,scene);
+}
+
+void scene_add_walkmask(Scene *scene,Walkmask *mask)
+{
+    if ((!scene)||(!mask))return;
+    scene->walkmasks = gfc_list_append(scene->walkmasks,mask);
 }
 
 void scene_add_entity(Scene *scene, Entity *entity)
@@ -177,6 +187,8 @@ void scene_spawn_exhibits(Scene *scene)
 
 void scene_draw(Scene *scene)
 {
+    int i,c;
+    Walkmask *mask;
     if (!scene)return;
     gf2d_actor_draw(
         &scene->background,
@@ -185,6 +197,16 @@ void scene_draw(Scene *scene)
         NULL,
         NULL,
         NULL);
+    if ((debugMode)||(editorMode))
+    {
+        c = gfc_list_get_count(scene->walkmasks);
+        for (i = 0;i < c; i++)
+        {
+            mask = (Walkmask*)gfc_list_get_nth(scene->walkmasks,i);
+            if (!mask)continue;
+            walkmask_draw(mask);
+        }
+    }
 }
 
 Entity *scene_get_active_player(Scene *scene)
@@ -247,9 +269,18 @@ void scene_free(Scene *scene)
     int count,i;
     Exhibit *exhibit;
     Entity *ent;
+    Walkmask *mask;
     if (!scene)return;
     gf2d_actor_free(&scene->background);
     
+    count = gfc_list_get_count(scene->walkmasks);
+    for (i = 0; i < count; i++)
+    {
+        mask = gfc_list_get_nth(scene->walkmasks,i);
+        if (!mask)continue;
+        walkmask_free(mask);
+    }
+    gfc_list_delete(scene->walkmasks);
     count = gfc_list_get_count(scene->exhibits);
     for (i = 0; i < count; i++)
     {
@@ -281,6 +312,7 @@ Scene *scene_get_active()
     return _active_scene;
 }
 
+
 void scene_next_scene(char *nextScene, Entity *player, char *positionExhibit)
 {
     Exhibit *exhibit;
@@ -311,6 +343,24 @@ void scene_next_scene(char *nextScene, Entity *player, char *positionExhibit)
     //free up the last scene
     scene_free(scene_get_active());
     scene_set_active(scene);
+}
+
+Walkmask *scene_get_walkmask_by_point(Scene *scene, Vector2D point)
+{
+    Walkmask *mask = NULL;
+    int i,c;
+    if (!scene)return NULL;
+    c = gfc_list_get_count(scene->walkmasks);
+    for (i = 0;i < c; i++)
+    {
+        mask = (Walkmask *)gfc_list_get_nth(scene->walkmasks,i);
+        if (!mask)continue;
+        if (walkmask_point_in_check(mask, point))
+        {
+            return mask;
+        }
+    }
+    return NULL;//not found
 }
 
 

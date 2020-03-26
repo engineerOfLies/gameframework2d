@@ -6,6 +6,7 @@
 #include "exhibits.h"
 
 static int exhibit_paused = 0;
+extern int editorMode;
 
 int exhibit_do_action(Exhibit *exhibit, char *command);
 
@@ -288,7 +289,7 @@ Entity *exhibit_entity_spawn(Exhibit *exhibit)
     ent->position.y = exhibit->rect.y;
     ent->drawColor = gfc_color(0,0.5,0.5,1);
     ent->shape = gf2d_shape_rect(0,0, exhibit->rect.w, exhibit->rect.h);
-    ent->draw = exhibit_draw;
+    if (editorMode)ent->draw = exhibit_draw;
     ent->data = exhibit;
     exhibit->entity = ent;
     return ent;

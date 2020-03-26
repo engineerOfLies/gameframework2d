@@ -14,6 +14,7 @@
 #include "windows_common.h"
 #include "exhibits.h"
 #include "exhibit_editor.h"
+#include "walkmask_editor.h"
 #include "scene.h"
 
 extern void exitGame();
@@ -32,10 +33,10 @@ typedef struct
     TextLine    filename;
     Scene      *scene;
     Exhibit    *selectedExhibit;
-    Window     *exhibitEditor;
+    Walkmask   *selectedWalkmask;
     TextLine    backgroundFileName;
     TextLine    backgroundActionName;
-    Window     *subwindow;
+    Window     *subWindow;
     EditorModes editorMode;
 }EditorData;
 
@@ -61,6 +62,25 @@ void onFileSaveOk(void *Data)
     return;
 }
 
+void editor_window_close_subwindow(Window *win)
+{
+    EditorData *data;
+    if (!win)return;
+    if (!win->data)return;
+    data = (EditorData*)win->data;
+    gf2d_window_free(data->subWindow);
+    data->subWindow = NULL;
+}
+
+void editor_window_new_subwindow(Window *win,Window *sub)
+{
+    EditorData *data;
+    if (!win)return;
+    data = (EditorData*)win->data;
+    editor_window_close_subwindow(win);
+    if (!sub)return;
+    data->subWindow = sub;
+}
 
 int editor_window_draw(Window *win)
 {
@@ -82,6 +102,16 @@ int editor_window_free(Window *win)
     return 0;
 }
 
+void editor_deselect_mask(Window *win)
+{
+    EditorData *data;
+    if (!win)return;
+    data = (EditorData *)win->data;
+    if ((!data)||(!data->selectedWalkmask))return;
+    data->selectedWalkmask = NULL;
+    editor_window_close_subwindow(win);
+}
+
 void editor_deselect_exhibit(Window *win)
 {
     EditorData *data;
@@ -90,10 +120,28 @@ void editor_deselect_exhibit(Window *win)
     if ((!data)||(!data->selectedExhibit)||(!data->selectedExhibit->entity))return;
     data->selectedExhibit->entity->drawColor = gfc_color(0,0.5,0.5,1);
     data->selectedExhibit = NULL;
-    if (data->exhibitEditor)
+    editor_window_close_subwindow(win);
+}
+
+void editor_select_mask(Window *win, Walkmask *mask)
+{
+    Rect r;
+    EditorData *data;
+    Vector2D resolution;
+    if ((!win)||(!mask))return;
+    resolution = gf2d_graphics_get_resolution();
+    editor_deselect_mask(win);
+    data = (EditorData *)win->data;
+    data->selectedWalkmask = mask;
+    mask->drawColor = gfc_color(0,1,1,1);
+    r = walkmask_get_bounds(mask);
+    if (r.x > resolution.x / 2)
     {
-        gf2d_window_free(data->exhibitEditor);
-        data->exhibitEditor = NULL;
+        editor_window_new_subwindow(win,walkmask_editor(mask,vector2d(0,80)));
+    }
+    else
+    {
+        editor_window_new_subwindow(win,walkmask_editor(mask,vector2d(resolution.x - 200,80)));
     }
 }
 
@@ -109,11 +157,11 @@ void editor_select_exhibit(Window *win, Exhibit *exhibit)
     exhibit->entity->drawColor = gfc_color(0,1,1,1);
     if (exhibit->rect.x > resolution.x / 2)
     {
-        data->exhibitEditor = exhibit_editor(exhibit,vector2d(0,80));
+        editor_window_new_subwindow(win,exhibit_editor(exhibit,vector2d(0,80)));
     }
     else
     {
-        data->exhibitEditor = exhibit_editor(exhibit,vector2d(resolution.x - 200,80));
+        editor_window_new_subwindow(win,exhibit_editor(exhibit,vector2d(resolution.x - 200,80)));
     }
 }
 
@@ -133,7 +181,7 @@ void onBackgroundActorChange(void *data)
     gf2d_actor_set_action(&editor->scene->background,editor->scene->action);
     camera_set_bounds(0,0,editor->scene->background.size.x,editor->scene->background.size.y);
     camera_set_focus(zero);
-    editor->subwindow = NULL;
+    editor_window_close_subwindow(win);
 }
 
 void onBackgroundCancel(void *data)
@@ -145,15 +193,39 @@ void onBackgroundCancel(void *data)
     if (!win)return;
     editor = win->data;
     if (!editor)return;
-    editor->subwindow = NULL;    
+    editor_window_close_subwindow(win);
+}
+
+void editor_window_set_mode(Window *win, EditorModes mode)
+{
+    EditorData *data;
+    TextLine label;
+    if (!win)return;
+    data = (EditorData *)win->data;
+    if (!data)return;
+    data->editorMode = mode;
+    switch (data->editorMode)
+    {
+        case EM_MAX:
+        case EM_Exhibit:
+            gfc_line_sprintf(label, "Mode: Exhibit");
+            break;
+        case EM_Mask:
+            gfc_line_sprintf(label, "Mode: Mask");
+            break;
+        case EM_Layers:
+            gfc_line_sprintf(label, "Mode: Layers");
+            break;
+    }
+    gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,1001),label);
 }
 
 int editor_window_update(Window *win,List *updateList)
 {
     int i,count;
+    Walkmask *mask = NULL;
     Element *e;
     Exhibit *exhibit = NULL;
-    TextLine label;
     EditorData *data;
     Vector2D mouse;
     if (!win)return 0;
@@ -175,37 +247,35 @@ int editor_window_update(Window *win,List *updateList)
         switch(e->index)
         {
             case 1000:
+                if (data->subWindow)break;// don't allow mode switch while a subWindow is active
                 data->editorMode = (data->editorMode + 1) % EM_MAX;
-                switch (data->editorMode)
-                {
-                    case EM_MAX:
-                    case EM_Exhibit:
-                        gfc_line_sprintf(label, "Mode: Exhibit");
-                        break;
-                    case EM_Mask:
-                        gfc_line_sprintf(label, "Mode: Mask");
-                        break;
-                    case EM_Layers:
-                        gfc_line_sprintf(label, "Mode: Layers");
-                        break;
-                }
-                gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,1001),label);
+                editor_window_set_mode(win, data->editorMode);
                 break;
             case 51:
                 //background selector
-                if (data->subwindow)break;
+                if (data->subWindow)break;
                 if (data->scene->background.al != NULL)
                 {
                     gfc_line_cpy(data->backgroundFileName,data->scene->background.al->filename);
                     gfc_line_cpy(data->backgroundActionName,gf2d_actor_get_action_name(&data->scene->background));
                 }
-                data->subwindow = actor_editor_menu(data->backgroundFileName,data->backgroundActionName,win, onBackgroundActorChange,onBackgroundCancel);
+                editor_window_new_subwindow(win,actor_editor_menu(data->backgroundFileName,data->backgroundActionName,win, onBackgroundActorChange,onBackgroundCancel));
+                break;
+            case 52:
+                // new mask
+                editor_window_close_subwindow(win);
+                mask = walkmask_new_by_rect(gf2d_rect(100,100,100,100));
+                scene_add_walkmask(data->scene,mask);
+                data->selectedWalkmask = mask;
+                editor_window_set_mode(win, EM_Mask);
                 break;
             case 53:
                 // new exhibit
+                editor_window_close_subwindow(win);
                 exhibit = exhibit_new();
                 scene_add_exhibit(data->scene,exhibit);
                 scene_add_entity(data->scene, exhibit_entity_spawn(exhibit));
+                editor_window_set_mode(win, EM_Exhibit);
                 editor_select_exhibit(win, exhibit);
                 break;
             case 54:
@@ -238,6 +308,15 @@ int editor_window_update(Window *win,List *updateList)
                 }
                 break;
             case EM_Mask:
+                mask = scene_get_walkmask_by_point(data->scene, mouse);
+                if (mask != NULL)
+                {
+                    editor_select_mask(win, mask);
+                }
+                else
+                {
+                    editor_deselect_mask(win);
+                }
                 break;
             default:
                 break;
@@ -296,7 +375,6 @@ void onFileNameCancel(void *Data)
     if (!Data)return;
     data = Data;
     gfc_line_cpy(data->filename,"scenes/");
-    return;
 }
 
 void onFileNameOk(void *Data)
