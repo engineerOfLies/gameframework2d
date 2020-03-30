@@ -42,7 +42,6 @@ Walkmask *walkmask_new()
     Walkmask *mask;
     mask = (Walkmask *)gfc_allocate_array(sizeof(Walkmask),1);
     if (!mask)return NULL;
-    mask->drawColor = gfc_color(.8,.8,0,1);
     mask->points = gfc_list_new();
     return mask;
 }
@@ -119,6 +118,23 @@ PointData *walkmask_get_nearest_point(Walkmask *mask, Vector2D refPoint)
     return best;
 }
 
+PointData *walkmask_subdivide_point(Walkmask *mask,PointData *previous)
+{
+    PointData *nextpoint = NULL;
+    Vector2D position;
+    if ((!mask)||(!previous))return NULL;
+    
+    nextpoint = gfc_list_get_nth(mask->points,previous->nextPoint);
+    if (!nextpoint)
+    {
+        return NULL;
+    }
+    
+    vector2d_sub(position,previous->position,nextpoint->position);
+    
+    return walkmask_insert_point(mask,position,previous);
+}
+
 
 PointData *walkmask_insert_point(Walkmask *mask,Vector2D position,PointData *previous)
 {
@@ -141,7 +157,21 @@ PointData *walkmask_insert_point(Walkmask *mask,Vector2D position,PointData *pre
     return newone;
 }
 
-void walkmask_draw(Walkmask *mask)
+void walkmask_move(Walkmask *mask,Vector2D offset)
+{
+    PointData *point;
+    int i = 0,c;
+    if (!mask)return;    
+    c = gfc_list_get_count(mask->points);
+    for (i = 0;i < c; i++)
+    {
+        point = (PointData*)gfc_list_get_nth(mask->points,i);
+        if (!point)continue;
+        vector2d_add(point->position,point->position,offset);
+    }
+}
+
+void walkmask_draw(Walkmask *mask,Color color,Vector2D drawOffset)
 {
     PointData *nextpoint = NULL;
     PointData *point;
@@ -153,10 +183,11 @@ void walkmask_draw(Walkmask *mask)
     firstpoint = point = gfc_list_get_nth(mask->points,0);
     if (!point)return;
     offset = camera_get_offset();
+    vector2d_add(offset,offset,drawOffset);
     do
     {
         vector2d_add(p1,point->position,offset);
-        gf2d_draw_circle(p1, 5, gfc_color_to_vector4(mask->drawColor));
+        gf2d_draw_circle(p1, 5, gfc_color_to_vector4(color));
         nextpoint = gfc_list_get_nth(mask->points,point->nextPoint);
         if (!nextpoint)
         {
@@ -166,7 +197,7 @@ void walkmask_draw(Walkmask *mask)
         vector2d_add(p1,point->position,offset);
         vector2d_add(p2,nextpoint->position,offset);
         
-        gf2d_draw_line(p1,p2, gfc_color_to_vector4(mask->drawColor));
+        gf2d_draw_line(p1,p2, gfc_color_to_vector4(color));
         
         point = nextpoint;
     }

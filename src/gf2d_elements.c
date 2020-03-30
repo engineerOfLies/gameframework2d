@@ -138,7 +138,10 @@ Element *gf2d_element_load_from_config(SJson *json,Element *parent,Window *win)
     e = gf2d_element_new();
     if (!e)return NULL;
     value = sj_object_get_value(json,"name");
-    gfc_line_cpy(e->name,sj_get_string_value(value));
+    if (value)
+    {
+        gfc_line_cpy(e->name,sj_get_string_value(value));
+    }
     
     value = sj_object_get_value(json,"id");
     sj_get_integer_value(value,&e->index);
@@ -157,26 +160,33 @@ Element *gf2d_element_load_from_config(SJson *json,Element *parent,Window *win)
     gf2d_element_calibrate(e,parent, win);
     
     value = sj_object_get_value(json,"type");
-    type = sj_get_string_value(value);
-    if (strcmp(type,"list") == 0)
+    if (value)
     {
-        gf2d_element_load_list_from_config(e,json,win);
+        type = sj_get_string_value(value);
+        if (strcmp(type,"list") == 0)
+        {
+            gf2d_element_load_list_from_config(e,json,win);
+        }
+        else if (strcmp(type,"label") == 0)
+        {
+            gf2d_element_load_label_from_config(e,json);
+        }
+        else if (strcmp(type,"actor") == 0)
+        {
+            gf2d_element_load_actor_from_config(e,json);
+        }
+        else if (strcmp(type,"button") == 0)
+        {
+            gf2d_element_load_button_from_config(e,json,win);
+        }
+        else if (strcmp(type,"entry") == 0)
+        {
+            gf2d_element_load_entry_from_config(e,json,win);
+        }
     }
-    else if (strcmp(type,"label") == 0)
+    else
     {
-        gf2d_element_load_label_from_config(e,json);
-    }
-    else if (strcmp(type,"actor") == 0)
-    {
-        gf2d_element_load_actor_from_config(e,json);
-    }
-    else if (strcmp(type,"button") == 0)
-    {
-        gf2d_element_load_button_from_config(e,json,win);
-    }
-    else if (strcmp(type,"entry") == 0)
-    {
-        gf2d_element_load_entry_from_config(e,json,win);
+        slog("element definition missing type!");
     }
     return e;
 }

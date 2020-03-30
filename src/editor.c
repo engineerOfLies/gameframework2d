@@ -133,7 +133,6 @@ void editor_select_mask(Window *win, Walkmask *mask)
     editor_deselect_mask(win);
     data = (EditorData *)win->data;
     data->selectedWalkmask = mask;
-    mask->drawColor = gfc_color(0,1,1,1);
     r = walkmask_get_bounds(mask);
     if (r.x > resolution.x / 2)
     {
@@ -268,6 +267,7 @@ int editor_window_update(Window *win,List *updateList)
                 scene_add_walkmask(data->scene,mask);
                 data->selectedWalkmask = mask;
                 editor_window_set_mode(win, EM_Mask);
+                editor_select_mask(win, mask);
                 break;
             case 53:
                 // new exhibit

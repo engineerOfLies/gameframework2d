@@ -204,7 +204,7 @@ void scene_draw(Scene *scene)
         {
             mask = (Walkmask*)gfc_list_get_nth(scene->walkmasks,i);
             if (!mask)continue;
-            walkmask_draw(mask);
+            walkmask_draw(mask,gfc_color(0.6,0,0.6,1),vector2d(0,0));
         }
     }
 }

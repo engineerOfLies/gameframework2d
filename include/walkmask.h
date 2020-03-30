@@ -16,8 +16,6 @@ typedef struct
 {
     List    *points;        /**<sequence of points that will make a walk mask by its outline*/
     Uint8    exterior;      /**<if this polygon should be considered an interior or exterior mask.  IE: interior masks require the player to be within it, while exterior ones require the player to be outside of it*/
-    Color    drawColor;     /**<when drawn during editing, what color to use*/
-    PointData *selectedPoint;/**<used during editing, keeps track of the selectedPoint*/
 }Walkmask;
 
 /**
@@ -53,10 +51,26 @@ int walkmask_point_in_check(Walkmask *mask, Vector2D queryPoint);
 PointData *walkmask_insert_point(Walkmask *mask,Vector2D position,PointData *previous);
 
 /**
+ * @brief insert a walkmask point between the reference point and the next point
+ * @param mask the mask to add a point to
+ * @param previous the reference point.  New point will be between this point and the next point
+ */
+PointData *walkmask_subdivide_point(Walkmask *mask,PointData *previous);
+
+/**
  * @brief draws the walkmask to the screen
  * @param walkmask the mask to draw
+ * @param color the color to draw the mask as
+ * @param offset an offset to draw the mask at
  */
-void walkmask_draw(Walkmask *walkmask);
+void walkmask_draw(Walkmask *walkmask,Color color, Vector2D offset);
+
+/**
+ * @brief move a whole mask by the offset provided
+ * @param mask the mask to move
+ * @param offset the vector to move the mask by
+ */
+void walkmask_move(Walkmask *mask,Vector2D offset);
 
 /**
  * @brief given the refPoint, find the nearest point in the walk mask

@@ -29,7 +29,7 @@
                 },
                 {
                 "type": "label",
-                "name": "display_name_toggle",
+                "name": "mask_type",
                 "id" : 2,
                 "bounds": [0,0,1,40],
                 "color" : [255,255,255,255],
@@ -50,11 +50,11 @@
                 "label" :
                     {
                     "type": "label",
-                    "name": "Set_Actor",
+                    "name": "toggletype",
                     "id" : 531,
                     "bounds": [0,0,168,64],
                     "color" : [255,255,255,255],
-                    "text":"Set Actor",
+                    "text":"Toggle Type",
                     "align" : "middle",
                     "justify" : "center",
                     "style":"H5"
@@ -71,32 +71,30 @@
                 },
                 {
                 "type": "label",
-                "name": "action",
-                "id" : 4,
+                "name": "selection_type",
+                "id" : 3,
                 "bounds": [0,0,1,40],
                 "color" : [255,255,255,255],
-                "text":"none",
+                "text":"mask select",
                 "justify" : "center",
                 "align" : "middle",
                 "style":"H5"
                 },
                 {
                 "type": "button",
-                "name": "set Action",
                 "id" : 54,
                 "bounds": [0,0,164,68],
                 "color" : [255,255,255,255],
-                "hotkey":"save",
+                "hotkey":"next",
                 "highColor" : [255,255,255,255],
                 "pressColor" : [255,255,255,255],
                 "label" :
                     {
                     "type": "label",
-                    "name": "Set_Action",
                     "id" : 541,
                     "bounds": [0,0,168,64],
                     "color" : [255,255,255,255],
-                    "text":"Set Action",
+                    "text":"Next Mode",
                     "align" : "middle",
                     "justify" : "center",
                     "style":"H5"
@@ -113,52 +111,20 @@
                 },
                 {
                 "type": "button",
-                "name": "rect",
-                "id" : 55,
-                "bounds": [0,0,164,68],
-                "color" : [255,255,255,255],
-                "hotkey":"load",
-                "highColor" : [255,255,255,255],
-                "pressColor" : [255,255,255,255],
-                "label" :
-                    {
-                    "type": "label",
-                    "name": "load_l",
-                    "id" : 551,
-                    "bounds": [0,0,168,64],
-                    "color" : [255,255,255,255],
-                    "text":"Set Rect",
-                    "align" : "middle",
-                    "justify" : "center",
-                    "style":"H5"
-                    },
-                "actor" :
-                    {
-                    "type": "actor",
-                    "name": "image",
-                    "id" : 552,
-                    "bounds": [0,0,168,64],
-                    "color" : [255,255,255,255],
-                    "actor" : "actors/button.actor"
-                    }
-                },
-                {
-                "type": "button",
-                "name": "near",
+                "name": "done",
                 "id" : 56,
                 "bounds": [0,0,164,68],
                 "color" : [255,255,255,255],
-                "hotkey":"load",
+                "hotkey":"none",
                 "highColor" : [255,255,255,255],
                 "pressColor" : [255,255,255,255],
                 "label" :
                     {
                     "type": "label",
-                    "name": "load_l",
                     "id" : 561,
                     "bounds": [0,0,168,64],
                     "color" : [255,255,255,255],
-                    "text":"Set Near Point",
+                    "text":"Subdivide",
                     "align" : "middle",
                     "justify" : "center",
                     "style":"H6"
