@@ -87,4 +87,13 @@ PointData *walkmask_get_nearest_point(Walkmask *mask, Vector2D refPoint);
  */
 Rect walkmask_get_bounds(Walkmask *mask);
 
+/**
+ * @brief save a walkmask to json for writing to disk
+ * @param mask the mask to convert
+ * @return NULL on error or a json struct otherwise
+ */
+SJson *walkmask_to_json(Walkmask *mask);
+
+Walkmask *walkmask_load_from_json(SJson *json);
+
 #endif

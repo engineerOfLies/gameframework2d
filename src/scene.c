@@ -89,6 +89,7 @@ void scene_save(Scene *scene, char *filename)
 {
     SJson *json = NULL, *array = NULL, *item = NULL;
     Exhibit *exhibit = NULL;
+    Walkmask *mask = NULL;
     int i,count;
     if ((!scene)||(!filename))
     {
@@ -102,9 +103,11 @@ void scene_save(Scene *scene, char *filename)
         slog("failed to make base json object for file safe");
         return;
     }
-    
-    sj_object_insert(json,"background",sj_new_str(scene->background.al->filename));
-    sj_object_insert(json,"action",sj_new_str(scene->action));
+    if (scene->background.al)
+    {
+        sj_object_insert(json,"background",sj_new_str(scene->background.al->filename));
+        sj_object_insert(json,"action",sj_new_str(scene->action));
+    }
     array = sj_array_new();
     sj_object_insert(json,"exhibits",array);
     count = gfc_list_get_count(scene->exhibits);
@@ -116,7 +119,17 @@ void scene_save(Scene *scene, char *filename)
         if (!item)continue;
         sj_array_append(array,item);
     }
-    
+    array = sj_array_new();
+    sj_object_insert(json,"walkmasks",array);
+    count = gfc_list_get_count(scene->walkmasks);
+    for (i = 0; i < count;i++)
+    {
+        mask = (Walkmask*)gfc_list_get_nth(scene->walkmasks,i);
+        if (!mask)continue;
+        item = walkmask_to_json(mask);
+        if (!item)continue;
+        sj_array_append(array,item);
+    }
     sj_save(json,filename);
     
     sj_free(json);
@@ -127,7 +140,9 @@ Scene *scene_load(char *filename)
     Scene *scene;
     SJson *json;
     SJson *exhibits,*exhibitjs;
+    SJson *walkmasks,*maskjs;
     Exhibit *exhibit;
+    Walkmask *walkmask;
     int i,count;
     char *imageName;
     
@@ -162,6 +177,21 @@ Scene *scene_load(char *filename)
             if (exhibit)
             {
                 scene_add_exhibit(scene,exhibit);
+            }
+        }
+    }
+    walkmasks = sj_object_get_value(json,"walkmasks");
+    if (walkmasks)
+    {
+        count = sj_array_get_count(walkmasks);
+        for (i = 0;i < count; i++)
+        {
+            maskjs = sj_array_get_nth(walkmasks,i);
+            if (!maskjs)continue;
+            walkmask = walkmask_load_from_json(maskjs);
+            if (walkmask)
+            {
+                scene_add_walkmask(scene,walkmask);
             }
         }
     }

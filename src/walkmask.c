@@ -2,6 +2,7 @@
 #include "gfc_types.h"
 
 #include "gf2d_draw.h"
+#include "gf2d_config.h"
 
 #include "camera.h"
 #include "walkmask.h"
@@ -130,7 +131,8 @@ PointData *walkmask_subdivide_point(Walkmask *mask,PointData *previous)
         return NULL;
     }
     
-    vector2d_sub(position,previous->position,nextpoint->position);
+    vector2d_add(position,previous->position,nextpoint->position);
+    vector2d_scale(position,position,0.5);
     
     return walkmask_insert_point(mask,position,previous);
 }
@@ -250,5 +252,101 @@ int walkmask_point_in_check(Walkmask *mask, Vector2D queryPoint)
     }
     return crossCount % 2;
 }
+
+SJson *pointdata_to_json(PointData *point)
+{
+    SJson *json;
+    if (!point)return NULL;
+    json = sj_object_new();
+    if (!json)return NULL;
+    sj_object_insert(json,"position",sj_vector2d_new(point->position));
+    sj_object_insert(json,"scale",sj_vector2d_new(point->scale));
+    sj_object_insert(json,"layer",sj_new_int(point->layer));
+    sj_object_insert(json,"nextPoint",sj_new_int(point->nextPoint));
+    return json;
+}
+
+SJson *walkmask_to_json(Walkmask *mask)
+{
+    SJson *json,*array,*item;
+    PointData *point;
+    int i,c;
+    if (!mask)
+    {
+        slog("no mask provided to convert to json");
+        return NULL;
+    }
+    
+    json = sj_object_new();
+    if (!json)
+    {
+        slog("failed to make json object for mask");
+        return NULL;
+    }
+    sj_object_insert(json,"exterior",sj_new_bool(mask->exterior));
+    array = sj_array_new();
+    sj_object_insert(json,"points",array);
+    
+    c = gfc_list_get_count(mask->points);
+    for (i = 0;i < c;i++)
+    {
+        point = gfc_list_get_nth(mask->points,i);
+        if (!point)continue;
+        item = pointdata_to_json(point);
+        if (!item)continue;
+        sj_array_append(array,item);
+    }
+    return json;
+}
+
+PointData *pointdata_load_from_json(SJson *json)
+{
+    PointData *point;
+    int temp;
+    if (!json)return NULL;
+    point = pointdata_new();
+    if (!point)return NULL;
+    
+    sj_value_as_vector2d(sj_object_get_value(json,"position"),&point->position);
+    sj_value_as_vector2d(sj_object_get_value(json,"scale"),&point->scale);
+    if (sj_get_integer_value(sj_object_get_value(json,"layer"),&temp))
+    {
+        point->layer = temp;
+    }
+    if (sj_get_integer_value(sj_object_get_value(json,"nextPoint"),&temp))
+    {
+        point->nextPoint = temp;
+    }
+    
+    return point;
+}
+
+Walkmask *walkmask_load_from_json(SJson *json)
+{
+    PointData *pdata = NULL;
+    Walkmask *mask = NULL;
+    SJson *points = NULL, *point = NULL;
+    int i,c;
+    if (!json)return NULL;
+
+    mask = walkmask_new();
+    if (!mask)return NULL;
+    
+    sj_get_bool_value(sj_object_get_value(json,"exterior"),(short int *)&mask->exterior);
+    points = sj_object_get_value(json,"points");
+    c = sj_array_get_count(points);
+    for (i = 0; i < c; i++)
+    {
+        point = sj_array_get_nth(points,i);
+        if (!point)continue;
+        pdata = pointdata_load_from_json(point);
+        if (!pdata)continue;
+        mask->points = gfc_list_append(mask->points,pdata);
+    }
+
+    return mask;
+
+}
+
 
 /*eol@eof*/

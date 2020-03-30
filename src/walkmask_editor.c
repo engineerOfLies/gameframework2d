@@ -68,7 +68,38 @@ int walkmask_editor_update(Window *win,List *updateList)
     if (!updateList)return 0;
     walkmask_data = (WalkmaskData*)win->data;
     if (!walkmask_data)return 0;
-
+    count = gfc_list_get_count(updateList);
+    for (i = 0; i < count; i++)
+    {
+        e = gfc_list_get_nth(updateList,i);
+        if (!e)continue;
+        switch(e->index)
+        {
+            case 53:
+                if ((walkmask_data)&&(walkmask_data->mask))
+                {
+                    walkmask_data->mask->exterior = !walkmask_data->mask->exterior;
+                    walkmask_editor_set_style(win, walkmask_data->mask);
+                }
+                return 0;
+            case 54:
+                // cycle action mode
+                walkmask_data->mode = (walkmask_data->mode +1) % WM_MAX;
+                walkmask_editor_set_mode(win,walkmask_data->mode);
+                return 0;
+            case 56:
+                //subdivide
+                if (walkmask_data->selectedPoint)
+                {
+                    walkmask_subdivide_point(walkmask_data->mask,walkmask_data->selectedPoint);
+                }
+                return 0;
+        }
+    }
+    if (gf2d_window_mouse_in(win))
+    {
+        return 0;
+    }
     if (gf2d_mouse_button_pressed(0))
     {
         // begin selection
@@ -109,34 +140,6 @@ int walkmask_editor_update(Window *win,List *updateList)
     }
 
 
-    count = gfc_list_get_count(updateList);
-    for (i = 0; i < count; i++)
-    {
-        e = gfc_list_get_nth(updateList,i);
-        if (!e)continue;
-        switch(e->index)
-        {
-            case 53:
-                if ((walkmask_data)&&(walkmask_data->mask))
-                {
-                    walkmask_data->mask->exterior = !walkmask_data->mask->exterior;
-                    walkmask_editor_set_style(win, walkmask_data->mask);
-                }
-                break;
-            case 54:
-                // cycle action mode
-                walkmask_data->mode = (walkmask_data->mode +1) % WM_MAX;
-                walkmask_editor_set_mode(win,walkmask_data->mode);
-                break;
-            case 56:
-                //subdivide
-                if (walkmask_data->selectedPoint)
-                {
-                    walkmask_subdivide_point(walkmask_data->mask,walkmask_data->selectedPoint);
-                }
-                break;
-        }
-    }
     return 0;
 }
 
@@ -171,7 +174,7 @@ int walkmask_editor_draw(Window *win)
             {
                 vector2d_add(p1,walkmask_data->selectedPoint->position,offset);
                 vector2d_add(p1,p1,walkmask_data->delta);
-                gf2d_draw_circle(p1, 5, vector4d(1,1,0,1));
+                gf2d_draw_circle(p1, 6, vector4d(255,255,255,255));
             }
             break;
         case WM_Edge:
