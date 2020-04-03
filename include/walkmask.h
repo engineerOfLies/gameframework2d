@@ -94,6 +94,21 @@ Rect walkmask_get_bounds(Walkmask *mask);
  */
 SJson *walkmask_to_json(Walkmask *mask);
 
+/**
+ * @brief loat a walkmask from json data
+ * @param json the json to parse
+ * @return NULL on error or a configured walkmask otherwise
+ */
 Walkmask *walkmask_load_from_json(SJson *json);
+
+/**
+ * @brief find out if the line traced from start to end clips any edge in the given mask.
+ * @param mask the walkmask to check against
+ * @param start the start point of the trace
+ * @param end the end point of the trace
+ * @param contact (optional) if there is a collision, this will be populated with the contact point of the collision
+ * @return 0 if there is no clip, 1 if there is.  If you provided a contact point it will be set on true only.
+ */
+int walkmask_edge_clip(Walkmask *mask,Vector2D start, Vector2D end,Vector2D *contact);
 
 #endif

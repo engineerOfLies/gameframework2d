@@ -89,7 +89,6 @@ int exhibit_do_action(Exhibit *exhibit,char * command)
         slog("proximity matters for this exhibit");
         if (player_near_scene_point(scene_get_active_player(exhibit->scene),exhibit->near) == 0)
         {
-            slog("player is not near target, moving to it");
             exhibit_player_walk_to(exhibit);
             player_set_callback(scene_get_active_player(exhibit->scene),exhibit_interact_callback,exhibit);
             return 1;

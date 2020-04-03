@@ -5,6 +5,7 @@
         "frameWidth": 128,
         "frameHeight": 128,
         "framesPerLine": 16,
+        "drawOffset": [-64,-128],
         "scale": [2,2],
         "color": [255,255,255,255],
         "colorSpecial": [255,255,255,255],

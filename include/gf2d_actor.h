@@ -52,6 +52,7 @@ typedef struct
     Vector2D    scale;        /**<scale to draw at*/
     Vector4D    color;
     Vector4D    colorSpecial;
+    Vector2D    drawOffset;
 }ActionList;
 
 typedef struct

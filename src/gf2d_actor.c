@@ -164,6 +164,11 @@ void gf2d_action_file_load_actions(FILE *file,ActionList *actionList)
             fscanf(file,"%f,%f",&actionList->scale.x,&actionList->scale.y);
             continue;
         }
+        if(strcmp(buf,"drawOffset:") == 0)
+        {
+            fscanf(file,"%f,%f",&actionList->drawOffset.x,&actionList->drawOffset.y);
+            continue;
+        }
         if(strcmp(buf,"color:") == 0)
         {
             fscanf(file,"%f,%f,%f,%f",&actionList->color.x,&actionList->color.y,&actionList->color.z,&actionList->color.w);
@@ -332,6 +337,7 @@ ActionList *gf2d_action_list_load_json(
     sj_get_integer_value(sj_object_get_value(actor,"frameHeight"),&actionList->frameHeight);
     sj_get_integer_value(sj_object_get_value(actor,"framesPerLine"),&actionList->framesPerLine);
     sj_value_as_vector2d(sj_object_get_value(actor,"scale"),&actionList->scale);
+    sj_value_as_vector2d(sj_object_get_value(actor,"drawOffset"),&actionList->drawOffset);
     sj_value_as_vector4d(sj_object_get_value(actor,"color"),&actionList->color);
     sj_value_as_vector4d(sj_object_get_value(actor,"colorSpecial"),&actionList->colorSpecial);
     
@@ -533,6 +539,7 @@ void gf2d_actor_draw(
 )
 {
     Vector2D drawScale;
+    Vector2D drawPosition;
     if ((!actor)||(!actor->_inuse))return;
     vector2d_copy(drawScale,actor->al->scale);
     if (scale)
@@ -540,9 +547,11 @@ void gf2d_actor_draw(
         drawScale.x *= scale->x;
         drawScale.y *= scale->y;
     }
+    
+    vector2d_add(drawPosition,position,actor->al->drawOffset);
     gf2d_sprite_draw(
         actor->sprite,
-        position,
+        drawPosition,
         &drawScale,
         scaleCenter,
         rotation,

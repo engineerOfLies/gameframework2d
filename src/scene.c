@@ -253,8 +253,11 @@ void scene_set_active_player(Scene *scene,Entity *player)
 
 void scene_active_player_walk_to(Scene *scene,Vector2D position)
 {
-    if (!scene)return;
-    player_walk_to(scene->activePlayer,position);
+    Vector2D walkPosition;
+    if ((!scene) || (!scene->activePlayer))return;
+    scene_walk_check(scene,scene->activePlayer->position, position,&walkPosition);
+
+    player_walk_to(scene->activePlayer,walkPosition);
 }
 
 void scene_update(Scene *scene)
@@ -378,6 +381,10 @@ void scene_next_scene(char *nextScene, Entity *player, char *positionExhibit)
 Walkmask *scene_get_walkmask_by_point(Scene *scene, Vector2D point)
 {
     Walkmask *mask = NULL;
+    Walkmask *best = NULL;
+    float distance,bestDistance;
+    PointData *maskPoint;
+
     int i,c;
     if (!scene)return NULL;
     c = gfc_list_get_count(scene->walkmasks);
@@ -385,12 +392,57 @@ Walkmask *scene_get_walkmask_by_point(Scene *scene, Vector2D point)
     {
         mask = (Walkmask *)gfc_list_get_nth(scene->walkmasks,i);
         if (!mask)continue;
-        if (walkmask_point_in_check(mask, point))
+        if (!walkmask_point_in_check(mask, point))continue;
+        
+        maskPoint = walkmask_get_nearest_point(mask, point);
+        if (!maskPoint)continue;
+        distance = vector2d_magnitude_between(maskPoint->position,point);
+        if ((!best)||(distance < bestDistance))
         {
-            return mask;
+            bestDistance = distance;
+            best = mask;
         }
     }
-    return NULL;//not found
+    return best;//not found
+}
+
+int scene_walk_check(Scene *scene,Vector2D start, Vector2D end,Vector2D *contact)
+{
+    Walkmask *mask = NULL;
+    Vector2D closestPoint,checkPoint;
+    int i,c,clipped = 0;
+    float    distance, bestDistance = -1;
+    // check walkmask and any exhibits that may be in the way to see if a player can walk to the desired point
+    if (!scene)return 0;
+    c = gfc_list_get_count(scene->walkmasks);
+    vector2d_copy(checkPoint,end);
+    for (i = 0; i < c;i++)
+    {
+        mask = (Walkmask*)gfc_list_get_nth(scene->walkmasks,i);
+        if (!mask)continue;
+        if (walkmask_edge_clip(mask,start, end,&checkPoint))
+        {
+            clipped = 1;
+            distance = vector2d_magnitude_between(start,checkPoint);
+            if ((bestDistance == -1)||(distance < bestDistance))
+            {
+                bestDistance = distance;
+                vector2d_copy(closestPoint,checkPoint);
+            }
+        }
+    }
+    if (contact)
+    {
+        if (clipped)
+        {
+            vector2d_move_towards(contact, closestPoint, start, 2);
+        }
+        else
+        {
+            vector2d_move_towards(contact, end, start, 2);
+        }
+    }
+    return clipped;
 }
 
 

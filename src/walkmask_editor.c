@@ -64,10 +64,14 @@ int walkmask_editor_update(Window *win,List *updateList)
     int i,count;
     Element *e;
     WalkmaskData* walkmask_data;
+    Vector2D mouse;
+    
     if (!win)return 0;
     if (!updateList)return 0;
     walkmask_data = (WalkmaskData*)win->data;
     if (!walkmask_data)return 0;
+
+    mouse = gf2d_mouse_get_position();
     count = gfc_list_get_count(updateList);
     for (i = 0; i < count; i++)
     {
@@ -96,6 +100,15 @@ int walkmask_editor_update(Window *win,List *updateList)
                 return 0;
         }
     }
+    if (mouse.x < 8)
+    {
+        win->dimensions.x = 0;
+    }
+    else if (!gf2d_window_mouse_in(win))
+    {
+        win->dimensions.x = -win->dimensions.w;
+    }
+
     if (gf2d_window_mouse_in(win))
     {
         return 0;

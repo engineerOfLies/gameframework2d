@@ -143,5 +143,15 @@ Scene *scene_get_active();
  */
 Walkmask *scene_get_walkmask_by_point(Scene *scene, Vector2D point);
 
+/**
+ * @brief check if the end point can be walked to, if it clips a walk mask get the position that the player CAN walk to
+ * @param scene the scene to check
+ * @param start the position that the player is in
+ * @param end the desired position to walk to
+ * @param contact a pointer to a vector that will be set with the best position that the player can walk to.
+ * @return 0 if the line from start to end does not clip any mask edges, 1 otherwise.
+ * on 1 contact is set to the new location, on 0 it is set to end
+ */
+int scene_walk_check(Scene *scene,Vector2D start, Vector2D end,Vector2D *contact);
 
 #endif

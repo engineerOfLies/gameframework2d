@@ -125,23 +125,12 @@ void editor_deselect_exhibit(Window *win)
 
 void editor_select_mask(Window *win, Walkmask *mask)
 {
-    Rect r;
     EditorData *data;
-    Vector2D resolution;
     if ((!win)||(!mask))return;
-    resolution = gf2d_graphics_get_resolution();
     editor_deselect_mask(win);
     data = (EditorData *)win->data;
     data->selectedWalkmask = mask;
-    r = walkmask_get_bounds(mask);
-    if (r.x > resolution.x / 2)
-    {
-        editor_window_new_subwindow(win,walkmask_editor(mask,vector2d(0,80)));
-    }
-    else
-    {
-        editor_window_new_subwindow(win,walkmask_editor(mask,vector2d(resolution.x - 200,80)));
-    }
+    editor_window_new_subwindow(win,walkmask_editor(mask,vector2d(0,80)));
 }
 
 void editor_select_exhibit(Window *win, Exhibit *exhibit)

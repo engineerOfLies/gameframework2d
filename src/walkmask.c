@@ -348,5 +348,44 @@ Walkmask *walkmask_load_from_json(SJson *json)
 
 }
 
+int walkmask_edge_clip(Walkmask *mask,Vector2D start, Vector2D end,Vector2D *contact)
+{
+    PointData *p1,*p2;
+    Vector2D best,poc;
+    float bestDistance = -1,distance;
+    int i,c;
+    int crossCount = 0;
+    if (!mask)return 0;
+
+    // for each point pair, check if the line described by the queryPoint crosses the edge.  Odd number means inside, even number means outside
+    c = gfc_list_get_count(mask->points);
+    for (i = 0; i < c; i++)
+    {
+        p1 = gfc_list_get_nth(mask->points,i);
+        p2 = gfc_list_get_nth(mask->points,p1->nextPoint);
+        if (gf2d_edge_intersect_poc(
+            gf2d_edge_from_vectors(start,end),
+            gf2d_edge_from_vectors(p1->position,p2->position),
+            &poc,
+            NULL))
+        {
+            crossCount++;
+            distance = vector2d_magnitude_between(start,poc);
+            if ((bestDistance == -1) || (distance < bestDistance))
+            {
+                vector2d_copy(best,poc);
+                bestDistance = distance;
+            }
+        }
+    }
+    if (crossCount)
+    {
+        if (contact)
+            *contact = best;
+        return 1;
+    }
+    return 0;
+}
+
 
 /*eol@eof*/

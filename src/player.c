@@ -39,11 +39,7 @@ int player_near_point(Entity *self,Vector2D position)
 
 int player_near_scene_point(Entity *player,Vector2D position)
 {
-    Rect r;
     if (!player)return 0;
-    r = gf2d_shape_get_bounds(player->shape);
-    position.y -= r.h;
-    position.x -= (r.w/2);
     return player_near_point(player,position);
 }
 
@@ -91,12 +87,8 @@ Entity *player_spawn(Vector2D position)
 
 void player_set_position(Entity *player,Vector2D position)
 {
-    Rect r;
     if (!player)return;
     vector2d_copy(player->position,position);
-    r = gf2d_shape_get_bounds(player->shape);
-    player->position.y -= r.h;
-    player->position.x -= (r.w/2);
 }
 
 void player_save(Entity *player)
@@ -137,14 +129,10 @@ Entity *player_load(char *filename)
 
 void player_walk_to(Entity *player,Vector2D position)
 {
-    Rect r;
     if (!player)return;
     player->state = ES_Walking;
     player->update = player_walk;
     vector2d_copy(player->targetPosition,position);
-    r = gf2d_shape_get_bounds(player->shape);
-    player->targetPosition.y -= r.h;
-    player->targetPosition.x -= (r.w/2);
     gf2d_actor_set_action(&player->actor,"walk");
 }
 

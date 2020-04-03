@@ -73,7 +73,7 @@ int exhibit_editor_update(Window *win,List *updateList)
                 break;
             case EM_Near:
                 exhibit_data->exhibit->near = gf2d_mouse_get_position();
-                vector2d_add(exhibit_data->exhibit->near,exhibit_data->exhibit->near,camera_get_offset());
+                vector2d_sub(exhibit_data->exhibit->near,exhibit_data->exhibit->near,camera_get_offset());
                 exhibit_data->mode = EM_Default;
                 break;
             case EM_Rect:
@@ -82,7 +82,7 @@ int exhibit_editor_update(Window *win,List *updateList)
                 rect.h = fabs(mouse.y - exhibit_data->click.y);
                 rect.x = MIN(mouse.x,exhibit_data->click.x);
                 rect.y = MIN(mouse.y,exhibit_data->click.y);
-                vector2d_add(rect,rect,camera_get_offset());
+                vector2d_sub(rect,rect,camera_get_offset());
                 exhibit_set_rect(exhibit_data->exhibit,rect);
                 exhibit_data->mode = EM_Default;
                 break;
