@@ -28,6 +28,18 @@ Window *hud_get()
     return _HUD;
 }
 
+void hud_show()
+{
+    if (!_HUD)return;
+    _HUD->dimensions.y = 0;
+}
+
+void hud_hide()
+{
+    if (!_HUD)return;
+    _HUD->dimensions.y = -_HUD->dimensions.h;
+}
+
 int hud_update(Window *win,List *updateList)
 {
     int i,count;
@@ -46,11 +58,11 @@ int hud_update(Window *win,List *updateList)
     mouse = gf2d_mouse_get_position();
     if (mouse.y < 8)
     {
-        win->dimensions.y = 0;
+        hud_show();
     }
     else if (!gf2d_window_mouse_in(win))
     {
-        win->dimensions.y = -win->dimensions.h;
+        hud_hide();
     }
 
     count = gfc_list_get_count(updateList);
@@ -60,8 +72,22 @@ int hud_update(Window *win,List *updateList)
         if (!e)continue;
         switch(e->index)
         {
-            case 0:
-                break;
+            case 11:
+                gf2d_mouse_set_function(MF_Interact);
+                hud_hide();
+                return 1;
+            case 21:
+                gf2d_mouse_set_function(MF_Walk);
+                hud_hide();
+                return 1;
+            case 31:
+                gf2d_mouse_set_function(MF_Look);
+                hud_hide();
+                return 1;
+            case 41:
+                gf2d_mouse_set_function(MF_Talk);
+                hud_hide();
+                return 1;
         }
     }
     return 0;

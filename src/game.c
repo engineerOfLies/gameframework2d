@@ -88,7 +88,10 @@ int main(int argc, char * argv[])
         
         gf2d_entity_think_all();
 
-        if ((!editorMode)&&(!windowsUpdated))scene_update(scene_get_active());
+        if ((!editorMode)&&(!windowsUpdated))
+        {
+            scene_update(scene_get_active());
+        }
                 
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
