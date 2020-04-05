@@ -13,7 +13,7 @@
         "bounds": [2,2,1,1],
         "color" : [255,255,255,255],
         "style": "vertical",
-        "item_size" : [168,64],
+        "item_size" : [168,60],
         "elements":
             [
                 {
@@ -62,11 +62,11 @@
                 "type": "label",
                 "name": "display_name_toggle",
                 "id" : 2,
-                "bounds": [0,0,1,40],
+                "bounds": [0,20,1,40],
                 "color" : [255,255,255,255],
                 "text":"display name off",
                 "justify" : "center",
-                "align" : "middle",
+                "align" : "bottom",
                 "style":"H5"
                 },
                 {
@@ -102,19 +102,58 @@
                 },
                 {
                 "type": "label",
-                "name": "actor file",
+                "name": "layer",
                 "id" : 3,
-                "bounds": [0,0,1,40],
+                "bounds": [0,20,1,40],
+                "color" : [255,255,255,255],
+                "text":"Layer: 0",
+                "justify" : "center",
+                "align" : "bottom",
+                "style":"H5"
+                },
+                {
+                "type": "button",
+                "id" : 53,
+                "bounds": [0,0,164,68],
+                "color" : [255,255,255,255],
+                "hotkey":"none",
+                "highColor" : [255,255,255,255],
+                "pressColor" : [255,255,255,255],
+                "label" :
+                    {
+                    "type": "label",
+                    "id" : 531,
+                    "bounds": [0,0,168,64],
+                    "color" : [255,255,255,255],
+                    "text":"Set Layer",
+                    "align" : "middle",
+                    "justify" : "center",
+                    "style":"H5"
+                    },
+                "actor" :
+                    {
+                    "type": "actor",
+                    "id" : 532,
+                    "bounds": [0,0,168,64],
+                    "color" : [255,255,255,255],
+                    "actor" : "actors/button.actor"
+                    }
+                },
+                {
+                "type": "label",
+                "name": "actor file",
+                "id" : 4,
+                "bounds": [0,20,1,40],
                 "color" : [255,255,255,255],
                 "text":"actors/",
                 "justify" : "center",
-                "align" : "middle",
+                "align" : "bottom",
                 "style":"H5"
                 },
                 {
                 "type": "button",
                 "name": "actor",
-                "id" : 53,
+                "id" : 54,
                 "bounds": [0,0,164,68],
                 "color" : [255,255,255,255],
                 "hotkey":"mask",
@@ -124,52 +163,10 @@
                     {
                     "type": "label",
                     "name": "Set_Actor",
-                    "id" : 531,
-                    "bounds": [0,0,168,64],
-                    "color" : [255,255,255,255],
-                    "text":"Set Actor",
-                    "align" : "middle",
-                    "justify" : "center",
-                    "style":"H5"
-                    },
-                "actor" :
-                    {
-                    "type": "actor",
-                    "name": "image",
-                    "id" : 532,
-                    "bounds": [0,0,168,64],
-                    "color" : [255,255,255,255],
-                    "actor" : "actors/button.actor"
-                    }
-                },
-                {
-                "type": "label",
-                "name": "action",
-                "id" : 4,
-                "bounds": [0,0,1,40],
-                "color" : [255,255,255,255],
-                "text":"none",
-                "justify" : "center",
-                "align" : "middle",
-                "style":"H5"
-                },
-                {
-                "type": "button",
-                "name": "set Action",
-                "id" : 54,
-                "bounds": [0,0,164,68],
-                "color" : [255,255,255,255],
-                "hotkey":"save",
-                "highColor" : [255,255,255,255],
-                "pressColor" : [255,255,255,255],
-                "label" :
-                    {
-                    "type": "label",
-                    "name": "Set_Action",
                     "id" : 541,
                     "bounds": [0,0,168,64],
                     "color" : [255,255,255,255],
-                    "text":"Set Action",
+                    "text":"Set Actor",
                     "align" : "middle",
                     "justify" : "center",
                     "style":"H5"
@@ -183,6 +180,17 @@
                     "color" : [255,255,255,255],
                     "actor" : "actors/button.actor"
                     }
+                },
+                {
+                "type": "label",
+                "name": "action",
+                "id" : 5,
+                "bounds": [0,20,1,40],
+                "color" : [255,255,255,255],
+                "text":"none",
+                "justify" : "center",
+                "align" : "bottom",
+                "style":"H5"
                 },
                 {
                 "type": "button",

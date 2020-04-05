@@ -28,6 +28,7 @@ typedef struct
     Vector2D         delta;
 }WalkmaskData;
 
+
 void walkmask_editor_set_style(Window *win, Walkmask *mask)
 {
     if ((!win)||(!mask))return;
@@ -67,37 +68,39 @@ int walkmask_editor_update(Window *win,List *updateList)
     Vector2D mouse;
     
     if (!win)return 0;
-    if (!updateList)return 0;
     walkmask_data = (WalkmaskData*)win->data;
     if (!walkmask_data)return 0;
 
     mouse = gf2d_mouse_get_position();
-    count = gfc_list_get_count(updateList);
-    for (i = 0; i < count; i++)
+    if (updateList)
     {
-        e = gfc_list_get_nth(updateList,i);
-        if (!e)continue;
-        switch(e->index)
+        count = gfc_list_get_count(updateList);
+        for (i = 0; i < count; i++)
         {
-            case 53:
-                if ((walkmask_data)&&(walkmask_data->mask))
-                {
-                    walkmask_data->mask->exterior = !walkmask_data->mask->exterior;
-                    walkmask_editor_set_style(win, walkmask_data->mask);
-                }
-                return 0;
-            case 54:
-                // cycle action mode
-                walkmask_data->mode = (walkmask_data->mode +1) % WM_MAX;
-                walkmask_editor_set_mode(win,walkmask_data->mode);
-                return 0;
-            case 56:
-                //subdivide
-                if (walkmask_data->selectedPoint)
-                {
-                    walkmask_subdivide_point(walkmask_data->mask,walkmask_data->selectedPoint);
-                }
-                return 0;
+            e = gfc_list_get_nth(updateList,i);
+            if (!e)continue;
+            switch(e->index)
+            {
+                case 53:
+                    if ((walkmask_data)&&(walkmask_data->mask))
+                    {
+                        walkmask_data->mask->exterior = !walkmask_data->mask->exterior;
+                        walkmask_editor_set_style(win, walkmask_data->mask);
+                    }
+                    return 0;
+                case 54:
+                    // cycle action mode
+                    walkmask_data->mode = (walkmask_data->mode +1) % WM_MAX;
+                    walkmask_editor_set_mode(win,walkmask_data->mode);
+                    return 0;
+                case 56:
+                    //subdivide
+                    if (walkmask_data->selectedPoint)
+                    {
+                        walkmask_subdivide_point(walkmask_data->mask,walkmask_data->selectedPoint);
+                    }
+                    return 0;
+            }
         }
     }
     if (mouse.x < 8)

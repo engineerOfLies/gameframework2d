@@ -175,6 +175,17 @@ void gf2d_entity_draw_all()
     }
 }
 
+void gf2d_entity_draw_all_by_layer(Uint32 layer)
+{
+    int i;
+    for (i = 0; i < entity_manager.maxEntities;i++)
+    {
+        if (entity_manager.entityList[i].inuse == 0)continue;
+        if (entity_manager.entityList[i].drawLayer != layer)continue;
+        gf2d_entity_draw(&entity_manager.entityList[i]);
+    }
+}
+
 void gf2d_entity_pre_sync_body(Entity *self)
 {
     if (!self)return;// nothin to do

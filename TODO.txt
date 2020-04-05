@@ -1,0 +1,44 @@
+LOTN
+Point & Click Adventure Game
+
+Programming TODO list
+
+ - General
+    - Port functionality from pdark for word wrapping text
+    - player / load save
+    - player history system
+    - Add Callbacks for Actor's action completion
+    
+ - Scenes
+    - Add Support for Layers
+        X entities draw according to layer, scenes call draw entities per layer
+        X Configure what position (y) will determine which layer the player entity is in
+        X Exhbits will state what layer they are in for draw purposes.
+    - Make in-Game HUD
+    - Add Support for Time of Day Color Effects for Background and Entities
+
+ - UI
+    - Main Game Screen
+    - Make Inventory / Skill / Spell menus
+        - Add selected Item/Skill/Spell to the Mouse Actions
+    - Make Dialog Box Window
+    - Player Stats Screen
+        - Way to customize combat actions
+    - Options Menu
+
+- Editor
+    - Key / Value Entry for map editor to add custom arguments to each exhibit
+    - Actor Editor for Exhibits
+    - Add conditional Spawns for Exhibits
+    - Build in function for each interact type for exhibits
+        - Add Near Requirement
+        - Add Additional Arguments
+
+- Combat
+    - Make Combat Screen 
+    - Make Command Menus
+    - Make AI
+        - Configurable from json
+
+ 
+ 

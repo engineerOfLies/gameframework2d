@@ -21,7 +21,98 @@ typedef struct
     Exhibit        *exhibit;
     ExhibitModes    mode;
     Vector2D        click;
+    Window         *subwindow;
+    TextLine        actionName;
+    TextLine        actorName;
+    TextLine        layerStr;
 }ExhibitData;
+
+void exhibit_editor_set_layer(Window *win)
+{
+    ExhibitData *exhibit_data;
+    TextLine label;
+    if ((!win)||(!win->data))return;
+    exhibit_data = (ExhibitData *)win->data;
+    gfc_line_sprintf(label,"Layer: %i",exhibit_data->exhibit->drawLayer);
+    gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,3),label);
+}
+
+void exhibit_editor_set_actor(Window *win)
+{
+    ExhibitData *exhibit_data;
+    if ((!win)||(!win->data))return;
+    exhibit_data = (ExhibitData *)win->data;
+    if (strlen(exhibit_data->exhibit->actor))
+    {
+        gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,4),exhibit_data->exhibit->actor);
+    }
+}
+
+void onActorChange(void *data)
+{
+    Window *win;
+    ExhibitData *exhibit_data;
+    Exhibit *exhibit;
+    if (!data)return;
+    win = data;
+    if (!win)return;
+    exhibit_data = win->data;
+    if (!exhibit_data)return;
+    exhibit = exhibit_data->exhibit;
+    gfc_line_cpy(exhibit_data->exhibit->actor,exhibit_data->actorName);
+    gfc_line_cpy(exhibit_data->exhibit->action,exhibit_data->actionName);
+    if (exhibit->entity)
+    {
+        gf2d_actor_free(&exhibit->entity->actor);
+        if (gf2d_actor_load(&exhibit->entity->actor,exhibit_data->actorName))
+        {
+            gf2d_actor_set_action(&exhibit->entity->actor,exhibit_data->actionName);
+        }
+    }
+    
+    exhibit_editor_set_actor(win);
+    exhibit_data->subwindow = NULL;
+}
+
+void onActorCancel(void *data)
+{
+    Window *win;
+    ExhibitData *exhibit_data;
+    if (!data)return;
+    win = data;
+    if (!win)return;
+    exhibit_data = win->data;
+    if (!exhibit_data)return;
+    exhibit_data->subwindow = NULL;
+}
+
+
+void onLayerSet(void *data)
+{
+    Window *win;
+    int layer;
+    ExhibitData *exhibit_data = NULL;
+    if (!data)return;
+    win = (Window *)data;
+    if (!win->data)return;
+    exhibit_data = (ExhibitData *)win->data;
+    exhibit_data->subwindow = NULL;
+    sscanf(exhibit_data->layerStr,"%i",&layer);
+    exhibit_set_draw_layer(exhibit_data->exhibit, layer);
+    exhibit_editor_set_layer(win);
+}
+
+void onLayerCancel(void *data)
+{
+    Window *win;
+    ExhibitData *exhibit_data = NULL;
+    if (!data)return;
+    win = (Window *)data;
+    if (!win->data)return;
+    exhibit_data = (ExhibitData *)win->data;
+    exhibit_data->subwindow = NULL;
+}
+
 
 void onExhibitNameCancel(void *data)
 {
@@ -100,6 +191,19 @@ int exhibit_editor_update(Window *win,List *updateList)
             case 51:
                 window_text_entry("Exhibit Name", exhibit_data->exhibit->name, win, GFCLINELEN, onExhibitNameChange,onExhibitNameCancel);
                 break;
+            case 53:
+                if (!exhibit_data->subwindow)
+                {
+                    gfc_line_sprintf(exhibit_data->layerStr,"%i",exhibit_data->exhibit->drawLayer);
+                    exhibit_data->subwindow = window_text_entry("Enter Exhibit Draw Layer", exhibit_data->layerStr, win, GFCLINELEN, onLayerSet,onLayerCancel);
+                }
+                break;
+            case 54:
+                if (!exhibit_data->subwindow)
+                {
+                    exhibit_data->subwindow = actor_editor_menu(exhibit_data->actorName,exhibit_data->actionName,win, onActorChange,onActorCancel);
+                }
+                break;
             case 55:
                 exhibit_data->mode = EM_Rect;
                 break;
@@ -174,14 +278,7 @@ Window *exhibit_editor(Exhibit *exhibit,Vector2D position)
     win->draw = exhibit_editor_draw;
     win->data = exhibit_data;
     gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,1),exhibit->name);
-    if (strlen(exhibit->actor))
-    {
-        gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,3),exhibit->actor);
-        if (strlen(exhibit->action))
-        {
-            gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,4),exhibit->action);
-        }
-    }
+    exhibit_editor_set_layer(win);
     return win;
 }
 

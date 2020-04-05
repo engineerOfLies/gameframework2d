@@ -60,6 +60,7 @@ Scene *scene_new()
         scene_manager.sceneList[i].walkmasks = gfc_list_new();
         scene_manager.sceneList[i].exhibits = gfc_list_new();
         scene_manager.sceneList[i].entities = gfc_list_new();
+        scene_manager.sceneList[i].layers = gfc_list_new();
         return &scene_manager.sceneList[i];
     }
     slog("failed to find a free scene in memory");
@@ -79,6 +80,14 @@ void scene_add_walkmask(Scene *scene,Walkmask *mask)
     scene->walkmasks = gfc_list_append(scene->walkmasks,mask);
 }
 
+void scene_add_layer(Scene *scene,Layer *layer)
+{
+    if ((!scene)||(!layer))return;
+    scene->layers = gfc_list_append(scene->layers,layer);
+    layer->index = gfc_list_get_item_index(scene->layers,layer);
+    slog("layer set to index %i",layer->index);
+}
+
 void scene_add_entity(Scene *scene, Entity *entity)
 {
     if ((!scene)||(!entity))return;
@@ -90,6 +99,7 @@ void scene_save(Scene *scene, char *filename)
     SJson *json = NULL, *array = NULL, *item = NULL;
     Exhibit *exhibit = NULL;
     Walkmask *mask = NULL;
+    Layer *layer = NULL;
     int i,count;
     if ((!scene)||(!filename))
     {
@@ -102,11 +112,6 @@ void scene_save(Scene *scene, char *filename)
     {
         slog("failed to make base json object for file safe");
         return;
-    }
-    if (scene->background.al)
-    {
-        sj_object_insert(json,"background",sj_new_str(scene->background.al->filename));
-        sj_object_insert(json,"action",sj_new_str(scene->action));
     }
     array = sj_array_new();
     sj_object_insert(json,"exhibits",array);
@@ -130,6 +135,18 @@ void scene_save(Scene *scene, char *filename)
         if (!item)continue;
         sj_array_append(array,item);
     }
+    array = sj_array_new();
+    sj_object_insert(json,"layers",array);
+    count = gfc_list_get_count(scene->layers);
+    for (i = 0; i < count;i++)
+    {
+        layer = (Layer*)gfc_list_get_nth(scene->layers,i);
+        if (!layer)continue;
+        item = layer_save_to_json(layer);
+        if (!item)continue;
+        sj_array_append(array,item);
+    }
+
     sj_save(json,filename);
     
     sj_free(json);
@@ -141,11 +158,11 @@ Scene *scene_load(char *filename)
     SJson *json;
     SJson *exhibits,*exhibitjs;
     SJson *walkmasks,*maskjs;
+    SJson *layers,*layerjs;
     Exhibit *exhibit;
     Walkmask *walkmask;
-    int i,count;
-    char *imageName;
-    
+    Layer *layer;
+    int i,count;    
     
     scene = scene_new();
     if (!scene)return NULL;
@@ -156,19 +173,12 @@ Scene *scene_load(char *filename)
         scene_free(scene);
         return NULL;
     }
-    imageName = (char *)sj_get_string_value(sj_object_get_value(json,"background"));
-    if (gf2d_actor_load(&scene->background,imageName))
-    {
-        imageName = (char *)sj_get_string_value(sj_object_get_value(json,"action"));
-        gfc_line_cpy(scene->action,imageName);
-        gf2d_actor_set_action(&scene->background,imageName);
-    }
     gfc_line_cpy(scene->filename,filename);
-    camera_set_bounds(0,0,scene->background.size.x,scene->background.size.y);
     exhibits = sj_object_get_value(json,"exhibits");
     if (exhibits)
     {
         count = sj_array_get_count(exhibits);
+        slog("%i exhibits found",count);
         for (i = 0;i < count; i++)
         {
             exhibitjs = sj_array_get_nth(exhibits,i);
@@ -195,7 +205,28 @@ Scene *scene_load(char *filename)
             }
         }
     }
-    
+
+    layers = sj_object_get_value(json,"layers");
+    if (layers)
+    {
+        count = sj_array_get_count(layers);
+        for (i = 0;i < count; i++)
+        {
+            layerjs = sj_array_get_nth(layers,i);
+            if (!layerjs)continue;
+            layer = layer_load_from_json(layerjs);
+            if (layer)
+            {
+                scene_add_layer(scene,layer);
+            }
+        }
+    }
+    layer = gfc_list_get_nth(scene->layers,0);
+    if (layer)
+    {
+        camera_set_bounds(0,0,layer->actor.size.x,layer->actor.size.y);
+    }
+
     scene->config = json;
     return scene;
 }
@@ -219,14 +250,15 @@ void scene_draw(Scene *scene)
 {
     int i,c;
     Walkmask *mask;
+    Layer *layer;
     if (!scene)return;
-    gf2d_actor_draw(
-        &scene->background,
-        camera_get_offset(),
-        NULL,
-        NULL,
-        NULL,
-        NULL);
+    c = gfc_list_get_count(scene->layers);
+    for (i = 0; i < c; i++)
+    {
+        layer = (Layer*)gfc_list_get_nth(scene->layers,i);
+        if (layer)layer_draw(layer);
+        gf2d_entity_draw_all_by_layer(i);
+    }
     if ((debugMode)||(editorMode))
     {
         c = gfc_list_get_count(scene->walkmasks);
@@ -277,11 +309,6 @@ void scene_update(Scene *scene)
     offset = camera_get_position();
     vector2d_add(destination,destination,offset);
     
-    if (!(gf2d_point_in_rect(destination,gf2d_rect(0,0,scene->background.size.x,scene->background.size.y))))
-    {
-        return;// clicked out of the scene
-    }
-
     count = gfc_list_get_count(scene->exhibits);
     for (i = 0; i < count; i++)
     {
@@ -296,16 +323,42 @@ void scene_update(Scene *scene)
     }
 }
 
+Layer *scene_get_background_layer(Scene *scene)
+{
+    if (!scene)return NULL;
+    return gfc_list_get_nth(scene->layers,0);
+}
 
+Layer *scene_get_layer_by_position(Scene *scene, Vector2D point)
+{
+    int i,c;
+    Layer *layer;
+    Layer *chosenLayer = NULL;
+    if (!scene)return NULL;
+    c = gfc_list_get_count(scene->layers);
+    for (i = 0; i < c; i++)
+    {
+        layer = gfc_list_get_nth(scene->layers,i);
+        if (!layer)continue;
+        if (point.y >= layer->layerBegin)
+        {
+            if ((chosenLayer == NULL) || (chosenLayer->layerBegin < layer->layerBegin))
+            {
+                chosenLayer = layer;
+            }
+        }
+    }
+    return chosenLayer;
+}
 void scene_free(Scene *scene)
 {
     int count,i;
     Exhibit *exhibit;
     Entity *ent;
     Walkmask *mask;
+    Layer *layer;
     if (!scene)return;
-    gf2d_actor_free(&scene->background);
-    
+
     count = gfc_list_get_count(scene->walkmasks);
     for (i = 0; i < count; i++)
     {
@@ -330,6 +383,14 @@ void scene_free(Scene *scene)
         gf2d_entity_free(ent);
     }
     gfc_list_delete(scene->entities);
+    count = gfc_list_get_count(scene->layers);
+    for (i = 0; i < count; i++)
+    {
+        layer = gfc_list_get_nth(scene->layers,i);
+        if (!layer)continue;
+        layer_free(layer);
+    }
+    gfc_list_delete(scene->layers);
     sj_free(scene->config);
     memset(scene,0,sizeof(Scene));
 }

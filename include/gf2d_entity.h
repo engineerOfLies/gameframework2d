@@ -26,6 +26,7 @@ typedef struct Entity_S
 {
     Uint8 inuse;                            /**<never touch this*/
     Uint64  id;                             /**<auto increment id for this entity*/
+    Uint32  drawLayer;                      /**<for draw by layer games*/
 
     TextLine name;                          /**<name of the entity, for information purposes*/
     EntityState state;                      /**<state of the entity*/
@@ -113,6 +114,13 @@ void gf2d_entity_draw(Entity *self);
  * @brief draw all active entities in the system
  */
 void gf2d_entity_draw_all();
+
+/**
+ * @brief draw aall active entities in the given layer
+ * @param layer only entities that match this draw layer will be drawn
+ */
+void gf2d_entity_draw_all_by_layer(Uint32 layer);
+
 
 /**
  * @brief call all think function for all active entities in the system

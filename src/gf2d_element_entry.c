@@ -14,13 +14,26 @@ void gf2d_element_entry_draw(Element *element,Vector2D offset)
     if (!entry)return;
     vector2d_add(position,offset,element->bounds);
     gf2d_element_draw(entry->label,position);
-    gf2d_rect_draw(
-        gf2d_rect(
-            element->bounds.x + position.x,
-            element->bounds.y + position.y,
-            element->bounds.w,
-            element->bounds.h),
-        gfc_color8(200,200,200,255));
+    if (!entry->has_focus)
+    {
+        gf2d_rect_draw(
+            gf2d_rect(
+                element->bounds.x + position.x,
+                element->bounds.y + position.y,
+                element->bounds.w,
+                element->bounds.h),
+            gfc_color8(150,150,150,255));
+    }
+    else
+    {
+        gf2d_rect_draw(
+            gf2d_rect(
+                element->bounds.x + position.x,
+                element->bounds.y + position.y,
+                element->bounds.w,
+                element->bounds.h),
+            gfc_color8(200,200,200,255));
+    }
 }
 
 List *gf2d_element_entry_update(Element *element,Vector2D offset)

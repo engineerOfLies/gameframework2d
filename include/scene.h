@@ -7,7 +7,7 @@
 #include "gf2d_entity.h"
 #include "gf2d_actor.h"
 #include "walkmask.h"
-
+#include "layers.h"
 
 // NOTE: this forward declaration is necessary because Exhibits need to know about Scenes and Scenes need to know about exhibits.
 // This is how you become your own grandfather
@@ -17,9 +17,8 @@ typedef struct
 {
     Uint8      _inuse;              /**<no touchy*/
     TextLine    filename;           /**<name of the file loaded*/
-    Actor       background;         /**<background actor*/
-    TextLine    action;             /**<action to take for the background actor*/
     SJson      *config;             /**<additional configuration for the scene*/
+    List       *layers;           /**<list of exhibits in this scene*/
     List       *exhibits;           /**<list of exhibits in this scene*/
     List       *entities;           /**<list of entities spawned in this scene*/
     List       *walkmasks;          /**<bounds for where a player can walk in a scene*/
@@ -39,6 +38,21 @@ void scene_add_walkmask(Scene *scene,Walkmask *mask);
  * @param exhibit the exhibit to add
  */
 void scene_add_exhibit(Scene *scene,Exhibit *exhibit);
+
+void scene_add_layer(Scene *scene,Layer *layer);
+
+/**
+ * @brief it is assumed that the background layer is the largest layer that many things will be based on.
+ */
+Layer *scene_get_background_layer(Scene *scene);
+
+/**
+ * @brief get the best layer chosen by the provided reference point
+ * @param scene the scene to check
+ * @param point the point to check with
+ * @return NULL on no layer found or error, the best fit layer otherwise
+ */
+Layer *scene_get_layer_by_position(Scene *scene, Vector2D point);
 
 /**
  * @brief add a new entity to the scene

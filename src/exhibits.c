@@ -208,6 +208,7 @@ SJson *exhibit_to_json(Exhibit *exhibit)
     }
     sj_object_insert(json,"name",sj_new_str(exhibit->name));
     sj_object_insert(json,"displayName",sj_new_bool(exhibit->displayName));
+    sj_object_insert(json,"drawLayer",sj_new_int(exhibit->drawLayer));
     sj_object_insert(json,"actor",sj_new_str(exhibit->actor));
     sj_object_insert(json,"action",sj_new_str(exhibit->action));
     sj_object_insert(json,"rect",sj_vector4d_new(gf2d_rect_to_vector4d(exhibit->rect)));
@@ -222,6 +223,7 @@ Exhibit *exhibit_load(SJson *json)
     Vector4D vector = {0};
     Exhibit *exhibit = NULL;
     const char *string = NULL;
+    int tempInt;
     if (!json)return NULL;
 
     exhibit = exhibit_new();
@@ -234,6 +236,10 @@ Exhibit *exhibit_load(SJson *json)
     exhibit->rect = gf2d_rect(vector.x,vector.y,vector.z,vector.w);
 
     sj_value_as_vector2d(sj_object_get_value(json,"near"),&exhibit->near);
+    if (sj_get_integer_value(sj_object_get_value(json,"drawLayer"),&tempInt))
+    {
+        exhibit->drawLayer = tempInt;
+    }
 
     exhibit->args = sj_copy(sj_object_get_value(json,"args"));
 
@@ -290,10 +296,20 @@ Entity *exhibit_entity_spawn(Exhibit *exhibit)
     ent->shape = gf2d_shape_rect(0,0, exhibit->rect.w, exhibit->rect.h);
     if (editorMode)ent->draw = exhibit_draw;
     ent->data = exhibit;
+    ent->drawLayer = exhibit->drawLayer;
     exhibit->entity = ent;
     return ent;
 }
 
+void exhibit_set_draw_layer(Exhibit *exhibit, Uint32 layer)
+{
+    if (!exhibit)return;
+    exhibit->drawLayer = layer;
+    if (exhibit->entity)
+    {
+        exhibit->entity->drawLayer = layer;
+    }
+}
 
 Exhibit *exhibit_get_mouse_over_from_scene(Scene *scene)
 {

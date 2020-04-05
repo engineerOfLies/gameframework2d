@@ -2,6 +2,7 @@
 #include "simple_json.h"
 #include "gf2d_config.h"
 #include "camera.h"
+#include "scene.h"
 #include "player.h"
 
 typedef struct
@@ -54,7 +55,7 @@ void player_walk(Entity *self)
         self->state = ES_Idle;
         gf2d_actor_set_action(&self->actor,"idle");
         vector2d_set(self->velocity,0,0);
-        self->update = player_idle;
+        self->think = player_idle;
         player_run_callback(self);
         return;
     }
@@ -78,7 +79,7 @@ Entity *player_spawn(Vector2D position)
         gf2d_entity_free(player);
         return NULL;
     }
-    player->update = player_idle;
+    player->think = player_idle;
     player->data = pd;
     player->drawColor = gfc_color(1,0,0,1);
     vector2d_copy(player->position,position);
@@ -131,7 +132,7 @@ void player_walk_to(Entity *player,Vector2D position)
 {
     if (!player)return;
     player->state = ES_Walking;
-    player->update = player_walk;
+    player->think = player_walk;
     vector2d_copy(player->targetPosition,position);
     gf2d_actor_set_action(&player->actor,"walk");
 }
@@ -145,6 +146,18 @@ void player_run_callback(Entity *player)
     player->nextAction = NULL;
     gfc_callback_call(call);//just in case the callback sets the player's next callback
     gfc_callback_free(call);
+}
+
+void player_update(Entity *player)
+{
+    Scene *scene;
+    Layer *layer;
+    if (!player)return;
+    scene = scene_get_active();
+    if (!scene)return;
+    layer = scene_get_layer_by_position(scene, player->position);
+    player->drawLayer = layer->index;
+    vector2d_copy(player->scale,layer->playerScale);
 }
 
 void player_set_callback(Entity *player,void(*call)(void *),void *data)

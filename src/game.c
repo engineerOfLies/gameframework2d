@@ -95,7 +95,6 @@ int main(int argc, char * argv[])
             if (!editorMode)
             {   
                 scene_draw(scene_get_active());
-                gf2d_entity_draw_all();
             }
             //UI elements last
             gf2d_windows_draw_all();

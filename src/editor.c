@@ -7,6 +7,8 @@
 #include "gf2d_windows.h"
 #include "gf2d_elements.h"
 #include "gf2d_element_label.h"
+#include "gf2d_draw.h"
+#include "gf2d_shape.h"
 #include "gf2d_mouse.h"
 
 #include "camera.h"
@@ -15,7 +17,9 @@
 #include "exhibits.h"
 #include "exhibit_editor.h"
 #include "walkmask_editor.h"
+#include "layer_editor.h"
 #include "scene.h"
+#include "layers.h"
 
 extern void exitGame();
 extern void exitCheck();
@@ -34,6 +38,7 @@ typedef struct
     Scene      *scene;
     Exhibit    *selectedExhibit;
     Walkmask   *selectedWalkmask;
+    Layer      *selectedLayer;
     TextLine    backgroundFileName;
     TextLine    backgroundActionName;
     Window     *subWindow;
@@ -84,11 +89,30 @@ void editor_window_new_subwindow(Window *win,Window *sub)
 
 int editor_window_draw(Window *win)
 {
+    int i,c;
+    Layer *layer;
+    Vector2D res,offset;
     EditorData *data;
     if (!win->data)return 0;
     data = win->data;
     scene_draw(data->scene);
-    gf2d_entity_draw_all();
+    
+    res = gf2d_graphics_get_resolution();
+    c = gfc_list_get_count(data->scene->layers);
+    for (i = 0;i < c; i++)
+    {
+        gf2d_entity_draw_all_by_layer(i);
+        layer = gfc_list_get_nth(data->scene->layers,i);
+        if (!layer)continue;
+        if (data->editorMode == EM_Layers)
+        {
+            if ((data->selectedLayer == NULL) || (data->selectedLayer == layer))
+            {
+                offset = camera_get_offset();
+                gf2d_draw_rect_filled(gfc_sdl_rect(0,layer->layerBegin + offset.y,res.x,res.y-layer->layerBegin - offset.y),vector4d(255,255,0,128));
+            }
+        }
+    }
     return 0;
 }
 
@@ -109,6 +133,16 @@ void editor_deselect_mask(Window *win)
     data = (EditorData *)win->data;
     if ((!data)||(!data->selectedWalkmask))return;
     data->selectedWalkmask = NULL;
+    editor_window_close_subwindow(win);
+}
+
+void editor_deselect_layer(Window *win)
+{
+    EditorData *data;
+    if (!win)return;
+    data = (EditorData *)win->data;
+    if ((!data)||(!data->selectedLayer))return;
+    data->selectedLayer = NULL;
     editor_window_close_subwindow(win);
 }
 
@@ -133,6 +167,17 @@ void editor_select_mask(Window *win, Walkmask *mask)
     editor_window_new_subwindow(win,walkmask_editor(mask,vector2d(0,80)));
 }
 
+void editor_select_layer(Window *win, Layer *layer)
+{
+    EditorData *data;
+    if ((!win)||(!layer))return;
+    editor_deselect_mask(win);
+    data = (EditorData *)win->data;
+    data->selectedLayer = layer;
+    editor_window_new_subwindow(win,layer_editor(layer,win,data->scene));
+}
+
+
 void editor_select_exhibit(Window *win, Exhibit *exhibit)
 {
     EditorData *data;
@@ -151,37 +196,6 @@ void editor_select_exhibit(Window *win, Exhibit *exhibit)
     {
         editor_window_new_subwindow(win,exhibit_editor(exhibit,vector2d(resolution.x - 200,80)));
     }
-}
-
-void onBackgroundActorChange(void *data)
-{
-    Window *win;
-    EditorData *editor;
-    Vector2D zero = {0};
-    if (!data)return;
-    win = data;
-    if (!win)return;
-    editor = win->data;
-    if (!editor)return;
-    gf2d_actor_free(&editor->scene->background);
-    gfc_line_cpy(editor->scene->action,editor->backgroundActionName);
-    gf2d_actor_load(&editor->scene->background,editor->backgroundFileName);
-    gf2d_actor_set_action(&editor->scene->background,editor->scene->action);
-    camera_set_bounds(0,0,editor->scene->background.size.x,editor->scene->background.size.y);
-    camera_set_focus(zero);
-    editor_window_close_subwindow(win);
-}
-
-void onBackgroundCancel(void *data)
-{
-    Window *win;
-    EditorData *editor;
-    if (!data)return;
-    win = data;
-    if (!win)return;
-    editor = win->data;
-    if (!editor)return;
-    editor_window_close_subwindow(win);
 }
 
 void editor_window_set_mode(Window *win, EditorModes mode)
@@ -212,6 +226,7 @@ int editor_window_update(Window *win,List *updateList)
 {
     int i,count;
     Walkmask *mask = NULL;
+    Layer *layer = NULL;
     Element *e;
     Exhibit *exhibit = NULL;
     EditorData *data;
@@ -240,14 +255,13 @@ int editor_window_update(Window *win,List *updateList)
                 editor_window_set_mode(win, data->editorMode);
                 break;
             case 51:
-                //background selector
-                if (data->subWindow)break;
-                if (data->scene->background.al != NULL)
-                {
-                    gfc_line_cpy(data->backgroundFileName,data->scene->background.al->filename);
-                    gfc_line_cpy(data->backgroundActionName,gf2d_actor_get_action_name(&data->scene->background));
-                }
-                editor_window_new_subwindow(win,actor_editor_menu(data->backgroundFileName,data->backgroundActionName,win, onBackgroundActorChange,onBackgroundCancel));
+                //new layer
+                editor_window_close_subwindow(win);
+                layer = layer_new();
+                scene_add_layer(data->scene,layer);
+                data->selectedLayer = layer;
+                editor_window_set_mode(win, EM_Layers);
+                editor_select_layer(win, layer);
                 break;
             case 52:
                 // new mask
@@ -305,6 +319,17 @@ int editor_window_update(Window *win,List *updateList)
                 else
                 {
                     editor_deselect_mask(win);
+                }
+                break;
+            case EM_Layers:
+                layer = scene_get_layer_by_position(data->scene, mouse);
+                if (layer != NULL)
+                {
+                    editor_select_layer(win, layer);
+                }
+                else
+                {
+                    editor_deselect_layer(win);
                 }
                 break;
             default:

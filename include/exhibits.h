@@ -14,6 +14,7 @@
 struct Exhibit_S
 {
     TextLine    name;           /**<exhibit name*/
+    Uint32      drawLayer;      /**<layer for when this exhibit gets drawn*/
     Bool        displayName;    /**<if the interaction needs to be displayed.*/
     TextLine    actor;          /**<actor to use for this exhibit*/
     TextLine    action;         /**<action to use for the actor for the exhibit*/
@@ -75,6 +76,8 @@ Exhibit *exhibit_get_mouse_over_from_scene(Scene *scene);
  * @param rect the new rect for the exhibit
  */
 void exhibit_set_rect(Exhibit *exhibit,Rect rect);
+
+void exhibit_set_draw_layer(Exhibit *exhibit, Uint32 layer);
 
 /**
  * @brief get the json that will describe the exhibit

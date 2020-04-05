@@ -1,66 +1,83 @@
 {
 "window":{
     "color" : [255,255,255, 255],
-    "dimensions" : [0,0,1,80],
+    "dimensions" : [0,80,200,1],
     "justify" : "center",
     "align" : "top",
     "elements":
     [
-          {
+      {
         "type": "list",
-        "name": "vlist",
-        "id" : -10,
+        "name": "list",
+        "id" : -1,
         "bounds": [2,2,1,1],
         "color" : [255,255,255,255],
         "style": "vertical",
-        "item_size" : [1,64],
-        "elements":
-            [
-
-      {
-        "type": "list",
-        "name": "hlist",
-        "id" : 0,
-        "bounds": [2,2,1,1],
-        "color" : [255,255,255,255],
-        "style": "horizontal",
         "item_size" : [168,64],
         "elements":
             [
                 {
-                "type": "button",
-                "name": "New Layer",
-                "id" : 51,
-                "bounds": [0,0,168,64],
-                "hotkey":"background",
+                "type": "label",
+                "id" : 0,
+                "bounds": [0,0,1,40],
                 "color" : [255,255,255,255],
+                "text":"Layer Editor",
+                "justify" : "center",
+                "align" : "middle",
+                "style":"H5"
+                },
+                {
+                "type": "label",
+                "id" : 1,
+                "bounds": [0,20,1,40],
+                "color" : [255,255,255,255],
+                "text":"Mode: Layer Begin",
+                "justify" : "center",
+                "align" : "bottom",
+                "style":"H5"
+                },
+                {
+                "type": "button",
+                "id" : 51,
+                "bounds": [0,0,164,68],
+                "color" : [255,255,255,255],
+                "hotkey":"mask",
                 "highColor" : [255,255,255,255],
                 "pressColor" : [255,255,255,255],
                 "label" :
                     {
                     "type": "label",
-                    "name": "background",
-                    "id" : 511,
+                    "name": "label",
+                    "id" : 531,
                     "bounds": [0,0,168,64],
                     "color" : [255,255,255,255],
-                    "text":"New Layer",
-                    "justify" : "center",
+                    "text":"Mode Switch",
                     "align" : "middle",
+                    "justify" : "center",
                     "style":"H5"
                     },
                 "actor" :
                     {
                     "type": "actor",
                     "name": "image",
-                    "id" : 512,
+                    "id" : 532,
                     "bounds": [0,0,168,64],
                     "color" : [255,255,255,255],
                     "actor" : "actors/button.actor"
                     }
                 },
                 {
+                "type": "label",
+                "id" : 2,
+                "bounds": [0,20,1,40],
+                "color" : [255,255,255,255],
+                "text":"actors/",
+                "justify" : "center",
+                "align" : "bottom",
+                "style":"H5"
+                },
+                {
                 "type": "button",
-                "name": "mask",
                 "id" : 52,
                 "bounds": [0,0,164,68],
                 "color" : [255,255,255,255],
@@ -70,11 +87,11 @@
                 "label" :
                     {
                     "type": "label",
-                    "name": "mask",
+                    "name": "label",
                     "id" : 521,
                     "bounds": [0,0,168,64],
                     "color" : [255,255,255,255],
-                    "text":"Mask",
+                    "text":"Load Actor",
                     "align" : "middle",
                     "justify" : "center",
                     "style":"H5"
@@ -90,8 +107,17 @@
                     }
                 },
                 {
+                "type": "label",
+                "id" : 3,
+                "bounds": [0,20,1,40],
+                "color" : [255,255,255,255],
+                "text":"Scale (1,1)",
+                "justify" : "center",
+                "align" : "bottom",
+                "style":"H5"
+                },
+                {
                 "type": "button",
-                "name": "New Exhibit",
                 "id" : 53,
                 "bounds": [0,0,164,68],
                 "color" : [255,255,255,255],
@@ -101,11 +127,11 @@
                 "label" :
                     {
                     "type": "label",
-                    "name": "exhbit_l",
-                    "id" : 521,
+                    "name": "label",
+                    "id" : 531,
                     "bounds": [0,0,168,64],
                     "color" : [255,255,255,255],
-                    "text":"New Exhibit",
+                    "text":"Set Scale",
                     "align" : "middle",
                     "justify" : "center",
                     "style":"H5"
@@ -114,7 +140,7 @@
                     {
                     "type": "actor",
                     "name": "image",
-                    "id" : 522,
+                    "id" : 532,
                     "bounds": [0,0,168,64],
                     "color" : [255,255,255,255],
                     "actor" : "actors/button.actor"
@@ -122,21 +148,20 @@
                 },
                 {
                 "type": "button",
-                "name": "Save As",
-                "id" : 54,
+                "id" : 1000,
                 "bounds": [0,0,164,68],
                 "color" : [255,255,255,255],
-                "hotkey":"save",
+                "hotkey":"close",
                 "highColor" : [255,255,255,255],
                 "pressColor" : [255,255,255,255],
                 "label" :
                     {
                     "type": "label",
-                    "name": "save_l",
-                    "id" : 521,
+                    "name": "label",
+                    "id" : 531,
                     "bounds": [0,0,168,64],
                     "color" : [255,255,255,255],
-                    "text":"Save As",
+                    "text":"Done",
                     "align" : "middle",
                     "justify" : "center",
                     "style":"H5"
@@ -145,99 +170,13 @@
                     {
                     "type": "actor",
                     "name": "image",
-                    "id" : 522,
-                    "bounds": [0,0,168,64],
-                    "color" : [255,255,255,255],
-                    "actor" : "actors/button.actor"
-                    }
-                },
-                {
-                "type": "button",
-                "name": "Load",
-                "id" : 55,
-                "bounds": [0,0,164,68],
-                "color" : [255,255,255,255],
-                "hotkey":"load",
-                "highColor" : [255,255,255,255],
-                "pressColor" : [255,255,255,255],
-                "label" :
-                    {
-                    "type": "label",
-                    "name": "load_l",
-                    "id" : 521,
-                    "bounds": [0,0,168,64],
-                    "color" : [255,255,255,255],
-                    "text":"Load",
-                    "align" : "middle",
-                    "justify" : "center",
-                    "style":"H5"
-                    },
-                "actor" :
-                    {
-                    "type": "actor",
-                    "name": "image",
-                    "id" : 522,
-                    "bounds": [0,0,168,64],
-                    "color" : [255,255,255,255],
-                    "actor" : "actors/button.actor"
-                    }
-                },
-                {
-                "type": "button",
-                "name": "Quit",
-                "id" : 56,
-                "bounds": [0,0,164,68],
-                "color" : [255,255,255,255],
-                "hotkey":"quit",
-                "highColor" : [255,255,255,255],
-                "pressColor" : [255,255,255,255],
-                "label" :
-                    {
-                    "type": "label",
-                    "name": "quit_l",
-                    "id" : 521,
-                    "bounds": [0,0,168,64],
-                    "color" : [255,255,255,255],
-                    "text":"Quit",
-                    "align" : "middle",
-                    "justify" : "center",
-                    "style":"H5"
-                    },
-                "actor" :
-                    {
-                    "type": "actor",
-                    "name": "image",
-                    "id" : 522,
+                    "id" : 532,
                     "bounds": [0,0,168,64],
                     "color" : [255,255,255,255],
                     "actor" : "actors/button.actor"
                     }
                 }
             ]
-      },
-      {
-        "type": "button",
-        "name": "Mode",
-        "id" : 1000,
-        "bounds": [0,25,164,68],
-        "color" : [255,255,255,255],
-        "hotkey":"mode",
-        "highColor" : [255,255,255,255],
-        "pressColor" : [255,255,255,255],
-        "label" :
-            {
-            "type": "label",
-            "name": "mode_l",
-            "id" : 1001,
-            "bounds": [20,0,168,64],
-            "color" : [255,255,255,255],
-            "text":"Mode: Exhibit",
-            "align" : "middle",
-            "justify" : "left",
-            "style":"H6"
-            }
-      }
-      ]
       }
     ]
     }

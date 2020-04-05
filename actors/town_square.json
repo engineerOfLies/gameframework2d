@@ -1,0 +1,22 @@
+{
+    "actor":
+    {
+        "sprite": "images/backgrounds/townSquare_layer.png",
+        "frameWidth": 320,
+        "frameHeight": 200,
+        "framesPerLine": 4,
+        "scale": [4,4],
+        "color": [255,255,255,255],
+        "colorSpecial": [255,255,255,255],
+        "actionList":
+        [
+            {
+                "action": "layer1",
+                "startFrame": 0,
+                "endFrame": 0,
+                "frameRate": 0,
+                "type": "loop"
+            }
+        ]
+    }
+}

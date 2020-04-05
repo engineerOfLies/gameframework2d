@@ -6,6 +6,7 @@
 
 Window *editor_window(Scene *scene);
 Window *editor_menu();
+void editor_deselect_layer(Window *win);
 
 
 #endif
