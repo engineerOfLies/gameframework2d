@@ -16,8 +16,7 @@
 #include "camera.h"
 #include "scene.h"
 #include "editor.h"
-#include "player.h"
-#include "hud.h"
+#include "main_menu.h"
 
 static int _done = 0;
 static Window *_quit = NULL;
@@ -52,7 +51,6 @@ int main(int argc, char * argv[])
 {
     /*variable declarations*/
     int windowsUpdated = 0;
-    Entity *player;
         
     init_all(argc,argv);
     
@@ -60,18 +58,15 @@ int main(int argc, char * argv[])
     // game specific setup
         // init mouse, editor window
     gf2d_mouse_load("actors/mouse.json");
+    gf2d_mouse_set_function(MF_Pointer);
     
     if (editorMode)
     {
         editor_menu();
-        gf2d_mouse_set_function(MF_Pointer);
     }
     else
     {
-        gf2d_mouse_set_function(MF_Walk);
-        player = player_spawn(vector2d(300,300));
-        scene_next_scene("scenes/testlevel.json", player, "player_start");
-        hud_open(player);
+        main_menu();
     }
 
     
@@ -112,7 +107,6 @@ int main(int argc, char * argv[])
         }
    //     slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
-    player_free(player);
     slog("---==== END ====---");
     return 0;
 }
