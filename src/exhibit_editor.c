@@ -145,9 +145,18 @@ int exhibit_editor_update(Window *win,List *updateList)
     ExhibitData* exhibit_data;
     Vector2D mouse;
     if (!win)return 0;
-    if (!updateList)return 0;
     exhibit_data = (ExhibitData*)win->data;
     if (!exhibit_data)return 0;
+    
+    mouse = gf2d_mouse_get_position();
+    if (mouse.x < 8)
+    {
+        win->dimensions.x = 0;
+    }
+    else if (!gf2d_window_mouse_in(win))
+    {
+        win->dimensions.x = -win->dimensions.w;
+    }
 
     if (gf2d_mouse_button_pressed(0))
     {
@@ -212,6 +221,7 @@ int exhibit_editor_update(Window *win,List *updateList)
                 break;
         }
     }
+
     return 0;
 }
 

@@ -17,6 +17,7 @@
 #include "scene.h"
 #include "editor.h"
 #include "player.h"
+#include "hud.h"
 
 static int _done = 0;
 static Window *_quit = NULL;
@@ -70,6 +71,7 @@ int main(int argc, char * argv[])
         gf2d_mouse_set_function(MF_Walk);
         player = player_spawn(vector2d(300,300));
         scene_next_scene("scenes/testlevel.json", player, "player_start");
+        hud_open(player);
     }
 
     

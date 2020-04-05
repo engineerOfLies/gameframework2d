@@ -7,6 +7,7 @@
 #include "camera.h"
 #include "player.h"
 #include "exhibits.h"
+#include "hud.h"
 
 extern int editorMode;
 extern int debugMode;
@@ -303,6 +304,7 @@ void scene_update(Scene *scene)
         return;
     }
     if (!gf2d_mouse_button_released(0))return;
+    if (hud_mouse_check())return;
     
     //get the mouse click position in scene relative space
     destination = gf2d_mouse_get_position();

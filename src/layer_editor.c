@@ -319,8 +319,4 @@ Window *layer_editor(Layer *layer,Window *parent,Scene *scene)
     return win;
 }
 
-
-/*eol@eof*/
-
-
 /*eol@eof*/

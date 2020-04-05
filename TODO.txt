@@ -14,7 +14,8 @@ Programming TODO list
         X entities draw according to layer, scenes call draw entities per layer
         X Configure what position (y) will determine which layer the player entity is in
         X Exhbits will state what layer they are in for draw purposes.
-    - Make in-Game HUD
+        
+    - Make in-Game HUD - in progress
     - Add Support for Time of Day Color Effects for Background and Entities
 
  - UI

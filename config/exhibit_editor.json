@@ -1,7 +1,7 @@
 {
 "window":{
     "color" : [255,255,255, 255],
-    "dimensions" : [0,80,200,1],
+    "dimensions" : [0,0,200,1],
     "justify" : "center",
     "align" : "top",
     "elements":
@@ -10,7 +10,7 @@
         "type": "list",
         "name": "list",
         "id" : 0,
-        "bounds": [2,2,1,1],
+        "bounds": [2,0,1,1],
         "color" : [255,255,255,255],
         "style": "vertical",
         "item_size" : [168,60],
@@ -53,48 +53,6 @@
                     "type": "actor",
                     "name": "image",
                     "id" : 512,
-                    "bounds": [0,0,168,64],
-                    "color" : [255,255,255,255],
-                    "actor" : "actors/button.actor"
-                    }
-                },
-                {
-                "type": "label",
-                "name": "display_name_toggle",
-                "id" : 2,
-                "bounds": [0,20,1,40],
-                "color" : [255,255,255,255],
-                "text":"display name off",
-                "justify" : "center",
-                "align" : "bottom",
-                "style":"H5"
-                },
-                {
-                "type": "button",
-                "name": "display_button",
-                "id" : 52,
-                "bounds": [0,0,164,68],
-                "color" : [255,255,255,255],
-                "hotkey":"mask",
-                "highColor" : [255,255,255,255],
-                "pressColor" : [255,255,255,255],
-                "label" :
-                    {
-                    "type": "label",
-                    "name": "display",
-                    "id" : 521,
-                    "bounds": [0,0,168,64],
-                    "color" : [255,255,255,255],
-                    "text":"Toggle Display",
-                    "align" : "middle",
-                    "justify" : "center",
-                    "style":"H6"
-                    },
-                "actor" :
-                    {
-                    "type": "actor",
-                    "name": "image",
-                    "id" : 522,
                     "bounds": [0,0,168,64],
                     "color" : [255,255,255,255],
                     "actor" : "actors/button.actor"
@@ -180,17 +138,6 @@
                     "color" : [255,255,255,255],
                     "actor" : "actors/button.actor"
                     }
-                },
-                {
-                "type": "label",
-                "name": "action",
-                "id" : 5,
-                "bounds": [0,20,1,40],
-                "color" : [255,255,255,255],
-                "text":"none",
-                "justify" : "center",
-                "align" : "bottom",
-                "style":"H5"
                 },
                 {
                 "type": "button",

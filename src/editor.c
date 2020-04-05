@@ -181,21 +181,12 @@ void editor_select_layer(Window *win, Layer *layer)
 void editor_select_exhibit(Window *win, Exhibit *exhibit)
 {
     EditorData *data;
-    Vector2D resolution;
     if ((!win)||(!exhibit))return;
-    resolution = gf2d_graphics_get_resolution();
     editor_deselect_exhibit(win);
     data = (EditorData *)win->data;
     data->selectedExhibit = exhibit;
     exhibit->entity->drawColor = gfc_color(0,1,1,1);
-    if (exhibit->rect.x > resolution.x / 2)
-    {
-        editor_window_new_subwindow(win,exhibit_editor(exhibit,vector2d(0,80)));
-    }
-    else
-    {
-        editor_window_new_subwindow(win,exhibit_editor(exhibit,vector2d(resolution.x - 200,80)));
-    }
+    editor_window_new_subwindow(win,exhibit_editor(exhibit,vector2d(0,0)));
 }
 
 void editor_window_set_mode(Window *win, EditorModes mode)
@@ -276,6 +267,7 @@ int editor_window_update(Window *win,List *updateList)
                 // new exhibit
                 editor_window_close_subwindow(win);
                 exhibit = exhibit_new();
+                exhibit_set_rect(exhibit,gf2d_rect(100,100,100,100));
                 scene_add_exhibit(data->scene,exhibit);
                 scene_add_entity(data->scene, exhibit_entity_spawn(exhibit));
                 editor_window_set_mode(win, EM_Exhibit);

@@ -1,1 +1,253 @@
-{"exhibits":[{"name":"player_start","displayName":"false","drawLayer":"0","actor":"","action":"","rect":["300.000000","340.000000","60.000000","120.000000"],"near":["360.000000","459.000000"]},{"name":"Town Gate","displayName":"true","drawLayer":"0","actor":"","action":"","rect":["690.000000","200.000000","150.000000","150.000000"],"near":["709.000000","363.000000"],"args":{"exit":{"scene":"scenes/townSquare.json","position":"south_exit"},"look":{"DEFAULT":"The old gates are closed, but remain unlocked."},"interact":{"proximity":"true","action":{"type":"exit","message":"The doors creek open and you enter the town."},"DEFAULT":"The old gates feel smooth and warn from years of weathering."},"talk":{"DEFAULT":"If this door was ever able to magically speak before, it can't anymore."},"item":{"old_key":{"proximity":"true","message":"There is no key hole on this door."},"DEFAULT":"Nope, that doesn't work."},"spell":{"DEFAULT":"Your spell fizzles."}}}],"walkmasks":[{"exterior":"false","points":[{"position":["268.000000","451.000000"],"scale":["0.000000","0.000000"],"layer":"0","nextPoint":"6"},{"position":["558.000000","527.000000"],"scale":["0.000000","0.000000"],"layer":"0","nextPoint":"2"},{"position":["606.000000","597.000000"],"scale":["0.000000","0.000000"],"layer":"0","nextPoint":"5"},{"position":["308.000000","756.000000"],"scale":["0.000000","0.000000"],"layer":"0","nextPoint":"12"},{"position":["185.500000","512.000000"],"scale":["0.000000","0.000000"],"layer":"0","nextPoint":"0"},{"position":["946.000000","754.500000"],"scale":["0.000000","0.000000"],"layer":"0","nextPoint":"3"},{"position":["431.000000","396.500000"],"scale":["0.000000","0.000000"],"layer":"0","nextPoint":"7"},{"position":["611.500000","353.250000"],"scale":["0.000000","0.000000"],"layer":"0","nextPoint":"8"},{"position":["693.750000","349.625000"],"scale":["0.000000","0.000000"],"layer":"0","nextPoint":"10"},{"position":["589.375000","473.312500"],"scale":["0.000000","0.000000"],"layer":"0","nextPoint":"1"},{"position":["837.562500","349.468750"],"scale":["0.000000","0.000000"],"layer":"0","nextPoint":"11"},{"position":["703.468750","408.890625"],"scale":["0.000000","0.000000"],"layer":"0","nextPoint":"9"},{"position":["206.750000","647.000000"],"scale":["0.000000","0.000000"],"layer":"0","nextPoint":"4"}]}],"layers":[{"actor":"actors/town.json","action":"gate","parallax":"0.000000","layerBegin":"0","playerScale":["1.000000","1.000000"]},{"actor":"actors/town_layer.json","action":"gate1","parallax":"0.000000","layerBegin":"484","playerScale":["1.000000","1.000000"]}]}
+{
+  "exhibits": [
+    {
+      "name": "player_start",
+      "displayName": "false",
+      "drawLayer": "0",
+      "actor": "",
+      "action": "",
+      "rect": [
+        "300.000000",
+        "340.000000",
+        "60.000000",
+        "120.000000"
+      ],
+      "near": [
+        "360.000000",
+        "459.000000"
+      ]
+    },
+    {
+      "name": "Town Gate",
+      "displayName": "true",
+      "drawLayer": "0",
+      "actor": "",
+      "action": "",
+      "rect": [
+        "690.000000",
+        "200.000000",
+        "150.000000",
+        "150.000000"
+      ],
+      "near": [
+        "709.000000",
+        "363.000000"
+      ],
+      "args": {
+        "exit": {
+          "scene": "scenes/townSquare.json",
+          "position": "south_exit"
+        },
+        "look": {
+          "DEFAULT": "The old gates are closed, but remain unlocked."
+        },
+        "interact": {
+          "proximity": "true",
+          "action": {
+            "type": "exit",
+            "message": "The doors creek open and you enter the town."
+          },
+          "DEFAULT": "The old gates feel smooth and warn from years of weathering."
+        },
+        "talk": {
+          "DEFAULT": "If this door was ever able to magically speak before, it can't anymore."
+        },
+        "item": {
+          "old_key": {
+            "proximity": "true",
+            "message": "There is no key hole on this door."
+          },
+          "DEFAULT": "Nope, that doesn't work."
+        },
+        "spell": {
+          "DEFAULT": "Your spell fizzles."
+        }
+      }
+    }
+  ],
+  "walkmasks": [
+    {
+      "exterior": "false",
+      "points": [
+        {
+          "position": [
+            "268.000000",
+            "451.000000"
+          ],
+          "scale": [
+            "0.000000",
+            "0.000000"
+          ],
+          "layer": "0",
+          "nextPoint": "6"
+        },
+        {
+          "position": [
+            "558.000000",
+            "527.000000"
+          ],
+          "scale": [
+            "0.000000",
+            "0.000000"
+          ],
+          "layer": "0",
+          "nextPoint": "2"
+        },
+        {
+          "position": [
+            "606.000000",
+            "597.000000"
+          ],
+          "scale": [
+            "0.000000",
+            "0.000000"
+          ],
+          "layer": "0",
+          "nextPoint": "5"
+        },
+        {
+          "position": [
+            "308.000000",
+            "756.000000"
+          ],
+          "scale": [
+            "0.000000",
+            "0.000000"
+          ],
+          "layer": "0",
+          "nextPoint": "12"
+        },
+        {
+          "position": [
+            "185.500000",
+            "512.000000"
+          ],
+          "scale": [
+            "0.000000",
+            "0.000000"
+          ],
+          "layer": "0",
+          "nextPoint": "0"
+        },
+        {
+          "position": [
+            "946.000000",
+            "754.500000"
+          ],
+          "scale": [
+            "0.000000",
+            "0.000000"
+          ],
+          "layer": "0",
+          "nextPoint": "3"
+        },
+        {
+          "position": [
+            "431.000000",
+            "396.500000"
+          ],
+          "scale": [
+            "0.000000",
+            "0.000000"
+          ],
+          "layer": "0",
+          "nextPoint": "7"
+        },
+        {
+          "position": [
+            "611.500000",
+            "353.250000"
+          ],
+          "scale": [
+            "0.000000",
+            "0.000000"
+          ],
+          "layer": "0",
+          "nextPoint": "8"
+        },
+        {
+          "position": [
+            "693.750000",
+            "349.625000"
+          ],
+          "scale": [
+            "0.000000",
+            "0.000000"
+          ],
+          "layer": "0",
+          "nextPoint": "10"
+        },
+        {
+          "position": [
+            "589.375000",
+            "473.312500"
+          ],
+          "scale": [
+            "0.000000",
+            "0.000000"
+          ],
+          "layer": "0",
+          "nextPoint": "1"
+        },
+        {
+          "position": [
+            "837.562500",
+            "349.468750"
+          ],
+          "scale": [
+            "0.000000",
+            "0.000000"
+          ],
+          "layer": "0",
+          "nextPoint": "11"
+        },
+        {
+          "position": [
+            "703.468750",
+            "408.890625"
+          ],
+          "scale": [
+            "0.000000",
+            "0.000000"
+          ],
+          "layer": "0",
+          "nextPoint": "9"
+        },
+        {
+          "position": [
+            "206.750000",
+            "647.000000"
+          ],
+          "scale": [
+            "0.000000",
+            "0.000000"
+          ],
+          "layer": "0",
+          "nextPoint": "4"
+        }
+      ]
+    }
+  ],
+  "layers": [
+    {
+      "actor": "actors/town.json",
+      "action": "gate",
+      "parallax": "0.000000",
+      "layerBegin": "0",
+      "playerScale": [
+        "1.000000",
+        "1.000000"
+      ]
+    },
+    {
+      "actor": "actors/town_layer.json",
+      "action": "gate1",
+      "parallax": "0.000000",
+      "layerBegin": "484",
+      "playerScale": [
+        "1.000000",
+        "1.000000"
+      ]
+    }
+  ]
+}

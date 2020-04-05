@@ -1,0 +1,159 @@
+{
+"window":{
+    "color" : [255,255,255, 255],
+    "dimensions" : [0,0,1,80],
+    "justify" : "center",
+    "align" : "top",
+    "elements":
+    [
+        {
+        "type": "list",
+        "name": "hlist",
+        "id" : 0,
+        "bounds": [120,8,1,1],
+        "color" : [255,255,255,255],
+        "style": "horizontal",
+        "item_size" : [160,70],
+        "elements":
+            [
+                {
+                "type": "button",
+                "name": "Interact",
+                "id" : 11,
+                "bounds": [0,0,70,70],
+                "color" : [255,255,255,255],
+                "highColor" : [255,255,255,255],
+                "pressColor" : [255,255,255,255],
+                "actor" :
+                    {
+                    "type": "actor",
+                    "id" : 112,
+                    "bounds": [0,0,70,70],
+                    "color" : [255,255,255,255],
+                    "actor" : "actors/interact_button.json"
+                    }
+                },
+                {
+                "type": "button",
+                "name": "Walk",
+                "id" : 21,
+                "bounds": [0,0,70,70],
+                "color" : [255,255,255,255],
+                "highColor" : [255,255,255,255],
+                "pressColor" : [255,255,255,255],
+                "actor" :
+                    {
+                    "type": "actor",
+                    "id" : 212,
+                    "bounds": [0,0,70,70],
+                    "color" : [255,255,255,255],
+                    "actor" : "actors/walk_button.json"
+                    }
+                },
+                {
+                "type": "button",
+                "name": "Look",
+                "id" : 31,
+                "bounds": [0,0,70,70],
+                "color" : [255,255,255,255],
+                "highColor" : [255,255,255,255],
+                "pressColor" : [255,255,255,255],
+                "actor" :
+                    {
+                    "type": "actor",
+                    "id" : 312,
+                    "bounds": [0,0,70,70],
+                    "color" : [255,255,255,255],
+                    "actor" : "actors/look_button.json"
+                    }
+                },
+                {
+                "type": "button",
+                "name": "Talk",
+                "id" : 41,
+                "bounds": [0,0,70,70],
+                "color" : [255,255,255,255],
+                "highColor" : [255,255,255,255],
+                "pressColor" : [255,255,255,255],
+                "actor" :
+                    {
+                    "type": "actor",
+                    "id" : 412,
+                    "bounds": [0,0,70,70],
+                    "color" : [255,255,255,255],
+                    "actor" : "actors/talk_button.json"
+                    }
+                },
+                {
+                "type": "button",
+                "name": "Items",
+                "id" : 51,
+                "bounds": [0,0,70,70],
+                "color" : [255,255,255,255],
+                "highColor" : [255,255,255,255],
+                "pressColor" : [255,255,255,255],
+                "actor" :
+                    {
+                    "type": "actor",
+                    "id" : 512,
+                    "bounds": [0,0,70,70],
+                    "color" : [255,255,255,255],
+                    "actor" : "actors/inventory_button.json"
+                    }
+                },
+                {
+                "type": "button",
+                "name": "Spells",
+                "id" : 61,
+                "bounds": [0,0,70,70],
+                "color" : [255,255,255,255],
+                "highColor" : [255,255,255,255],
+                "pressColor" : [255,255,255,255],
+                "actor" :
+                    {
+                    "type": "actor",
+                    "id" : 612,
+                    "bounds": [0,0,70,70],
+                    "color" : [255,255,255,255],
+                    "actor" : "actors/spells_button.json"
+                    }
+                },
+                {
+                "type": "button",
+                "name": "Stats",
+                "id" : 71,
+                "bounds": [0,0,70,70],
+                "color" : [255,255,255,255],
+                "highColor" : [255,255,255,255],
+                "pressColor" : [255,255,255,255],
+                "actor" :
+                    {
+                    "type": "actor",
+                    "id" : 712,
+                    "bounds": [0,0,70,70],
+                    "color" : [255,255,255,255],
+                    "actor" : "actors/stats_button.json"
+                    }
+                },
+                {
+                "type": "button",
+                "name": "Options",
+                "id" : 81,
+                "bounds": [0,0,70,70],
+                "color" : [255,255,255,255],
+                "highColor" : [255,255,255,255],
+                "pressColor" : [255,255,255,255],
+                "actor" :
+                    {
+                    "type": "actor",
+                    "id" : 812,
+                    "bounds": [0,0,70,70],
+                    "color" : [255,255,255,255],
+                    "actor" : "actors/options_button.json"
+                    }
+                }
+            ]
+        }
+    ]
+    }
+}

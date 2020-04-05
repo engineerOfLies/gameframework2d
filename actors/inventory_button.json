@@ -1,0 +1,36 @@
+{
+    "actor":
+    {
+        "sprite": "images/pointerset.png",
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "framesPerLine": 4,
+        "scale": [1,1],
+        "color": [255,255,255,230],
+        "colorSpecial": [255,255,255,255],
+        "actionList":
+        [
+            {
+                "action": "idle",
+                "startFrame": 21,
+                "endFrame": 21,
+                "frameRate": 0,
+                "type": "loop"
+            },
+            {
+                "action": "high",
+                "startFrame": 22,
+                "endFrame": 22,
+                "frameRate": 0,
+                "type": "loop"
+            },
+            {
+                "action": "press",
+                "startFrame": 23,
+                "endFrame": 23,
+                "frameRate": 0,
+                "type": "loop"
+            }
+        ]
+    }
+}
