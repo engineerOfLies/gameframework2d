@@ -6,6 +6,8 @@
 
 #include "gf2d_entity.h"
 #include "gf2d_actor.h"
+#include "gf2d_mouse.h"
+
 #include "walkmask.h"
 #include "layers.h"
 
@@ -23,6 +25,7 @@ typedef struct
     List       *entities;           /**<list of entities spawned in this scene*/
     List       *walkmasks;          /**<bounds for where a player can walk in a scene*/
     Entity     *activePlayer;       /**<active player entity*/
+    MouseFunction   mouseFunction;  /**<selected mouse function for the scene.  NOT saved to disk*/
 }Scene;
 
 /**
@@ -167,5 +170,20 @@ Walkmask *scene_get_walkmask_by_point(Scene *scene, Vector2D point);
  * on 1 contact is set to the new location, on 0 it is set to end
  */
 int scene_walk_check(Scene *scene,Vector2D start, Vector2D end,Vector2D *contact);
+
+/**
+ * @brief set the mouse funciton for the scene
+ * @param scene the scene to set it for
+ * @param mf the mouse function to set
+ */
+void scene_set_mouse_function(Scene *scene, MouseFunction mf);
+
+/**
+ * @brief get the current mouse action for the active scene
+ * @param scene the scen to set the function for
+ * @return the mouse funciton that is set for the scene
+ */
+MouseFunction scene_get_mouse_function(Scene *scene);
+
 
 #endif

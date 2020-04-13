@@ -3,6 +3,7 @@
 
 #include "gfc_vector.h"
 
+#include "gf2d_actor.h"
 #include "gf2d_shape.h"
 
 
@@ -14,7 +15,8 @@ typedef enum
     MF_Interact,
     MF_Talk,
     MF_Item,
-    MF_Spell
+    MF_Spell,
+    MF_Max
 }MouseFunction;
 
 /**
@@ -112,5 +114,23 @@ void gf2d_mouse_set_function(MouseFunction mf);
  * @return a MouseFunction code
  */
 MouseFunction gf2d_mouse_get_function();
+
+/**
+ * @brief set the action to use for the spell actor
+ * @param action if NULL clears the spell associated with the spell, otherwise will use the actor specified
+ */
+void gf2d_mouse_set_spell_action(char *action);
+
+/**
+ * @brief set the actor to use for the item
+ * @param action     if NULL clears the item associated with the item action, otherwise will use the actor specified
+ */
+void gf2d_mouse_set_item_action(char *action);
+
+/**
+ * @brief update the logic for mouse context switching
+ */
+void gf2d_mouse_scene_update();
+
 
 #endif

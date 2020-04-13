@@ -62,6 +62,7 @@ Scene *scene_new()
         scene_manager.sceneList[i].exhibits = gfc_list_new();
         scene_manager.sceneList[i].entities = gfc_list_new();
         scene_manager.sceneList[i].layers = gfc_list_new();
+        scene_manager.sceneList[i].mouseFunction = MF_Walk;
         return &scene_manager.sceneList[i];
     }
     slog("failed to find a free scene in memory");
@@ -508,5 +509,18 @@ int scene_walk_check(Scene *scene,Vector2D start, Vector2D end,Vector2D *contact
     return clipped;
 }
 
+
+void scene_set_mouse_function(Scene *scene, MouseFunction mf)
+{
+    if (!scene)return;
+    scene->mouseFunction = mf;
+}
+
+
+MouseFunction scene_get_mouse_function(Scene *scene)
+{
+    if (!scene)return 0;
+    return scene->mouseFunction;
+}
 
 /*eol@eof*/

@@ -138,12 +138,14 @@ Entity *gf2d_entity_load(const char *filename)
 
 void gf2d_entity_draw(Entity *self)
 {
-    Vector2D drawPosition;
+    Vector2D drawPosition,drawOffset;
     if (!self)return;
     if (!self->inuse)return;
 
     vector2d_add(drawPosition,self->position,camera_get_offset());
-    vector2d_add(drawPosition,drawPosition,self->offset);
+    drawOffset.x = self->offset.x * self->scale.x;
+    drawOffset.y = self->offset.y * self->scale.y;
+    vector2d_add(drawPosition,drawPosition,drawOffset);
 
     gf2d_particle_emitter_draw(self->pe);
 

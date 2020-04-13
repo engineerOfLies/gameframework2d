@@ -19,6 +19,7 @@
 #include "main_menu.h"
 
 static int _done = 0;
+static int _begin = 0;
 static Window *_quit = NULL;
 int editorMode = 0;
 int debugMode = 0;
@@ -30,8 +31,14 @@ void onCancel(void *data)
     _quit = NULL;
 }
 
+void beginGame()
+{
+    _begin = 1;
+}
+
 void onExit(void *data)
 {
+    _begin = 0;
     _done = 1;
     _quit = NULL;
 }
@@ -83,8 +90,9 @@ int main(int argc, char * argv[])
         
         gf2d_entity_think_all();
 
-        if ((!editorMode)&&(!windowsUpdated))
+        if ((!editorMode)&&(!windowsUpdated)&&(_begin))
         {
+            gf2d_mouse_scene_update();
             scene_update(scene_get_active());
         }
                 
@@ -92,7 +100,7 @@ int main(int argc, char * argv[])
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
                 // DRAW WORLD
-            if (!editorMode)
+            if ((!editorMode)&&(_begin))
             {   
                 scene_draw(scene_get_active());
             }

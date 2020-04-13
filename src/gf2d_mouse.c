@@ -1,6 +1,9 @@
 #include <SDL.h>
+
 #include "gf2d_actor.h"
 #include "gf2d_mouse.h"
+
+#include "scene.h"
 
 
 typedef struct
@@ -12,8 +15,12 @@ typedef struct
 typedef struct
 {
     MouseState mouse[2]; /**<mouse state for the current and last frames*/
-    Actor actor;
+    Actor actor;         /**<mouse actor*/
     MouseFunction mf;    /**<current mouse state*/
+    Bool    itemSet;     /**<if set, allow cycling through itemActor*/
+    Bool    spellSet;     /**<if set, allow cycling through spellActor*/
+    Actor itemActor;    /**<use this actor when drawing an item selection*/
+    Actor spellActor;   /**<use this actor when drawing a spell selection*/
 }Mouse;
 
 static Mouse _mouse = {0};
@@ -29,11 +36,40 @@ void gf2d_mouse_load(char *actorFile)
     gf2d_actor_load(&_mouse.actor,actorFile);
 }
 
+void gf2d_mouse_set_item_action(char *action)
+{
+    if (!action)
+    {
+        gf2d_mouse_set_function(MF_Walk);
+        _mouse.itemSet = 0;
+    }
+    _mouse.itemSet = 1;
+    gf2d_actor_set_action(&_mouse.itemActor,action);
+    gf2d_mouse_set_function(MF_Item);
+}
+
+void gf2d_mouse_set_spell_action(char *action)
+{
+    if (!action)
+    {
+        gf2d_mouse_set_function(MF_Walk);
+        _mouse.spellSet = 0;
+    }
+    _mouse.spellSet = 1;
+    gf2d_actor_set_action(&_mouse.spellActor,action);
+    gf2d_mouse_set_function(MF_Spell);
+}
+
 void gf2d_mouse_set_function(MouseFunction mf)
 {
+    if (mf == MF_Max)
+    {
+        mf = MF_Pointer;
+    }
     _mouse.mf = mf;
     switch (mf)
     {
+        case MF_Max:
         case MF_Pointer:
             gf2d_mouse_set_action("pointer");
             break;
@@ -58,6 +94,28 @@ void gf2d_mouse_set_function(MouseFunction mf)
     }
 }
 
+void gf2d_mouse_scene_update()
+{
+    if((gf2d_mouse_button_released(2))&&(_mouse.mf != MF_Pointer))
+    {
+        _mouse.mf++;
+        if ((_mouse.mf == MF_Item)&&(!_mouse.itemSet))
+        {
+            _mouse.mf++;
+        }
+        if ((_mouse.mf == MF_Spell)&&(!_mouse.spellSet))
+        {
+            _mouse.mf++;
+        }
+        if (_mouse.mf >= MF_Max)
+        {
+            _mouse.mf = MF_Walk;
+        }
+        gf2d_mouse_set_function(_mouse.mf);
+        scene_set_mouse_function(scene_get_active(),_mouse.mf);
+    }
+}
+
 void gf2d_mouse_update()
 {
     int x,y;
@@ -65,26 +123,39 @@ void gf2d_mouse_update()
     memcpy(&_mouse.mouse[1],&_mouse.mouse[0],sizeof(MouseState));
     _mouse.mouse[0].buttons = SDL_GetMouseState(&x,&y);
     vector2d_set(_mouse.mouse[0].position,x,y);
-    if((gf2d_mouse_button_released(2))&&(_mouse.mf != MF_Pointer))
-    {
-        _mouse.mf++;
-        if (_mouse.mf == MF_Item)
-        {
-            _mouse.mf = MF_Walk;
-        }
-        gf2d_mouse_set_function(_mouse.mf);
-    }
 }
 
 void gf2d_mouse_draw()
 {
-    gf2d_actor_draw(
-    &_mouse.actor,
-    _mouse.mouse[0].position,
-    NULL,
-    NULL,
-    NULL,
-    NULL);
+    switch (_mouse.mf)
+    {
+        case MF_Spell:
+            gf2d_actor_draw(
+            &_mouse.spellActor,
+            _mouse.mouse[0].position,
+            NULL,
+            NULL,
+            NULL,
+            NULL);
+            break;
+        case MF_Item:
+            gf2d_actor_draw(
+            &_mouse.itemActor,
+            _mouse.mouse[0].position,
+            NULL,
+            NULL,
+            NULL,
+            NULL);
+            break;
+        default:
+            gf2d_actor_draw(
+            &_mouse.actor,
+            _mouse.mouse[0].position,
+            NULL,
+            NULL,
+            NULL,
+            NULL);
+    }
 }
 
 int gf2d_mouse_moved()

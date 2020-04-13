@@ -12,6 +12,8 @@ typedef struct
     SJson      *history;
 }PlayerData;
 
+void player_update(Entity *player);
+
 void player_free(Entity *player)
 {
     if (!player)
@@ -81,6 +83,7 @@ Entity *player_spawn(Vector2D position)
     }
     player->think = player_idle;
     player->data = pd;
+    player->update = player_update;
     player->drawColor = gfc_color(1,0,0,1);
     vector2d_copy(player->position,position);
     return player;
@@ -156,8 +159,11 @@ void player_update(Entity *player)
     scene = scene_get_active();
     if (!scene)return;
     layer = scene_get_layer_by_position(scene, player->position);
-    player->drawLayer = layer->index;
-    vector2d_copy(player->scale,layer->playerScale);
+    if (layer)
+    {
+        player->drawLayer = layer->index;
+        vector2d_copy(player->scale,layer->playerScale);
+    }
 }
 
 void player_set_callback(Entity *player,void(*call)(void *),void *data)

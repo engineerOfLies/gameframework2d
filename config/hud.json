@@ -138,6 +138,7 @@
                 {
                 "type": "button",
                 "name": "Options",
+                "hotkey":"options",
                 "id" : 81,
                 "bounds": [0,0,70,70],
                 "color" : [255,255,255,255],

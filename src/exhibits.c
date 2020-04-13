@@ -146,7 +146,7 @@ int exhibit_mouse_check(Exhibit *exhibit)
     mf = gf2d_mouse_get_function();
     switch(mf)
     {
-        case MF_Pointer:
+        default:
             break;
         case MF_Walk:
             arg = sj_object_get_value(exhibit->args,"walk");

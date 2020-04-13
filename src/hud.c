@@ -7,7 +7,9 @@
 #include "gf2d_draw.h"
 
 #include "camera.h"
+#include "hud.h"
 #include "windows_common.h"
+#include "options_menu.h"
 #include "hud.h"
 
 static Window *_HUD = NULL; /**<hud is a singleton.  don't spawn more than one*/
@@ -58,10 +60,12 @@ int hud_update(Window *win,List *updateList)
     mouse = gf2d_mouse_get_position();
     if (mouse.y < 8)
     {
+        gf2d_mouse_set_function(MF_Pointer);
         hud_show();
     }
     else if (!gf2d_window_mouse_in(win))
     {
+        gf2d_mouse_set_function(scene_get_mouse_function(scene_get_active()));
         hud_hide();
     }
 
@@ -73,22 +77,35 @@ int hud_update(Window *win,List *updateList)
         switch(e->index)
         {
             case 11:
+                scene_set_mouse_function(scene_get_active(),MF_Interact);
                 gf2d_mouse_set_function(MF_Interact);
                 hud_hide();
                 return 1;
             case 21:
+                scene_set_mouse_function(scene_get_active(),MF_Walk);
                 gf2d_mouse_set_function(MF_Walk);
                 hud_hide();
                 return 1;
             case 31:
+                scene_set_mouse_function(scene_get_active(),MF_Look);
                 gf2d_mouse_set_function(MF_Look);
                 hud_hide();
                 return 1;
             case 41:
+                scene_set_mouse_function(scene_get_active(),MF_Talk);
                 gf2d_mouse_set_function(MF_Talk);
                 hud_hide();
                 return 1;
+            case 81:
+                options_menu();
+                hud_hide();
+                return 1;
+
         }
+    }
+    if (gf2d_window_mouse_in(win))
+    {
+        return 1;
     }
     return 0;
 }
