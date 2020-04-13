@@ -10,6 +10,7 @@
 #include "hud.h"
 #include "windows_common.h"
 #include "options_menu.h"
+#include "inventory_menu.h"
 #include "hud.h"
 
 static Window *_HUD = NULL; /**<hud is a singleton.  don't spawn more than one*/
@@ -95,6 +96,10 @@ int hud_update(Window *win,List *updateList)
                 scene_set_mouse_function(scene_get_active(),MF_Talk);
                 gf2d_mouse_set_function(MF_Talk);
                 hud_hide();
+                return 1;
+            case 51:
+                hud_hide();
+                inventory_menu();
                 return 1;
             case 81:
                 options_menu();
