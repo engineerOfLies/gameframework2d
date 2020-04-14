@@ -3,12 +3,16 @@
 #include "gf2d_config.h"
 #include "camera.h"
 #include "scene.h"
+#include "inventory.h"
 #include "player.h"
 
 typedef struct
 {
     TextLine    scene;
     Vector2D    position;
+    Inventory  *items;
+    Inventory  *spells;
+    Inventory  *skills;
     SJson      *history;
 }PlayerData;
 
