@@ -10,7 +10,7 @@
         "type": "list",
         "name": "hlist",
         "id" : 0,
-        "bounds": [120,8,1,1],
+        "bounds": [0,8,1,1],
         "color" : [255,255,255,255],
         "style": "horizontal",
         "item_size" : [160,70],

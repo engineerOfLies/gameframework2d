@@ -22,7 +22,8 @@ static int _done = 0;
 static int _begin = 0;
 static Window *_quit = NULL;
 int editorMode = 0;
-int debugMode = 0;
+extern int __DebugMode;
+
 
 void init_all(int argc, char *argv[]);
 
@@ -135,7 +136,7 @@ void init_all(int argc, char *argv[])
         }
         else if (strcmp(argv[i],"--debug") == 0)
         {
-            debugMode = 1;
+            __DebugMode = 1;
         }
     }
     /*program initializtion*/

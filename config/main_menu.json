@@ -30,7 +30,7 @@
             "type": "list",
             "name": "buttons",
             "id" : 50,
-            "bounds": [90,10,1,1],
+            "bounds": [90,10,160,1],
             "color" : [255,255,255,255],
             "style": "vertical",
             "item_size" : [1,64],
@@ -39,7 +39,7 @@
                 {
                 "type": "button",
                 "id" : 51,
-                "bounds": [0,0,168,64],
+                "bounds": [0,0,160,64],
                 "hotkey":"l",
                 "color" : [255,255,255,255],
                 "highColor" : [255,255,255,255],
@@ -48,7 +48,7 @@
                     {
                     "type": "label",
                     "id" : 511,
-                    "bounds": [0,0,168,64],
+                    "bounds": [0,0,160,64],
                     "color" : [255,255,255,255],
                     "text":"New Game",
                     "justify" : "center",
@@ -59,7 +59,7 @@
                     {
                     "type": "actor",
                     "id" : 512,
-                    "bounds": [0,0,168,64],
+                    "bounds": [0,0,160,64],
                     "color" : [255,255,255,255],
                     "actor" : "actors/button.actor"
                     }
@@ -67,7 +67,7 @@
                 {
                 "type": "button",
                 "id" : 61,
-                "bounds": [0,0,168,64],
+                "bounds": [0,0,160,64],
                 "hotkey":"l",
                 "color" : [255,255,255,255],
                 "highColor" : [255,255,255,255],
@@ -76,7 +76,7 @@
                     {
                     "type": "label",
                     "id" : 611,
-                    "bounds": [0,0,168,64],
+                    "bounds": [0,0,160,64],
                     "color" : [255,255,255,255],
                     "text":"Continue",
                     "justify" : "center",
@@ -87,7 +87,7 @@
                     {
                     "type": "actor",
                     "id" : 612,
-                    "bounds": [0,0,168,64],
+                    "bounds": [0,0,160,64],
                     "color" : [255,255,255,255],
                     "actor" : "actors/button.actor"
                     }
@@ -95,7 +95,7 @@
                 {
                 "type": "button",
                 "id" : 71,
-                "bounds": [0,0,168,64],
+                "bounds": [0,0,160,64],
                 "hotkey":"l",
                 "color" : [255,255,255,255],
                 "highColor" : [255,255,255,255],
@@ -104,7 +104,7 @@
                     {
                     "type": "label",
                     "id" : 711,
-                    "bounds": [0,0,168,64],
+                    "bounds": [0,0,160,64],
                     "color" : [255,255,255,255],
                     "text":"Load Game",
                     "justify" : "center",
@@ -115,7 +115,7 @@
                     {
                     "type": "actor",
                     "id" : 712,
-                    "bounds": [0,0,168,64],
+                    "bounds": [0,0,160,64],
                     "color" : [255,255,255,255],
                     "actor" : "actors/button.actor"
                     }
@@ -123,7 +123,7 @@
                 {
                 "type": "button",
                 "id" : 81,
-                "bounds": [0,0,168,64],
+                "bounds": [0,0,160,64],
                 "hotkey":"l",
                 "color" : [255,255,255,255],
                 "highColor" : [255,255,255,255],
@@ -132,7 +132,7 @@
                     {
                     "type": "label",
                     "id" : 811,
-                    "bounds": [0,0,168,64],
+                    "bounds": [0,0,160,64],
                     "color" : [255,255,255,255],
                     "text":"Quit",
                     "justify" : "center",
@@ -143,7 +143,7 @@
                     {
                     "type": "actor",
                     "id" : 812,
-                    "bounds": [0,0,168,64],
+                    "bounds": [0,0,160,64],
                     "color" : [255,255,255,255],
                     "actor" : "actors/button.actor"
                     }

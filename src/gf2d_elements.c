@@ -8,6 +8,8 @@
 #include "gf2d_element_list.h"
 #include "gf2d_element_label.h"
 
+extern int __DebugMode;
+
 Element *gf2d_element_new()
 {
     Element *e;
@@ -53,14 +55,17 @@ void gf2d_element_free(Element *e)
 
 void gf2d_element_draw(Element *e, Vector2D offset)
 {
-   // Rect rect;
+    Rect rect;
     if (!e)
     {
         return;
     }
     if (e->draw)e->draw(e,offset);
-//    gf2d_rect_set(rect,offset.x + e->bounds.x,offset.y + e->bounds.y,e->bounds.w,e->bounds.h);
- //   gf2d_rect_draw(rect,gfc_color8(100,255,100,255));
+    if (__DebugMode)
+    {
+        gf2d_rect_set(rect,offset.x + e->bounds.x,offset.y + e->bounds.y,e->bounds.w,e->bounds.h);
+        gf2d_rect_draw(rect,gfc_color8(100,255,100,255));
+    }
 }
 
 List * gf2d_element_update(Element *e, Vector2D offset)
@@ -112,10 +117,12 @@ void gf2d_element_calibrate(Element *e,Element *parent, Window *win)
     if ((e->bounds.w > 0)&&(e->bounds.w <= 1.0))
     {
         e->bounds.w *= res.w;
+        e->bounds.h -= e->bounds.x;
     }
     if ((e->bounds.h > 0)&&(e->bounds.h <= 1.0))
     {
         e->bounds.h *= res.h;
+        e->bounds.h -= e->bounds.y;
     }
     
     if (negx)

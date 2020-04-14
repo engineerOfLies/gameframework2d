@@ -33,6 +33,7 @@ typedef struct
 
 /*local gobals*/
 static Graphics gf2d_graphics;
+int    __DebugMode = 0;
 
 /*forward declarations*/
 void gf2d_graphics_close();

@@ -5,7 +5,7 @@
 #include "camera.h"
 #include "gf2d_entity.h"
 
-extern int debugMode;
+extern int __DebugMode;
 
 typedef struct
 {
@@ -156,7 +156,7 @@ void gf2d_entity_draw(Entity *self)
         &self->scaleCenter,
         &self->rotation,
         &self->flip);
-    if (debugMode)
+    if (__DebugMode)
     {
         vector2d_add(drawPosition,self->position,camera_get_offset());
         gf2d_shape_draw(self->shape,gfc_color(1,0,0,1),drawPosition);

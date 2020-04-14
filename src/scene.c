@@ -10,7 +10,7 @@
 #include "hud.h"
 
 extern int editorMode;
-extern int debugMode;
+extern int __DebugMode;
 
 typedef struct
 {
@@ -261,7 +261,7 @@ void scene_draw(Scene *scene)
         if (layer)layer_draw(layer);
         gf2d_entity_draw_all_by_layer(i);
     }
-    if ((debugMode)||(editorMode))
+    if ((__DebugMode)||(editorMode))
     {
         c = gfc_list_get_count(scene->walkmasks);
         for (i = 0;i < c; i++)
