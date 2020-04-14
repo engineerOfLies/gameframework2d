@@ -429,6 +429,7 @@ void gf2d_font_draw_text_wrap(
         slog("bad Font provided for draw.");
         return;
     }
+
     gfc_block_cpy(text,thetext);
     temptextline[0] = '\0';
     do
@@ -476,7 +477,7 @@ void gf2d_font_draw_text_wrap(
             drawheight += h;
             if (block.h != 0)
             {
-                if ((drawheight + h) > block.h)
+                if ((drawheight + h) > (block.y + block.h))
                 {
                     break;
                 }
@@ -484,6 +485,7 @@ void gf2d_font_draw_text_wrap(
             sprintf(temptextline,"%s",word); /*add a word*/
         }
     }while(1);
+    
 }
 
 

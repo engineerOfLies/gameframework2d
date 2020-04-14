@@ -117,12 +117,10 @@ void gf2d_element_calibrate(Element *e,Element *parent, Window *win)
     if ((e->bounds.w > 0)&&(e->bounds.w <= 1.0))
     {
         e->bounds.w *= res.w;
-        e->bounds.h -= e->bounds.x;
     }
     if ((e->bounds.h > 0)&&(e->bounds.h <= 1.0))
     {
         e->bounds.h *= res.h;
-        e->bounds.h -= e->bounds.y;
     }
     
     if (negx)
