@@ -427,14 +427,18 @@ void scene_next_scene(char *nextScene, Entity *player, char *positionExhibit)
     
     scene_spawn_exhibits(scene);
     
-    exhibit = exhibit_get_from_scene(scene,positionExhibit);
-    if (!exhibit)
+    if (positionExhibit)
     {
-        slog("failed to find exhibit %s, cannot place player!",positionExhibit);
-        return;
+        exhibit = exhibit_get_from_scene(scene,positionExhibit);
+        if (!exhibit)
+        {
+            slog("failed to find exhibit %s, cannot place player!",positionExhibit);
+            return;
+        }
+        player_set_position(player,exhibit->near);
     }
 
-    player_set_position(player,exhibit->near);
+    player_set_scene(player,scene->filename);
     camera_set_focus(player->position);
     
     //free up the last scene

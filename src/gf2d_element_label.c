@@ -59,7 +59,6 @@ void gf2d_element_label_draw(Element *element,Vector2D offset)
     }
     if (label->wraps)
     {
-        slog("element bounds for text wrap: %f,%f",element->bounds.w, element->bounds.h);
         gf2d_font_draw_text_wrap_tag(label->text,label->style,element->color, gf2d_rect(position.x, position.y, element->bounds.w, element->bounds.h));
     }
     else 

@@ -26,13 +26,46 @@ typedef struct
 {
     Sprite *background;
     TextLine filename;
+    Window *win;
 }MainMenuData;
+
+
+void onFileLoadCancel(void *Data)
+{
+    MainMenuData* data;
+    if (!Data)return;
+    data = Data;
+    gfc_line_cpy(data->filename,"saves/");
+    return;
+}
+
+void onFileLoadOk(void *Data)
+{
+    Entity *player;
+    MainMenuData* data;
+    if (!Data)return;
+    data = Data;
+
+    player = player_load(data->filename);
+    if (!player)
+    {
+        window_alert("Failed to Load", "file not found", NULL,NULL);
+        gfc_line_cpy(data->filename,"saves/");
+        return;
+    }
+    scene_next_scene(player_get_scene(player), player, NULL);
+    hud_open(player);
+    gf2d_mouse_set_function(MF_Walk);
+    beginGame();    
+    gf2d_window_free(data->win);
+    return;
+}
 
 
 void main_menu_start_new_game()
 {
     Entity *player;
-    player = player_spawn(vector2d(300,300));
+    player = player_spawn(vector2d(300,300),"scenes/testlevel.json");
     scene_next_scene("scenes/testlevel.json", player, "player_start");
     hud_open(player);
     gf2d_mouse_set_function(MF_Walk);
@@ -82,7 +115,8 @@ int main_menu_update(Window *win,List *updateList)
                 main_menu_start_new_game();
                 gf2d_window_free(win);
                 return 1;
-            case 52:
+            case 71:
+                window_text_entry("Enter Save Game to Load", data->filename, win->data, GFCLINELEN, onFileLoadOk,onFileLoadCancel);
                 return 1;
             case 81:
                 gf2d_window_free(win);
@@ -111,6 +145,7 @@ Window *main_menu()
     data->background = gf2d_sprite_load_image("images/backgrounds/background_sunset.png");
     gfc_line_cpy(data->filename,"saves/");
     win->data = data;
+    data->win = win;
     return win;
 }
 

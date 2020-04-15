@@ -99,10 +99,10 @@ int hud_update(Window *win,List *updateList)
                 return 1;
             case 51:
                 hud_hide();
-                inventory_menu();
+                inventory_menu(player_get_item_inventory(hud->player));
                 return 1;
             case 81:
-                options_menu();
+                options_menu(hud->player);
                 hud_hide();
                 return 1;
 

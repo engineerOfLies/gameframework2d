@@ -7,6 +7,7 @@
 #include "gf2d_windows.h"
 #include "gf2d_elements.h"
 #include "gf2d_element_label.h"
+#include "gf2d_element_actor.h"
 #include "gf2d_draw.h"
 #include "gf2d_shape.h"
 #include "gf2d_mouse.h"
@@ -14,10 +15,12 @@
 #include "camera.h"
 #include "windows_common.h"
 #include "player.h"
+#include "items.h"
 #include "inventory_menu.h"
 
 typedef struct
 {
+    Inventory *inven;
     TextLine filename;
 }InventoryMenuData;
 
@@ -28,16 +31,11 @@ int inventory_menu_free(Window *win)
     if (!win->data)return 0;
     data = win->data;
     free(data);
-
     return 0;
 }
 
 int inventory_menu_draw(Window *win)
 {
-    InventoryMenuData *data;
-    if (!win)return 0;
-    if (!win->data)return 0;
-    data = win->data;
     return 0;
 }
 
@@ -69,8 +67,41 @@ int inventory_menu_update(Window *win,List *updateList)
     return 1;
 }
 
+ActorElement *inventory_menu_item_set(InventoryItem *item)
+{
+    Item *itemInfo;
+    if (!item)return NULL;
+    itemInfo = item_list_get_by_name(item->name);
+    if (!itemInfo)return NULL;
+    return gf2d_element_actor_new_full(itemInfo->actor, itemInfo->action,vector2d(1,1));
+}
 
-Window *inventory_menu()
+void inventory_menu_list_setup(Window *win,InventoryMenuData* data)
+{
+    int i,c;
+    Element *e;
+    ActorElement *ae;
+    InventoryItem *item;
+    if ((!win)||(!data))return;
+    c = inventory_get_count(data->inven);
+    for (i = 0; i < c; i++)
+    {
+        item = inventory_get_nth(data->inven,i);
+        if (!item)continue;
+        ae = inventory_menu_item_set(item);
+        if (!ae)continue;
+        e = gf2d_element_new_full(
+            gf2d_window_get_element_by_id(win,1000),
+            1000+i,
+            item->name,
+            gf2d_rect(0,0,70,70),
+            gfc_color(1,1,1,1),
+            0);
+        gf2d_element_make_actor(e,ae);
+    }
+}
+
+Window *inventory_menu(Inventory *inven)
 {
     Window *win;
     InventoryMenuData* data;
@@ -85,6 +116,7 @@ Window *inventory_menu()
     win->draw = inventory_menu_draw;
     data = (InventoryMenuData*)gfc_allocate_array(sizeof(InventoryMenuData),1);
     win->data = data;
+    data->inven = inven;
     return win;
 }
 

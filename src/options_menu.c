@@ -22,8 +22,29 @@ extern void exitCheck();
 
 typedef struct
 {
+    Entity *player;
     TextLine filename;
 }OptionsMenuData;
+
+void onPlayerSaveCancel(void *Data)
+{
+    OptionsMenuData* data;
+    if (!Data)return;
+    data = Data;
+    gfc_line_cpy(data->filename,data->filename);
+    return;
+}
+
+void onPlayerSaveOk(void *Data)
+{
+    OptionsMenuData* data;
+    if (!Data)return;
+    data = Data;
+    player_save(data->player, data->filename);
+    
+    return;
+}
+
 
 int options_menu_free(Window *win)
 {
@@ -38,10 +59,6 @@ int options_menu_free(Window *win)
 
 int options_menu_draw(Window *win)
 {
-    OptionsMenuData *data;
-    if (!win)return 0;
-    if (!win->data)return 0;
-    data = win->data;
     return 0;
 }
 
@@ -66,6 +83,8 @@ int options_menu_update(Window *win,List *updateList)
                 gf2d_window_free(win);
                 return 1;
             case 51:
+                gfc_line_cpy(data->filename,player_get_filename(data->player));
+                window_text_entry("Enter filename to save", data->filename, win->data, GFCLINELEN, onPlayerSaveOk,onPlayerSaveCancel);
                 return 1;
             case 52:
                 return 1;
@@ -79,7 +98,7 @@ int options_menu_update(Window *win,List *updateList)
 }
 
 
-Window *options_menu()
+Window *options_menu(Entity *player)
 {
     Window *win;
     OptionsMenuData* data;
@@ -94,6 +113,7 @@ Window *options_menu()
     win->draw = options_menu_draw;
     data = (OptionsMenuData*)gfc_allocate_array(sizeof(OptionsMenuData),1);
     win->data = data;
+    data->player = player;
     return win;
 }
 
