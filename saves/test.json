@@ -11,6 +11,11 @@
             "name":"Gold",
             "count":100,
             "skill":0
+        },
+        {
+            "name":"Skull",
+            "count":1,
+            "skill":0
         }
     ]
   },

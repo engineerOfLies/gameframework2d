@@ -56,7 +56,7 @@ void gf2d_element_free(Element *e)
 void gf2d_element_draw(Element *e, Vector2D offset)
 {
     Rect rect;
-    if (!e)
+    if ((!e)||(e->state == ES_hidden))
     {
         return;
     }

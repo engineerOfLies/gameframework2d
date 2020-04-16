@@ -17,6 +17,7 @@ typedef struct
     Element *actor;
     BE_Style style;
     TextLine hotkey; /**<input used to hotkey the button*/
+    Bool     customActions;
     // base color comes from element
     Color highColor;    /**<color used when button is in highlight*/
     Color pressColor;   /**<color used while pressed*/
@@ -36,9 +37,10 @@ void gf2d_element_make_button(Element *e,ButtonElement *button);
  * @param actor (optional) use this element for the image display for the button
  * @param highColor this color will be used when drawing the button when it has highlight
  * @param pressColor this color will be used when drawing the button when it is pressed
+ * @param customActions if true, this will not look for actions idle, high and press for the button
  * @return NULL on error or a newly create button element
  */
-ButtonElement *gf2d_element_button_new_full(Element *label,Element *actor,Color highColor,Color pressColor);
+ButtonElement *gf2d_element_button_new_full(Element *label,Element *actor,Color highColor,Color pressColor,int customActions);
 
 /**
  * @brief load button configuration for a button element from config
