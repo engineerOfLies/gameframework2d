@@ -33,6 +33,11 @@ typedef struct
  */
 ListElement *gf2d_element_list_new_full(Rect bounds,Vector2D itemSize,ListStyle ls,int wraps,int scrolls,int packed);
 
+/**
+ * @brief add an element to the list
+ * @param e the list to add to
+ * @param item the item to add
+ */
 void gf2d_element_list_add_item(Element *e,Element *item);
 
 /**

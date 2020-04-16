@@ -66,7 +66,7 @@ ActorElement *gf2d_element_actor_new_full(char *actorFile, char *action,Vector2D
         return NULL;
     }
     vector2d_copy(ae->scale,scale);
-    if (gf2d_actor_load(&ae->actor,actorFile))
+    if ((actorFile)&&(strlen(actorFile))&&(gf2d_actor_load(&ae->actor,actorFile)))
     {
         if ((action) && (strlen(action) > 0))
         {

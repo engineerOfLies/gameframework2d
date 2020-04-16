@@ -6,6 +6,7 @@
 #include "gf2d_graphics.h"
 #include "gf2d_windows.h"
 #include "gf2d_elements.h"
+#include "gf2d_element_list.h"
 #include "gf2d_element_label.h"
 #include "gf2d_element_actor.h"
 #include "gf2d_draw.h"
@@ -84,12 +85,14 @@ void inventory_menu_list_setup(Window *win,InventoryMenuData* data)
     InventoryItem *item;
     if ((!win)||(!data))return;
     c = inventory_get_count(data->inven);
+    slog("attempting to add %i items to the inventory screen",c);
     for (i = 0; i < c; i++)
     {
         item = inventory_get_nth(data->inven,i);
         if (!item)continue;
         ae = inventory_menu_item_set(item);
         if (!ae)continue;
+        slog("building inventory element");
         e = gf2d_element_new_full(
             gf2d_window_get_element_by_id(win,1000),
             1000+i,
@@ -98,6 +101,7 @@ void inventory_menu_list_setup(Window *win,InventoryMenuData* data)
             gfc_color(1,1,1,1),
             0);
         gf2d_element_make_actor(e,ae);
+        gf2d_element_list_add_item(gf2d_window_get_element_by_id(win,1000),e);
     }
 }
 
@@ -117,6 +121,7 @@ Window *inventory_menu(Inventory *inven)
     data = (InventoryMenuData*)gfc_allocate_array(sizeof(InventoryMenuData),1);
     win->data = data;
     data->inven = inven;
+    inventory_menu_list_setup(win,data);
     return win;
 }
 

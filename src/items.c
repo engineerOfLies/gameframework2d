@@ -59,6 +59,7 @@ void item_list_load(char *filename)
         item = item_parse_from_json(js_item);
         _item_list = gfc_list_append(_item_list,item);
     }
+    slog("loaded %i items for the game",gfc_list_get_count(_item_list));
     sj_free(json);
 }
 
@@ -113,6 +114,7 @@ Item *item_parse_from_json(SJson *json)
     sj_get_integer_value(sj_object_get_value(json,"stackable"),&item->stackable);
     sj_get_integer_value(sj_object_get_value(json,"stackLimit"),&item->stackLimit);
 
+    slog("loaded item %s",item->name);
     return item;
 }
 

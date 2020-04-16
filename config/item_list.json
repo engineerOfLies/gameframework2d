@@ -1,0 +1,101 @@
+{
+    "item_list":
+    [
+        {
+            "name":"Flowers",
+            "actor":"actors/items.json",
+            "action":"flowers",
+            "description":"An assortment of hand picked flowers",
+            "cost":5,
+            "healthCost":0,
+            "manaCost":0,
+            "staminaCost":0,
+            "stackable":true,
+            "stackLimit":10
+        },
+        {
+            "name":"Gold",
+            "actor":"actors/items.json",
+            "action":"gold",
+            "description":"gold can be exchanged for goods and services!",
+            "cost":1,
+            "healthCost":0,
+            "manaCost":0,
+            "staminaCost":0,
+            "stackable":true,
+            "stackLimit":-1
+        },
+        {
+            "name":"Cord",
+            "actor":"actors/items.json",
+            "action":"corn",
+            "description":"fresh picked corn.  Can be eated",
+            "cost":5,
+            "healthCost":0,
+            "manaCost":0,
+            "staminaCost":0,
+            "stackable":true,
+            "stackLimit":10
+        },
+        {
+            "name":"Health Potion",
+            "actor":"actors/items.json",
+            "action":"health_potion",
+            "description":"Drinking this will replenish your health by 20",
+            "cost":15,
+            "healthCost":-20,
+            "manaCost":0,
+            "staminaCost":0,
+            "stackable":true,
+            "stackLimit":5
+        },
+        {
+            "name":"Mana Potion",
+            "actor":"actors/items.json",
+            "action":"mana_potion",
+            "description":"Drinking this potion will replinish your mana by 20!",
+            "cost":20,
+            "healthCost":0,
+            "manaCost":-20,
+            "staminaCost":0,
+            "stackable":true,
+            "stackLimit":5
+        },
+        {
+            "name":"Stamina Potion",
+            "actor":"actors/items.json",
+            "action":"stamina_potion",
+            "description":"Drinking this will recover some of your spent stamina by 30",
+            "cost":10,
+            "healthCost":0,
+            "manaCost":0,
+            "staminaCost":-30,
+            "stackable":true,
+            "stackLimit":5
+        },
+        {
+            "name":"Skull",
+            "actor":"actors/items.json",
+            "action":"skull",
+            "description":"It's a skull...",
+            "cost":0,
+            "healthCost":0,
+            "manaCost":0,
+            "staminaCost":0,
+            "stackable":true,
+            "stackLimit":1
+        },
+        {
+            "name":"Soul Forge",
+            "actor":"actors/items.json",
+            "action":"soul_forge",
+            "description":"This mysterious amulet is named the Soul Forge, or so Kallack told you",
+            "cost":0,
+            "healthCost":0,
+            "manaCost":0,
+            "staminaCost":0,
+            "stackable":true,
+            "stackLimit":1
+        }
+    ]
+}

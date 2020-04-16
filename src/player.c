@@ -200,10 +200,10 @@ Entity *player_parse_from_json(SJson *json)
     pd->items = inventory_parse_from_json(inven);
     
     inven = sj_object_get_value(json,"skills");
-    pd->items = inventory_parse_from_json(inven);
+    pd->skills = inventory_parse_from_json(inven);
     
     inven = sj_object_get_value(json,"spells");
-    pd->items = inventory_parse_from_json(inven);
+    pd->spells = inventory_parse_from_json(inven);
     
     pd->history = sj_copy(sj_object_get_value(json,"history"));
     sj_free(json);

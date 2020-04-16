@@ -17,6 +17,7 @@
 #include "scene.h"
 #include "editor.h"
 #include "main_menu.h"
+#include "items.h"
 
 static int _done = 0;
 static int _begin = 0;
@@ -76,7 +77,8 @@ int main(int argc, char * argv[])
     {
         main_menu();
     }
-
+    
+    item_list_load("config/item_list.json");
     
     
     /*main game loop*/

@@ -1,1 +1,23 @@
-{"position":["345.998413","540.079834"],"scene":"scenes/townSquare.json","items":{"items":[]},"skills":{"items":[]},"spells":{"items":[]}}
+{
+  "position": [
+    "345.998413",
+    "540.079834"
+  ],
+  "scene": "scenes/townSquare.json",
+  "items": {
+    "items":
+    [
+        {
+            "name":"Gold",
+            "count":100,
+            "skill":0
+        }
+    ]
+  },
+  "skills": {
+    "items": []
+  },
+  "spells": {
+    "items": []
+  }
+}

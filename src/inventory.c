@@ -10,7 +10,11 @@ SJson *inventory_item_to_json(InventoryItem *item);
 
 int inventory_get_count(Inventory *inven)
 {
-    if (!inven)return 0;
+    if (!inven)
+    {
+        slog("NULL inventory provided");
+        return 0;
+    }
     return gfc_list_get_count(inven->items);
 }
 
