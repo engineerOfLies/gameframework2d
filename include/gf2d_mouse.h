@@ -120,12 +120,14 @@ MouseFunction gf2d_mouse_get_function();
  * @param action if NULL clears the spell associated with the spell, otherwise will use the actor specified
  */
 void gf2d_mouse_set_spell_action(char *action);
+void gf2d_mouse_set_spell_actor(char *actor);
 
 /**
  * @brief set the actor to use for the item
  * @param action     if NULL clears the item associated with the item action, otherwise will use the actor specified
  */
 void gf2d_mouse_set_item_action(char *action);
+void gf2d_mouse_set_item_actor(char *actor);
 
 /**
  * @brief update the logic for mouse context switching

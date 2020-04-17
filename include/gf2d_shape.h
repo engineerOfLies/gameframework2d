@@ -170,6 +170,8 @@ Uint8 gf2d_rect_overlap_poc(Rect a,Rect b,Vector2D *poc, Vector2D *normal);
  */
 void gf2d_rect_draw(Rect r,Color color);
 
+void gf2d_rect_draw_filled(Rect r,Color color);
+
 /**
  * @brief make a GF2D Circle
  * @param x the position of the circle center

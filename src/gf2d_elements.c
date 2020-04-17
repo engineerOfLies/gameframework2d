@@ -29,7 +29,9 @@ Element *gf2d_element_new_full(
     TextLine name,
     Rect bounds,
     Color color,
-    int state       
+    int state,
+    Color backgroundColor,
+    int backgroundDraw
 )
 {
     Element *e;
@@ -40,6 +42,8 @@ Element *gf2d_element_new_full(
     e->color = color;
     e->state = state;
     e->bounds = bounds;
+    e->backgroundColor = backgroundColor;
+    e->backgroundDraw = backgroundDraw;
     return e;
 }
 
@@ -60,10 +64,14 @@ void gf2d_element_draw(Element *e, Vector2D offset)
     {
         return;
     }
+    gf2d_rect_set(rect,offset.x + e->bounds.x,offset.y + e->bounds.y,e->bounds.w,e->bounds.h);
+    if (e->backgroundDraw)
+    {
+        gf2d_rect_draw_filled(rect,e->backgroundColor);
+    }
     if (e->draw)e->draw(e,offset);
     if (__DebugMode)
     {
-        gf2d_rect_set(rect,offset.x + e->bounds.x,offset.y + e->bounds.y,e->bounds.w,e->bounds.h);
         gf2d_rect_draw(rect,gfc_color8(100,255,100,255));
     }
 }
@@ -158,7 +166,16 @@ Element *gf2d_element_load_from_config(SJson *json,Element *parent,Window *win)
     vector4d_set(vector,255,255,255,255);
     sj_value_as_vector4d(value,&vector);
     e->color = gfc_color_from_vector4(vector);
-        
+
+    value = sj_object_get_value(json,"backgroundColor");
+    vector4d_set(vector,255,255,255,0);
+    sj_value_as_vector4d(value,&vector);
+    e->color = gfc_color_from_vector4(vector);
+
+    value = sj_object_get_value(json,"backgroundDraw");
+    sj_get_integer_value(value,&e->backgroundDraw);
+    
+
     value = sj_object_get_value(json,"bounds");
     sj_value_as_vector4d(value,&vector);
     gf2d_rect_set(e->bounds,vector.x,vector.y,vector.z,vector.w);

@@ -140,7 +140,7 @@
                             "type": "label",
                             "bounds": [0,0,168,64],
                             "color" : [255,255,255,255],
-                            "text":"Cancel",
+                            "text":"Select",
                             "align" : "middle",
                             "justify" : "center",
                             "style":"H5"

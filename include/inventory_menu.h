@@ -4,6 +4,6 @@
 #include "gf2d_windows.h"
 #include "inventory.h"
 
-Window *inventory_menu(Inventory *inven);
+Window *inventory_menu(Inventory *inven,char *actor,char *action,void (*onSelect)(void *data),void *callbackData);
 
 #endif

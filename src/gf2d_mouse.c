@@ -25,9 +25,33 @@ typedef struct
 
 static Mouse _mouse = {0};
 
+void gf2d_mouse_set_item_actor(char *actor)
+{
+    if (!actor)return;
+    if (_mouse.itemActor.al)
+    {
+        // already an actor loaded
+        if (gfc_line_cmp(actor,_mouse.itemActor.al->filename)==0)return;//already the correct actor
+        gf2d_actor_free(&_mouse.itemActor);
+    }
+    gf2d_actor_load(&_mouse.itemActor,actor);
+}
+
 void gf2d_mouse_set_action(char *action)
 {
     gf2d_actor_set_action(&_mouse.actor,action);
+}
+
+void gf2d_mouse_set_spell_actor(char *actor)
+{
+    if (!actor)return;
+    if (_mouse.spellActor.al)
+    {
+        // already an actor loaded
+        if (gfc_line_cmp(actor,_mouse.spellActor.al->filename)==0)return;//already the correct actor
+        gf2d_actor_free(&_mouse.spellActor);
+    }
+    gf2d_actor_load(&_mouse.spellActor,actor);
 }
 
 void gf2d_mouse_load(char *actorFile)
@@ -38,7 +62,7 @@ void gf2d_mouse_load(char *actorFile)
 
 void gf2d_mouse_set_item_action(char *action)
 {
-    if (!action)
+    if ((!action)||(strlen(action)))
     {
         gf2d_mouse_set_function(MF_Walk);
         _mouse.itemSet = 0;

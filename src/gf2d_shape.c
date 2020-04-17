@@ -351,6 +351,11 @@ void gf2d_rect_draw(Rect r,Color color)
     gf2d_draw_rect(gf2d_rect_to_sdl_rect(r),gfc_color_to_vector4(color));
 }
 
+void gf2d_rect_draw_filled(Rect r,Color color)
+{
+    gf2d_draw_rect_filled(gf2d_rect_to_sdl_rect(r),gfc_color_to_vector4(color));
+}
+
 void gf2d_shape_draw(Shape shape,Color color,Vector2D offset)
 {
     switch(shape.type)

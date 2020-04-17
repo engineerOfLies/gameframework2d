@@ -17,7 +17,9 @@ static Window *_HUD = NULL; /**<hud is a singleton.  don't spawn more than one*/
 
 typedef struct
 {
-    Entity *player;// the player whose in control at the moment
+    TextLine    action;
+    TextLine    actor;
+    Entity     *player;// the player whose in control at the moment
 }HUD;
 
 int hud_mouse_check()
@@ -41,6 +43,21 @@ void hud_hide()
 {
     if (!_HUD)return;
     _HUD->dimensions.y = -_HUD->dimensions.h;
+}
+
+void onItemSelect(void *data)
+{
+    Window *win;
+    HUD *hud;
+    if (!data)return;
+    win = data;
+    if (!win->data)return;
+    hud = win->data;
+    
+    slog("setting mouse actor to %s",hud->actor);
+    gf2d_mouse_set_item_actor(hud->actor);
+    gf2d_mouse_set_item_action(hud->action);
+    scene_set_mouse_function(scene_get_active(), MF_Item);
 }
 
 int hud_update(Window *win,List *updateList)
@@ -99,7 +116,7 @@ int hud_update(Window *win,List *updateList)
                 return 1;
             case 51:
                 hud_hide();
-                inventory_menu(player_get_item_inventory(hud->player));
+                inventory_menu(player_get_item_inventory(hud->player),hud->actor,hud->action,onItemSelect,win);
                 return 1;
             case 81:
                 options_menu(hud->player);
