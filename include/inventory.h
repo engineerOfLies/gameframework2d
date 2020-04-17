@@ -46,8 +46,9 @@ InventoryItem *inventory_get_nth(Inventory *inven,int i);
  * @param name the item to add
  * @param count how much the player gets 
  * @param skill skill level of the item for the player
+ * @return 0 on failure or the inventory is full of the item in question, 1 on success
  */
-void inventory_give_item(Inventory *inven,char *name, int count, int skill);
+int inventory_give_item(Inventory *inven,char *name, int count, int skill);
 
 /**
  * @brief parse inventory information from a json object

@@ -88,6 +88,8 @@ char *player_get_filename(Entity *player);
 
 
 Inventory *player_get_item_inventory(Entity *player);
+int player_give_item(Entity *player,char *item,int count);
+
 
 /**
  * @brief set a callback for the player to perform after the current command is completed

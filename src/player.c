@@ -256,6 +256,14 @@ void player_set_callback(Entity *player,void(*call)(void *),void *data)
     player->nextAction = gfc_callback_new(call,data);
 }
 
+int player_give_item(Entity *player,char *item,int count)
+{
+    if (!player)return 0;
+    if (!item)return 0;
+    if (count <= 0)return 0;
+    return inventory_give_item(player_get_item_inventory(player),item, count, 0);    
+}
+
 Inventory *player_get_item_inventory(Entity *player)
 {
     PlayerData *pd;

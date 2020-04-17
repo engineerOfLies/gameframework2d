@@ -74,8 +74,10 @@ void exhibit_interact_callback(void *data)
 
 int exhibit_do_action(Exhibit *exhibit,char * command)
 {
+    int count = 0;
     Bool proximity = 0;
     const char *actionType = NULL;
+    const char *item = NULL;
     const char *message = NULL;
     SJson *arg = NULL,*action = NULL;
 
@@ -114,6 +116,30 @@ int exhibit_do_action(Exhibit *exhibit,char * command)
         else
         {
             do_exit(exhibit);
+        }
+    }
+    else if (strcmp(actionType,"give_item")==0)
+    {
+        item = sj_get_string_value(sj_object_get_value(action,"item"));
+        count = 1;
+        sj_get_integer_value(sj_object_get_value(action,"count"),&count);
+        if (player_give_item(scene_get_active_player(exhibit->scene),(char *)item,count))
+        {// success
+            message = sj_get_string_value(sj_object_get_value(action,"success"));
+            if (message)
+            {   
+                window_alert(exhibit->name, (char *)message, NULL, NULL);
+                exhibit_paused = 1;
+            }
+        }
+        else
+        {// failure
+            message = sj_get_string_value(sj_object_get_value(action,"failure"));
+            if (message)
+            {   
+                window_alert(exhibit->name, (char *)message, NULL,NULL);
+                exhibit_paused = 1;
+            }
         }
     }
     return 1;

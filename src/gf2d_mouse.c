@@ -17,8 +17,8 @@ typedef struct
     MouseState mouse[2]; /**<mouse state for the current and last frames*/
     Actor actor;         /**<mouse actor*/
     MouseFunction mf;    /**<current mouse state*/
-    Bool    itemSet;     /**<if set, allow cycling through itemActor*/
-    Bool    spellSet;     /**<if set, allow cycling through spellActor*/
+    int     itemSet;     /**<if set, allow cycling through itemActor*/
+    int     spellSet;     /**<if set, allow cycling through spellActor*/
     Actor itemActor;    /**<use this actor when drawing an item selection*/
     Actor spellActor;   /**<use this actor when drawing a spell selection*/
 }Mouse;

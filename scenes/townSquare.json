@@ -52,7 +52,11 @@
         "interact": {
           "DEFAULT": "You pick a few flowers.",
           "action": {
-            "give_item": "flowers"
+            "type": "give_item",
+            "item": "Flowers",
+            "count": 1,
+            "success":"you pick a few choice flowers and add the bundle to your pack",
+            "failure":"you have enough flowers for now"
           }
         },
         "talk": {

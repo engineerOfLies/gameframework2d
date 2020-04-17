@@ -1,6 +1,6 @@
 #include "simple_logger.h"
 
-
+#include "items.h"
 #include "inventory.h"
 
 void inventory_item_free(InventoryItem *item);
@@ -24,23 +24,39 @@ InventoryItem *inventory_get_nth(Inventory *inven,int i)
     return gfc_list_get_nth(inven->items,i);
 }
 
-void inventory_give_item(Inventory *inven,char *name, int count, int skill)
+int inventory_give_item(Inventory *inven,char *name, int count, int skill)
 {
+    Item *itemInfo;
     InventoryItem *item;
-    if (!inven)return;
+    if (!inven)return 0;
+    itemInfo = item_list_get_by_name(name);
+    if (!itemInfo)return 0;
     item = inventory_get_item(inven,name);
     if (item != NULL)
     {
+        if (!itemInfo->stackable)
+        {
+            return 0;
+        }
+        if (item->count >= itemInfo->stackLimit)
+        {
+            return 0;
+        }
         item->count += count;
         item->skill = skill;
-        return;
+        if (item->count >= itemInfo->stackLimit)
+        {
+            item->count = itemInfo->stackLimit;
+        }
+        return 1;
     }
     item = inventory_item_new();
-    if (!item)return;
+    if (!item)return 0;
     gfc_line_cpy(item->name,name);
     item->count = count;
     item->skill = skill;
     inven->items = gfc_list_append(inven->items,item);
+    return 1;
 }
 
 InventoryItem *inventory_get_item(Inventory *inven,char *name)
