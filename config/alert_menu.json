@@ -13,6 +13,7 @@
         "bounds": [0,0,1,1],
         "color" : [255,255,255,255],
         "style": "vertical",
+        "packed":true,
         "item_size" : [100,24],
         "elements":
         [
@@ -20,23 +21,24 @@
                 "type": "label",
                 "name": "title",
                 "id" : 1,
-                "bounds": [0,0,1,40],
+                "bounds": [0,0,1,20],
                 "color" : [255,255,255,255],
                 "text":"?",
                 "justify" : "center",
                 "align" : "middle",
-                "style":"H3"
+                "style":"H4"
             },
             {
                 "type": "label",
                 "name": "message",
                 "id" : 2,
-                "bounds": [10,0,1,40],
+                "bounds": [10,0,1,80],
                 "color" : [255,255,255,255],
                 "text":"?",
+                "wraps":true,
                 "justify" : "left",
-                "align" : "middle",
-                "style":"H4"
+                "align" : "top",
+                "style":"H5"
             },
             {
                 "type": "button",

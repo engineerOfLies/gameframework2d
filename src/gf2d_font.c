@@ -410,7 +410,8 @@ void gf2d_font_draw_text_wrap(
     TextLine word;
     Bool whitespace;
     int drawheight = block.y;
-    int w,h;
+    int w,h = 0;
+    int row = 0;
     int i;
     int space;
     int lindex = 0;
@@ -454,7 +455,7 @@ void gf2d_font_draw_text_wrap(
         }while (whitespace);
         if (sscanf(text,"%s",word) == EOF)
         {
-            block.y=drawheight+h;
+            block.y=drawheight + (h*row);
             gf2d_font_draw_line(temptextline,font,color, vector2d(block.x,block.y));
             return;
         }
@@ -470,14 +471,13 @@ void gf2d_font_draw_text_wrap(
         lindex += strlen(word);
         if(w > block.w)         /*see if we have gone over*/
         {
-            block.y=drawheight+h;
+            block.y=drawheight + (h*row);
             gf2d_font_draw_line(textline,font,color, vector2d(block.x,block.y));
-            
+            row++;
             /*draw the line and get ready for the next line*/
-            drawheight += h;
             if (block.h != 0)
             {
-                if ((drawheight + h) > (block.y + block.h))
+                if ((drawheight + (h*row)) > (block.y + block.h))
                 {
                     break;
                 }

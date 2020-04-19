@@ -10,6 +10,7 @@ typedef struct
     TextLine    name;
     int         count;
     int         skill;
+    int         uses;
 }InventoryItem;
 
 typedef struct

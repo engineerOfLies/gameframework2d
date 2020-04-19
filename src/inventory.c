@@ -203,6 +203,7 @@ InventoryItem *inventory_item_from_json(SJson *json)
     
     sj_get_integer_value(sj_object_get_value(json,"count"),&item->count);
     sj_get_integer_value(sj_object_get_value(json,"skill"),&item->skill);
+    sj_get_integer_value(sj_object_get_value(json,"uses"),&item->uses);
     
     return item;
 }
@@ -217,6 +218,7 @@ SJson *inventory_item_to_json(InventoryItem *item)
     sj_object_insert(json,"name",sj_new_str(item->name));
     sj_object_insert(json,"count",sj_new_int(item->count));
     sj_object_insert(json,"skill",sj_new_int(item->skill));
+    sj_object_insert(json,"uses",sj_new_int(item->uses));
     
     return json;
 }
