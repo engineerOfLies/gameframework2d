@@ -65,8 +65,8 @@ void onFileLoadOk(void *Data)
 void main_menu_start_new_game()
 {
     Entity *player;
-    player = player_spawn(vector2d(300,300),"scenes/testlevel.json");
-    scene_next_scene("scenes/testlevel.json", player, "player_start");
+    player = player_load("saves/start.json");
+    scene_next_scene(player_get_scene(player), player, "player_start");
     hud_open(player);
     gf2d_mouse_set_function(MF_Walk);
     beginGame();
@@ -132,7 +132,7 @@ Window *main_menu()
 {
     Window *win;
     MainMenuData* data;
-    win = gf2d_window_load("config/main_menu.json");
+    win = gf2d_window_load("menus/main_menu.json");
     if (!win)
     {
         slog("failed to load editor menu");

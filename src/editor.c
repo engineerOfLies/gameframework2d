@@ -335,7 +335,7 @@ Window *editor_window(Scene * scene)
 {
     Window *win;
     EditorData *data;
-    win = gf2d_window_load("config/editor_window.json");
+    win = gf2d_window_load("menus/editor_window.json");
     if (!win)
     {
         slog("failed to load editor window");

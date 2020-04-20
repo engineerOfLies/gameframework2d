@@ -9,11 +9,14 @@
 typedef struct
 {
     TextLine    filename;   /**<player save file*/
+    float       health, stamina, mana;
+    int         healthMax,staminaMax,manaMax;
     TextLine    scene;
     Vector2D    position;
     Inventory  *items;
     Inventory  *spells;
     Inventory  *skills;
+    Inventory  *attributes;
     SJson      *history;
 }PlayerData;
 
@@ -149,6 +152,7 @@ SJson *player_to_json(Entity *player)
     sj_object_insert(json,"items",inventory_to_json(pd->items));
     sj_object_insert(json,"skills",inventory_to_json(pd->skills));
     sj_object_insert(json,"spells",inventory_to_json(pd->spells));
+    sj_object_insert(json,"attributes",inventory_to_json(pd->attributes));
     
     return json;
 }
@@ -204,6 +208,9 @@ Entity *player_parse_from_json(SJson *json)
     
     inven = sj_object_get_value(json,"spells");
     pd->spells = inventory_parse_from_json(inven);
+
+    inven = sj_object_get_value(json,"attributes");
+    pd->attributes = inventory_parse_from_json(inven);
     
     pd->history = sj_copy(sj_object_get_value(json,"history"));
     sj_free(json);

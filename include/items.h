@@ -5,6 +5,10 @@
 #include "gfc_types.h"
 #include "gfc_text.h"
 
+/**
+ * @brief items are generic enough to work for items, skills, spells, and attributes
+ */
+
 typedef struct
 {
     TextLine    name;
@@ -18,6 +22,7 @@ typedef struct
     int         stackable;
     int         stackLimit;
 }Item;
+
 
 /**
  * @brief load a global item list from json file

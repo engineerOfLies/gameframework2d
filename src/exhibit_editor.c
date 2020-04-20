@@ -274,7 +274,7 @@ Window *exhibit_editor(Exhibit *exhibit,Vector2D position)
 {
     Window *win;
     ExhibitData *exhibit_data = NULL;
-    win = gf2d_window_load("config/exhibit_editor.json");
+    win = gf2d_window_load("menus/exhibit_editor.json");
     if (!win)
     {
         slog("failed to load exhibit editor menu");

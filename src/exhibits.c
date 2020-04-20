@@ -50,7 +50,6 @@ void do_exit(void *data)
 
     exhibit = (Exhibit *)data;
     exhibit_unpause(NULL);
-    slog("now exiting the scene");
 
     arg = sj_object_get_value(exhibit->args,"exit");
     if (!arg)
@@ -88,7 +87,6 @@ int exhibit_do_action(Exhibit *exhibit,char * command)
     sj_get_bool_value(sj_object_get_value(arg,"proximity"),(short int *)&proximity);
     if (proximity)
     {
-        slog("proximity matters for this exhibit");
         if (player_near_scene_point(scene_get_active_player(exhibit->scene),exhibit->near) == 0)
         {
             exhibit_player_walk_to(exhibit);
@@ -96,7 +94,6 @@ int exhibit_do_action(Exhibit *exhibit,char * command)
             return 1;
         }
     }
-    slog("player is either close enough, or it doesn't matter. interacting");
     // either we don't need to be near it, or we are already here
     action = sj_object_get_value(arg,"action");
     actionType = sj_get_string_value(sj_object_get_value(action,"type"));

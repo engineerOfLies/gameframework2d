@@ -298,7 +298,7 @@ Window *layer_editor(Layer *layer,Window *parent,Scene *scene)
 {
     Window *win;
     LayerData *layer_data = NULL;
-    win = gf2d_window_load("config/layer_editor.json");
+    win = gf2d_window_load("menus/layer_editor.json");
     if (!win)
     {
         slog("failed to load layer editor menu");

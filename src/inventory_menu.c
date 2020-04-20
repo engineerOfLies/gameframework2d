@@ -218,7 +218,7 @@ Window *inventory_menu(Inventory *inven,char *actor,char *action,void (*onSelect
 {
     Window *win;
     InventoryMenuData* data;
-    win = gf2d_window_load("config/inventory_menu.json");
+    win = gf2d_window_load("menus/inventory_menu.json");
     if (!win)
     {
         slog("failed to load inventory menu");

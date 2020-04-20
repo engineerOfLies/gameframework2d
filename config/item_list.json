@@ -2,6 +2,42 @@
     "item_list":
     [
         {
+            "name":"Strength",
+            "actor":"actors/attributes.json",
+            "action":"strength",
+            "description":"How strong a character is, how much they can lift, how much damage they do with a strength based weapons"
+        },
+        {
+            "name":"Endurance",
+            "actor":"actors/attributes.json",
+            "action":"endurance",
+            "description":" How much punishment a character can take."
+        },
+        {
+            "name":"Dexterity",
+            "actor":"actors/attributes.json",
+            "action":"dexterity",
+            "description":"How nimble a character is with their hands.  Useful for crafts, finesse based weapons, and some forms of spell casting."
+        },
+        {
+            "name":"Agility",
+            "actor":"actors/attributes.json",
+            "action":"agility",
+            "description":"How well the character can move their body.  Useful to avoid damage and perform acrobatic skills."
+        },
+        {
+            "name":"Focus",
+            "actor":"actors/attributes.json",
+            "action":"focus",
+            "description":"How keen a character’s mind is.  How quick to pick up new ideas and understand complex concepts."
+        },
+        {
+            "name":"Resolve",
+            "actor":"actors/attributes.json",
+            "action":"resolve",
+            "description":"How keen a character’s mind is.  How quick to pick up new ideas and understand complex concepts."
+        },
+        {
             "name":"Flowers",
             "actor":"actors/items.json",
             "action":"flowers",

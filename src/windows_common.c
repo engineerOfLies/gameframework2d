@@ -77,7 +77,7 @@ Window *window_yes_no(char *text, void(*onYes)(void *),void(*onNo)(void *),void 
 {
     Window *win;
     List *callbacks;
-    win = gf2d_window_load("config/yes_no_window.json");
+    win = gf2d_window_load("menus/yes_no_window.json");
     if (!win)
     {
         slog("failed to load yes/no window");
@@ -169,7 +169,7 @@ Window *window_alert(char *title, char *text, void(*onOK)(void *),void *okData)
 {
     Window *win;
     List *callbacks;
-    win = gf2d_window_load("config/alert_menu.json");
+    win = gf2d_window_load("menus/alert_menu.json");
     if (!win)
     {
         slog("failed to load alert window");
@@ -190,7 +190,7 @@ Window *window_text_entry(char *question, char *defaultText,void *callbackData, 
 {
     Window *win;
     List *callbacks;
-    win = gf2d_window_load("config/text_entry_window.json");
+    win = gf2d_window_load("menus/text_entry_window.json");
     if (!win)
     {
         slog("failed to load yes/no window");

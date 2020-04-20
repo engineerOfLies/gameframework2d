@@ -18,7 +18,7 @@
       ],
       "args": {
         "exit": {
-          "scene": "scenes/testlevel.json",
+          "scene": "scenes/town_gate.json",
           "position": "Town Gate"
         },
         "walk": {

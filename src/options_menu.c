@@ -102,7 +102,7 @@ Window *options_menu(Entity *player)
 {
     Window *win;
     OptionsMenuData* data;
-    win = gf2d_window_load("config/options_menu.json");
+    win = gf2d_window_load("menus/options_menu.json");
     if (!win)
     {
         slog("failed to load editor menu");

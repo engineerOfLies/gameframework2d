@@ -159,7 +159,7 @@ Window *hud_open(Entity *player)
         }
         return _HUD;
     }
-    win = gf2d_window_load("config/hud.json");
+    win = gf2d_window_load("menus/hud.json");
     if (!win)
     {
         slog("failed to load hud");

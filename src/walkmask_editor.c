@@ -221,7 +221,7 @@ Window *walkmask_editor(Walkmask *mask,Vector2D position)
 {
     Window *win;
     WalkmaskData *walkmask_data = NULL;
-    win = gf2d_window_load("config/mask_editor.json");
+    win = gf2d_window_load("menus/mask_editor.json");
     if (!win)
     {
         slog("failed to load exhibit editor menu");

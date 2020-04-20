@@ -153,7 +153,7 @@ Window *actor_editor_menu(char *actorFile,char *action,void *data, void(*onOk)(v
     AEData *aedata;
     List *callbacks;
     TextLine label;
-    win = gf2d_window_load("config/actor_window.json");
+    win = gf2d_window_load("menus/actor_window.json");
     if (!win)
     {
         slog("failed to load actor window");
