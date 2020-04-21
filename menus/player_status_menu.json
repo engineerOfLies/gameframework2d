@@ -1,0 +1,358 @@
+{
+  "window": {
+    "color": [255,255,255,255],
+    "dimensions": [0,0,750,510],
+    "justify": "center",
+    "align": "middle",
+    "elements": [
+      {
+        "type": "list",
+        "bounds": [0,0,1,1],
+        "color": [255,255,255,255],
+        "style": "vertical",
+        "packed":true,
+        "elements": [
+          {
+            "type": "label",
+            "id" : 1,
+            "bounds": [0,10,1,40],
+            "color" : [255,255,255,255],
+            "text":"Player Name",
+            "justify" : "center",
+            "align" : "middle",
+            "style":"H3"
+          },
+          {
+            "type": "list",
+            "name":"columns",
+            "bounds": [0,0,1,400],
+            "color": [255,255,255,255],
+            "style": "horizontal",
+            "item_size": [250,1],
+            "elements": [
+              {
+                "type": "list",
+                "name":"attributes",
+                "bounds": [10,0,1,1],
+                "color": [255,255,255,255],
+                "style": "vertical",
+                "item_size": [1,70],
+                "elements": [
+                    {
+                        "type": "list",
+                        "name":"strength",
+                        "bounds": [0,0,1,1],
+                        "color": [255,255,255,255],
+                        "style": "horizontal",
+                        "packed": true,
+                        "elements": [
+                            {
+                                "type": "actor",
+                                "bounds": [0,0,128,128],
+                                "color" : [255,255,255,255],
+                                "actor" : "actors/attributes.json",
+                                "action": "strength"
+                            },
+                            {
+                                "type": "label",
+                                "id" : 1000,
+                                "bounds": [0,10,1,40],
+                                "color" : [255,255,255,255],
+                                "text":"strength",
+                                "justify" : "left",
+                                "align" : "middle",
+                                "style":"H3"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "list",
+                        "name":"endurance",
+                        "bounds": [0,0,1,1],
+                        "color": [255,255,255,255],
+                        "style": "horizontal",
+                        "packed": true,
+                        "elements": [
+                            {
+                                "type": "actor",
+                                "bounds": [0,0,128,128],
+                                "color" : [255,255,255,255],
+                                "actor" : "actors/attributes.json",
+                                "action": "endurance"
+                            },
+                            {
+                                "type": "label",
+                                "id" : 1000,
+                                "bounds": [0,10,1,40],
+                                "color" : [255,255,255,255],
+                                "text":"endurance",
+                                "justify" : "left",
+                                "align" : "middle",
+                                "style":"H3"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "list",
+                        "name":"dexterity",
+                        "bounds": [0,0,1,1],
+                        "color": [255,255,255,255],
+                        "style": "horizontal",
+                        "packed": true,
+                        "elements": [
+                            {
+                                "type": "actor",
+                                "bounds": [0,0,128,128],
+                                "color" : [255,255,255,255],
+                                "actor" : "actors/attributes.json",
+                                "action": "dexterity"
+                            },
+                            {
+                                "type": "label",
+                                "id" : 1002,
+                                "bounds": [0,10,1,40],
+                                "color" : [255,255,255,255],
+                                "text":"dexterity",
+                                "justify" : "left",
+                                "align" : "middle",
+                                "style":"H3"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "list",
+                        "name":"agility",
+                        "bounds": [0,0,1,1],
+                        "color": [255,255,255,255],
+                        "style": "horizontal",
+                        "packed": true,
+                        "elements": [
+                            {
+                                "type": "actor",
+                                "bounds": [0,0,128,128],
+                                "color" : [255,255,255,255],
+                                "actor" : "actors/attributes.json",
+                                "action": "agility"
+                            },
+                            {
+                                "type": "label",
+                                "id" : 1003,
+                                "bounds": [0,10,1,40],
+                                "color" : [255,255,255,255],
+                                "text":"agility",
+                                "justify" : "left",
+                                "align" : "middle",
+                                "style":"H3"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "list",
+                        "name":"focus",
+                        "bounds": [0,0,1,1],
+                        "color": [255,255,255,255],
+                        "style": "horizontal",
+                        "packed": true,
+                        "elements": [
+                            {
+                                "type": "actor",
+                                "bounds": [0,0,128,128],
+                                "color" : [255,255,255,255],
+                                "actor" : "actors/attributes.json",
+                                "action": "focus"
+                            },
+                            {
+                                "type": "label",
+                                "id" : 1004,
+                                "bounds": [0,10,1,40],
+                                "color" : [255,255,255,255],
+                                "text":"focus",
+                                "justify" : "left",
+                                "align" : "middle",
+                                "style":"H3"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "list",
+                        "name":"resolve",
+                        "bounds": [0,0,1,1],
+                        "color": [255,255,255,255],
+                        "style": "horizontal",
+                        "packed": true,
+                        "elements": [
+                            {
+                                "type": "actor",
+                                "bounds": [0,0,128,128],
+                                "color" : [255,255,255,255],
+                                "actor" : "actors/attributes.json",
+                                "action": "resolve"
+                            },
+                            {
+                                "type": "label",
+                                "id" : 1005,
+                                "bounds": [0,10,1,40],
+                                "color" : [255,255,255,255],
+                                "text":"resolve",
+                                "justify" : "left",
+                                "align" : "middle",
+                                "style":"H3"
+                            }
+                        ]
+                    }
+                ]
+              },
+              {
+                "type": "list",
+                "name":"core",
+                "id":2000,
+                "bounds": [0,0,250,1],
+                "color": [255,255,255,255],
+                "style": "vertical",
+                "packed":true,
+                "elements": [
+                    {
+                        "type": "actor",
+                        "bounds": [0,64,128,230],
+                        "scale":[1.5,1.5],
+                        "color" : [255,255,255,255],
+                        "actor" : "actors/player.json",
+                        "action": "idle"
+                    },
+                    {
+                        "type": "list",
+                        "name":"health",
+                        "bounds": [0,0,1,70],
+                        "color": [255,255,255,255],
+                        "style": "horizontal",
+                        "packed": true,
+                        "elements": [
+                            {
+                                "type": "actor",
+                                "bounds": [0,0,128,128],
+                                "color" : [255,255,255,255],
+                                "actor" : "actors/attributes.json",
+                                "action": "health"
+                            },
+                            {
+                                "type": "label",
+                                "id" : 2000,
+                                "bounds": [0,10,1,40],
+                                "color" : [255,255,255,255],
+                                "text":" 100/100",
+                                "justify" : "left",
+                                "align" : "middle",
+                                "style":"H3"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "list",
+                        "name":"stamina",
+                        "bounds": [0,0,1,70],
+                        "color": [255,255,255,255],
+                        "style": "horizontal",
+                        "packed": true,
+                        "elements": [
+                            {
+                                "type": "actor",
+                                "bounds": [0,0,128,128],
+                                "color" : [255,255,255,255],
+                                "actor" : "actors/attributes.json",
+                                "action": "stamina"
+                            },
+                            {
+                                "type": "label",
+                                "id" : 2001,
+                                "bounds": [0,10,1,40],
+                                "color" : [255,255,255,255],
+                                "text":"stamina",
+                                "justify" : "left",
+                                "align" : "middle",
+                                "style":"H3"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "list",
+                        "name":"mana",
+                        "bounds": [0,0,1,70],
+                        "color": [255,255,255,255],
+                        "style": "horizontal",
+                        "packed": true,
+                        "elements": [
+                            {
+                                "type": "actor",
+                                "bounds": [0,0,128,128],
+                                "color" : [255,255,255,255],
+                                "actor" : "actors/attributes.json",
+                                "action": "mana"
+                            },
+                            {
+                                "type": "label",
+                                "id" : 2002,
+                                "bounds": [0,10,1,40],
+                                "color" : [255,255,255,255],
+                                "text":"mana",
+                                "justify" : "left",
+                                "align" : "middle",
+                                "style":"H3"
+                            }
+                        ]
+                    }                
+                ]
+              },
+              {
+                "type": "list",
+                "name":"skills",
+                "id":3000,
+                "bounds": [0,0,250,1],
+                "color": [255,255,255,255],
+                "style": "vertical",
+                "item_size": [1,70],
+                "elements": [
+                    {
+                        "type": "label",
+                        "id":3001,
+                        "bounds": [0,0,1,40],
+                        "color" : [255,255,255,255],
+                        "text":"Skills",
+                        "justify" : "center",
+                        "align" : "middle",
+                        "style":"H3"
+                    }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "button",
+            "id" : 51,
+            "bounds": [590,0,150,60],
+            "color" : [255,255,255,255],
+            "hotkey":"cancel",
+            "highColor" : [255,255,255,255],
+            "pressColor" : [255,255,255,255],
+            "label" :
+                {
+                "type": "label",
+                "bounds": [0,0,168,64],
+                "color" : [255,255,255,255],
+                "text":"Done",
+                "align" : "middle",
+                "justify" : "center",
+                "style":"H5"
+                },
+            "actor" :
+                {
+                "type": "actor",
+                "bounds": [0,0,168,64],
+                "color" : [255,255,255,255],
+                "actor" : "actors/button.actor"
+                }
+          }
+        ]
+      }
+    ]
+  }
+}

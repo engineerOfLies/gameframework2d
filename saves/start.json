@@ -1,0 +1,74 @@
+{
+  "position": [
+    "345.998413",
+    "540.079834"
+  ],
+  "scene": "scenes/town_gate.json",
+  "attributes": {
+    "items":
+    [
+        {
+            "name":"Strength",
+            "skill":10
+        },
+        {
+            "name":"Endurance",
+            "skill":10
+        },
+        {
+            "name":"Dexterity",
+            "skill":10
+        },
+        {
+            "name":"Agility",
+            "skill":10
+        },
+        {
+            "name":"Focus",
+            "skill":10
+        },
+        {
+            "name":"Resolve",
+            "skill":10
+        }
+    ]
+  },
+  "items": {
+    "items":
+    [
+        {
+            "name":"Gold",
+            "count":100,
+            "skill":0
+        },
+        {
+            "name":"Skull",
+            "count":1,
+            "skill":0
+        }
+    ]
+  },
+  "skills": {
+    "items": [
+        {
+            "name":"Attack",
+            "skill":10
+        },
+        {
+            "name":"Defense",
+            "skill":10
+        },
+        {
+            "name":"Throwing",
+            "skill":10
+        },
+        {
+            "name":"Climbing",
+            "skill":10
+        }
+    ]
+  },
+  "spells": {
+    "items": []
+  }
+}

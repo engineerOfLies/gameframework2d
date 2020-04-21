@@ -18,7 +18,7 @@
                 "type": "loop"
             },
             {
-                "action": "stamin",
+                "action": "stamina",
                 "startFrame": 1,
                 "endFrame": 1,
                 "frameRate": 0,

@@ -3,42 +3,49 @@
     [
         {
             "name":"Strength",
+            "type":"attribute",
             "actor":"actors/attributes.json",
             "action":"strength",
             "description":"How strong a character is, how much they can lift, how much damage they do with a strength based weapons"
         },
         {
             "name":"Endurance",
+            "type":"attribute",
             "actor":"actors/attributes.json",
             "action":"endurance",
             "description":" How much punishment a character can take."
         },
         {
             "name":"Dexterity",
+            "type":"attribute",
             "actor":"actors/attributes.json",
             "action":"dexterity",
             "description":"How nimble a character is with their hands.  Useful for crafts, finesse based weapons, and some forms of spell casting."
         },
         {
             "name":"Agility",
+            "type":"attribute",
             "actor":"actors/attributes.json",
             "action":"agility",
             "description":"How well the character can move their body.  Useful to avoid damage and perform acrobatic skills."
         },
         {
             "name":"Focus",
+            "type":"attribute",
             "actor":"actors/attributes.json",
             "action":"focus",
             "description":"How keen a character’s mind is.  How quick to pick up new ideas and understand complex concepts."
         },
         {
             "name":"Resolve",
+            "type":"attribute",
             "actor":"actors/attributes.json",
             "action":"resolve",
             "description":"How keen a character’s mind is.  How quick to pick up new ideas and understand complex concepts."
         },
         {
             "name":"Flowers",
+            "type":"item",
             "actor":"actors/items.json",
             "action":"flowers",
             "description":"An assortment of hand picked flowers",
@@ -51,6 +58,7 @@
         },
         {
             "name":"Gold",
+            "type":"item",
             "actor":"actors/items.json",
             "action":"gold",
             "description":"gold can be exchanged for goods and services!",
@@ -63,6 +71,7 @@
         },
         {
             "name":"Cord",
+            "type":"item",
             "actor":"actors/items.json",
             "action":"corn",
             "description":"fresh picked corn.  Can be eated",
@@ -75,6 +84,7 @@
         },
         {
             "name":"Health Potion",
+            "type":"item",
             "actor":"actors/items.json",
             "action":"health_potion",
             "description":"Drinking this will replenish your health by 20",
@@ -87,6 +97,7 @@
         },
         {
             "name":"Mana Potion",
+            "type":"item",
             "actor":"actors/items.json",
             "action":"mana_potion",
             "description":"Drinking this potion will replinish your mana by 20!",
@@ -99,6 +110,7 @@
         },
         {
             "name":"Stamina Potion",
+            "type":"item",
             "actor":"actors/items.json",
             "action":"stamina_potion",
             "description":"Drinking this will recover some of your spent stamina by 30",
@@ -111,6 +123,7 @@
         },
         {
             "name":"Skull",
+            "type":"item",
             "actor":"actors/items.json",
             "action":"skull",
             "description":"It's a skull...",
@@ -123,6 +136,7 @@
         },
         {
             "name":"Soul Forge",
+            "type":"item",
             "actor":"actors/items.json",
             "action":"soul_forge",
             "description":"This mysterious amulet is named the Soul Forge, or so Kallack told you",

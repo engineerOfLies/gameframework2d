@@ -11,6 +11,7 @@
 #include "windows_common.h"
 #include "options_menu.h"
 #include "inventory_menu.h"
+#include "player_status_menu.h"
 #include "hud.h"
 
 static Window *_HUD = NULL; /**<hud is a singleton.  don't spawn more than one*/
@@ -117,6 +118,10 @@ int hud_update(Window *win,List *updateList)
             case 51:
                 hud_hide();
                 inventory_menu(player_get_item_inventory(hud->player),hud->actor,hud->action,onItemSelect,win);
+                return 1;
+            case 71:
+                hud_hide();
+                player_status_menu(hud->player);
                 return 1;
             case 81:
                 options_menu(hud->player);
