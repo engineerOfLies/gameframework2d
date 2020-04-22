@@ -36,7 +36,7 @@
                 "bounds": [10,0,1,1],
                 "color": [255,255,255,255],
                 "style": "vertical",
-                "item_size": [1,70],
+                "item_size": [1,65],
                 "elements": [
                     {
                         "type": "list",
@@ -48,7 +48,7 @@
                         "elements": [
                             {
                                 "type": "actor",
-                                "bounds": [0,0,128,128],
+                                "bounds": [0,0,64,74],
                                 "color" : [255,255,255,255],
                                 "actor" : "actors/attributes.json",
                                 "action": "strength"
@@ -75,14 +75,14 @@
                         "elements": [
                             {
                                 "type": "actor",
-                                "bounds": [0,0,128,128],
+                                "bounds": [0,0,64,74],
                                 "color" : [255,255,255,255],
                                 "actor" : "actors/attributes.json",
                                 "action": "endurance"
                             },
                             {
                                 "type": "label",
-                                "id" : 1000,
+                                "id" : 1001,
                                 "bounds": [0,10,1,40],
                                 "color" : [255,255,255,255],
                                 "text":"endurance",
@@ -102,7 +102,7 @@
                         "elements": [
                             {
                                 "type": "actor",
-                                "bounds": [0,0,128,128],
+                                "bounds": [0,0,64,74],
                                 "color" : [255,255,255,255],
                                 "actor" : "actors/attributes.json",
                                 "action": "dexterity"
@@ -129,7 +129,7 @@
                         "elements": [
                             {
                                 "type": "actor",
-                                "bounds": [0,0,128,128],
+                                "bounds": [0,0,64,74],
                                 "color" : [255,255,255,255],
                                 "actor" : "actors/attributes.json",
                                 "action": "agility"
@@ -156,7 +156,7 @@
                         "elements": [
                             {
                                 "type": "actor",
-                                "bounds": [0,0,128,128],
+                                "bounds": [0,0,64,74],
                                 "color" : [255,255,255,255],
                                 "actor" : "actors/attributes.json",
                                 "action": "focus"
@@ -183,7 +183,7 @@
                         "elements": [
                             {
                                 "type": "actor",
-                                "bounds": [0,0,128,128],
+                                "bounds": [0,0,64,74],
                                 "color" : [255,255,255,255],
                                 "actor" : "actors/attributes.json",
                                 "action": "resolve"
@@ -205,7 +205,6 @@
               {
                 "type": "list",
                 "name":"core",
-                "id":2000,
                 "bounds": [0,0,250,1],
                 "color": [255,255,255,255],
                 "style": "vertical",
@@ -222,14 +221,14 @@
                     {
                         "type": "list",
                         "name":"health",
-                        "bounds": [0,0,1,70],
+                        "bounds": [0,30,1,64],
                         "color": [255,255,255,255],
                         "style": "horizontal",
                         "packed": true,
                         "elements": [
                             {
                                 "type": "actor",
-                                "bounds": [0,0,128,128],
+                                "bounds": [0,0,64,74],
                                 "color" : [255,255,255,255],
                                 "actor" : "actors/attributes.json",
                                 "action": "health"
@@ -249,14 +248,14 @@
                     {
                         "type": "list",
                         "name":"stamina",
-                        "bounds": [0,0,1,70],
+                        "bounds": [0,30,1,64],
                         "color": [255,255,255,255],
                         "style": "horizontal",
                         "packed": true,
                         "elements": [
                             {
                                 "type": "actor",
-                                "bounds": [0,0,128,128],
+                                "bounds": [0,0,64,74],
                                 "color" : [255,255,255,255],
                                 "actor" : "actors/attributes.json",
                                 "action": "stamina"
@@ -276,14 +275,14 @@
                     {
                         "type": "list",
                         "name":"mana",
-                        "bounds": [0,0,1,70],
+                        "bounds": [0,30,1,64],
                         "color": [255,255,255,255],
                         "style": "horizontal",
                         "packed": true,
                         "elements": [
                             {
                                 "type": "actor",
-                                "bounds": [0,0,128,128],
+                                "bounds": [0,0,64,74],
                                 "color" : [255,255,255,255],
                                 "actor" : "actors/attributes.json",
                                 "action": "mana"
@@ -309,7 +308,7 @@
                 "bounds": [0,0,250,1],
                 "color": [255,255,255,255],
                 "style": "vertical",
-                "item_size": [1,70],
+                "item_size": [1,50],
                 "elements": [
                     {
                         "type": "label",

@@ -3,6 +3,7 @@
     "345.998413",
     "540.079834"
   ],
+  "name": "Ketch",
   "scene": "scenes/town_gate.json",
   "attributes": {
     "items":
@@ -65,10 +66,27 @@
         {
             "name":"Climbing",
             "skill":10
+        },
+        {
+            "name":"Etherism",
+            "skill":10
+        },
+        {
+            "name":"Necromancy",
+            "skill":10
         }
     ]
   },
   "spells": {
-    "items": []
+    "items": [
+        {
+            "name":"Ethereal Hand",
+            "skill":10
+        },
+        {
+            "name":"Ethereal Sight",
+            "skill":10
+        }
+    ]
   }
 }

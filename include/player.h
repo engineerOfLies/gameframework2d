@@ -86,9 +86,18 @@ char *player_get_scene(Entity *player);
  */
 char *player_get_filename(Entity *player);
 
+char *player_get_name(Entity *player);
+
 
 Inventory *player_get_item_inventory(Entity *player);
+Inventory *player_get_skill_inventory(Entity *player);
+
 int player_give_item(Entity *player,char *item,int count);
+
+InventoryItem *player_get_attribute(Entity *player, char *name);
+InventoryItem *player_get_skills(Entity *player, char *name);
+
+void player_get_core_attributes(Entity *player,int *health,int *healthMax,int *stamina, int *staminaMax,int *mana, int *manaMax);
 
 
 /**

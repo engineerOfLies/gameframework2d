@@ -9,17 +9,54 @@
 typedef struct
 {
     TextLine    filename;   /**<player save file*/
-    float       health, stamina, mana;
+    TextLine    name;       /**<character name*/
+    int         health, stamina, mana;
     int         healthMax,staminaMax,manaMax;
     TextLine    scene;
     Vector2D    position;
     Inventory  *items;
-    Inventory  *spells;
-    Inventory  *skills;
+    Inventory  *spells;     // spells and special skills
+    Inventory  *skills;     //generic skills
     Inventory  *attributes;
     SJson      *history;
 }PlayerData;
 
+PlayerData *player_get_data(Entity *player)
+{
+    if (!player)return NULL;
+    return (PlayerData*)player->data;
+}
+
+void player_get_core_attributes(Entity *player,int *health,int *healthMax,int *stamina, int *staminaMax,int *mana, int *manaMax)
+{
+    PlayerData *data;
+    if (!player)return;
+    data = player_get_data(player);
+    if (health)*health = data->health;
+    if (healthMax)*healthMax = data->healthMax;
+    if (stamina)*stamina = data->stamina;
+    if (staminaMax)*staminaMax = data->staminaMax;
+    if (mana)*mana = data->mana;
+    if (manaMax)*manaMax = data->manaMax;
+}
+
+InventoryItem *player_get_skills(Entity *player, char *name)
+{
+    PlayerData *data;
+    if (!player)return NULL;
+    data = player_get_data(player);
+    if (!data)return NULL;
+    return inventory_get_item(data->skills,name);
+}
+
+InventoryItem *player_get_attribute(Entity *player, char *name)
+{
+    PlayerData *data;
+    if (!player)return NULL;
+    data = player_get_data(player);
+    if (!data)return NULL;
+    return inventory_get_item(data->attributes,name);
+}
 
 void player_set_scene(Entity *player,char *scene)
 {
@@ -147,6 +184,7 @@ SJson *player_to_json(Entity *player)
     vector2d_copy(pd->position,player->position);
 
     sj_object_insert(json,"position",sj_vector2d_new(pd->position));
+    sj_object_insert(json,"name",sj_new_str(pd->name));
     sj_object_insert(json,"scene",sj_new_str(pd->scene));
     sj_object_insert(json,"history",sj_copy(pd->history));
     sj_object_insert(json,"items",inventory_to_json(pd->items));
@@ -198,6 +236,11 @@ Entity *player_parse_from_json(SJson *json)
         }
         pd = (PlayerData*)player->data;
         gfc_line_cpy(pd->scene,str);
+    }
+    str = sj_get_string_value(sj_object_get_value(json,"name"));
+    if (str)
+    {
+        gfc_line_cpy(pd->name,str);
     }
     
     inven = sj_object_get_value(json,"items");
@@ -271,6 +314,14 @@ int player_give_item(Entity *player,char *item,int count)
     return inventory_give_item(player_get_item_inventory(player),item, count, 0);    
 }
 
+Inventory *player_get_skill_inventory(Entity *player)
+{
+    PlayerData *pd;
+    if (!player)return NULL;
+    pd = player->data;
+    return pd->skills;
+}
+
 Inventory *player_get_item_inventory(Entity *player)
 {
     PlayerData *pd;
@@ -294,4 +345,14 @@ char *player_get_filename(Entity *player)
     pd = player->data;
     return pd->filename;
 }
+
+char *player_get_name(Entity *player)
+{
+    PlayerData *pd;
+    if (!player)return NULL;
+    pd = player->data;
+    return pd->name;
+}
+
+
 /*eol@eof*/

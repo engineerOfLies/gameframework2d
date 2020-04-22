@@ -59,7 +59,6 @@ void item_list_load(char *filename)
         item = item_parse_from_json(js_item);
         _item_list = gfc_list_append(_item_list,item);
     }
-    slog("loaded %i items for the game",gfc_list_get_count(_item_list));
     sj_free(json);
 }
 
@@ -98,23 +97,34 @@ void item_free(Item *item)
 Item *item_parse_from_json(SJson *json)
 {
     Item *item;
+    const char *buffer;
     if (!json)return NULL;
     
     item = item_new();
     if (!item)return NULL;
     
-    gfc_line_cpy(item->name,sj_get_string_value(sj_object_get_value(json,"name")));
-    gfc_line_cpy(item->actor,sj_get_string_value(sj_object_get_value(json,"actor")));
-    gfc_line_cpy(item->action,sj_get_string_value(sj_object_get_value(json,"action")));
-    gfc_block_cpy(item->description,sj_get_string_value(sj_object_get_value(json,"description")));
+    buffer = sj_get_string_value(sj_object_get_value(json,"name"));
+    if ((buffer)&&(strlen(buffer)))
+        gfc_line_cpy(item->name,buffer);
+    
+    buffer = sj_get_string_value(sj_object_get_value(json,"actor"));
+    if ((buffer)&&(strlen(buffer)))
+        gfc_line_cpy(item->actor,buffer);
+
+    buffer = sj_get_string_value(sj_object_get_value(json,"action"));
+    if ((buffer)&&(strlen(buffer)))
+        gfc_line_cpy(item->action,buffer);
+
+    buffer = sj_get_string_value(sj_object_get_value(json,"description"));
+    if ((buffer)&&(strlen(buffer)))
+        gfc_line_cpy(item->description,buffer);
+    
     sj_get_integer_value(sj_object_get_value(json,"healthCost"),&item->healthCost);
     sj_get_integer_value(sj_object_get_value(json,"staminaCost"),&item->staminaCost);
     sj_get_integer_value(sj_object_get_value(json,"manaCost"),&item->manaCost);
     sj_get_integer_value(sj_object_get_value(json,"cost"),&item->cost);
     sj_get_integer_value(sj_object_get_value(json,"stackable"),&item->stackable);
     sj_get_integer_value(sj_object_get_value(json,"stackLimit"),&item->stackLimit);
-
-    slog("loaded item %s",item->name);
     return item;
 }
 

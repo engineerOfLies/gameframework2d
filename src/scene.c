@@ -87,7 +87,6 @@ void scene_add_layer(Scene *scene,Layer *layer)
     if ((!scene)||(!layer))return;
     scene->layers = gfc_list_append(scene->layers,layer);
     layer->index = gfc_list_get_item_index(scene->layers,layer);
-    slog("layer set to index %i",layer->index);
 }
 
 void scene_add_entity(Scene *scene, Entity *entity)
@@ -180,7 +179,6 @@ Scene *scene_load(char *filename)
     if (exhibits)
     {
         count = sj_array_get_count(exhibits);
-        slog("%i exhibits found",count);
         for (i = 0;i < count; i++)
         {
             exhibitjs = sj_array_get_nth(exhibits,i);

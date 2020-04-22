@@ -214,6 +214,7 @@ void inventory_menu_list_setup(Window *win, InventoryMenuData* data)
     }
 }
 
+
 Window *inventory_menu(Inventory *inven,char *actor,char *action,void (*onSelect)(void *data),void *callbackData)
 {
     Window *win;

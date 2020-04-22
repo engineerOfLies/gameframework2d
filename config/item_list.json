@@ -2,6 +2,66 @@
     "item_list":
     [
         {
+            "name":"Attack",
+            "type":"skill",
+            "description":"Decreases lead in time to attack, increases chance of overcoming a defense, slightly increases damage.",
+            "trains":"SD"
+        },
+        {
+            "name":"Defense",
+            "type":"skill",
+            "description":"Increases window of protection when dodging or blocking. Increases chance of avoiding damage when failed.",
+            "trains":"EA"
+        },
+        {
+            "name":"Throwing",
+            "type":"skill",
+            "description":"Ability to hit a target when throwing a rock, knife, or potion.",
+            "trains":"DF"
+        },
+        {
+            "name":"Climbing",
+            "type":"skill",
+            "description":"Ability to climb difficult surfaces.",
+            "trains":"AR"
+        },
+        {
+            "name":"Etherism",
+            "type":"skill",
+            "description":"Deals with the interaction and control of ethereal essences.",
+            "trains":"F"
+        },
+        {
+            "name":"Necromancy",
+            "type":"skill",
+            "description":"Deals with the interaction of life and death and the recently deceased.",
+            "trains":"R"
+        },
+        {
+            "name":"Fencing",
+            "type":"skill",
+            "description":"A school of martial arts specializing in sword combat.",
+            "trains":"DA"
+        },
+        {
+            "name":"Roguery",
+            "type":"skill",
+            "description":"A class of skills dealing with subterfuge, stealth, and generally the skills associated with thievery.",
+            "trains":"DA"
+        },
+        {
+            "name":"Tinkering",
+            "type":"skill",
+            "description":"A class of skills dealing with tinkering with mechanical devices...lock picking, trap disarming, etc",
+            "trains":"DF"
+        },
+        {
+            "name":"Herbalism",
+            "type":"skill",
+            "description":"Study of plants and their special properties.  How to combine them in specific ways to create salves, balms, and potions.",
+            "trains":"DF"
+        },
+        {
             "name":"Strength",
             "type":"attribute",
             "actor":"actors/attributes.json",
