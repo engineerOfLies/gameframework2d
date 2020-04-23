@@ -60,7 +60,7 @@
                     "type": "actor",
                     "id" : 11,
                     "justify" : "center",
-                    "bounds": [0,0,70,70],
+                    "bounds": [124,0,70,70],
                     "color" : [255,255,255,255]
                   },
                   {

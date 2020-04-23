@@ -2,6 +2,105 @@
     "item_list":
     [
         {
+            "name":"Ethereal Hand",
+            "type":"spell",
+            "actor":"actors/spells.json",
+            "action":"ethereal_hand",
+            "description":"Hand becomes slightly intangible allowing you to reach through things.",
+            "cost":100,
+            "healthCost":0,
+            "manaCost":10,
+            "parent":"Etherism"
+        },
+        {
+            "name":"Ethereal Sight",
+            "type":"spell",
+            "actor":"actors/spells.json",
+            "action":"ethereal_sight",
+            "description":"Gain limited ability to see into the etheral plane.",
+            "cost":100,
+            "healthCost":0,
+            "manaCost":10,
+            "parent":"Etherism"
+        },
+        {
+            "name":"Ethereal Hook",
+            "type":"spell",
+            "actor":"actors/spells.json",
+            "action":"ethereal_hook",
+            "description":"Cast a line of ethereal energy that can hook things an pull them towards you.",
+            "cost":100,
+            "healthCost":0,
+            "manaCost":10,
+            "parent":"Etherism"
+        },
+        {
+            "name":"Ether Bolt",
+            "type":"spell",
+            "actor":"actors/spells.json",
+            "action":"ethereal_bolt",
+            "description":"Form a ball of compressed ethereal engery that will shoot towards a target.  Deals ethereal damage.",
+            "cost":100,
+            "healthCost":0,
+            "manaCost":10,
+            "parent":"Etherism"
+        },
+        {
+            "name":"Ghost Light",
+            "type":"spell",
+            "actor":"actors/spells.json",
+            "action":"ghost_light",
+            "description":"Summon a spirit from beyond to light your way.",
+            "cost":100,
+            "healthCost":0,
+            "manaCost":5,
+            "parent":"Necromancy"
+        },
+        {
+            "name":"Whisps",
+            "type":"spell",
+            "actor":"actors/spells.json",
+            "action":"whisps",
+            "description":"Summon spirits from beyond to attack your enemies. Deals ethereal damage.",
+            "cost":200,
+            "healthCost":5,
+            "manaCost":10,
+            "parent":"Necromancy"
+        },
+        {
+            "name":"Skeletal Slash",
+            "type":"spell",
+            "actor":"actors/spells.json",
+            "action":"skeletal_slash",
+            "description":"Summon a skeleton to slash at your enemies. Deals physical damage.",
+            "cost":100,
+            "healthCost":5,
+            "manaCost":10,
+            "parent":"Necromancy"
+        },
+        {
+            "name":"Ghost Blade",
+            "type":"spell",
+            "actor":"actors/spells.json",
+            "action":"ghost_blade",
+            "description":"Summon a spirit from beyond and bind it to a blade.  Weapon will deal additional ethereal damage the next time it strikes.",
+            "cost":100,
+            "healthCost":0,
+            "manaCost":5,
+            "parent":"Necromancy"
+        },
+        {
+            "name":"Speak with the Dead",
+            "type":"spell",
+            "actor":"actors/spells.json",
+            "action":"speak_with_dead",
+            "description":"Gain the ability to hear and speak with the nearby dead.",
+            "cost":100,
+            "healthCost":0,
+            "manaCost":5,
+            "parent":"Necromancy"
+        },
+        {
             "name":"Attack",
             "type":"skill",
             "description":"Decreases lead in time to attack, increases chance of overcoming a defense, slightly increases damage.",
@@ -204,7 +303,20 @@
             "healthCost":0,
             "manaCost":0,
             "staminaCost":0,
-            "stackable":true,
+            "stackable":false,
+            "stackLimit":1
+        },
+        {
+            "name":"Necromancy Tomb",
+            "type":"item",
+            "actor":"actors/items.json",
+            "action":"necromancy_tomb",
+            "description":"This was Kallack's book.  He was adamant that you keep it safe.  It seems to hold his notes on necromancy, but he wrote in code.",
+            "cost":0,
+            "healthCost":0,
+            "manaCost":0,
+            "staminaCost":0,
+            "stackable":false,
             "stackLimit":1
         }
     ]
