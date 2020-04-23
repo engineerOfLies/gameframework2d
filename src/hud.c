@@ -61,6 +61,22 @@ void onItemSelect(void *data)
     scene_set_mouse_function(scene_get_active(), MF_Item);
 }
 
+void onSpellSelect(void *data)
+{
+    Window *win;
+    HUD *hud;
+    if (!data)return;
+    win = data;
+    if (!win->data)return;
+    hud = win->data;
+    
+    slog("setting mouse actor to %s",hud->actor);
+    gf2d_mouse_set_spell_actor(hud->actor);
+    gf2d_mouse_set_spell_action(hud->action);
+    scene_set_mouse_function(scene_get_active(), MF_Spell);
+}
+
+
 int hud_update(Window *win,List *updateList)
 {
     int i,count;
@@ -117,7 +133,11 @@ int hud_update(Window *win,List *updateList)
                 return 1;
             case 51:
                 hud_hide();
-                inventory_menu(player_get_item_inventory(hud->player),hud->actor,hud->action,onItemSelect,win);
+                inventory_menu("Equipment",player_get_item_inventory(hud->player),hud->actor,hud->action,onItemSelect,win);
+                return 1;
+            case 61:
+                hud_hide();
+                inventory_menu("Spells and Special Skills",player_get_spell_inventory(hud->player),hud->actor,hud->action,onSpellSelect,win);
                 return 1;
             case 71:
                 hud_hide();

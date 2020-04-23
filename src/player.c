@@ -330,6 +330,14 @@ Inventory *player_get_item_inventory(Entity *player)
     return pd->items;
 }
 
+Inventory *player_get_spell_inventory(Entity *player)
+{
+    PlayerData *pd;
+    if (!player)return NULL;
+    pd = player->data;
+    return pd->spells;
+}
+
 char *player_get_scene(Entity *player)
 {
     PlayerData *pd;

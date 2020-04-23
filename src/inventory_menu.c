@@ -215,7 +215,7 @@ void inventory_menu_list_setup(Window *win, InventoryMenuData* data)
 }
 
 
-Window *inventory_menu(Inventory *inven,char *actor,char *action,void (*onSelect)(void *data),void *callbackData)
+Window *inventory_menu(char *title, Inventory *inven,char *actor,char *action,void (*onSelect)(void *data),void *callbackData)
 {
     Window *win;
     InventoryMenuData* data;
@@ -236,6 +236,7 @@ Window *inventory_menu(Inventory *inven,char *actor,char *action,void (*onSelect
     data->callback = gfc_callback_new(onSelect,callbackData);
     inventory_menu_list_setup(win,data);
     inventory_menu_select_item(win, data);
+    gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,1),title);
     return win;
 }
 

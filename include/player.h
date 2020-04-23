@@ -91,6 +91,7 @@ char *player_get_name(Entity *player);
 
 Inventory *player_get_item_inventory(Entity *player);
 Inventory *player_get_skill_inventory(Entity *player);
+Inventory *player_get_spell_inventory(Entity *player);
 
 int player_give_item(Entity *player,char *item,int count);
 
