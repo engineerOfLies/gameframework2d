@@ -63,6 +63,44 @@
           "DEFAULT": "Your spell fizzles."
         }
       }
+    },
+    {
+      "name": "scarecrow",
+      "displayName": "false",
+      "drawLayer": "0",
+      "actor": "",
+      "action": "",
+      "rect": [
+        "1069.000000",
+        "376.000000",
+        "120.000000",
+        "189.000000"
+      ],
+      "near": [
+        "732.000000",
+        "599.000000"
+      ],
+      "args": {
+        "look": {
+          "DEFAULT": "An old scarecrow guards the field, it looks odd"
+        },
+        "interact": {
+          "DEFAULT": "Please don't bother it. It's had a long day."
+        },
+        "talk": {
+          "action": {
+            "type": "dialog",
+            "dialog": "config/scarecrow_dialog.json"
+          },          "proximity": "true",
+          "DEFAULT": "ERROR in Dialog"
+        },
+        "item": {
+          "DEFAULT": "Leave the poor scarecrow alone"
+        },
+        "spell": {
+          "DEFAULT": "Your spell fizzles."
+        }
+      }
     }
   ],
   "walkmasks": [
@@ -83,8 +121,8 @@
         },
         {
           "position": [
-            "558.000000",
-            "527.000000"
+            "636.000000",
+            "530.000000"
           ],
           "scale": [
             "0.000000",
@@ -95,8 +133,8 @@
         },
         {
           "position": [
-            "606.000000",
-            "597.000000"
+            "729.000000",
+            "563.000000"
           ],
           "scale": [
             "0.000000",
@@ -179,8 +217,8 @@
         },
         {
           "position": [
-            "589.375000",
-            "473.312500"
+            "633.375000",
+            "469.312500"
           ],
           "scale": [
             "0.000000",

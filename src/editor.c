@@ -275,7 +275,7 @@ int editor_window_update(Window *win,List *updateList)
                 break;
             case 54:
                 // save
-                window_text_entry("Enter Scene to Load", data->filename, win->data, GFCLINELEN, onFileSaveOk,onFileSaveCancel);
+                window_text_entry("Enter Scene to Save", data->filename, win->data, GFCLINELEN, onFileSaveOk,onFileSaveCancel);
                 break;
             case 56:
                 //exit
@@ -441,7 +441,7 @@ Window *editor_menu()
 {
     Window *win;
     EditorMenuData* data;
-    win = gf2d_window_load("config/editor_menu.json");
+    win = gf2d_window_load("menus/editor_menu.json");
     if (!win)
     {
         slog("failed to load editor menu");

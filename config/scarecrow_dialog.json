@@ -1,0 +1,59 @@
+{
+    "title":"Old Scarecrow",
+    "description":"An old scarecrow that can somehow talk.  He seems friendly.",
+    "topics":
+    [
+        {
+            "topic":"Greet",
+            "response":"Hello there human."
+        },
+        {
+            "topic":"Ask about crows",
+            "response":"Not much crows in these parts.  They put me here for tradition.",
+            "effects":
+            {
+                "dialog":
+                {
+                    "topics":
+                    [
+                        {
+                            "topic":"tradition",
+                            "response":"Yeah, people always put up scarecrows in fields to, you know, scare away crows or other pests."
+                        },
+                        {
+                            "topic":"crows",
+                            "response":"Crows are not native to this region.  Now Ravens, we get those.  Ravens don't get scared of my type much though.  Too big and mean and smart."
+                        }                        
+                    ]
+                }
+            }
+        },
+        {
+            "topic":"Ask about hat",
+            "response":"You like my hat?  I never much cared for it.  It keeps the sun out of my eyes, and I want to see the sun.",
+            "conditions":
+            [
+                {
+                    "evaluate":false,
+                    "condition":"history",
+                    "value":"gotHat"
+                }
+            ],
+            "effects":
+            {
+                "question":
+                {
+                    "question":"Do you want my hat?",
+                    "onYes":
+                    {
+                        "type": "give_item",
+                        "item": "Hat",
+                        "count": 1,
+                        "success":"You take the hat from the scarecrow and thank him",
+                        "failure":"you already have a hat"
+                    }
+                }
+            }
+        }
+    ]
+}

@@ -219,7 +219,7 @@ void gf2d_font_draw_line(char *text,Font *font,Color color, Vector2D position)
     surface = TTF_RenderUTF8_Blended(font->font, text, gfc_color_to_sdl(color));
     if (!surface)
     {
-        slog("failed to render text");
+        slog("failed to render text for text '%s'",text);
         return;
     }
     surface = gf2d_graphics_screen_convert(&surface);

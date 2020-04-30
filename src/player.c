@@ -17,7 +17,7 @@ typedef struct
     Inventory  *items;
     Inventory  *spells;     // spells and special skills
     Inventory  *skills;     //generic skills
-    Inventory  *attributes;
+    Inventory  *attributes; //strength, et al.
     SJson      *history;
 }PlayerData;
 
@@ -40,13 +40,31 @@ void player_get_core_attributes(Entity *player,int *health,int *healthMax,int *s
     if (manaMax)*manaMax = data->manaMax;
 }
 
-InventoryItem *player_get_skills(Entity *player, char *name)
+InventoryItem *player_get_skill(Entity *player, char *name)
 {
     PlayerData *data;
     if (!player)return NULL;
     data = player_get_data(player);
     if (!data)return NULL;
     return inventory_get_item(data->skills,name);
+}
+
+InventoryItem *player_get_spell(Entity *player, char *name)
+{
+    PlayerData *data;
+    if (!player)return NULL;
+    data = player_get_data(player);
+    if (!data)return NULL;
+    return inventory_get_item(data->spells,name);
+}
+
+InventoryItem *player_get_item(Entity *player, char *name)
+{
+    PlayerData *data;
+    if (!player)return NULL;
+    data = player_get_data(player);
+    if (!data)return NULL;
+    return inventory_get_item(data->items,name);
 }
 
 InventoryItem *player_get_attribute(Entity *player, char *name)

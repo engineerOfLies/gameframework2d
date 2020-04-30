@@ -96,7 +96,9 @@ Inventory *player_get_spell_inventory(Entity *player);
 int player_give_item(Entity *player,char *item,int count);
 
 InventoryItem *player_get_attribute(Entity *player, char *name);
-InventoryItem *player_get_skills(Entity *player, char *name);
+InventoryItem *player_get_skill(Entity *player, char *name);
+InventoryItem *player_get_item(Entity *player, char *name);
+InventoryItem *player_get_spell(Entity *player, char *name);
 
 void player_get_core_attributes(Entity *player,int *health,int *healthMax,int *stamina, int *staminaMax,int *mana, int *manaMax);
 

@@ -3,6 +3,7 @@
 #include "windows_common.h"
 #include "camera.h"
 #include "player.h"
+#include "dialog_tree.h"
 #include "exhibits.h"
 
 static int exhibit_paused = 0;
@@ -99,10 +100,19 @@ int exhibit_do_action(Exhibit *exhibit,char * command)
     actionType = sj_get_string_value(sj_object_get_value(action,"type"));
     if (!actionType)
     {
-        slog("exhibit_interact: no action type specified for exhibit %s",exhibit->name);
+//        slog("exhibit_interact: no action type specified for exhibit %s",exhibit->name);
         return 0;
     }
-    if (strcmp(actionType,"exit")==0)
+    if (strcmp(actionType,"dialog")==0)
+    {
+        message = sj_get_string_value(sj_object_get_value(action,"dialog"));
+        if (message)
+        {
+            dialog_tree_new((char *)message,scene_get_active_player(exhibit->scene));
+            return 1;
+        }
+    }
+    else if (strcmp(actionType,"exit")==0)
     {
         message = sj_get_string_value(sj_object_get_value(action,"message"));
         if (message)
@@ -191,6 +201,7 @@ int exhibit_mouse_check(Exhibit *exhibit)
             arg = sj_object_get_value(exhibit->args,"interact");
             break;
         case MF_Talk:
+            if (exhibit_do_action(exhibit,"talk"))return 1;
             arg = sj_object_get_value(exhibit->args,"talk");
             break;
         case MF_Item:

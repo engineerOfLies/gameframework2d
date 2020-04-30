@@ -1,0 +1,75 @@
+{
+"window":{
+    "color" : [255,255,255, 255],
+    "dimensions" : [-710,100,700,600],
+    "align" : "middle",
+    "elements":
+    [
+      {
+        "type": "list",
+        "name": "list",
+        "id" : 1000,
+        "bounds": [0,0,1,1],
+        "color" : [255,255,255,255],
+        "style": "vertical",
+        "packed":true,
+        "elements":
+        [
+            {
+                "type": "label",
+                "name": "title",
+                "id" : 1,
+                "bounds": [0,0,1,20],
+                "color" : [255,255,255,255],
+                "text":"?",
+                "justify" : "center",
+                "align" : "middle",
+                "style":"H4"
+            },
+            {
+                "type": "list",
+                "name": "list",
+                "id" : 4000,
+                "bounds": [0,0,1,128],
+                "color" : [255,255,255,255],
+                "style": "horizontal",
+                "packed":true,
+                "elements":
+                [
+                  {
+                    "type": "actor",
+                    "bounds": [10,0,128,128],
+                    "scale":[1,1],
+                    "color" : [255,255,255,255],
+                    "actor" : "actors/player.json",
+                    "action": "idle"
+                  },
+                  {
+                    "type": "label",
+                    "name": "message",
+                    "id" : 2,
+                    "bounds": [0,0,1,128],
+                    "color" : [255,255,255,255],
+                    "text":"?",
+                    "wraps":true,
+                    "justify" : "left",
+                    "align" : "top",
+                    "style":"H5"
+                  }
+                ]
+            }
+        ]
+      },
+      {
+        "type": "button",
+        "name": "ok",
+        "id" : 51,
+        "bounds": [0,0,1,1],
+        "hotkey":"ok",
+        "color" : [255,255,255,255],
+        "highColor" : [255,255,255,255],
+        "pressColor" : [255,255,255,255]
+      }
+    ]
+    }
+}

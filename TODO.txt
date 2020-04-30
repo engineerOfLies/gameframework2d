@@ -4,11 +4,17 @@ Point & Click Adventure Game
 Programming TODO list
 
  - General
-    - Port functionality from pdark for word wrapping text
-    - player / load save
+    X Port functionality from pdark for word wrapping text
+    X player / load save
     - player history system
-    - Add Callbacks for Actor's action completion
+    X Add Callbacks for Actor's action completion
+    - Add support for multiple player characters in the scene
+    - Add general conditional evaluator for exhibits and dialog.
     
+ - Scripted Sequences
+    - Add ability to drive a scripted sequence of events.
+        - Actors, actions, positions and time stamps.\
+        
  - Scenes
     X Add Support for Layers
         X entities draw according to layer, scenes call draw entities per layer
@@ -21,13 +27,13 @@ Programming TODO list
     - Add conditional Spawns for Exhibits
 
  - UI
-    - Main Game Screen
-    - Make Inventory / Skill / Spell menus
-        - Add selected Item/Skill/Spell to the Mouse Actions
+    X Main Game Screen
+    X Make Inventory / Skill / Spell menus
+        X Add selected Item/Skill/Spell to the Mouse Actions
     - Make Dialog Box Window
-    - Player Stats Screen
+    X Player Stats Screen
         - Way to customize combat actions
-    - Options Menu
+    X Options Menu
 
 - Combat
     - Make Combat Screen 
@@ -35,5 +41,6 @@ Programming TODO list
     - Make AI
         - Configurable from json
 
+- Add ZLIB use for loading json to obscure data.
  
  
