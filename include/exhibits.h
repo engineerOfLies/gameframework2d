@@ -87,4 +87,11 @@ void exhibit_set_draw_layer(Exhibit *exhibit, Uint32 layer);
  */
 SJson *exhibit_to_json(Exhibit *exhibit);
 
+/**
+ * @brief unpause exhibit updates
+ * @param data provide it with NULL, it is not used
+ * 
+ */
+void exhibit_unpause(void *data);
+
 #endif

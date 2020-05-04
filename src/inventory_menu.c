@@ -175,7 +175,7 @@ ActorElement *inventory_menu_item_set(InventoryItem *item)
     if (!item)return NULL;
     itemInfo = item_list_get_by_name(item->name);
     if (!itemInfo)return NULL;
-    return gf2d_element_actor_new_full(itemInfo->actor, itemInfo->action,vector2d(1,1));
+    return gf2d_element_actor_new_full(itemInfo->actor, itemInfo->action,vector2d(1,1),NULL);
 }
 
 void inventory_menu_list_setup(Window *win, InventoryMenuData* data)

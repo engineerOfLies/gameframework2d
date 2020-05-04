@@ -109,6 +109,7 @@ int exhibit_do_action(Exhibit *exhibit,char * command)
         if (message)
         {
             dialog_tree_new((char *)message,scene_get_active_player(exhibit->scene));
+            exhibit_paused = 1;
             return 1;
         }
     }

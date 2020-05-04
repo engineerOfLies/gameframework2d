@@ -12,13 +12,20 @@ void gf2d_element_actor_draw(Element *element,Vector2D offset)
     actor = (ActorElement*)element->data;
     if (!actor)return;
     vector2d_add(position,offset,element->bounds);
-    gf2d_actor_draw(
-        &actor->actor,
-        position,
-        &actor->scale,
-        NULL,
-        NULL,
-        NULL);
+    if (actor->image)
+    {
+        gf2d_sprite_draw_image(actor->image,position);
+    }
+    else
+    {
+        gf2d_actor_draw(
+            &actor->actor,
+            position,
+            &actor->scale,
+            NULL,
+            NULL,
+            NULL);
+    }
 }
 
 List * gf2d_element_actor_update(Element *element,Vector2D offset)
@@ -57,7 +64,7 @@ ActorElement *gf2d_element_actor_new()
 }
 
 
-ActorElement *gf2d_element_actor_new_full(char *actorFile, char *action,Vector2D scale)
+ActorElement *gf2d_element_actor_new_full(char *actorFile, char *action,Vector2D scale,const char *image)
 {
     ActorElement *ae;
     ae = gf2d_element_actor_new();
@@ -72,6 +79,10 @@ ActorElement *gf2d_element_actor_new_full(char *actorFile, char *action,Vector2D
         {
             gf2d_actor_set_action(&ae->actor,action);
         }
+    }
+    else if (image != NULL)
+    {
+        ae->image = gf2d_sprite_load_image((char *)image);
     }
     return ae;
 }
@@ -141,8 +152,9 @@ void gf2d_element_make_actor(Element *e,ActorElement *actor)
 void gf2d_element_load_actor_from_config(Element *e,SJson *json)
 {
     SJson *value;
-    const char *buffer;
-    const char *action;
+    const char *buffer = NULL;
+    const char *action = NULL;
+    const char *image = NULL;
     Vector2D scale;
     if ((!e) || (!json))
     {
@@ -150,13 +162,24 @@ void gf2d_element_load_actor_from_config(Element *e,SJson *json)
         return;
     }
     value = sj_object_get_value(json,"actor");
-    buffer = sj_get_string_value(value);
+    if (value)
+    {
+        buffer = sj_get_string_value(value);
+        value = sj_object_get_value(json,"action");
+        if (value)
+        {
+            action = sj_get_string_value(value);
+        }
+    }
+    else
+    {
+        value = sj_object_get_value(json,"image");
+        image = sj_get_string_value(value);
+    }
     
-    value = sj_object_get_value(json,"action");
-    action = sj_get_string_value(value);
 
     scale.x = scale.y = 1;
     sj_value_as_vector2d(sj_object_get_value(json,"scale"),&scale);
-    gf2d_element_make_actor(e,gf2d_element_actor_new_full((char *)buffer,(char *)action,scale));
+    gf2d_element_make_actor(e,gf2d_element_actor_new_full((char *)buffer,(char *)action,scale,image));
 }
 /*eol@eof*/

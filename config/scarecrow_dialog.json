@@ -1,6 +1,7 @@
 {
     "title":"Old Scarecrow",
     "description":"An old scarecrow that can somehow talk.  He seems friendly.",
+    "done":"Say Farewell",
     "topics":
     [
         {
@@ -14,6 +15,7 @@
             {
                 "dialog":
                 {
+                    "done":"Something Else",
                     "topics":
                     [
                         {

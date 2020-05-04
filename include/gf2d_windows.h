@@ -24,6 +24,7 @@ typedef enum
 typedef struct Window_S
 {
     int _inuse;             /**<do not touch*/
+    TextLine    name;       /**<name of window*/
     int no_draw_generic;    /**<if true, do not use the generic window draw style*/
     List *elements;         /**<all the components of the window*/
     Sprite *background;     /**<background image*/
