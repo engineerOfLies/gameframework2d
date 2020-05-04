@@ -1,0 +1,33 @@
+{
+"window":{
+    "color" : [255,255,255, 255],
+    "dimensions" : [-710,100,700,600],
+    "align" : "middle",
+    "elements":
+    [
+      {
+        "type": "list",
+        "name": "list",
+        "id" : 1000,
+        "bounds": [0,0,1,1],
+        "color" : [255,255,255,255],
+        "style": "vertical",
+        "item_size" : [1,32],
+        "elements":
+        [
+            {
+                "type": "label",
+                "name": "title",
+                "id" : 1,
+                "bounds": [0,0,1,20],
+                "color" : [255,255,255,255],
+                "text":"Topics",
+                "justify" : "center",
+                "align" : "middle",
+                "style":"H3"
+            }
+        ]
+      }
+    ]
+    }
+}

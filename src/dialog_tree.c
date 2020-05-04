@@ -10,12 +10,14 @@
 #include "gf2d_font.h"
 #include "gf2d_mouse.h"
 
+#include "windows_common.h"
 #include "scene.h"
 #include "exhibits.h"
 #include "dialog_tree.h"
 
 typedef struct
 {
+    const char *speaker;
     SJson *json;
     Entity *player;
     Window *parent;
@@ -23,6 +25,7 @@ typedef struct
 }DialogBranchData;
 
 void dialog_child_closed(Window *win);
+Window *dialog_branch_new(Window *parent, SJson *json,Entity *player,const char *speaker);
 
 int dialog_branch_draw(Window *win)
 {
@@ -39,6 +42,58 @@ int dialog_branch_free(Window *win)
     return 0;
 }
 
+void dialog_branch_handle_topic(Window *win, DialogBranchData *data,int n)
+{
+    int i,c;
+    SJson *topic = NULL,*topics = NULL,*effects = NULL,*effect,*value = NULL,*type;
+    const char *str = NULL;
+    
+    
+    topics = sj_object_get_value(data->json,"topics");
+    if (!topics)
+    {
+        slog("no topics found for the chosen topic??");
+        return;
+    }
+    topic = sj_array_get_nth(topics,n);
+    if (!topic)
+    {
+        slog("topic missing!");
+        return;
+    }
+    effects = sj_object_get_value(topic,"effects");
+    if (effects)
+    {
+        c = sj_array_get_count(effects);
+        for (i = 0; i < c; i++)
+        {
+            effect = sj_array_get_nth(effects,i);
+            if (!effect)continue;
+            type = sj_object_get_value(effect,"type");
+            if (!type)continue;
+            str = sj_get_string_value(type);
+            if (!str)continue;
+            if (strcmp(str,"dialog")==0)
+            {
+                value = sj_object_get_value(effect,"dialog");
+                if (!value)continue;
+                data->child = dialog_branch_new(win, value,data->player,data->speaker);
+
+                continue;
+            }
+        }
+    }
+    value = sj_object_get_value(topic,"response");
+    if (value)
+    {
+        str = sj_get_string_value(value);
+        if (str != NULL)
+        {
+            window_dialog((char *)data->speaker, (char*)str, NULL,NULL);
+        }
+    }
+}
+
 int dialog_branch_update(Window *win,List *updateList)
 {
     int i,count;
@@ -48,6 +103,7 @@ int dialog_branch_update(Window *win,List *updateList)
     if (!updateList)return 0;
     data = (DialogBranchData*)win->data;
     if (!data)return 1;
+    if (data->child != NULL)return 1;
     
     count = gfc_list_get_count(updateList);
     for (i = 0; i < count; i++)
@@ -62,7 +118,8 @@ int dialog_branch_update(Window *win,List *updateList)
         }
         if (e->index > 1000)
         {
-            //do something about a topic
+            dialog_branch_handle_topic(win, data,e->index - 1001);
+            return 1;
         }
     }
     return 1;
@@ -118,7 +175,6 @@ void dialog_branch_add_topic(Window *win,SJson *topicJson, int i)
         slog("topic string empty");
         return;
     }
-    slog("building dialog option for topic '%s'",topic);
     b = gf2d_element_new_full(
             gf2d_window_get_element_by_id(win,1000),
             1001+i,
@@ -154,7 +210,6 @@ void dialog_branch_setup_topics(Window *win, DialogBranchData *data)
         return;
     }
     c = sj_array_get_count(topics);
-    slog("%i topics for dialog tree",c);
     for (i = 0; i < c; i ++)
     {
         topic = sj_array_get_nth(topics,i);
@@ -164,7 +219,7 @@ void dialog_branch_setup_topics(Window *win, DialogBranchData *data)
 }
 
 
-Window *dialog_branch_new(Window *parent, SJson *json,Entity *player)
+Window *dialog_branch_new(Window *parent, SJson *json,Entity *player,const char *speaker)
 {
     SJson *value;
     const char *doneText = "Done";
@@ -192,6 +247,7 @@ Window *dialog_branch_new(Window *parent, SJson *json,Entity *player)
     data->json = json;
     data->player = player;
     data->parent = parent;
+    data->speaker = speaker;
     dialog_branch_setup_topics(win,data);
     
     value = sj_object_get_value(data->json,"done");
@@ -261,7 +317,7 @@ Window *dialog_tree_new(char *filename,Entity *player)
     SJson *json;
     SJson *value;
     Window *win;
-    const char *str = NULL;
+    const char *str = NULL,*speaker = NULL;
     DialogTreeData* data;
     win = gf2d_window_load("menus/dialog_tree.json");
     if (!win)
@@ -288,10 +344,10 @@ Window *dialog_tree_new(char *filename,Entity *player)
     value = sj_object_get_value(data->json,"title");
     if (value)
     {
-        str = sj_get_string_value(value);
-        if (str)
+        speaker = sj_get_string_value(value);
+        if (speaker)
         {
-            gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,1),(char *)str);
+            gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,1),(char *)speaker);
         }
     }
     value = sj_object_get_value(data->json,"description");
@@ -303,7 +359,7 @@ Window *dialog_tree_new(char *filename,Entity *player)
             gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,2),(char *)str);
         }
     }
-    dialog_branch_new(win, data->json,player);
+    dialog_branch_new(win, data->json,player,speaker);
     gf2d_mouse_set_function(MF_Pointer);
     return win;
 }

@@ -12,23 +12,26 @@
             "topic":"Ask about crows",
             "response":"Not much crows in these parts.  They put me here for tradition.",
             "effects":
-            {
-                "dialog":
+            [
                 {
-                    "done":"Something Else",
-                    "topics":
-                    [
-                        {
-                            "topic":"tradition",
-                            "response":"Yeah, people always put up scarecrows in fields to, you know, scare away crows or other pests."
-                        },
-                        {
-                            "topic":"crows",
-                            "response":"Crows are not native to this region.  Now Ravens, we get those.  Ravens don't get scared of my type much though.  Too big and mean and smart."
-                        }                        
-                    ]
+                    "type":"dialog",
+                    "dialog":
+                    {
+                        "done":"Something Else",
+                        "topics":
+                        [
+                            {
+                                "topic":"tradition",
+                                "response":"Yeah, people always put up scarecrows in fields to, you know, scare away crows or other pests."
+                            },
+                            {
+                                "topic":"crows",
+                                "response":"Crows are not native to this region.  Now Ravens, we get those.  Ravens don't get scared of my type much though.  Too big and mean and smart."
+                            }                        
+                        ]
+                    }
                 }
-            }
+            ]
         },
         {
             "topic":"Ask about hat",
@@ -42,20 +45,22 @@
                 }
             ],
             "effects":
-            {
-                "question":
+            [
                 {
-                    "question":"Do you want my hat?",
-                    "onYes":
+                    "question":
                     {
-                        "type": "give_item",
-                        "item": "Hat",
-                        "count": 1,
-                        "success":"You take the hat from the scarecrow and thank him",
-                        "failure":"you already have a hat"
+                        "question":"Do you want my hat?",
+                        "onYes":
+                        {
+                            "type": "give_item",
+                            "item": "Hat",
+                            "count": 1,
+                            "success":"You take the hat from the scarecrow and thank him",
+                            "failure":"you already have a hat"
+                        }
                     }
                 }
-            }
+            ]
         }
     ]
 }
