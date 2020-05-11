@@ -61,7 +61,7 @@ void do_exit(void *data)
     nextScene = sj_get_string_value(sj_object_get_value(arg,"scene"));
     positionExhibit = sj_get_string_value(sj_object_get_value(arg,"position"));
     //this destroys the exhibit we are in, so must be the last thing done here
-    scene_next_scene((char *)nextScene, scene_get_active_player(exhibit->scene), (char *)positionExhibit);
+    scene_next_scene((char *)nextScene, scene_get_party(exhibit->scene), (char *)positionExhibit);
 }
 
 void exhibit_interact_callback(void *data)

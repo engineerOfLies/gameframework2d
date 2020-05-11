@@ -15,6 +15,7 @@
 #include "windows_common.h"
 #include "scene.h"
 #include "hud.h"
+#include "party.h"
 #include "player.h"
 
 extern void exitGame();
@@ -41,20 +42,20 @@ void onFileLoadCancel(void *Data)
 
 void onFileLoadOk(void *Data)
 {
-    Entity *player;
+    Party *party;
     MainMenuData* data;
     if (!Data)return;
     data = Data;
 
-    player = player_load(data->filename);
-    if (!player)
+    party = party_load(data->filename);
+    if (!party)
     {
         window_alert("Failed to Load", "file not found", NULL,NULL);
         gfc_line_cpy(data->filename,"saves/");
         return;
     }
-    scene_next_scene(player_get_scene(player), player, NULL);
-    hud_open(player);
+    scene_next_scene(party_get_scene(party), party, NULL);
+    hud_open(party->activePlayer);
     gf2d_mouse_set_function(MF_Walk);
     beginGame();    
     gf2d_window_free(data->win);
@@ -64,10 +65,10 @@ void onFileLoadOk(void *Data)
 
 void main_menu_start_new_game()
 {
-    Entity *player;
-    player = player_load("saves/start.json");
-    scene_next_scene(player_get_scene(player), player, "player_start");
-    hud_open(player);
+    Party *party;
+    party = party_load("saves/start.json");
+    scene_next_scene(party_get_scene(party), party, "player_start");
+    hud_open(party->activePlayer);
     gf2d_mouse_set_function(MF_Walk);
     beginGame();
 }

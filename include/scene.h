@@ -8,6 +8,7 @@
 #include "gf2d_actor.h"
 #include "gf2d_mouse.h"
 
+#include "party.h"
 #include "walkmask.h"
 #include "layers.h"
 
@@ -24,6 +25,7 @@ typedef struct
     List       *exhibits;           /**<list of exhibits in this scene*/
     List       *entities;           /**<list of entities spawned in this scene*/
     List       *walkmasks;          /**<bounds for where a player can walk in a scene*/
+    Party      *party;              /**<the party for the scene*/
     Entity     *activePlayer;       /**<active player entity*/
     MouseFunction   mouseFunction;  /**<selected mouse function for the scene.  NOT saved to disk*/
 }Scene;
@@ -124,6 +126,7 @@ void scene_free(Scene *scene);
 void scene_set_active_player(Scene *scene,Entity *player);
 
 Entity *scene_get_active_player(Scene *scene);
+Party *scene_get_party(Scene *scene);
 
 /**
  * @brief issue a walk command to the active player to walk towards the specified position in the scene
@@ -135,10 +138,10 @@ void scene_active_player_walk_to(Scene *scene,Vector2D position);
 /**
  * @brief transition into the next scene
  * @param nextScene the name of the file that describes the next scene
- * @param player the active player that will be placed into the new scene
+ * @param party the party that will be placed into the new scene
  * @param positionExhibit the exhibit that will be used as a reference to place the player at
  */
-void scene_next_scene(char *nextScene, Entity *player, char *positionExhibit);
+void scene_next_scene(char *nextScene, Party *party, char *positionExhibit);
 
 /**
  * @brief set a scene to be the active scene

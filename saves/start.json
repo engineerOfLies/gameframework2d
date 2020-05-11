@@ -1,98 +1,108 @@
 {
-  "position": [
-    "345.998413",
-    "540.079834"
-  ],
-  "name": "Ketch",
-  "scene": "scenes/town_gate.json",
-  "attributes": {
-    "items":
+    "saveFile":"saves/newgame.json",
+    "activePlayer":0,
+    "gold":100,
+    "scene": "scenes/town_gate.json",
+    
+    "players":
     [
         {
-            "name":"Strength",
-            "skill":10
+        "position": [
+            "345.998413",
+            "540.079834"
+        ],
+        "name": "Ketch",
+        "scene": "scenes/town_gate.json",
+        "attributes": {
+            "items":
+            [
+                {
+                    "name":"Strength",
+                    "skill":10
+                },
+                {
+                    "name":"Endurance",
+                    "skill":10
+                },
+                {
+                    "name":"Dexterity",
+                    "skill":10
+                },
+                {
+                    "name":"Agility",
+                    "skill":10
+                },
+                {
+                    "name":"Focus",
+                    "skill":10
+                },
+                {
+                    "name":"Resolve",
+                    "skill":10
+                }
+            ]
         },
-        {
-            "name":"Endurance",
-            "skill":10
+        "items": {
+            "items":
+            [
+                {
+                    "name":"Necromancy Tomb",
+                    "count":1
+                },
+                {
+                    "name":"Soul Forge",
+                    "count":1
+                },
+                {
+                    "name":"Gold",
+                    "count":100
+                },
+                {
+                    "name":"Skull",
+                    "count":1
+                }
+            ]
         },
-        {
-            "name":"Dexterity",
-            "skill":10
+        "skills": {
+            "items": [
+                {
+                    "name":"Attack",
+                    "skill":10
+                },
+                {
+                    "name":"Defense",
+                    "skill":10
+                },
+                {
+                    "name":"Throwing",
+                    "skill":10
+                },
+                {
+                    "name":"Climbing",
+                    "skill":10
+                },
+                {
+                    "name":"Etherism",
+                    "skill":10
+                },
+                {
+                    "name":"Necromancy",
+                    "skill":10
+                }
+            ]
         },
-        {
-            "name":"Agility",
-            "skill":10
-        },
-        {
-            "name":"Focus",
-            "skill":10
-        },
-        {
-            "name":"Resolve",
-            "skill":10
+        "spells": {
+            "items": [
+                {
+                    "name":"Ethereal Hand",
+                    "skill":10
+                },
+                {
+                    "name":"Ethereal Sight",
+                    "skill":10
+                }
+            ]
+        }
         }
     ]
-  },
-  "items": {
-    "items":
-    [
-        {
-            "name":"Necromancy Tomb",
-            "count":1
-        },
-        {
-            "name":"Soul Forge",
-            "count":1
-        },
-        {
-            "name":"Gold",
-            "count":100
-        },
-        {
-            "name":"Skull",
-            "count":1
-        }
-    ]
-  },
-  "skills": {
-    "items": [
-        {
-            "name":"Attack",
-            "skill":10
-        },
-        {
-            "name":"Defense",
-            "skill":10
-        },
-        {
-            "name":"Throwing",
-            "skill":10
-        },
-        {
-            "name":"Climbing",
-            "skill":10
-        },
-        {
-            "name":"Etherism",
-            "skill":10
-        },
-        {
-            "name":"Necromancy",
-            "skill":10
-        }
-    ]
-  },
-  "spells": {
-    "items": [
-        {
-            "name":"Ethereal Hand",
-            "skill":10
-        },
-        {
-            "name":"Ethereal Sight",
-            "skill":10
-        }
-    ]
-  }
 }

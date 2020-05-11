@@ -271,6 +271,12 @@ void scene_draw(Scene *scene)
     }
 }
 
+Party *scene_get_party(Scene *scene)
+{
+    if (!scene)return NULL;
+    return scene->party;
+}
+
 Entity *scene_get_active_player(Scene *scene)
 {
     if (!scene)return NULL;
@@ -408,20 +414,20 @@ Scene *scene_get_active()
 }
 
 
-void scene_next_scene(char *nextScene, Entity *player, char *positionExhibit)
+void scene_next_scene(char *nextScene, Party *party, char *positionExhibit)
 {
     Exhibit *exhibit;
     Scene *scene;
-    if (!player)
+    if (!party)
     {
-        slog("no player entity!");
+        slog("no party information!");
         return;
     }
     
     
     //load the new scene
     scene = scene_load(nextScene);
-    scene_set_active_player(scene,player);
+    scene_set_active_player(scene,party->activePlayer);
     
     scene_spawn_exhibits(scene);
     
@@ -433,11 +439,12 @@ void scene_next_scene(char *nextScene, Entity *player, char *positionExhibit)
             slog("failed to find exhibit %s, cannot place player!",positionExhibit);
             return;
         }
-        player_set_position(player,exhibit->near);
+        //TODO make multiple positions for inactive players
+        player_set_position(party->activePlayer,exhibit->near);
     }
 
-    player_set_scene(player,scene->filename);
-    camera_set_focus(player->position);
+    party_set_scene(party,scene->filename);
+    camera_set_focus(party->activePlayer->position);
     
     //free up the last scene
     scene_free(scene_get_active());
