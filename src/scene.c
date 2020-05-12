@@ -445,7 +445,7 @@ void scene_next_scene(char *nextScene, Party *party, char *positionExhibit)
 
     party_set_scene(party,scene->filename);
     camera_set_focus(party->activePlayer->position);
-    
+    scene->party = party;
     //free up the last scene
     scene_free(scene_get_active());
     scene_set_active(scene);

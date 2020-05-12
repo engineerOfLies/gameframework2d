@@ -8,7 +8,8 @@ Programming TODO list
     X player / load save
     - player history system
     X Add Callbacks for Actor's action completion
-    - Add support for multiple player characters in the scene
+    X Add support for multiple player characters in the scene
+        - Add system for players to follow the active one
     - Add general conditional evaluator for exhibits and dialog.
     
  - Scripted Sequences
@@ -20,17 +21,20 @@ Programming TODO list
         X entities draw according to layer, scenes call draw entities per layer
         X Configure what position (y) will determine which layer the player entity is in
         X Exhbits will state what layer they are in for draw purposes.
+    - Add exhibits for idle players to walk to per scene
         
     X Make in-Game HUD - in progress
     - Add Support for Time of Day Color Effects for Background and Entities
     - Add support for background music selection
     - Add conditional Spawns for Exhibits
+    
+    - Add starting position for walk in effects.
 
  - UI
     X Main Game Screen
     X Make Inventory / Skill / Spell menus
         X Add selected Item/Skill/Spell to the Mouse Actions
-    - Make Dialog Box Window
+    X Make Dialog Box Window
     X Player Stats Screen
         - Way to customize combat actions
     X Options Menu

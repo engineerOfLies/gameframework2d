@@ -14,6 +14,8 @@
 #include "camera.h"
 #include "windows_common.h"
 #include "player.h"
+#include "scene.h"
+#include "party.h"
 #include "options_menu.h"
 
 extern void exitGame();
@@ -26,7 +28,7 @@ typedef struct
     TextLine filename;
 }OptionsMenuData;
 
-void onPlayerSaveCancel(void *Data)
+void onPartySaveCancel(void *Data)
 {
     OptionsMenuData* data;
     if (!Data)return;
@@ -35,12 +37,12 @@ void onPlayerSaveCancel(void *Data)
     return;
 }
 
-void onPlayerSaveOk(void *Data)
+void onPartySaveOk(void *Data)
 {
     OptionsMenuData* data;
     if (!Data)return;
     data = Data;
-    player_save(data->player, data->filename);
+    party_save(scene_get_party(scene_get_active()), data->filename);
     
     return;
 }
@@ -84,7 +86,7 @@ int options_menu_update(Window *win,List *updateList)
                 return 1;
             case 51:
                 gfc_line_cpy(data->filename,player_get_filename(data->player));
-                window_text_entry("Enter filename to save", data->filename, win->data, GFCLINELEN, onPlayerSaveOk,onPlayerSaveCancel);
+                window_text_entry("Enter filename to save", data->filename, win->data, GFCLINELEN, onPartySaveOk,onPartySaveCancel);
                 return 1;
             case 52:
                 return 1;
