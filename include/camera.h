@@ -1,64 +1,62 @@
 #ifndef __CAMERA_H__
 #define __CAMERA_H__
 
-#include <SDL.h>
-
+#include "gfc_types.h"
 #include "gfc_vector.h"
 
-#include "gf2d_shape.h"
 
 /**
- * @brief set the position and size of the screen camera
- * @param x the current left position of the camera
- * @param y the current top position of the camera
- * @param w the width of the camera
- * @param h the height of the camera
+ * @brief Set the camera size in width and height (this provably matches the screen resolution
+ * @param size the width and height of the camera
  */
-void camera_set_dimensions(Sint32 x,Sint32 y,Uint32 w,Uint32 h);
+void camera_set_dimensions(Vector2D size);
 
 /**
- * @brief get the position and size of the camera
- * @return the camera view
+ * @brief get the camera's current dimenstions (extent)
+ * @return a vector containing the width and height of the camera
  */
-Rect camera_get_dimensions();
+Vector2D camera_get_dimensions();
 
 /**
- * @brief get the current camera position
- * @return the x,y position of the camera
+ * @brief check if a point is on screen
  */
+Bool camera_point_on_screen(Vector2D point);
 
-Vector2D camera_get_position();
 
 /**
- * @brief limit the position of the camera by these bounds
- * @param x the minimum x position for the camera
- * @param y the minimum y position for the camera
- * @param w the right bounds
- * @param w the bottom bounds
+ * @brief check if the rectangle is on screen
  */
-void camera_set_bounds(Sint32 x,Sint32 y,Uint32 w,Uint32 h);
+Bool camera_rect_on_screen(SDL_Rect rect);
 
 /**
- * @brief get the current camera bounds
- * @return the camera bounding rect
- */
-Rect camera_get_bounds();
-
-/**
- * @brief move the camera, but limit by bounds
- * @param v the vector to move the camera by
- */
-void camera_move(Vector2D v);
-
-/**
- * @brief move the camera to new position, but respect bounds
- * @param position the ideal new top left position of the camera
+ * @brief set the camera position relative to the gameworld
+ * @param position the vector to set the camera to
  */
 void camera_set_position(Vector2D position);
 
 /**
- * @brief move the camera to ne position, but do not respect bounds
- * @param position the new top left position of the camera
+ * @brief move the camera relative to its current position
+ * @param move the ammount to move the camera by
  */
-void camera_set_position_absolute(Vector2D position);
+void camera_move(Vector2D move);
+
+/**
+ * @brief get the camera's world position
+ * @return the camera's position in world coordinates
+ */
+Vector2D camera_get_position();
+
+/**
+ * @brief return the rectangle that describes the camera;
+ * @return the rectangle
+ * @note hehe
+ */
+SDL_Rect camera_get_rect();
+
+/**
+ * @brief return the offset for things to be drawn relative to the camera
+ * @return the inverse of the camera coordinates
+ */
+Vector2D camera_get_offset();
+
 #endif

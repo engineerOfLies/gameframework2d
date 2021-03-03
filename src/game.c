@@ -70,7 +70,7 @@ int main(int argc, char * argv[])
     gf2d_windows_init(128);
     gf2d_entity_system_init(1024);
     
-    camera_set_dimensions(0,0,1200,700);
+    camera_set_dimensions(vector2d(1200,700));
     background = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
     
     SDL_ShowCursor(SDL_DISABLE);
