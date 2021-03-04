@@ -29,11 +29,11 @@ typedef enum
  */
 typedef struct Action_S
 {
-    TextLine name;
-    int startFrame;
-    int endFrame;
-    float frameRate;
-    ActionType type;
+    TextLine    name;
+    int         startFrame;
+    int         endFrame;
+    float       frameRate;
+    ActionType  type;
 }Action;
 
 /**
@@ -52,13 +52,16 @@ typedef struct
     Vector2D    scale;        /**<scale to draw at*/
     Vector4D    color;
     Vector4D    colorSpecial;
+    Vector2D    drawOffset;
 }ActionList;
 
 typedef struct
 {
+    int         _inuse;       /**<set if the actor is in use*/
     Sprite     *sprite;       /**<which sprite to draw this entity with*/
     Vector4D    color;        /**<color to shift sprite too*/
     float       frame;        /**<current frame for the sprite*/
+    Vector2D    size;         /**<size of the actor (sprite size times scale*/
     ActionList *al;           /**<action list for managing sprite animations*/
     TextLine    action;       /**<the current action*/
     ActionReturnType at;      /**<set automatically each frame*/
@@ -108,8 +111,9 @@ float gf2d_action_set(ActionList *al,char *name);
  * @brief load actor information from file into the actor provided
  * @param actor a pointer to the actor to populate
  * @param file the file path to load
+ * @returns true on success or false on failure
  */
-void gf2d_actor_load(Actor *actor,char *file);
+int gf2d_actor_load(Actor *actor,char *file);
 
 /**
  * @brief free all assets loaded for the actor and set its data to 0
@@ -146,6 +150,34 @@ void gf2d_actor_set_action(Actor *actor,char *action);
  * @brief based on the actor's current action set the next frame and return type
  */
 void gf2d_actor_next_frame(Actor *actor);
+
+/**
+ * @brief change the action to the next action in the list
+ * @note loops
+ * @param actor the actor to change
+ */
+void gf2d_actor_next_action(Actor *actor);
+
+/**
+ * @brief change the action to the previous action in the list
+ * @note loops
+ * @param actor the actor to change
+ */
+void gf2d_actor_prev_action(Actor *actor);
+
+/**
+ * @brief get the name of the current action for the actor
+ * @param actor the actor to get the current action for
+ * @return NULL on error or not set, a pointer to the name otherwise
+ */
+const char *gf2d_actor_get_action_name(Actor *actor);
+
+/**
+ * @brief get the current action for the given actor
+ * @param actor the actor to get the action for
+ * @return NULL on error or not set, a pointer to the action data otherwise
+ */
+Action *gf2d_actor_get_current_action(Actor *actor);
 
 /**
  * @brief return the number of animation frames (not sprite frames) until the action completes
