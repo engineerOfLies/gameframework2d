@@ -1,0 +1,22 @@
+{
+    "actor":
+    {
+        "sprite": "images/backgrounds/field.png",
+        "frameWidth": 512,
+        "frameHeight": 512,
+        "framesPerLine": 4,
+        "scale": [1,1],
+        "color": [255,255,255,230],
+        "colorSpecial": [255,255,255,255],
+        "actionList":
+        [
+            {
+                "action": "field",
+                "startFrame": 0,
+                "endFrame": 0,
+                "frameRate": 0,
+                "type": "loop"
+            }
+        ]
+    }
+}

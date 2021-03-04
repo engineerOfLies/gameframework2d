@@ -342,6 +342,11 @@ void gf2d_actor_free(Actor *actor)
 
 void gf2d_actor_load(Actor *actor,char *file)
 {
+    gf2d_actor_load_all(actor,file,false);
+}
+
+void gf2d_actor_load_all(Actor *actor,char *file,Bool surface)
+{
     if (!actor)
     {
         slog("no actor specified to load into");
@@ -358,7 +363,7 @@ void gf2d_actor_load(Actor *actor,char *file)
         actor->al->frameWidth,
         actor->al->frameHeight,
         actor->al->framesPerLine,
-        false);
+        surface);
     gf2d_actor_set_action(actor,actor->al->actions[0].name);
 }
 

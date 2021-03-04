@@ -106,6 +106,13 @@ void gf2d_sprite_draw_to_surface(
 );
 
 /**
+ * @brief creates the texture for the sprite based on the current surface information.
+ * @note: if the texture already exists, it will be deteled first
+ * @param sprite the sprite to update
+ */
+void gf2d_sprite_create_texture_from_surface(Sprite *sprite);
+
+/**
  * @brief allocate space for a sprite
  * @note both texture and sprite data is left blank
  * @return NULL on error or out of memory, a blank sprite otherwise

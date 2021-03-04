@@ -4,6 +4,7 @@
 #include "gfc_types.h"
 #include "gfc_text.h"
 
+#include "gf2d_actor.h"
 #include "gf2d_sprite.h"
 
 typedef enum
@@ -15,17 +16,10 @@ typedef enum
 
 typedef struct
 {
-    Sprite     **bgImage;    /**<the background image for the level*/
-    int         bgImageCount;/**<how many we have*/
+    Sprite     *baseTile;
+    int         tileFrame;  /**<which tile frame to use*/
+    Sprite     *background;
     Vector2D    levelSize;   /**<how large, in pixels, the level is*/
-    Sprite     *tileSet;     /**<sprite for the tileset*/
-    TileTypes  *tileMap;     /**<the tiles for the level*/
-    Uint32      tileCount;
-    Uint32      levelWidth;  /**<how many tiles per row the level has*/
-    Uint32      levelHeight; /**<how many tiles per column the level has*/
-    int         tileWidth;   /**<now many pixels wide the tiles are*/
-    int         tileHeight;  /**<how many pixels tall each tile is*/
-    int         tileFPL;
 }Level;
 
 

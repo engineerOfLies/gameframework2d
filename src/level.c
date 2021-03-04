@@ -3,6 +3,11 @@
 #include "simple_json.h"
 #include "simple_logger.h"
 
+#include "gfc_input.h"
+
+#include "gf2d_config.h"
+#include "gf2d_graphics.h"
+
 #include "camera.h"
 #include "level.h"
 
@@ -20,15 +25,60 @@ Level *level_new()
     return level;
 }
 
+void level_generate_background(Level *level)
+{
+    int i,j;
+    int countx,county;
+    
+    level->background = gf2d_sprite_new();
+    if (!level->background)
+    {
+        slog("failed to allocate space for a background sprite!");
+        return;
+    }
+    if ((!level->levelSize.x)||(!level->levelSize.y))
+    {
+        slog("cannot create a zero size background (%i,%i)",level->levelSize.x,level->levelSize.y);
+    }
+    level->background->surface = gf2d_graphics_create_surface(level->levelSize.x,level->levelSize.y);
+    level->background->frame_h = level->background->surface->h;
+    level->background->frame_w = level->background->surface->w;
+    level->background->frames_per_line = 1;
+
+    if (!level->baseTile)
+    {
+        slog("not generating background from baseTile, none provided!");
+        gf2d_sprite_create_texture_from_surface(level->background);
+        return;
+    }
+    countx = (level->background->surface->w / level->baseTile->frame_w) + 1;
+    county = (level->background->surface->h / level->baseTile->frame_h) + 1;
+    
+    for (j = 0; j < county;j++)
+    {
+        for (i = 0; i < countx; i++)
+        {
+            gf2d_sprite_draw_to_surface(
+                level->baseTile,
+                vector2d(i * level->baseTile->frame_w,j * level->baseTile->frame_h),
+                NULL,
+                NULL,
+                level->tileFrame,
+                level->background->surface
+            );
+
+        }
+    }
+    
+    gf2d_sprite_create_texture_from_surface(level->background);
+}
+
 Level *level_load(const char *filename)
 {
     const char *string;
     Level *level;
-    SJson *json,*levelJS,*levelMap,*row,*array;
-    int rows,columns;
-    int count,tileindex;
-    int i,j;
-    int tempInt;
+    SJson *json,*levelJS;
+    int frameWidth, frameHeight, framesPerLine;
 
     if (!filename)
     {
@@ -53,83 +103,27 @@ Level *level_load(const char *filename)
         sj_free(json);
         return NULL;
     }
-    
-    array = sj_object_get_value(levelJS,"bgImage");
-    count = sj_array_get_count(array);
-    level->bgImageCount = count;
-    if (count)
-    {
-        level->bgImage = (Sprite **)gfc_allocate_array(sizeof(Sprite*),count);
-        for (i = 0; i < count;i++)
-        {
-            string = sj_get_string_value(sj_array_get_nth(array,i));
-            if (string)
-            {
-                level->bgImage[i] = gf2d_sprite_load_image((char *)string);
-            }
-        }
-    }
-    string = sj_get_string_value(sj_object_get_value(levelJS,"tileSet"));
+
+    string = sj_get_string_value(sj_object_get_value(levelJS,"baseTile"));
     if (string)
     {
-        slog("loading tile set %s",string);
-        sj_get_integer_value(sj_object_get_value(levelJS,"tileWidth"),&level->tileWidth);
-        sj_get_integer_value(sj_object_get_value(levelJS,"tileHeight"),&level->tileHeight);
-        sj_get_integer_value(sj_object_get_value(levelJS,"tileFPL"),&level->tileFPL);
-        level->tileSet = gf2d_sprite_load_all(
-            (char *)string,
-            level->tileWidth,
-            level->tileHeight,
-            level->tileFPL,
-            0);
+        slog("loading level base tile spriet %s",string);
+        
+        sj_get_integer_value(sj_object_get_value(levelJS,"frameWidth"),&frameWidth);
+        sj_get_integer_value(sj_object_get_value(levelJS,"frameHeight"),&frameHeight);
+        sj_get_integer_value(sj_object_get_value(levelJS,"framesPerLine"),&framesPerLine);
+        sj_get_integer_value(sj_object_get_value(levelJS,"tileFrame"),&level->tileFrame);
+        
+        level->baseTile = gf2d_sprite_load_all(
+                (char *)string,
+                frameWidth,
+                frameHeight,
+                framesPerLine,
+                true
+            );
     }
-    levelMap = sj_object_get_value(levelJS,"tileMap");
-    if (!levelMap)
-    {
-        slog("missing tileMap data");
-        level_free(level);
-        sj_free(json);
-        return NULL;
-    }
-    rows = sj_array_get_count(levelMap);
-    row = sj_array_get_nth(levelMap,0);
-    columns = sj_array_get_count(row);
-    count = rows * columns;
-    level->levelWidth = columns;
-    level->levelHeight = rows;
-    level->tileMap = (TileTypes*)gfc_allocate_array(sizeof(TileTypes),count);
-    if (!level->tileMap)
-    {
-        level_free(level);
-        sj_free(json);
-        return NULL;
-    }
-    level->tileCount = count;
-    
-    tileindex = 0;
-    slog("tilemap data:");
-    for (j = 0; j < rows; j++)
-    {
-        row = sj_array_get_nth(levelMap,j);
-        if (!row)continue;// skip it, its bad
-        if (columns != sj_array_get_count(row))
-        {
-            slog("row %i, column count mismatch",j);
-            continue;
-        }
-        for (i = 0; i < columns; i++)
-        {
-            sj_get_integer_value(sj_array_get_nth(row,i),&tempInt);
-            level->tileMap[tileindex] = tempInt;
-            printf("%i,",level->tileMap[tileindex++]);
-        }
-        printf("\n");
-    }
-    level->levelSize.x = level->levelWidth * level->tileWidth;
-    level->levelSize.y = level->levelHeight * level->tileHeight;
-    slog("map width: %f, with %i tiles wide, each %i pixels wide", level->levelSize.x, level->levelWidth,level->tileWidth);
-    slog("map height: %f, with %i tiles high, each %i pixels tall", level->levelSize.y, level->levelHeight, level->tileHeight);
-    
+    sj_value_as_vector2d(sj_object_get_value(levelJS,"levelSize"),&level->levelSize);    
+    level_generate_background(level);
     sj_free(json);
     return level;
 }
@@ -139,7 +133,26 @@ void level_update(Level *level)
 {
     SDL_Rect camera;
     if (!level)return;
+    
+    if (gfc_input_command_down("cameraleft"))
+    {
+        camera_move(vector2d(-10,0));
+    }
+    if (gfc_input_command_down("cameraright"))
+    {
+        camera_move(vector2d(10,0));
+    }
+    if (gfc_input_command_down("cameraup"))
+    {
+        camera_move(vector2d(0,-10));
+    }
+    if (gfc_input_command_down("cameradown"))
+    {
+        camera_move(vector2d(0,10));
+    }
+
     camera = camera_get_rect();
+    
     //snap camera to the level bounds
     if ((camera.x + camera.w) > (int)level->levelSize.x)
     {
@@ -156,32 +169,17 @@ void level_update(Level *level)
 
 void level_free(Level *level)
 {
-    int i;
     if (!level)return;// nothing to do
     
-    if (level->tileMap != NULL)
-    {
-        free(level->tileSet);
-        level->tileMap = NULL;
-    }
-    if (level->bgImageCount)
-    {
-        for (i = 0; i < level->bgImageCount;i++)
-        {
-            gf2d_sprite_free(level->bgImage[i]);
-        }
-        free(level->bgImage);
-    }
-    gf2d_sprite_free(level->tileSet);
+    gf2d_sprite_free(level->baseTile);
+    gf2d_sprite_free(level->background);
     
     free(level);
 }
 
 void level_draw(Level *level)
 {
-    SDL_Rect camera;
-    Vector2D offset,drawPosition,parallax;
-    int i;
+    Vector2D offset;
     if (!level)
     {
         slog("cannot draw level, NULL pointer provided");
@@ -189,47 +187,16 @@ void level_draw(Level *level)
     }
     // draw the background first
     offset = camera_get_offset();
-    if (level->bgImageCount)
-    {
-        camera = camera_get_rect();
-        for (i = 0; i < level->bgImageCount;i++)
-        {
-            parallax.x = (float)(level->bgImage[i]->frame_w - camera.w)/ (level->levelSize.x - camera.w);
-            parallax.y = (float)(level->bgImage[i]->frame_h - camera.h)/ (level->levelSize.y - camera.h);
-            
-            gf2d_sprite_draw_image(level->bgImage[i],vector2d(offset.x * parallax.x,offset.y * parallax.y));        
-        }
-            
-    }
     //then draw the tiles
-    
-    if (!level->tileMap)
-    {
-        slog("not tiles loaded for the level, cannot draw it");
-        return;
-    }
-    for (i = 0; i < level->tileCount; i++)
-    {
-        if (level->tileMap[i] == 0)continue;
-        drawPosition.x = ((i % level->levelWidth)*level->tileSet->frame_w);
-        drawPosition.y = ((i / level->levelWidth)*level->tileSet->frame_h);
-        if (!camera_rect_on_screen(gfc_sdl_rect(drawPosition.x,drawPosition.y,level->tileSet->frame_w,level->tileSet->frame_h)))
-        {
-            //tile is off camera, skip
-            continue;
-        }
-        drawPosition.x += offset.x;
-        drawPosition.y += offset.y;
-        gf2d_sprite_draw(
-            level->tileSet,
-            drawPosition,
-            NULL,
-            NULL,
-            NULL,
-            NULL,
-            NULL,
-            level->tileMap[i] - 1);
-    }
+    gf2d_sprite_draw(
+    level->background,
+        offset,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        0);
 }
 
 

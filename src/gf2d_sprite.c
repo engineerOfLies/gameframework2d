@@ -120,6 +120,26 @@ Sprite *gf2d_sprite_load_image(char *filename)
     return gf2d_sprite_load_all(filename,-1,-1,1,false);
 }
 
+void gf2d_sprite_create_texture_from_surface(Sprite *sprite)
+{
+    if (sprite->texture != NULL)
+    {
+        SDL_DestroyTexture(sprite->texture);
+    }
+    sprite->texture = SDL_CreateTextureFromSurface(gf2d_graphics_get_renderer(),sprite->surface);
+    if (!sprite->texture)
+    {
+        slog("failed to create texture for sprite %s",sprite->filepath);
+        gf2d_sprite_free(sprite);
+        return;
+    }
+    SDL_SetTextureBlendMode(sprite->texture,SDL_BLENDMODE_BLEND);        
+    SDL_UpdateTexture(sprite->texture,
+                    NULL,
+                    sprite->surface->pixels,
+                    sprite->surface->pitch);    
+}
+
 Sprite *gf2d_sprite_load_all(
     char   *filename,
     Sint32  frameWidth,
@@ -161,19 +181,9 @@ Sprite *gf2d_sprite_load_all(
         return NULL;
     }
     
-    sprite->texture = SDL_CreateTextureFromSurface(gf2d_graphics_get_renderer(),surface);
-    if (!sprite->texture)
-    {
-        slog("failed to load sprite image %s",filename);
-        gf2d_sprite_free(sprite);
-        SDL_FreeSurface(surface);
-        return NULL;
-    }
-    SDL_SetTextureBlendMode(sprite->texture,SDL_BLENDMODE_BLEND);        
-    SDL_UpdateTexture(sprite->texture,
-                    NULL,
-                    surface->pixels,
-                    surface->pitch);
+    sprite->surface = surface;
+
+
     if (frameHeight == -1)
     {
         sprite->frame_h = surface->h;
@@ -187,13 +197,12 @@ Sprite *gf2d_sprite_load_all(
     sprite->frames_per_line = framesPerLine;
     gfc_line_cpy(sprite->filepath,filename);
 
+    gf2d_sprite_create_texture_from_surface(sprite);
+
     if(!keepSurface)
     {
         SDL_FreeSurface(surface);
-    }
-    else
-    {
-        sprite->surface = surface;
+        sprite->surface = NULL;
     }
     return sprite;
 }

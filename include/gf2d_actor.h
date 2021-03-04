@@ -112,6 +112,15 @@ float gf2d_action_set(ActionList *al,char *name);
 void gf2d_actor_load(Actor *actor,char *file);
 
 /**
+ * @brief same as above, but with additional configuration features
+ * @param actor the actor to load data into
+ * @param file the file that will describe the actor
+ * @param surface if the actor sprite should retain the SDL_Surface or not
+ */
+void gf2d_actor_load_all(Actor *actor,char *file,Bool surface);
+
+
+/**
  * @brief free all assets loaded for the actor and set its data to 0
  * @param actor a pointer to the actor to free
  */
