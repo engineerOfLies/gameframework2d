@@ -1,7 +1,7 @@
 {
     "level":
     {
-        "baseTile": "images/backgrounds/field.png",
+        "baseTile": "images/backgrounds/terrain.png",
         "frameWidth": 512,
         "frameHeight": 512,
         "framesPerLine": 4,

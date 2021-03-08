@@ -17,6 +17,7 @@
 
 #include "camera.h"
 #include "level.h"
+#include "keep.h"
 
 static int _done = 0;
 static Window *_quit = NULL;
@@ -39,6 +40,7 @@ int main(int argc, char * argv[])
     /*variable declarations*/
     int mx,my;
     float mf;
+    int i;
     
     Level *level = NULL;
     /*program initializtion*/
@@ -61,7 +63,7 @@ int main(int argc, char * argv[])
     gf2d_windows_init(128);
     gf2d_entity_system_init(1024);
     
-    camera_set_dimensions(vector2d(1200,700));
+    camera_set_dimensions(vector2d(1200,720));
     
     SDL_ShowCursor(SDL_DISABLE);
     // game specific setup
@@ -70,6 +72,11 @@ int main(int argc, char * argv[])
     mf = 0;
 
     level = level_load("levels/exampleLevel.json");
+    
+    for (i = 0; i < 10; i++)
+    {
+        keep_segment_new(vector2d(128+(i*34),128),"actors/wall_segment.json",(int)(gfc_random()*KS_Finished), KD_South);
+    }
 
     
     /*main game loop*/

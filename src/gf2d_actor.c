@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include "simple_logger.h"
+#include "simple_json.h"
+#include "gf2d_config.h"
 #include "gf2d_actor.h"
 
 
@@ -162,6 +164,11 @@ void gf2d_action_file_load_actions(FILE *file,ActionList *actionList)
             fscanf(file,"%f,%f",&actionList->scale.x,&actionList->scale.y);
             continue;
         }
+        if(strcmp(buf,"drawOffset:") == 0)
+        {
+            fscanf(file,"%f,%f",&actionList->drawOffset.x,&actionList->drawOffset.y);
+            continue;
+        }
         if(strcmp(buf,"color:") == 0)
         {
             fscanf(file,"%f,%f,%f,%f",&actionList->color.x,&actionList->color.y,&actionList->color.z,&actionList->color.w);
@@ -217,26 +224,21 @@ void gf2d_action_file_load_actions(FILE *file,ActionList *actionList)
     }
 }
 
-ActionList *gf2d_action_list_load(
+
+ActionList *gf2d_action_list_load_parse(
     char *filename
 )
 {
     FILE *file;
-    ActionList *actionList;
     int count;
-    actionList = gf2d_action_list_get_by_filename(filename);
-    if (actionList != NULL)
-    {
-        // found a copy already in memory
-        actionList->ref_count++;
-        return actionList;
-    }
-    
+    ActionList *actionList;
     actionList = gf2d_action_list_new();
+
     if (!actionList)
     {
         return NULL;
     }
+
     file = fopen(filename,"r");
     if (!file)
     {
@@ -253,13 +255,125 @@ ActionList *gf2d_action_list_load(
         slog("No actions found in file: %s",filename);
         return NULL;
     }
-    actionList->actions = (Action*)malloc(sizeof(Action)*count);
-    memset(actionList->actions,0,sizeof(Action)*count);
+    actionList->actions = (Action*)gfc_allocate_array(sizeof(Action),count);
     actionList->numActions = count;
     gf2d_action_file_load_actions(file,actionList);
     
     fclose(file);
     return actionList;
+}
+
+void gf2d_action_json_parse_action(
+    SJson *actionSJ,
+    Action *actionData
+)
+{
+    int tempInt;
+    float tempFloat;
+    const char *tempStr;
+    if ((!actionSJ)||(!actionData))
+    {
+        return;
+    }
+    tempStr = sj_get_string_value(sj_object_get_value(actionSJ,"action"));
+    gfc_line_cpy(actionData->name,tempStr);
+    tempStr = sj_get_string_value(sj_object_get_value(actionSJ,"type"));
+    if (strcmp(tempStr,"loop")==0)
+    {
+        actionData->type = AT_LOOP;
+    }
+    else if (strcmp(tempStr,"pass")==0)
+    {
+        actionData->type = AT_PASS;
+    }
+    sj_get_integer_value(sj_object_get_value(actionSJ,"startFrame"),&tempInt);
+    actionData->startFrame = tempInt;
+    sj_get_integer_value(sj_object_get_value(actionSJ,"endFrame"),&tempInt);
+    actionData->endFrame = tempInt;
+    sj_get_float_value(sj_object_get_value(actionSJ,"frameRate"),&tempFloat);
+    actionData->frameRate = tempFloat;
+}
+
+ActionList *gf2d_action_list_load_json(
+    SJson *json,
+    char *filename
+)
+{
+    ActionList *actionList;
+    SJson *actor = NULL;
+    SJson *actionListJson = NULL;
+    SJson *item = NULL;
+    int actionCount,i;
+    
+    if ((!json)||(!filename))
+    {
+        slog("missing parameters");
+        return NULL;
+    }
+
+    actor = sj_object_get_value(json,"actor");
+    if (!actor)
+    {
+        slog("missing actor object in actor file");
+        return NULL;
+    }
+    actionListJson = sj_object_get_value(actor,"actionList");
+    if (!actionListJson)
+    {
+        slog("missing actor actionList in actor file");
+        return NULL;
+    }
+
+    actionCount = sj_array_get_count(actionListJson);
+    actionList = gf2d_action_list_new();
+    if (!actionList)
+    {
+        return NULL;
+    }
+    
+    gfc_line_cpy(actionList->filename,filename);
+    gfc_line_cpy(actionList->sprite,sj_get_string_value(sj_object_get_value(actor,"sprite")));
+    sj_get_integer_value(sj_object_get_value(actor,"frameWidth"),&actionList->frameWidth);
+    sj_get_integer_value(sj_object_get_value(actor,"frameHeight"),&actionList->frameHeight);
+    sj_get_integer_value(sj_object_get_value(actor,"framesPerLine"),&actionList->framesPerLine);
+    sj_value_as_vector2d(sj_object_get_value(actor,"scale"),&actionList->scale);
+    sj_value_as_vector2d(sj_object_get_value(actor,"drawOffset"),&actionList->drawOffset);
+    sj_value_as_vector4d(sj_object_get_value(actor,"color"),&actionList->color);
+    sj_value_as_vector4d(sj_object_get_value(actor,"colorSpecial"),&actionList->colorSpecial);
+    
+    actionList->actions = (Action*)gfc_allocate_array(sizeof(Action),actionCount);
+    actionList->numActions = actionCount;
+    for (i = 0; i < actionCount; i++)
+    {
+        item = sj_array_get_nth(actionListJson,i);
+        if (!item)continue;
+        gf2d_action_json_parse_action(item,&actionList->actions[i]);
+    }
+    return actionList;
+}
+
+ActionList *gf2d_action_list_load(
+    char *filename
+)
+{
+    SJson *json;
+    ActionList *actionList;
+    actionList = gf2d_action_list_get_by_filename(filename);
+    if (actionList != NULL)
+    {
+        // found a copy already in memory
+        actionList->ref_count++;
+        return actionList;
+    }
+    // check if this is a json file, else use the old parser
+    json = sj_load(filename);
+    if (json)
+    {
+        actionList = gf2d_action_list_load_json(json,filename);
+        sj_free(json);
+        if (actionList)return actionList;
+    }
+    return gf2d_action_list_load_parse(filename);
 }
 
 Action *gf2d_action_list_get_action(ActionList *al, char *name)
@@ -340,43 +454,78 @@ void gf2d_actor_free(Actor *actor)
     memset(actor,0,sizeof(Actor));
 }
 
-void gf2d_actor_load(Actor *actor,char *file)
+int gf2d_actor_load(Actor *actor,char *file)
 {
-    gf2d_actor_load_all(actor,file,false);
-}
-
-void gf2d_actor_load_all(Actor *actor,char *file,Bool surface)
-{
+    if (!file)
+    {
+        slog("no file provided for actor");
+        return false;
+    }
     if (!actor)
     {
         slog("no actor specified to load into");
-        return;
+        return false;
     }
     actor->al = gf2d_action_list_load(file);
     if (!actor->al)
     {
-        return;// should have logged the error already
+        return false;// should have logged the error already
     }
+    actor->_inuse = 1;
+    actor->size.x = actor->al->frameWidth * actor->al->scale.x;
+    actor->size.y = actor->al->frameHeight * actor->al->scale.y;
     vector4d_copy(actor->color,actor->al->color);
     actor->sprite = gf2d_sprite_load_all(
         actor->al->sprite,
         actor->al->frameWidth,
         actor->al->frameHeight,
         actor->al->framesPerLine,
-        surface);
+        false);
     gf2d_actor_set_action(actor,actor->al->actions[0].name);
+    return true;
+}
+
+const char *gf2d_actor_get_action_name(Actor *actor)
+{
+    if (!actor)return NULL;
+    return actor->action;
+}
+
+Action *gf2d_actor_get_current_action(Actor *actor)
+{
+    if (!actor)return NULL;
+    return gf2d_action_list_get_action(actor->al, (char *)gf2d_actor_get_action_name(actor));
+}
+
+void gf2d_actor_next_action(Actor *actor)
+{
+    Action *action;
+    if ((!actor)||(!actor->_inuse)||(!actor->al))return;
+    action = gf2d_actor_get_current_action(actor);
+    if (!action)
+    {
+        slog("No action found for the actor");
+        return;
+    }
+    action++;// iterate to the next action;
+    if (action >= &actor->al->actions[actor->al->numActions])
+    {
+        // if we are past the amount of action, loop back to the original
+        action = &actor->al->actions[0];
+    }
+    gf2d_actor_set_action(actor,action->name);
 }
 
 void gf2d_actor_set_action(Actor *actor,char *action)
 {
-    if (!actor)return;
+    if ((!actor)||(!actor->_inuse)||(!action))return;
     actor->frame = gf2d_action_set(actor->al,action);
     gfc_line_cpy(actor->action,action);
 }
 
 void gf2d_actor_next_frame(Actor *actor)
 {
-    if (!actor)return;
+    if ((!actor)||(!actor->_inuse))return;
     actor->at = gf2d_action_list_get_next_frame(actor->al,&actor->frame,actor->action);
 }
 
@@ -390,22 +539,25 @@ void gf2d_actor_draw(
 )
 {
     Vector2D drawScale;
-    if (!actor)return;
+    Vector2D drawPosition;
+    if ((!actor)||(!actor->_inuse))return;
     vector2d_copy(drawScale,actor->al->scale);
     if (scale)
     {
         drawScale.x *= scale->x;
         drawScale.y *= scale->y;
     }
+    
+    vector2d_add(drawPosition,position,actor->al->drawOffset);
     gf2d_sprite_draw(
-    actor->sprite,
-    position,
-    &drawScale,
-    scaleCenter,
-    rotation,
-    flip,
-    &actor->color,
-    (int)actor->frame);
+        actor->sprite,
+        drawPosition,
+        &drawScale,
+        scaleCenter,
+        rotation,
+        flip,
+        &actor->color,
+        (int)actor->frame);
 
 }
 
@@ -413,9 +565,8 @@ int gf2d_actor_get_frames_remaining(Actor *actor)
 {
     Action *action;
     float total,passed;
-    if (!actor)
+    if ((!actor)||(!actor->_inuse))
     {
-        slog("no actor provided");
         return 0;
     }
     action = gf2d_action_list_get_action(actor->al, actor->action);

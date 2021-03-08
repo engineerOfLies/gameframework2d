@@ -1,0 +1,71 @@
+{
+    "actor":
+    {
+        "sprite": "images/wall.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "framesPerLine": 16,
+        "scale": [1,1],
+        "color": [255,255,255,230],
+        "colorSpecial": [255,255,255,255],
+        "actionList":
+        [
+            {
+                "action": "s",
+                "startFrame": 0,
+                "endFrame": 4,
+                "frameRate": 0,
+                "type": "pass"
+            },
+            {
+                "action": "sw",
+                "startFrame": 5,
+                "endFrame": 9,
+                "frameRate": 0,
+                "type": "pass"
+            },
+            {
+                "action": "w",
+                "startFrame": 10,
+                "endFrame": 14,
+                "frameRate": 0,
+                "type": "pass"
+            },
+            {
+                "action": "nw",
+                "startFrame": 15,
+                "endFrame": 19,
+                "frameRate": 0,
+                "type": "pass"
+            },
+            {
+                "action": "n",
+                "startFrame": 20,
+                "endFrame": 24,
+                "frameRate": 0,
+                "type": "pass"
+            },
+            {
+                "action": "ne",
+                "startFrame": 25,
+                "endFrame": 29,
+                "frameRate": 0,
+                "type": "pass"
+            },
+            {
+                "action": "e",
+                "startFrame": 30,
+                "endFrame": 34,
+                "frameRate": 0,
+                "type": "pass"
+            },
+            {
+                "action": "se",
+                "startFrame": 35,
+                "endFrame": 39,
+                "frameRate": 0,
+                "type": "pass"
+            }
+        ]
+    }
+}

@@ -53,7 +53,7 @@ void level_generate_background(Level *level)
     }
     countx = (level->background->surface->w / level->baseTile->frame_w) + 1;
     county = (level->background->surface->h / level->baseTile->frame_h) + 1;
-    
+    slog("generating the background with %i tiles",countx * county);
     for (j = 0; j < county;j++)
     {
         for (i = 0; i < countx; i++)
@@ -70,6 +70,18 @@ void level_generate_background(Level *level)
         }
     }
     
+    j = (int)(gfc_random() * 100);
+    for ( i = 0; i < j;i++)
+    {
+            gf2d_sprite_draw_to_surface(
+                level->baseTile,
+                vector2d(gfc_random() * level->background->surface->w,gfc_random() * level->background->surface->h),
+                NULL,
+                NULL,
+                4,
+                level->background->surface
+            );
+    }
     gf2d_sprite_create_texture_from_surface(level->background);
 }
 
