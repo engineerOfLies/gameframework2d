@@ -18,6 +18,7 @@
 #include "camera.h"
 #include "level.h"
 #include "keep.h"
+#include "build.h"
 
 static int _done = 0;
 static Window *_quit = NULL;
@@ -39,7 +40,6 @@ int main(int argc, char * argv[])
 {
     /*variable declarations*/
     int mx,my;
-    float mf;
     int i;
     
     Level *level = NULL;
@@ -69,27 +69,22 @@ int main(int argc, char * argv[])
     // game specific setup
         // init mouse, editor window
     gf2d_mouse_load("actors/mouse.actor");
-    mf = 0;
 
     level = level_load("levels/exampleLevel.json");
-    
+    level_show_mouse_tile();
     for (i = 0; i < 10; i++)
     {
         keep_segment_new(vector2d(128+(i*32),128+(i*16)),"actors/wall_segment.json",(int)(gfc_random()*KS_MAX), KD_SouthWest);
     }
 
-    
+    window_build();
     /*main game loop*/
     while(!_done)
     {
         gfc_input_update();
         /*update things here*/
         SDL_GetMouseState(&mx,&my);
-        mf+=0.1;
-        if (mf >= 16.0)
-        {
-            mf = 0;
-        }
+
         gf2d_windows_update_all();
                 
         gf2d_entity_think_all();

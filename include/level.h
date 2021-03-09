@@ -20,6 +20,7 @@ typedef struct
     int         tileFrame;  /**<which tile frame to use*/
     Sprite     *background;
     Vector2D    levelSize;   /**<how large, in pixels, the level is*/
+    Vector2D    levelTileSize; /**<the size of level *tiles* should be.  This is for unit placements*/
 }Level;
 
 
@@ -55,5 +56,24 @@ void level_update(Level *level);
  * @param level the level the draw
  */
 void level_draw(Level *level);
+
+/**
+ * @brief get the level tile that the mouse is currently over
+ * @param level the level to get the mouse from
+ * @param tile output vector.  It will be populated with the x and y tile position (in integer space)
+ */
+void level_get_mouse_tile(Level *level, Vector2D *tile);
+
+/**
+ * @brief enable / disable mouse tile highlighting
+ */
+void level_hide_mouse_tile();
+void level_show_mouse_tile();
+
+/**
+ * @brief get a pointer to the active level information
+ * @return NULL on error or the active level
+ */
+Level *level_get_current();
 
 #endif

@@ -1,0 +1,34 @@
+{
+"window":{
+    "color" : [255,255,255, 255],
+    "dimensions" : [0,0,128,1],
+    "justify" : "left",
+    "align" : "middle",
+    "elements":
+    [
+      {
+        "type": "list",
+        "name": "list",
+        "id" : 0,
+        "bounds": [10,10,1,1],
+        "color" : [255,255,255,255],
+        "style": "vertical",
+        "item_size" : [100,36],
+        "elements":
+        [
+            {
+            "type": "label",
+            "name": "question",
+            "id" : 1,
+            "bounds": [0,0,1,40],
+            "color" : [255,255,255,255],
+            "text":"build",
+            "justify" : "center",
+            "align" : "middle",
+            "style":"H2"
+            }
+        ]
+      }
+    ]
+    }
+}

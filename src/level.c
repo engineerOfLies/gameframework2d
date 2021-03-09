@@ -7,10 +7,40 @@
 
 #include "gf2d_config.h"
 #include "gf2d_graphics.h"
+#include "gf2d_draw.h"
 
 #include "camera.h"
 #include "level.h"
 
+static Level *_level = NULL;
+static int _mouse_draw = 0;
+
+void level_make_current(Level *level)
+{
+    if (!level)
+    {
+        slog("level_make_current : given NULL level");
+    }
+    _level = level;
+}
+
+Level *level_get_current()
+{
+    return _level;
+}
+
+void level_get_mouse_tile(Level *level, Vector2D *tile)
+{
+    Vector2D camera;
+    int mx,my;
+    if ((!level)||(!tile))return;
+    SDL_GetMouseState(&mx,&my);
+    camera = camera_get_position();
+    mx += camera.x;
+    my += camera.y;
+    tile->x = (int)(mx / level->levelTileSize.x);
+    tile->y = (int)(my / level->levelTileSize.y);
+}
 
 Level *level_new()
 {
@@ -135,8 +165,10 @@ Level *level_load(const char *filename)
             );
     }
     sj_value_as_vector2d(sj_object_get_value(levelJS,"levelSize"),&level->levelSize);    
+    sj_value_as_vector2d(sj_object_get_value(levelJS,"levelTileSize"),&level->levelTileSize);    
     level_generate_background(level);
     sj_free(json);
+    level_make_current(level);
     return level;
 }
 
@@ -189,9 +221,19 @@ void level_free(Level *level)
     free(level);
 }
 
+void level_hide_mouse_tile()
+{
+    _mouse_draw = 0;
+}
+
+void level_show_mouse_tile()
+{
+    _mouse_draw = 1;
+}
+
 void level_draw(Level *level)
 {
-    Vector2D offset;
+    Vector2D offset,mouse;
     if (!level)
     {
         slog("cannot draw level, NULL pointer provided");
@@ -209,6 +251,12 @@ void level_draw(Level *level)
         NULL,
         NULL,
         0);
+    if (_mouse_draw)
+    {
+        level_get_mouse_tile(level,&mouse);
+        slog("mouse tile: %f,%f",mouse.x,mouse.y);
+        gf2d_draw_rect(gfc_sdl_rect((int)(mouse.x * level->levelTileSize.x) + offset.x,(int)(mouse.y* level->levelTileSize.y) + offset.y,(Uint32)level->levelTileSize.x, (Uint32)level->levelTileSize.y),vector4d(100,255,255,255));
+    }
 }
 
 
