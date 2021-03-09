@@ -75,7 +75,7 @@ int main(int argc, char * argv[])
     
     for (i = 0; i < 10; i++)
     {
-        keep_segment_new(vector2d(128+(i*34),128),"actors/wall_segment.json",(int)(gfc_random()*KS_Finished), KD_South);
+        keep_segment_new(vector2d(128+(i*32),128+(i*16)),"actors/wall_segment.json",(int)(gfc_random()*KS_MAX), KD_SouthWest);
     }
 
     

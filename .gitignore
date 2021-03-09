@@ -58,3 +58,4 @@ gf2d
 *.log
 
 makefile.dep
+keepsmith
