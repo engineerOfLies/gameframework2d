@@ -1,9 +1,11 @@
 #include "simple_logger.h"
+#include "simple_json.h"
 
+#include "gf2d_config.h"
 #include "camera.h"
-
 #include "gf2d_entity.h"
 
+extern int __DebugMode;
 
 typedef struct
 {
@@ -62,6 +64,7 @@ void gf2d_entity_free(Entity *self)
     }
     gf2d_actor_free(&self->actor);
     gf2d_particle_emitter_free(self->pe);
+    if (self->args)sj_free(self->args);
     memset(self,0,sizeof(Entity));
 }
 
@@ -75,6 +78,7 @@ Entity *gf2d_entity_new()
             memset(&entity_manager.entityList[i],0,sizeof(Entity));
             entity_manager.entityList[i].id = entity_manager.autoincrement++;
             entity_manager.entityList[i].inuse = 1;
+            entity_manager.entityList[i].drawColor = gfc_color(1,1,1,1);
             vector2d_set(entity_manager.entityList[i].scale,1,1);
             entity_manager.entityList[i].actor.color = vector4d(1,1,1,1);// no color shift, opaque
             return &entity_manager.entityList[i];
@@ -83,25 +87,80 @@ Entity *gf2d_entity_new()
     return NULL;
 }
 
+Entity *gf2d_entity_load(const char *filename)
+{
+    SJson *json = NULL,*file = NULL,*args = NULL;
+    Entity * ent = NULL;
+    const char *str;
+    if (!filename)
+    {
+        slog("gf2d_entity_load:no filen provided");
+        return NULL;
+    }
+    ent = gf2d_entity_new();
+    if (!ent)return NULL;
+    file = sj_load(filename);
+    if (!file)
+    {
+        gf2d_entity_free(ent);
+        return NULL;
+    }
+    json = sj_object_get_value(file,"entity");
+    if (!json)
+    {
+        slog("missing 'entity' object in entity json");
+        gf2d_entity_free(ent);
+        sj_free(file);
+        return NULL;
+    }
+    sj_get_integer_value(sj_object_get_value(json,"id"),(int *)&ent->id);
+    gfc_line_cpy(ent->name,sj_get_string_value(sj_object_get_value(json,"name")));
+    gf2d_shape_from_json(sj_object_get_value(json,"shape"),&ent->shape);
+    sj_get_float_value(sj_object_get_value(json,"walkingSpeed"),&ent->walkingSpeed);
+    sj_value_as_vector2d(sj_object_get_value(json,"offset"),&ent->offset);
+    str = sj_get_string_value(sj_object_get_value(json,"actor"));
+    if (str != NULL)
+    {
+        if (gf2d_actor_load(&ent->actor,(char *)str))
+        {
+            str = sj_get_string_value(sj_object_get_value(json,"action"));
+            if (str != NULL)gf2d_actor_set_action(&ent->actor,(char*)str);
+
+        }
+    }
+    sj_get_float_value(sj_object_get_value(json,"health"),&ent->health);
+    sj_get_integer_value(sj_object_get_value(json,"maxHealth"),&ent->maxHealth);
+    args = sj_object_get_value(json,"args");
+    if (args)ent->args = sj_copy(args);
+    sj_free(file);
+    return ent;
+}
+
 void gf2d_entity_draw(Entity *self)
 {
-    Vector2D drawPosition;
+    Vector2D drawPosition,drawOffset;
     if (!self)return;
     if (!self->inuse)return;
-    
+
     vector2d_add(drawPosition,self->position,camera_get_offset());
+    drawOffset.x = self->offset.x * self->scale.x;
+    drawOffset.y = self->offset.y * self->scale.y;
+    vector2d_add(drawPosition,drawPosition,drawOffset);
 
     gf2d_particle_emitter_draw(self->pe);
 
-    gf2d_sprite_draw(
-        self->actor.sprite,
+    gf2d_actor_draw(
+        &self->actor,
         drawPosition,
         &self->scale,
         &self->scaleCenter,
         &self->rotation,
-        &self->flip,
-        &self->actor.color,
-        (Uint32) self->actor.frame);
+        &self->flip);
+    if (__DebugMode)
+    {
+        vector2d_add(drawPosition,self->position,camera_get_offset());
+        gf2d_shape_draw(self->shape,gfc_color(1,0,0,1),drawPosition);
+    }
     if (self->draw != NULL)
     {
         self->draw(self);
@@ -114,6 +173,17 @@ void gf2d_entity_draw_all()
     for (i = 0; i < entity_manager.maxEntities;i++)
     {
         if (entity_manager.entityList[i].inuse == 0)continue;
+        gf2d_entity_draw(&entity_manager.entityList[i]);
+    }
+}
+
+void gf2d_entity_draw_all_by_layer(Uint32 layer)
+{
+    int i;
+    for (i = 0; i < entity_manager.maxEntities;i++)
+    {
+        if (entity_manager.entityList[i].inuse == 0)continue;
+        if (entity_manager.entityList[i].drawLayer != layer)continue;
         gf2d_entity_draw(&entity_manager.entityList[i]);
     }
 }
@@ -144,6 +214,7 @@ void gf2d_entity_update(Entity *self)
         return;
     }
     /*collision handles position and velocity*/
+    vector2d_add(self->position,self->velocity,self->position);
     vector2d_add(self->velocity,self->velocity,self->acceleration);
 
     gf2d_particle_emitter_update(self->pe);

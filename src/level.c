@@ -8,6 +8,7 @@
 #include "gf2d_config.h"
 #include "gf2d_graphics.h"
 #include "gf2d_draw.h"
+#include "gf2d_entity.h"
 
 #include "camera.h"
 #include "level.h"
@@ -27,6 +28,17 @@ void level_make_current(Level *level)
 Level *level_get_current()
 {
     return _level;
+}
+
+void level_add_entity(Level *level, Entity *ent)
+{
+    
+}
+
+Entity *level_get_entity_by_tile(Level *level,Vector2D tile)
+{
+    
+    return NULL;
 }
 
 void level_get_mouse_tile(Level *level, Vector2D *tile)
@@ -178,6 +190,8 @@ void level_update(Level *level)
     SDL_Rect camera;
     if (!level)return;
     
+    gf2d_entity_update_all();
+
     if (gfc_input_command_down("cameraleft"))
     {
         camera_move(vector2d(-10,0));
@@ -254,9 +268,11 @@ void level_draw(Level *level)
     if (_mouse_draw)
     {
         level_get_mouse_tile(level,&mouse);
-        slog("mouse tile: %f,%f",mouse.x,mouse.y);
         gf2d_draw_rect(gfc_sdl_rect((int)(mouse.x * level->levelTileSize.x) + offset.x,(int)(mouse.y* level->levelTileSize.y) + offset.y,(Uint32)level->levelTileSize.x, (Uint32)level->levelTileSize.y),vector4d(100,255,255,255));
     }
+    
+    gf2d_entity_draw_all();
+
 }
 
 

@@ -49,6 +49,9 @@ struct Element_S
     Rect bounds;                /**<drawing bounds for the element*/
     Color color;                /**<color for the element*/
     
+    Color backgroundColor;      /**<color for background of element*/
+    int   backgroundDraw;       /**<if true, draw the background*/
+    
     int state;                  /**<if true, drawn with highlight*/
     int type;                   /**<which type of element this is*/
     void (*draw)        (struct Element_S *element,Vector2D offset); /**<draw function, offset comes from draw position of window*/
@@ -72,6 +75,8 @@ Element *gf2d_element_new();
  * @param color the dra    return NULL;
 w color of the element
  * @param state the initial state of the element
+ * @param backgroundColor the color to draw for the background
+ * @param backgroundDraw if true, draw a background for the element
  * @return NULL on error or a new element otherwise;
  */
 Element *gf2d_element_new_full(
@@ -80,7 +85,9 @@ Element *gf2d_element_new_full(
     TextLine name,
     Rect bounds,
     Color color,
-    int state
+    int state,
+    Color backgroundColor,
+    int backgroundDraw
 );
 
 /**

@@ -1,7 +1,7 @@
 #include "simple_logger.h"
 #include "simple_json.h"
 
-
+#include "level.h"
 #include "keep.h"
 
 static char *_diretion_names[] = 
@@ -40,14 +40,23 @@ char *keep_get_state_name(KeepStage stage)
 Entity *keep_segment_new(Vector2D position,const char *segment,KeepStage stage, KeepDirection direction)
 {
     Entity *ent;
-
+    Level *level;
     ent = gf2d_entity_new();
     if (!ent)return NULL;
         
+    level = level_get_current();
+    
     gf2d_actor_load(&ent->actor,(char *)segment);
     gf2d_actor_set_action(&ent->actor,keep_get_direction_name(direction));
     ent->actor.frame += stage;
     vector2d_copy(ent->position,position);
+    
+    if (level)
+    {
+        ent->position.x += level->levelTileSize.x/2 - ent->actor.sprite->frame_w/2;
+        ent->position.y += level->levelTileSize.y/2 - ent->actor.sprite->frame_h;
+    }
+    
     return ent;
 }
 

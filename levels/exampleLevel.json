@@ -6,7 +6,7 @@
         "frameHeight": 512,
         "framesPerLine": 4,
         "frame": 0,
-        "levelTileSize":[64,32],
+        "levelTileSize":[34,16],
         "levelSize":[4096,4096]
     }
 }

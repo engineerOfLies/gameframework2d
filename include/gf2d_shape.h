@@ -2,6 +2,7 @@
 #define __GF2D_SHAPE_H__
 
 #include <SDL.h>
+#include "simple_json.h"
 #include "gfc_vector.h"
 #include "gfc_color.h"
 
@@ -40,6 +41,14 @@ typedef struct
 }Shape;
 
 /**
+ * @brief parse a shape out of json
+ * @param json the json object to parse
+ * @param shape pointer to the shape to store the information into
+ * @return 0 on error or 1 on success
+ */
+int gf2d_shape_from_json(SJson *json,Shape *shape);
+
+/**
  * @brief make a GF2D Rect
  * @param x the left position of the rect
  * @param y the top position of the rect
@@ -57,6 +66,13 @@ Rect gf2d_rect(float x, float y, float w, float h);
  * @param h the height
  */
 Shape gf2d_shape_rect(float x, float y, float w, float h);
+
+/**
+ * @brief convert a rect to a vector4d
+ * @param r the rect to convert
+ * @returns a vector4f
+ */
+Vector4D gf2d_rect_to_vector4d(Rect r);
 
 /**
  * @brief make a shape based on a gf2d rect
@@ -153,6 +169,8 @@ Uint8 gf2d_rect_overlap_poc(Rect a,Rect b,Vector2D *poc, Vector2D *normal);
  * @param color the color to draw it with
  */
 void gf2d_rect_draw(Rect r,Color color);
+
+void gf2d_rect_draw_filled(Rect r,Color color);
 
 /**
  * @brief make a GF2D Circle
@@ -382,7 +400,6 @@ Uint8 gf2d_edge_intersect_shape_poc(Edge e,Shape s,Vector2D *poc,Vector2D *norma
 void gf2d_shape_slog(Shape shape);
 
 void gf2d_edge_slog(Edge e);
-void gf2d_rect_slog(Rect r);
 void gf2d_circle_slog(Circle c);
 
 /**

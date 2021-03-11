@@ -26,6 +26,16 @@
             "justify" : "center",
             "align" : "middle",
             "style":"H2"
+            },
+            {
+            "type": "actor",
+            "name": "buildCHoice",
+            "id" : 2,
+            "bounds": [0,0,64,64],
+            "color" : [255,255,255,255],
+            "actor" : "actors/wall_segment.json",
+            "action": "s",
+            "scale" : [1,1]
             }
         ]
       }

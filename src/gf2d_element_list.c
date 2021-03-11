@@ -3,38 +3,69 @@
 #include "simple_logger.h"
 #include "gf2d_element_list.h"
 
-Vector2D gf2d_element_get_item_position(Element *element,int i)
+Vector2D gf2d_element_get_item_position(Element *element,int i,Vector2D lastPosition)
 {
     ListElement* list;
+    Element *item;
+    Vector2D itemSize;
     Vector2D position = {0};
     int itemsPerLine;
-    if (!element)return position;
+    if (i == 0)return lastPosition;
+    if (!element)return lastPosition;
     list = (ListElement*)element->data;
-    if (!list)return position;
+    if (!list)return lastPosition;
+    item = (Element *)gfc_list_get_nth(list->list,i - 1);
+    if (!item)return position;
+    if (list->packed)
+    {
+        itemSize.x = item->bounds.w;
+        itemSize.y = item->bounds.h;
+    }
+    else
+    {
+        vector2d_copy(itemSize,list->itemSize);
+    }
     if ((list->listStyle == LS_Horizontal) && (list->wraps))
     {
-        itemsPerLine = element->bounds.w / list->itemSize.x;
-        position.x = element->bounds.x + ((i % itemsPerLine) * list->itemSize.x);
-        position.y = element->bounds.y + ((i / itemsPerLine) * list->itemSize.y);
+        itemsPerLine = element->bounds.w / itemSize.x;
+        if (((i % itemsPerLine) == 0)&&(i != 0))
+        {
+            // this is a new line
+            position.x = element->bounds.x;
+            position.y = lastPosition.y + itemSize.y;
+        }
+        else
+        {
+            position.x = lastPosition.x + itemSize.x;
+            position.y = lastPosition.y;
+        }
         return position;
     }
     if ((list->listStyle == LS_Vertical) && (list->wraps))
     {
-        itemsPerLine = element->bounds.h / list->itemSize.y;
-        position.x = element->bounds.x + ((i / itemsPerLine) * list->itemSize.x);
-        position.y = element->bounds.y + ((i % itemsPerLine) * list->itemSize.y);
+        itemsPerLine = element->bounds.h / itemSize.y;
+        if (((i % itemsPerLine) == 0)&&(i != 0))
+        {
+            position.x = lastPosition.x + itemSize.x;
+            position.y = element->bounds.y;
+        }
+        else
+        {
+            position.x = lastPosition.x;
+            position.y = lastPosition.y + itemSize.y;
+        }
         return position;
     }
     if (list->listStyle == LS_Horizontal)
     {
-        position.x = element->bounds.x + (i * list->itemSize.x);
-        position.y = element->bounds.y;
+        position.x = lastPosition.x + itemSize.x;
+        position.y = lastPosition.y;
         return position;
     }
     if (list->listStyle == LS_Vertical)
     {
-        position.x = element->bounds.x;
-        position.y = element->bounds.y + (i * list->itemSize.y);
+        position.x = lastPosition.x;
+        position.y = lastPosition.y + itemSize.y;
         return position;
     }
     return position;
@@ -43,20 +74,23 @@ Vector2D gf2d_element_get_item_position(Element *element,int i)
 void gf2d_element_list_draw(Element *element,Vector2D offset)
 {
     ListElement *list;
-    Vector2D position;
+    Vector2D position = {0};
+    Vector2D drawPosition = {0};
     int count,i;
     Element *e;
     if (!element)return;
     list = (ListElement*)element->data;
     if (!list)return;
+    position.x = element->bounds.x;
+    position.y = element->bounds.y;
     count = gfc_list_get_count(list->list);
     for (i = 0; i < count; i++)
     {
         e = (Element *)gfc_list_get_nth(list->list,i);
         if (!e)continue;
-        position = gf2d_element_get_item_position(element,i);
-        vector2d_add(position,position,offset);
-        gf2d_element_draw(e, position);
+        position = gf2d_element_get_item_position(element,i,position);
+        vector2d_add(drawPosition,position,offset);
+        gf2d_element_draw(e, drawPosition);
     }
 }
 
@@ -82,7 +116,7 @@ Element *list_get_by_name(Element *element,char *name)
 List *gf2d_element_list_update(Element *element,Vector2D offset)
 {
     ListElement *list;
-    Vector2D position;
+    Vector2D position,drawPosition;
     int count,i;
     Element *e;
     List *ret = NULL;
@@ -90,15 +124,16 @@ List *gf2d_element_list_update(Element *element,Vector2D offset)
     if (!element)return NULL;
     list = (ListElement*)element->data;
     if (!list)return NULL;
-    vector2d_add(position,offset,element->bounds);
     count = gfc_list_get_count(list->list);
+    position.x = element->bounds.x;
+    position.y = element->bounds.y;
     for (i = 0; i < count; i++)
     {
         e = (Element *)gfc_list_get_nth(list->list,i);
         if (!e)continue;
-        position = gf2d_element_get_item_position(element,i);
-        vector2d_add(position,position,offset);
-        updated = gf2d_element_update(e, position);
+        position = gf2d_element_get_item_position(element,i,position);
+        vector2d_add(drawPosition,position,offset);
+        updated = gf2d_element_update(e, drawPosition);
         if (updated != NULL)
         {
             if (ret == NULL)
@@ -148,7 +183,7 @@ ListElement *gf2d_element_list_new()
 }
 
 
-ListElement *gf2d_element_list_new_full(Rect bounds,Vector2D itemSize,ListStyle ls,int wraps,int scrolls)
+ListElement *gf2d_element_list_new_full(Rect bounds,Vector2D itemSize,ListStyle ls,int wraps,int scrolls,int packed)
 {
     ListElement *list;
     list = gf2d_element_list_new();
@@ -162,6 +197,7 @@ ListElement *gf2d_element_list_new_full(Rect bounds,Vector2D itemSize,ListStyle 
     list->listStyle = ls;
     list->wraps = wraps;
     list->scrolls = scrolls;
+    list->packed = packed;
     return list;
 }
 
@@ -222,6 +258,7 @@ void gf2d_element_load_list_from_config(Element *e,SJson *json,Window *win)
     int i,count;
     const char *style = NULL;
     short int wraps = 0,scrolls = 0;
+    short int packed = 0;
     if ((!e) || (!json))
     {
         slog("call missing parameters");
@@ -244,13 +281,15 @@ void gf2d_element_load_list_from_config(Element *e,SJson *json,Window *win)
     }
     value = sj_object_get_value(json,"wraps");
     sj_get_bool_value(value,&wraps);
+    value = sj_object_get_value(json,"packed");
+    sj_get_bool_value(value,&packed);
     value = sj_object_get_value(json,"scrolls");
     sj_get_bool_value(value,&scrolls);
     
     value = sj_object_get_value(json,"item_size");
     sj_value_as_vector2d(value,&vector);
     
-    list = gf2d_element_list_new_full(e->bounds,vector,ls,wraps,scrolls);
+    list = gf2d_element_list_new_full(e->bounds,vector,ls,wraps,scrolls,packed);
     gf2d_element_make_list(e,list);
     
     value = sj_object_get_value(json,"elements");

@@ -33,6 +33,7 @@ typedef struct
 
 /*local gobals*/
 static Graphics gf2d_graphics;
+int    __DebugMode = 0;
 
 /*forward declarations*/
 void gf2d_graphics_close();
@@ -194,7 +195,7 @@ float gf2d_graphics_get_frames_per_second()
 
 Vector2D gf2d_graphics_get_resolution()
 {
-    return vector2d(gf2d_graphics.renderWidth,gf2d_graphics.renderHeight);
+    return vector2d((float)gf2d_graphics.renderWidth,(float)gf2d_graphics.renderHeight);
 }
 
 void gf2d_graphics_frame_delay()

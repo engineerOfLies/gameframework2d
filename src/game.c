@@ -40,7 +40,6 @@ int main(int argc, char * argv[])
 {
     /*variable declarations*/
     int mx,my;
-    int i;
     
     Level *level = NULL;
     /*program initializtion*/
@@ -72,11 +71,7 @@ int main(int argc, char * argv[])
 
     level = level_load("levels/exampleLevel.json");
     level_show_mouse_tile();
-    for (i = 0; i < 10; i++)
-    {
-        keep_segment_new(vector2d(128+(i*32),128+(i*16)),"actors/wall_segment.json",(int)(gfc_random()*KS_MAX), KD_SouthWest);
-    }
-
+   
     window_build();
     /*main game loop*/
     while(!_done)
@@ -94,11 +89,9 @@ int main(int argc, char * argv[])
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
                 // DRAW WORLD
-                gf2d_entity_update_all();
                 level_update(level);
 
                 level_draw(level);
-                gf2d_entity_draw_all();
                 // Draw entities
             //UI elements last
             gf2d_windows_draw_all();

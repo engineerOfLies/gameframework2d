@@ -10,11 +10,25 @@ void gf2d_element_label_draw(Element *element,Vector2D offset)
     LabelElement *label;
     Vector2D position;
     Vector2D size = {0};
+    Rect r;
     if (!element)return;
     label = (LabelElement*)element->data;
     if (!label)return;
     if (strlen(label->text) <= 0)return;
-    size = gf2d_font_get_bounds_tag(label->text,label->style);
+    if (label->wraps)
+    {
+        r = gf2d_font_get_text_wrap_bounds_tag(
+            label->text,
+            label->style,
+            element->bounds.w,
+            element->bounds.h);
+        size.x = r.w;
+        size.y = r.h;
+    }
+    else
+    {
+        size = gf2d_font_get_bounds_tag(label->text,label->style);
+    }
     if (size.x < 0)
     {
         return;
@@ -43,7 +57,14 @@ void gf2d_element_label_draw(Element *element,Vector2D offset)
             position.y += (element->bounds.h - size.y);
             break;
     }
-    gf2d_font_draw_line_tag(label->text,label->style,element->color, position);
+    if (label->wraps)
+    {
+        gf2d_font_draw_text_wrap_tag(label->text,label->style,element->color, gf2d_rect(position.x, position.y, element->bounds.w, element->bounds.h));
+    }
+    else 
+    {
+        gf2d_font_draw_line_tag(label->text,label->style,element->color, position);
+    }
 }
 
 List *gf2d_element_label_update(Element *element,Vector2D offset)
@@ -76,7 +97,7 @@ LabelElement *gf2d_element_label_new()
 }
 
 
-LabelElement *gf2d_element_label_new_full(char *text,Color color,int style,int justify,int align)
+LabelElement *gf2d_element_label_new_full(char *text,Color color,int style,int justify,int align,int wraps)
 {
     LabelElement *label;
     label = gf2d_element_label_new();
@@ -89,6 +110,7 @@ LabelElement *gf2d_element_label_new_full(char *text,Color color,int style,int j
     label->style = style;
     label->justify = justify;
     label->alignment = align;
+    label->wraps = wraps;
     return label;
 }
 
@@ -100,6 +122,16 @@ void gf2d_element_make_label(Element *e,LabelElement *label)
     e->draw = gf2d_element_label_draw;
     e->update = gf2d_element_label_update;
     e->free_data = gf2d_element_label_free;
+}
+
+const char *gf2d_element_label_get_text(Element *e)
+{
+    if (!e)return NULL;
+    if (e->type != ET_Label)return NULL;
+    LabelElement *label;
+    label = (LabelElement *)e->data;
+    if (!label)return NULL;
+    return label->text;
 }
 
 void gf2d_element_label_set_text(Element *e,char *text)
@@ -121,6 +153,7 @@ void gf2d_element_load_label_from_config(Element *e,SJson *json)
     int style = FT_Normal;
     int justify = LJ_Left;  
     int align = LA_Top;
+    int wraps = 0;
     if ((!e) || (!json))
     {
         slog("call missing parameters");
@@ -164,6 +197,11 @@ void gf2d_element_load_label_from_config(Element *e,SJson *json)
         }
     }
 
+    value = sj_object_get_value(json,"wraps");
+    if (value)
+    {
+        sj_get_bool_value(value,(short int *)&wraps);
+    }
     value = sj_object_get_value(json,"justify");
     buffer = sj_get_string_value(value);
     if (buffer)
@@ -206,7 +244,7 @@ void gf2d_element_load_label_from_config(Element *e,SJson *json)
 
     value = sj_object_get_value(json,"text");
     buffer = sj_get_string_value(value);
-    gf2d_element_make_label(e,gf2d_element_label_new_full((char *)buffer,color,style,justify,align));
+    gf2d_element_make_label(e,gf2d_element_label_new_full((char *)buffer,color,style,justify,align,wraps));
 }
 
 /*eol@eof*/

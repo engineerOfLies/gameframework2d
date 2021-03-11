@@ -1,6 +1,43 @@
 #include "simple_logger.h"
 #include "gf2d_config.h"
 
+SJson *sj_vector2d_new(Vector2D input)
+{
+    SJson *json;
+    
+    json = sj_array_new();
+    if (!json)return NULL;
+    sj_array_append(json,sj_new_float(input.x));
+    sj_array_append(json,sj_new_float(input.y));
+    return json;
+}
+
+SJson *sj_vector3d_new(Vector3D input)
+{
+    SJson *json;
+    
+    json = sj_array_new();
+    if (!json)return NULL;
+    sj_array_append(json,sj_new_float(input.x));
+    sj_array_append(json,sj_new_float(input.y));
+    sj_array_append(json,sj_new_float(input.z));
+    return json;
+}
+
+SJson *sj_vector4d_new(Vector4D input)
+{
+    SJson *json;
+    
+    json = sj_array_new();
+    if (!json)return NULL;
+    sj_array_append(json,sj_new_float(input.x));
+    sj_array_append(json,sj_new_float(input.y));
+    sj_array_append(json,sj_new_float(input.z));
+    sj_array_append(json,sj_new_float(input.w));
+    return json;
+}
+
+
 int sj_value_as_vector2d(SJson *json,Vector2D *output)
 {
     const char *text = NULL;
@@ -93,7 +130,6 @@ int sj_value_as_vector4d(SJson *json,Vector4D *output)
     SJson *value;
     if (!json)
     {
-        slog("no json provided");
         return 0;
     }
     if (sj_is_array(json))
