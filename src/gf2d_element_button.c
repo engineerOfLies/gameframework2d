@@ -15,20 +15,23 @@ void gf2d_element_button_draw(Element *element,Vector2D offset)
     if (!button)return;
     vector2d_add(position,offset,element->bounds);
     actor = gf2d_element_actor_get_actor(button->actor);
-    switch(element->state)
+    if (!button->customActions)
     {
-        case ES_hidden:
-        case ES_disable:
-            return;
-        case ES_idle:
-            gf2d_actor_set_action(actor,"idle");
-            break;
-        case ES_highlight:
-            gf2d_actor_set_action(actor,"high");
-            break;
-        case ES_active:
-            gf2d_actor_set_action(actor,"press");
-            break;
+        switch(element->state)
+        {
+            case ES_hidden:
+            case ES_disable:
+                return;
+            case ES_idle:
+                gf2d_actor_set_action(actor,"idle");
+                break;
+            case ES_highlight:
+                gf2d_actor_set_action(actor,"high");
+                break;
+            case ES_active:
+                gf2d_actor_set_action(actor,"press");
+                break;
+        }
     }
     gf2d_element_draw(button->actor,position);
     gf2d_element_draw(button->label,position);
@@ -84,6 +87,17 @@ const char *gf2d_element_button_get_input(Element *e)
     return button->hotkey;
 }
 
+Element *gf2d_element_button_get_by_id(Element *e,int id)
+{
+    ButtonElement *button;
+    Element *r;
+    if (!e)return NULL;
+    button = (ButtonElement*)e->data;
+    r = gf2d_element_get_by_id(button->label,id);
+    if (r)return r;
+    return gf2d_element_get_by_id(button->actor,id);
+}
+
 Element *button_get_by_name(Element *e,char *name)
 {
     ButtonElement *button;
@@ -133,7 +147,7 @@ void gf2d_element_make_button(Element *e,ButtonElement *button)
     e->get_by_name = button_get_by_name;
 }
 
-ButtonElement *gf2d_element_button_new_full(Element *label,Element *actor,Color highColor,Color pressColor)
+ButtonElement *gf2d_element_button_new_full(Element *label,Element *actor,Color highColor,Color pressColor,int customActions)
 {
     ButtonElement *button;
     button = gf2d_element_button_new();
@@ -142,6 +156,7 @@ ButtonElement *gf2d_element_button_new_full(Element *label,Element *actor,Color 
     button->actor = actor;
     button->highColor = highColor;
     button->pressColor = pressColor;
+    button->customActions = customActions;
     return button;
 }
 
@@ -151,6 +166,7 @@ void gf2d_element_load_button_from_config(Element *e,SJson *json,Window *win)
     Element *label = NULL;
     Element *actor = NULL;
     SJson *value;
+    int customActions = 0;
     ButtonElement *button;
     
     if ((!e) || (!json))
@@ -170,7 +186,8 @@ void gf2d_element_load_button_from_config(Element *e,SJson *json,Window *win)
     {
         slog("pressColor not provided");
     }
-
+    
+    sj_get_integer_value(sj_object_get_value(json,"customActions"),&customActions);
 
     value = sj_object_get_value(json,"label");
     if (value)
@@ -182,7 +199,7 @@ void gf2d_element_load_button_from_config(Element *e,SJson *json,Window *win)
     {
         actor = gf2d_element_load_from_config(value,e,win);
     }
-    gf2d_element_make_button(e,gf2d_element_button_new_full(label,actor,gfc_color_from_vector4(highColor),gfc_color_from_vector4(pressColor)));
+    gf2d_element_make_button(e,gf2d_element_button_new_full(label,actor,gfc_color_from_vector4(highColor),gfc_color_from_vector4(pressColor),customActions));
  
     button = (ButtonElement*)e->data;
 

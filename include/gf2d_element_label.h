@@ -21,6 +21,7 @@ typedef struct
 {
     TextBlock text;     /**<the label text*/
     Color bgcolor;      /**<background color for the text*/
+    int wraps;          /**<if the text should word wrap to match the dimensional width of its element space*/
     int style;          /**<which font style to use*/
     int justify;        /**<leaning left or right*/
     int alignment;      /**<vertical alignment top, middle or bottom*/
@@ -33,9 +34,10 @@ typedef struct
  * @param style the font style
  * @param justify the LabelJustification
  * @param align the vertical alignment
+ * @param wraps if the label should word wrap
  * @return NULL on error or a new label element
  */
-LabelElement *gf2d_element_label_new_full(char *text,Color color,int style,int justify,int align);
+LabelElement *gf2d_element_label_new_full(char *text,Color color,int style,int justify,int align,int wraps);
 
 /**
  * @brief set an element to be the label provided
@@ -58,5 +60,10 @@ void gf2d_element_load_label_from_config(Element *e,SJson *json);
  */
 void gf2d_element_label_set_text(Element *e,char *text);
 
-
+/**
+ * @brief get the label text
+ * @param e the element to get the text from
+ * @return a pointer to the label text
+ */
+const char *gf2d_element_label_get_text(Element *e);
 #endif

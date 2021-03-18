@@ -31,6 +31,8 @@
 #include "gfc_types.h"
 #include "gfc_color.h"
 
+#include "gf2d_shape.h"
+
 typedef enum
 {
     FT_Normal,
@@ -61,6 +63,54 @@ void gf2d_font_init(char *configFile);
 void gf2d_font_draw_line_named(char *text,char *filename,Color color, Vector2D position);
 void gf2d_font_draw_line_tag(char *text,FontTypes tag,Color color, Vector2D position);
 void gf2d_font_draw_line(char *text,Font *font,Color color, Vector2D position);
+
+/**
+ * @brief draw a word wrapped block of text to the sceen
+ * @param thetext the text to draw
+ * @param block the dimensions to keep to
+ * @param color the color to draw with
+ * @param font the font to use, IF NULL this is a no-op
+ */
+void gf2d_font_draw_text_wrap(
+    char    *thetext,
+    Rect     block,
+    Color    color,
+    Font    *font
+);
+
+/**
+ * @brief draw a word wrapped block of text to the sceen by font tag
+ * @param text the text to draw
+ * @param tag the font tag to use to draw
+ * @param color the color to draw with
+ * @param block the dimensions to keep to
+ */
+void gf2d_font_draw_text_wrap_tag(char *text,FontTypes tag,Color color, Rect block);
+
+/**
+ * @brief get the bounds that will describe the text provided, with word wrap on
+ * @param thetext the text to check
+ * @param font the font to use
+ * @param w the width of the desired bounds - will be used for word wrapping
+ * @param h the height of the desired bounds
+ */
+Rect gf2d_font_get_text_wrap_bounds(
+    char    *thetext,
+    Font    *font,
+    Uint32   w,
+    Uint32   h
+);
+
+/**
+ * @brief the above but by tag
+ */
+Rect gf2d_font_get_text_wrap_bounds_tag(
+    char       *thetext,
+    FontTypes   tag,
+    Uint32      w,
+    Uint32      h
+);
+
 
 Vector2D gf2d_font_get_bounds_tag(char *text,FontTypes tag);
 Vector2D gf2d_font_get_bounds(char *text,Font *font);

@@ -15,13 +15,29 @@ typedef struct
     List *list;
     Vector2D itemSize;
     ListStyle listStyle;
+    int   packed;           /**<if true, items are spaced by their individual size, otherwise by the list itemSize*/
     int   wraps;
     int   scrolls;
 }ListElement;
 
 
-ListElement *gf2d_element_list_new_full(Rect bounds,Vector2D itemSize,ListStyle ls,int wraps,int scrolls);
+/**
+ * @brief make a new list element based on the parameters provided
+ * @param bounds the size of the list
+ * @param itemSize dimensions for uniform items in the list
+ * @param ls the style of the list (LS_Horizontal or LS_Vertical)
+ * @param wraps if the list should wrap around if it exceeds the width
+ * @param scrolls if the list should scroll (not yet implemented)
+ * @param packed if the items should be spaced according to their own size or the itemSize
+ * @return NULL on error or a formatted listElement otherwise
+ */
+ListElement *gf2d_element_list_new_full(Rect bounds,Vector2D itemSize,ListStyle ls,int wraps,int scrolls,int packed);
 
+/**
+ * @brief add an element to the list
+ * @param e the list to add to
+ * @param item the item to add
+ */
 void gf2d_element_list_add_item(Element *e,Element *item);
 
 /**

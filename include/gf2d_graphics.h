@@ -15,6 +15,7 @@
  * @param renderHeight How much draw height you want to work with logically
  * @param bgcolor what you want the default background color to be
  * @param fullscreen if you want the window to render full screen or not
+ * @param debug if you want debug rendering enabled.  Set to true to draw boarders and other helpful effects
  */
 void gf2d_graphics_initialize(
     char *windowName,
@@ -23,7 +24,8 @@ void gf2d_graphics_initialize(
     int renderWidth,
     int renderHeight,
     Vector4D bgcolor,
-    Bool fullscreen
+    Bool fullscreen,
+    Bool debug
 );
 
 /**
@@ -83,5 +85,13 @@ void gf2d_graphics_blit_surface_to_screen(SDL_Surface *surface,const SDL_Rect * 
  * @returns NULL on error, or the new SDL Surface upon success
  */
 SDL_Surface *gf2d_graphics_screen_convert(SDL_Surface **surface);
+
+
+/**
+ * @brief check if debug mode is set
+ * @return true if debug mode is enabled, false if not
+ */
+Bool gf2d_graphics_debug_mode();
+
 
 #endif

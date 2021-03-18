@@ -24,6 +24,7 @@ typedef enum
 typedef struct Window_S
 {
     int _inuse;             /**<do not touch*/
+    TextLine    name;       /**<name of window*/
     int no_draw_generic;    /**<if true, do not use the generic window draw style*/
     List *elements;         /**<all the components of the window*/
     Sprite *background;     /**<background image*/
@@ -51,8 +52,9 @@ void gf2d_windows_draw_all();
 
 /**
  * @brief update all active windows
+ * @return 1 if a window handled input or 0 if everything was idle
  */
-void gf2d_windows_update_all();
+int gf2d_windows_update_all();
 
 /**
  * @brief get a new initialized window
@@ -83,8 +85,9 @@ void gf2d_window_add_element(Window *win,Element *e);
 /**
  * @brief update a window and all of its elements
  * @param win the window to update
+ * @return 1 if the window in question should block input to windows below it
  */
-void gf2d_window_update(Window *win);
+int gf2d_window_update(Window *win);
 
 /**
  * @brief draw a window to the screen.  
@@ -116,5 +119,19 @@ void gf2d_draw_window_border_generic(Rect rect,Vector4D color);
  * @returns NULL on error or not found, a pointo to the element otherwise
  */
 Element *gf2d_window_get_element_by_id(Window *win,int id);
+
+/**
+ * @brief check if the mouse is currently over the window specified
+ * @param win the window to check;
+ * @return 0 if the mouse is over the window, 1 otherwise
+ */
+int gf2d_window_mouse_in(Window *win);
+
+/**
+ * @brief set the upper left position of a window
+ * @param win the window to move
+ * @param position the place to the move the window to
+ */
+void gf2d_window_set_position(Window *win,Vector2D position);
 
 #endif

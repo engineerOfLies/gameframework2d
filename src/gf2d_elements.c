@@ -1,12 +1,17 @@
 #include <stdlib.h>
 #include <string.h>
+
 #include "simple_logger.h"
+
+#include "gf2d_graphics.h"
+
 #include "gf2d_elements.h"
 #include "gf2d_element_actor.h"
 #include "gf2d_element_button.h"
 #include "gf2d_element_entry.h"
 #include "gf2d_element_list.h"
 #include "gf2d_element_label.h"
+
 
 Element *gf2d_element_new()
 {
@@ -27,7 +32,9 @@ Element *gf2d_element_new_full(
     TextLine name,
     Rect bounds,
     Color color,
-    int state       
+    int state,
+    Color backgroundColor,
+    int backgroundDraw
 )
 {
     Element *e;
@@ -38,6 +45,8 @@ Element *gf2d_element_new_full(
     e->color = color;
     e->state = state;
     e->bounds = bounds;
+    e->backgroundColor = backgroundColor;
+    e->backgroundDraw = backgroundDraw;
     return e;
 }
 
@@ -53,14 +62,21 @@ void gf2d_element_free(Element *e)
 
 void gf2d_element_draw(Element *e, Vector2D offset)
 {
-   // Rect rect;
-    if (!e)
+    Rect rect;
+    if ((!e)||(e->state == ES_hidden))
     {
         return;
     }
+    gf2d_rect_set(rect,offset.x + e->bounds.x,offset.y + e->bounds.y,e->bounds.w,e->bounds.h);
+    if (e->backgroundDraw)
+    {
+        gf2d_rect_draw_filled(rect,e->backgroundColor);
+    }
     if (e->draw)e->draw(e,offset);
-//    gf2d_rect_set(rect,offset.x + e->bounds.x,offset.y + e->bounds.y,e->bounds.w,e->bounds.h);
- //   gf2d_rect_draw(rect,gfc_color8(100,255,100,255));
+    if (gf2d_graphics_debug_mode())
+    {
+        gf2d_rect_draw(rect,gfc_color8(100,255,100,255));
+    }
 }
 
 List * gf2d_element_update(Element *e, Vector2D offset)
@@ -138,7 +154,10 @@ Element *gf2d_element_load_from_config(SJson *json,Element *parent,Window *win)
     e = gf2d_element_new();
     if (!e)return NULL;
     value = sj_object_get_value(json,"name");
-    gfc_line_cpy(e->name,sj_get_string_value(value));
+    if (value)
+    {
+        gfc_line_cpy(e->name,sj_get_string_value(value));
+    }
     
     value = sj_object_get_value(json,"id");
     sj_get_integer_value(value,&e->index);
@@ -150,33 +169,49 @@ Element *gf2d_element_load_from_config(SJson *json,Element *parent,Window *win)
     vector4d_set(vector,255,255,255,255);
     sj_value_as_vector4d(value,&vector);
     e->color = gfc_color_from_vector4(vector);
-        
+
+    value = sj_object_get_value(json,"backgroundColor");
+    vector4d_set(vector,255,255,255,0);
+    sj_value_as_vector4d(value,&vector);
+    e->color = gfc_color_from_vector4(vector);
+
+    value = sj_object_get_value(json,"backgroundDraw");
+    sj_get_integer_value(value,&e->backgroundDraw);
+    
+
     value = sj_object_get_value(json,"bounds");
     sj_value_as_vector4d(value,&vector);
     gf2d_rect_set(e->bounds,vector.x,vector.y,vector.z,vector.w);
     gf2d_element_calibrate(e,parent, win);
     
     value = sj_object_get_value(json,"type");
-    type = sj_get_string_value(value);
-    if (strcmp(type,"list") == 0)
+    if (value)
     {
-        gf2d_element_load_list_from_config(e,json,win);
+        type = sj_get_string_value(value);
+        if (strcmp(type,"list") == 0)
+        {
+            gf2d_element_load_list_from_config(e,json,win);
+        }
+        else if (strcmp(type,"label") == 0)
+        {
+            gf2d_element_load_label_from_config(e,json);
+        }
+        else if (strcmp(type,"actor") == 0)
+        {
+            gf2d_element_load_actor_from_config(e,json);
+        }
+        else if (strcmp(type,"button") == 0)
+        {
+            gf2d_element_load_button_from_config(e,json,win);
+        }
+        else if (strcmp(type,"entry") == 0)
+        {
+            gf2d_element_load_entry_from_config(e,json,win);
+        }
     }
-    else if (strcmp(type,"label") == 0)
+    else
     {
-        gf2d_element_load_label_from_config(e,json);
-    }
-    else if (strcmp(type,"actor") == 0)
-    {
-        gf2d_element_load_actor_from_config(e,json);
-    }
-    else if (strcmp(type,"button") == 0)
-    {
-        gf2d_element_load_button_from_config(e,json,win);
-    }
-    else if (strcmp(type,"entry") == 0)
-    {
-        gf2d_element_load_entry_from_config(e,json,win);
+        slog("element definition missing type!");
     }
     return e;
 }
@@ -202,6 +237,8 @@ Element *gf2d_element_get_by_id(Element *e,int id)
             return gf2d_element_list_get_item_by_id(e,id);
             break;
         case ET_Button:
+            return gf2d_element_button_get_by_id(e,id);
+            break;
         case ET_Entry:
         default:
             return NULL;

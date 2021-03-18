@@ -34,6 +34,7 @@ int main(int argc, char * argv[])
     /*variable declarations*/
     int i;
     int fullscreen = 0;
+    int debug = 0;
     Sprite *background = NULL;
     Space *space = NULL;
     Collision collision;
@@ -48,6 +49,10 @@ int main(int argc, char * argv[])
         {
             fullscreen = 1;
         }
+        if (strcmp(argv[i],"--debug") == 0)
+        {
+            debug = 1;
+        }
     }
     
     /*program initializtion*/
@@ -60,7 +65,8 @@ int main(int argc, char * argv[])
         1200,
         720,
         vector4d(0,0,0,255),
-        fullscreen);
+        fullscreen,
+        debug);
     gf2d_graphics_set_frame_delay(16);
     gfc_audio_init(256,16,4,1,1,1);
     gf2d_sprite_init(1024);

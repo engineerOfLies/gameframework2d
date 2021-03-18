@@ -3,7 +3,7 @@
 #include "gfc_color.h"
 
 #include "gf2d_graphics.h"
-
+#include "gf2d_shape.h"
 #include "gf2d_font.h"
 
 typedef struct
@@ -219,7 +219,7 @@ void gf2d_font_draw_line(char *text,Font *font,Color color, Vector2D position)
     surface = TTF_RenderUTF8_Blended(font->font, text, gfc_color_to_sdl(color));
     if (!surface)
     {
-        slog("failed to render text");
+        slog("failed to render text for text '%s'",text);
         return;
     }
     surface = gf2d_graphics_screen_convert(&surface);
@@ -275,5 +275,218 @@ Vector2D gf2d_font_get_bounds(char *text,Font *font)
     TTF_SizeUTF8(font->font, text, &x,&y);
     return vector2d(x,y);
 }
+
+void gf2d_font_chomp(char *text,int length,int strl)
+{
+    int i;
+    if (!text)return;
+    for(i = 0;i < strl - length;i++)
+    {
+        text[i] = text[i + length];
+    }
+    if (i > 0)
+    {
+        text[i - 1] = '\0';/*null terminate in case its overwritten*/
+    }
+    else
+    {
+        text[0] = '\0';
+    }
+}
+
+Rect gf2d_font_get_text_wrap_bounds_tag(
+    char       *thetext,
+    FontTypes   tag,
+    Uint32      w,
+    Uint32      h
+)
+{
+    return gf2d_font_get_text_wrap_bounds(thetext,gf2d_font_get_by_tag(tag),w,h);
+}
+
+Rect gf2d_font_get_text_wrap_bounds(
+    char    *thetext,
+    Font    *font,
+    Uint32   w,
+    Uint32   h
+)
+{
+    Rect r = {0,0,0,0};
+    TextBlock textline;
+    TextBlock temptextline;
+    TextBlock text;
+    TextLine word;
+    Bool whitespace;
+    int tw = 0, th = 0;
+    int drawheight = 0;
+    int i = 0;
+    int space = 0;
+    int lindex = 0;
+    if((thetext == NULL)||(thetext[0] == '\0'))
+    {
+        return r;
+    }
+    if (font == NULL)
+    {
+        slog("no font provided for draw.");
+        return r;
+    }
+    
+    gfc_block_cpy(text,thetext);
+    temptextline[0] = '\0';
+    do
+    {
+        space = 0;
+        i = 0;
+        whitespace = false;
+        do
+        {
+            if(sscanf(&text[i],"%c",&word[0]) == EOF)break;
+            if(word[0] == ' ')
+            {
+                space++;
+                whitespace = true;
+            }
+            if(word[0] == '\t')
+            {
+                space+=2;
+                whitespace = true;
+            }
+            i++;
+        }while(whitespace);
+        
+        if(sscanf(text,"%s",word) == EOF)
+        {
+            break;
+        }
+        gf2d_font_chomp(text,strlen(word) + 1,GFCTEXTLEN);
+        strncpy(textline,temptextline,GFCTEXTLEN);/*keep the last line that worked*/
+        for(i = 0;i < (space - 1);i++)
+        {
+            gfc_block_sprintf(temptextline,"%s%c",temptextline,' '); /*add spaces*/
+        }
+        gfc_block_sprintf(temptextline,"%s %s",temptextline,word); /*add a word*/
+        TTF_SizeText(font->font, temptextline, &tw, &th); /*see how big it is now*/
+        lindex += strlen(word);
+        if(tw > w)         /*see if we have gone over*/
+        {
+            drawheight += th;
+            if (h != 0)
+            {
+                if ((drawheight + th) > h)
+                {
+                    break;
+                }
+            }
+            gfc_block_sprintf(temptextline,"%s",word); /*add a word*/
+        }
+        else if (tw > r.w)
+        {
+            r.w = tw;
+        }
+    }while(1);
+    r.h = drawheight + th;
+    return r;
+}
+
+
+
+void gf2d_font_draw_text_wrap_tag(char *text,FontTypes tag,Color color, Rect block)
+{
+    gf2d_font_draw_text_wrap(text,block,color, gf2d_font_get_by_tag(tag));
+}
+
+
+void gf2d_font_draw_text_wrap(
+    char    *thetext,
+    Rect     block,
+    Color    color,
+    Font    *font
+)
+{
+    TextBlock textline;
+    TextBlock temptextline;
+    TextBlock text;
+    TextLine word;
+    Bool whitespace;
+    int drawheight = block.y;
+    int w,h = 0;
+    int row = 0;
+    int i;
+    int space;
+    int lindex = 0;
+    if ((thetext == NULL)||(thetext[0] == '\0'))
+    {
+        slog("no text provided for draw.");
+        return;
+    }
+    if (font == NULL)
+    {
+        slog("no font provided for draw.");
+        return;
+    }
+    if (font->font == NULL)
+    {
+        slog("bad Font provided for draw.");
+        return;
+    }
+
+    gfc_block_cpy(text,thetext);
+    temptextline[0] = '\0';
+    do
+    {
+        space = 0;
+        i = 0;
+        do
+        {
+            whitespace = false;
+            if(sscanf(&text[i],"%c",&word[0]) == EOF)break;
+            if(word[0] == ' ')
+            {
+                space++;
+                whitespace = true;
+            }
+            if(word[0] == '\t')
+            {
+                space+=2;
+                whitespace = true;
+            }
+            i++;
+        }while (whitespace);
+        if (sscanf(text,"%s",word) == EOF)
+        {
+            block.y=drawheight + (h*row);
+            gf2d_font_draw_line(temptextline,font,color, vector2d(block.x,block.y));
+            return;
+        }
+        
+        gf2d_font_chomp(text,strlen(word) + space,GFCTEXTLEN);
+        strncpy(textline,temptextline,GFCTEXTLEN);/*keep the last line that worked*/
+        for (i = 0;i < (space - 1);i++)
+        {
+            gfc_block_sprintf(temptextline,"%s%c",temptextline,' '); /*add spaces*/
+        }
+        gfc_block_sprintf(temptextline,"%s %s",temptextline,word); /*add a word*/
+        TTF_SizeText(font->font, temptextline, &w, &h); /*see how big it is now*/
+        lindex += strlen(word);
+        if(w > block.w)         /*see if we have gone over*/
+        {
+            block.y=drawheight + (h*row);
+            gf2d_font_draw_line(textline,font,color, vector2d(block.x,block.y));
+            row++;
+            /*draw the line and get ready for the next line*/
+            if (block.h != 0)
+            {
+                if ((drawheight + (h*row)) > (block.y + block.h))
+                {
+                    break;
+                }
+            }
+            gfc_block_sprintf(temptextline,"%s",word); /*add a word*/
+        }
+    }while(1);
+    
+}
+
 
 /*eol@eof*/
