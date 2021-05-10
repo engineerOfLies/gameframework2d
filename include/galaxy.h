@@ -14,7 +14,14 @@ typedef struct
 }Galaxy;
 
 Galaxy *galaxy_new();
-Galaxy *galaxy_generate(Uint32 seed);
+
+/**
+ * @brief generate a galaxy based on the provided seed
+ * @param seed the seed to use to generate the galaxy
+ * @param count the number of star systems to generate
+ * @return NULL on error or a pointer to the generated galaxy
+ */
+Galaxy *galaxy_generate(Uint32 seed, Uint32 count);
 void    galaxy_free(Galaxy *galaxy);
 Galaxy *galaxy_load_from_json(SJson *json);
 SJson  *galaxy_save_to_json(Galaxy *galaxy);

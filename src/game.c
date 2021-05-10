@@ -15,6 +15,7 @@
 #include "windows_common.h"
 
 #include "galaxy.h"
+#include "systems.h"
 
 static int _done = 0;
 static Window *_quit = NULL;
@@ -36,6 +37,7 @@ int main(int argc, char * argv[])
     int fullscreen = 0;
     int debug = 0;
     Sprite *background = NULL;
+    Galaxy *galaxy;
     int mx,my;
     float mf;
     for (i = 1; i < argc; i++)
@@ -72,16 +74,17 @@ int main(int argc, char * argv[])
     gf2d_entity_system_init(1024);
     
     camera_set_dimensions(0,0,1200,700);
-    background = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
+    background = gf2d_sprite_load_image("images/backgrounds/nebulablue.jpg");
     
     SDL_ShowCursor(SDL_DISABLE);
     // game specific setup
         // init mouse, editor window
     gf2d_mouse_load("actors/mouse.actor");
     /*main game loop*/
+    system_init();
+    galaxy = galaxy_generate(1,1000);
+    
     srand(SDL_GetTicks());
-
-    galaxy_generate(1);
     while(!_done)
     {
         gfc_input_update();
@@ -101,6 +104,8 @@ int main(int argc, char * argv[])
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
                 gf2d_sprite_draw_image(background,vector2d(0,0));
+                galaxy_draw(galaxy);
+
                 // DRAW WORLD
                 gf2d_entity_update_all();
                 // Draw entities
@@ -118,7 +123,7 @@ int main(int argc, char * argv[])
         }
         if (debug)slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
-    
+    galaxy_free(galaxy);
     slog("---==== END ====---");
     return 0;
 }

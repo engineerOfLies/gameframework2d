@@ -18,7 +18,8 @@ typedef enum
     PC_Temperate,
     PC_Thin,
     PC_Barren,
-    PC_Moon
+    PC_Moon,
+    PC_MAX
 }PlanetClassification;
 
 typedef struct
@@ -28,7 +29,7 @@ typedef struct
     Uint32      id;                 /**<unique id for the planet*/
     Uint32      size;               /**<how large the body is*/
     Color       color;              /**<base planetary color*/
-    float       classification;     /**<planetary classification for climate*/
+    Uint32      classification;     /**<planetary classification for climate*/
     List       *regions;            /**<list of regions on the planet*/
     List       *children;           /**<child planetary bodies (moons)*/
 }Planet;
@@ -38,7 +39,7 @@ List *planet_list_get_from_json(SJson *json);
 SJson planet_list_to_json(List *planetList);
 Planet *planet_get_by_id(List *planetList, Uint32 id);
 
-Planet *planet_generate(Uint32 id);
+Planet *planet_generate(Uint32 *id, int planetType, Uint32 seed);
 Planet *planet_new();
 void    planet_free(Planet* planet);
 
