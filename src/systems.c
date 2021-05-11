@@ -3,6 +3,7 @@
 #include "gf2d_sprite.h"
 #include "systems.h"
 #include "planet.h"
+#include "galaxy.h"
 
 /*typedef struct
 {
@@ -58,7 +59,7 @@ void system_free(System* system)
     free(system);
 }
 
-System *system_generate(Uint32 id, Uint32 seed)
+System *system_generate(Galaxy *galaxy, Uint32 id, Uint32 seed)
 {
     Uint32 i;
     Uint32 starCount;
@@ -70,16 +71,20 @@ System *system_generate(Uint32 id, Uint32 seed)
     srand(id + seed);
 
     starCount = (int)(gfc_random()*4.0) + 1;
-    
-    system->position.x = gfc_random();
-    system->position.y = gfc_random();
+    do
+    {
+        system->position.x = (gfc_random() * 0.8) + (gfc_random() * 0.1) + (gfc_random() * 0.05);
+        system->position.y = (gfc_random() * 0.8) + (gfc_random() * 0.1) + (gfc_random() * 0.05);
+    }while (galaxy_get_next_system_in_range(galaxy, NULL,system,system->position,0.05)!= NULL);
     
     slog("Generating System %i at (%f,%f) with %i stars", system->id,system->position.x,system->position.y,starCount);
     
+    system->size = (starCount * 0.25) + 0.5;
+    system->color = gfc_color_hsl((gfc_random() * (60 * system->size) - 30),1,0.5 + (gfc_random() *system->size),1);
     for (i = 0; i < starCount;i++)
     {
         system->idPool++;
-        planet_generate(&system->idPool, (int)(gfc_random()*PC_GasGiant),id + seed);
+        system->planets = gfc_list_append(system->planets,planet_generate(&system->idPool, (int)(gfc_random()*PC_GasGiant),id + seed));
     }
     return system;
 }
@@ -92,21 +97,25 @@ SJson *system_list_save_to_json(List *systemList);
 
 void system_draw_galaxy_view(System *system)
 {
-    Vector2D scale;
-    Vector2D resolution;
+    Vector2D scale,scalecenter;
+    Vector2D drawposition;
+    Vector4D color;
     if (!system)return;
-    resolution = gf2d_graphics_get_resolution();
-    resolution.x = (system->position.x * (float)resolution.x);
-    resolution.y = (system->position.y * (float)resolution.y);
-    scale = vector2d(0.5,0.5);
+    drawposition = galaxy_position_to_screen_position(system->position);
+    scale = vector2d(system->size,system->size);
+    color = gfc_color_to_vector4(system->color);
+    scalecenter.x = starSprite->frame_w * 0.5;
+    scalecenter.y = starSprite->frame_h * 0.5;
+    drawposition.x -= (scalecenter.x * scale.x);
+    drawposition.y -= (scalecenter.y * scale.y);
     gf2d_sprite_draw(
         starSprite,
-        resolution,
+        drawposition,
+        &scale,
         NULL,
         NULL,
         NULL,
-        NULL,
-        NULL,
+        &color,
         0);
         
 }

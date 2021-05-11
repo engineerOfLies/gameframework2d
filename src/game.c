@@ -30,6 +30,7 @@ void onExit(void *data)
     _quit = NULL;
 }
 
+
 int main(int argc, char * argv[])
 {
     /*variable declarations*/
@@ -82,7 +83,7 @@ int main(int argc, char * argv[])
     gf2d_mouse_load("actors/mouse.actor");
     /*main game loop*/
     system_init();
-    galaxy = galaxy_generate(1,1000);
+    galaxy = galaxy_generate(1,100);
     
     srand(SDL_GetTicks());
     while(!_done)
@@ -103,7 +104,7 @@ int main(int argc, char * argv[])
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
-                gf2d_sprite_draw_image(background,vector2d(0,0));
+                gf2d_sprite_draw_image(background,vector2d(-(background->frame_w *05),-(background->frame_h *05)));
                 galaxy_draw(galaxy);
 
                 // DRAW WORLD

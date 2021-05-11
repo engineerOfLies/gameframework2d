@@ -5,6 +5,8 @@
 #include "gfc_types.h"
 #include "gfc_list.h"
 #include "gfc_text.h"
+#include "gfc_vector.h"
+#include "systems.h"
 
 typedef struct
 {
@@ -26,5 +28,26 @@ void    galaxy_free(Galaxy *galaxy);
 Galaxy *galaxy_load_from_json(SJson *json);
 SJson  *galaxy_save_to_json(Galaxy *galaxy);
 void    galaxy_draw(Galaxy *galaxy);
+
+/**
+ * @brief perform an iterative search through the systems for one within range of the provided system
+ * @param galaxy the galaxy to search
+ * @param from search from this point forward.  Provide a NULL to start a fresh search
+ * @param ignore skip this system
+ * @param position relative to this position
+ * @param radius within this range to the position
+ * @return NULL when no more systems qualify, or a system pointer when we have a match.  Feed the result back into this function to keep searching
+ */
+System *galaxy_get_next_system_in_range(Galaxy *galaxy, System *from,System *ignore,Vector2D position,float radius);
+System *galaxy_get_nearest_system(Galaxy *galaxy,System *ignore,Vector2D position,float radius);
+
+/**
+ * @brief generate a star system with the id and provided seed
+ */
+System *system_generate(Galaxy *galaxy, Uint32 id,Uint32 seed);
+
+// convert to and from screen / galaxy position space
+Vector2D galaxy_position_to_screen_position(Vector2D position);
+Vector2D galaxy_position_from_screen_position(Vector2D position);
 
 #endif

@@ -6,7 +6,6 @@
 #include "gfc_types.h"
 #include "gfc_list.h"
 #include "gfc_text.h"
-
 #include "planet.h"
 
 /*
@@ -23,6 +22,8 @@ typedef struct
     TextLine    name;
     Vector2D    position;       /**<relative to the galactic center*/
     Uint32      id;             /**<unique system ID*/
+    float       size;           /**<scale for drawing for the galactic view*/
+    Color       color;          /**<color to shift it to when drawing*/
     Uint32      idPool;
     Uint32      allegience;     /**<to whom the system is owned*/
     List       *planets;        /**<first one is always a star*/
@@ -36,8 +37,6 @@ void system_init();
 System *system_new();
 
 void    system_free(System* system);
-
-System *system_generate(Uint32 id,Uint32 seed);
 
 System *system_load_from_json(SJson *json);
 SJson  *system_save_to_json(System *system);

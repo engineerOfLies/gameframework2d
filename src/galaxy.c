@@ -1,4 +1,9 @@
 #include <simple_logger.h>
+
+#include "gf2d_graphics.h"
+#include "gf2d_mouse.h"
+#include "gf2d_draw.h"
+
 #include "systems.h"
 #include "galaxy.h"
 
@@ -50,7 +55,7 @@ Galaxy *galaxy_generate(Uint32 seed, Uint32 count)
     slog("generating galaxy with seed (%i) with %i star systems",galaxy->seed,count);
     for (i = 0; i < count;i++)
     {
-        galaxy->systemList = gfc_list_append(galaxy->systemList,system_generate(++galaxy->idPool,galaxy->seed));
+        galaxy->systemList = gfc_list_append(galaxy->systemList,system_generate(galaxy,++galaxy->idPool,galaxy->seed));
     }
     return galaxy;
 }
@@ -62,6 +67,7 @@ SJson  *galaxy_save_to_json(Galaxy *galaxy);
 void    galaxy_draw(Galaxy *galaxy)
 {
     System *system;
+    Vector2D mouseposition;
     int count,i;
     if (!galaxy)return;
     count = gfc_list_get_count(galaxy->systemList);
@@ -71,8 +77,95 @@ void    galaxy_draw(Galaxy *galaxy)
         if (!system)continue;
         system_draw_galaxy_view(system);
     }
+    mouseposition = galaxy_position_from_screen_position(gf2d_mouse_get_position());
+    system = galaxy_get_nearest_system(galaxy,NULL,mouseposition,0.02);
+    if (system)
+    {
+        gf2d_draw_circle(galaxy_position_to_screen_position(system->position), 20, vector4d(100,255,255,255));
+    }
 }
 
+Vector2D galaxy_position_to_screen_position(Vector2D position)
+{
+    Vector2D resolution;
+    resolution = gf2d_graphics_get_resolution();
+    resolution.x = (position.x * (float)resolution.x);
+    resolution.y = (position.y * (float)resolution.y);
+    return resolution;
+}
 
+Vector2D galaxy_position_from_screen_position(Vector2D position)
+{
+    Vector2D resolution;
+    resolution = gf2d_graphics_get_resolution();
+    resolution.x = (position.x / (float)resolution.x);
+    resolution.y = (position.y / (float)resolution.y);
+    return resolution;
+}
+
+System *galaxy_get_nearest_system(Galaxy *galaxy,System *ignore,Vector2D position,float radius)
+{
+    System *system = NULL;//search item
+    System *best = NULL;
+    float bestrange = 2;
+    float range;
+    if (!galaxy)
+    {
+        slog("no galaxy provided");
+        return NULL;
+    }
+    do
+    {
+        system = galaxy_get_next_system_in_range(galaxy, system,ignore,position,radius);
+        if (!system)break;
+        range = vector2d_magnitude_between(position,system->position);
+        if (range < bestrange)
+        {
+            best = system;
+            bestrange = range;
+        }
+    }while (system != NULL);
+    return best;
+}
+
+System *galaxy_get_next_system_in_range(Galaxy *galaxy, System *from,System *ignore,Vector2D position,float radius)
+{
+    int i,count;
+    System *system;//search item
+    if (!galaxy)
+    {
+        slog("no galaxy provided");
+        return NULL;
+    }
+    count = gfc_list_get_count(galaxy->systemList);
+    if (from == NULL)
+    {
+        i = 0;
+    }
+    else
+    {
+        for (i =0 ; i < count; i++)
+        {
+            system = gfc_list_get_nth(galaxy->systemList,i);
+            if (!system)continue;
+            if (system == from)
+            {
+                i++;
+                break;
+            }
+        }
+    }
+    for (;i < count; i++)
+    {
+        system = gfc_list_get_nth(galaxy->systemList,i);
+        if (!system)continue;
+        if (system == ignore)continue;
+        if (vector2d_magnitude_between(system->position,position) <= radius)
+        {
+            return system;
+        }
+    }
+    return NULL;
+}
 
 /*eol@eof*/
