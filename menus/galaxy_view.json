@@ -1,0 +1,11 @@
+{
+"window":{
+    "color" : [255,255,255, 255],
+    "dimensions" : [0,0,1,1],
+    "justify" : "center",
+    "align" : "middle",
+    "elements":
+    [
+    ]
+    }
+}

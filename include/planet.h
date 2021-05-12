@@ -6,6 +6,7 @@
 #include "gfc_list.h"
 #include "gfc_color.h"
 #include "gfc_text.h"
+#include "gfc_vector.h"
 
 
 typedef enum
@@ -25,6 +26,7 @@ typedef enum
 typedef struct
 {
     TextLine    name;
+    Vector2D    systemPosition;     /**<where to draw in the system view*/
     Uint32      allegience;         /**<to whom planet is owned*/
     Uint32      id;                 /**<unique id for the planet*/
     Uint32      size;               /**<how large the body is*/
@@ -34,19 +36,21 @@ typedef struct
     List       *children;           /**<child planetary bodies (moons)*/
 }Planet;
 
+void planet_init();
+
 void planet_list_free(List *list);
 List *planet_list_get_from_json(SJson *json);
 SJson planet_list_to_json(List *planetList);
 Planet *planet_get_by_id(List *planetList, Uint32 id);
 
-Planet *planet_generate(Uint32 *id, int planetType, Uint32 seed);
+Planet *planet_generate(Uint32 *id, int planetType, Uint32 seed, Vector2D position);
 Planet *planet_new();
 void    planet_free(Planet* planet);
 
 Planet *planet_load_from_json(SJson *json);
 SJson *planet_save_to_json(Planet *planet);
 
-void planet_draw_system_view(Planet *planet);
+void planet_draw_system_view(Planet *planet,Vector2D offset);
 void planet_draw_planet_view(Planet *planet);
 
 #endif

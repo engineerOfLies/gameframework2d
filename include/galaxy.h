@@ -15,6 +15,8 @@ typedef struct
     List *systemList;
 }Galaxy;
 
+void galaxy_init();
+
 Galaxy *galaxy_new();
 
 /**

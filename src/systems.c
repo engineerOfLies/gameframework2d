@@ -5,21 +5,28 @@
 #include "planet.h"
 #include "galaxy.h"
 
-/*typedef struct
+typedef struct
 {
-    TextLine    name;
-    Vector2D    position;       
-    Uint32      id;             
-    Uint32      allegience;     
-    List       *planets;        
-}System;*/
+    Sprite *starSprite;
+    Sprite *background;
+}SystemManager;
 
-Sprite *starSprite = NULL;
+static SystemManager system_manager = {0};
 
+
+void system_close()
+{
+    slog("freeing system data");
+    gf2d_sprite_free(system_manager.background);
+    memset(&system_manager,0,sizeof(SystemManager));
+}
 
 void system_init()
 {
-    starSprite = gf2d_sprite_load_image("images/star.png");
+    slog("initializing system data");
+    system_manager.starSprite = gf2d_sprite_load_image("images/star.png");
+    system_manager.background = gf2d_sprite_load_image("images/backgrounds/starsystem.png");
+    atexit(system_close);
 }
 
 System *system_new()
@@ -61,8 +68,10 @@ void system_free(System* system)
 
 System *system_generate(Galaxy *galaxy, Uint32 id, Uint32 seed)
 {
+    Vector2D planetPosition = {0};
     Uint32 i;
     Uint32 starCount;
+    Uint32 attempts = 0;
     System *system;
     system = system_new();
     if (!system)return NULL;
@@ -75,16 +84,18 @@ System *system_generate(Galaxy *galaxy, Uint32 id, Uint32 seed)
     {
         system->position.x = (gfc_random() * 0.8) + (gfc_random() * 0.1) + (gfc_random() * 0.05);
         system->position.y = (gfc_random() * 0.8) + (gfc_random() * 0.1) + (gfc_random() * 0.05);
-    }while (galaxy_get_next_system_in_range(galaxy, NULL,system,system->position,0.05)!= NULL);
+        attempts++;
+    }while ((attempts < 1000)&&(galaxy_get_next_system_in_range(galaxy, NULL,system,system->position,0.1)!= NULL));
     
     slog("Generating System %i at (%f,%f) with %i stars", system->id,system->position.x,system->position.y,starCount);
     
     system->size = (starCount * 0.25) + 0.5;
-    system->color = gfc_color_hsl((gfc_random() * (60 * system->size) - 30),1,0.5 + (gfc_random() *system->size),1);
+    system->color = gfc_color_hsl((gfc_random() * (10 * system->size) + 30),1,0.5 + (gfc_random() *system->size),1);
     for (i = 0; i < starCount;i++)
     {
         system->idPool++;
-        system->planets = gfc_list_append(system->planets,planet_generate(&system->idPool, (int)(gfc_random()*PC_GasGiant),id + seed));
+        system->planets = gfc_list_append(system->planets,planet_generate(&system->idPool, (int)(gfc_random()*PC_GasGiant),id + seed,planetPosition));
+        planetPosition.y += 128;
     }
     return system;
 }
@@ -101,15 +112,16 @@ void system_draw_galaxy_view(System *system)
     Vector2D drawposition;
     Vector4D color;
     if (!system)return;
+    if (system_manager.starSprite == NULL)return;
     drawposition = galaxy_position_to_screen_position(system->position);
     scale = vector2d(system->size,system->size);
     color = gfc_color_to_vector4(system->color);
-    scalecenter.x = starSprite->frame_w * 0.5;
-    scalecenter.y = starSprite->frame_h * 0.5;
+    scalecenter.x = system_manager.starSprite->frame_w * 0.5;
+    scalecenter.y = system_manager.starSprite->frame_h * 0.5;
     drawposition.x -= (scalecenter.x * scale.x);
     drawposition.y -= (scalecenter.y * scale.y);
     gf2d_sprite_draw(
-        starSprite,
+        system_manager.starSprite,
         drawposition,
         &scale,
         NULL,
@@ -120,7 +132,22 @@ void system_draw_galaxy_view(System *system)
         
 }
 
-void system_draw_system_view(System *system);
+void system_draw_system_view(System *system, Vector2D offset)
+{
+    int i,count;
+    Planet* planet;
+    gf2d_sprite_draw_image(system_manager.background,vector2d(0,0));
+    if (!system)return;
+    count = gfc_list_get_count(system->planets);
+//    slog("attempting to draw %i stars for system",count);
+    for (i =0 ; i < count; i++)
+    {
+        planet = gfc_list_get_nth(system->planets,i);
+        if (!planet)continue;
+        planet_draw_system_view(planet,offset);
+    }
+
+}
 
 
 /*end of the line*/

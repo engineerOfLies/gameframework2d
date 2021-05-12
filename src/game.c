@@ -15,7 +15,10 @@
 #include "windows_common.h"
 
 #include "galaxy.h"
+#include "galaxy_view.h"
+#include "system_view.h"
 #include "systems.h"
+#include "planet.h"
 
 static int _done = 0;
 static Window *_quit = NULL;
@@ -37,10 +40,9 @@ int main(int argc, char * argv[])
     int i;
     int fullscreen = 0;
     int debug = 0;
-    Sprite *background = NULL;
     Galaxy *galaxy;
+    System *system;
     int mx,my;
-    float mf;
     for (i = 1; i < argc; i++)
     {
         if (strcmp(argv[i],"--fullscreen") == 0)
@@ -75,27 +77,28 @@ int main(int argc, char * argv[])
     gf2d_entity_system_init(1024);
     
     camera_set_dimensions(0,0,1200,700);
-    background = gf2d_sprite_load_image("images/backgrounds/nebulablue.jpg");
     
     SDL_ShowCursor(SDL_DISABLE);
     // game specific setup
         // init mouse, editor window
     gf2d_mouse_load("actors/mouse.actor");
     /*main game loop*/
+    galaxy_init();
     system_init();
-    galaxy = galaxy_generate(1,100);
-    
+    planet_init();
+    galaxy = galaxy_generate(200,1);    
     srand(SDL_GetTicks());
+    
+    system = galaxy_get_nearest_system(galaxy,NULL,vector2d(0.5,0.5),0.5);
+
+    if (!system)slog("found no system");
+    system_view_window(system);
+//    galaxy_view_window(galaxy);
     while(!_done)
     {
         gfc_input_update();
         /*update things here*/
         SDL_GetMouseState(&mx,&my);
-        mf+=0.1;
-        if (mf >= 16.0)
-        {
-            mf = 0;
-        }
         gf2d_windows_update_all();
                 
         gf2d_entity_think_all();
@@ -103,18 +106,14 @@ int main(int argc, char * argv[])
         
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
+            
+            gf2d_windows_draw_all();
             //backgrounds drawn first
-                gf2d_sprite_draw_image(background,vector2d(-(background->frame_w *05),-(background->frame_h *05)));
-                galaxy_draw(galaxy);
-
-                // DRAW WORLD
-                gf2d_entity_update_all();
-                // Draw entities
+        
             //UI elements last
             
             gf2d_font_draw_line_tag("Press F4 to quit!",FT_H1,gfc_color(255,255,255,255), vector2d(0,0));
             
-            gf2d_windows_draw_all();
             gf2d_mouse_draw();
         gf2d_grahics_next_frame();// render current draw frame and skip to the next frame
         
