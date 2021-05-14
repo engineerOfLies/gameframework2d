@@ -1,4 +1,5 @@
 #include <simple_logger.h>
+#include <simple_json.h>
 
 #include "gf2d_sprite.h"
 
@@ -7,22 +8,65 @@
 
 typedef struct
 {
-    Sprite *planet;
+    Uint32 planetCount;
+    SJson *config;
+    SJson *planetList;
+    Sprite **planet;
 }PlanetManager;
 
 static PlanetManager planet_manager = {0};
 
 void planet_close()
 {
+    int i;
     slog("freeing system data");
-    gf2d_sprite_free(planet_manager.planet);
+    for (i = 0;i < planet_manager.planetCount;i++)
+    {
+        gf2d_sprite_free(planet_manager.planet[i]);
+    }
+    free(planet_manager.planet);
+    sj_free(planet_manager.config);
     memset(&planet_manager,0,sizeof(PlanetManager));
 }
 
 void planet_init()
 {
+    SJson *planetData;
+    const char *planetSprite;
+    int i,count;
     slog("initializing planet data");
-    planet_manager.planet = gf2d_sprite_load_image("images/planet.png");
+    planet_manager.config = sj_load("config/planets.json");
+    if (!planet_manager.config)
+    {
+        slog("failed to load plant config data!");
+        return;
+    }
+    planet_manager.planetList = sj_object_get_value(planet_manager.config,"planets");
+    if (!planet_manager.planetList)
+    {
+        slog("failed to parse planet config data, missing planets");
+        sj_free(planet_manager.config);
+        planet_manager.config  = NULL;
+        return;
+    }
+    count = sj_array_get_count(planet_manager.planetList);
+    if (!count)
+    {
+        slog("failed to parse planet config data, missing planets");
+        sj_free(planet_manager.config);
+        planet_manager.config  = NULL;
+        return;
+    }
+    planet_manager.planet = gfc_allocate_array(sizeof(Sprite *),count);
+    for (i = 0;i < count;i++)
+    {
+        planetData = sj_array_get_nth(planet_manager.planetList,i);
+        if (!planetData)continue;
+        planetSprite = sj_get_string_value(sj_object_get_value(planetData,"sprite"));
+        if (!planetSprite)continue;
+        planet_manager.planet[i] = gf2d_sprite_load_image((char *)planetSprite);
+    }
+    planet_manager.planetCount = count;
     atexit(planet_close);
 }
 
@@ -118,7 +162,7 @@ Planet *planet_generate(Uint32 *id, int planetType, Uint32 seed, Vector2D positi
     else if (planet->classification <= PC_Star)
     {
         childPosition.x = 0;
-        childPosition.y = 128;
+        childPosition.y = 256;
         planet->size *= 100;
         childPlanetType = (int)(gfc_random() * (PC_Moon - PC_GasGiant)) + PC_GasGiant;
     }
@@ -154,24 +198,27 @@ SJson *planet_save_to_json(Planet *planet);
 void planet_draw_system_view(Planet *planet,Vector2D offset)
 {
     int i,count;
+    float drawScale;
     Planet *moon;
+    SJson *planetData = NULL;
     Vector4D color;
     Vector2D scale,scalecenter;
     Vector2D drawposition;
     if (!planet)return;
     vector2d_add(drawposition,planet->systemPosition,offset);
+    planetData = sj_array_get_nth(planet_manager.planetList,planet->classification);
+    sj_get_float_value(sj_object_get_value(planetData,"drawScale"),&drawScale);
     scale = vector2d(
-            1/((float)planet->classification+1) * 2,
-            1/((float)planet->classification+1) * 2);
+            drawScale,
+            drawScale);
     color = gfc_color_to_vector4(planet->color);
-    scalecenter.x = planet_manager.planet->frame_w * 0.5;
-    scalecenter.y = planet_manager.planet->frame_h * 0.5;
+    scalecenter.x = planet_manager.planet[planet->classification]->frame_w * 0.5;
+    scalecenter.y = planet_manager.planet[planet->classification]->frame_h * 0.5;
     drawposition.x -= (scalecenter.x * scale.x);
     drawposition.y -= (scalecenter.y * scale.y);
-    slog("drawing planet at (%f,%f) with a scale of %f",drawposition.x,drawposition.y,scale.x);
 
     gf2d_sprite_draw(
-        planet_manager.planet,
+        planet_manager.planet[planet->classification],
         drawposition,
         &scale,
         NULL,

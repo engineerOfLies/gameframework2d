@@ -1,5 +1,8 @@
-#include "camera.h"
 #include "simple_logger.h"
+
+#include "gfc_input.h"
+
+#include "camera.h"
 
 typedef struct
 {
@@ -7,6 +10,26 @@ typedef struct
     Rect bounds;
 }Camera;
 static Camera _camera = {0};
+
+void camera_update_by_keys()
+{
+    if (gfc_input_command_down("cameradown"))
+    {
+        camera_move(vector2d(0,10));
+    }
+    if (gfc_input_command_down("cameraup"))
+    {
+        camera_move(vector2d(0,-10));
+    }
+    if (gfc_input_command_down("cameraleft"))
+    {
+        camera_move(vector2d(-10,0));
+    }
+    if (gfc_input_command_down("cameraright"))
+    {
+        camera_move(vector2d(10,0));
+    }
+}
 
 void camera_set_dimensions(Sint32 x,Sint32 y,Uint32 w,Uint32 h)
 {
@@ -28,6 +51,11 @@ Vector2D camera_get_position()
     return vector2d(_camera.view.x,_camera.view.y);
 }
 
+Vector2D camera_get_offset()
+{
+    return vector2d(-_camera.view.x,-_camera.view.y);
+}
+
 void camera_set_bounds(Sint32 x,Sint32 y,Uint32 w,Uint32 h)
 {
     gf2d_rect_set(_camera.bounds,x,y,w,h);
@@ -44,13 +72,11 @@ void camera_bind()
 void camera_move(Vector2D v)
 {
     vector2d_add(_camera.view,v,_camera.view);
-    camera_bind();
 }
 
 void camera_set_position(Vector2D position)
 {
     vector2d_copy(_camera.view,position);
-    camera_bind();
 }
 
 void camera_set_position_absolute(Vector2D position)

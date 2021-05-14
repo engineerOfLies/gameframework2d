@@ -95,7 +95,7 @@ System *system_generate(Galaxy *galaxy, Uint32 id, Uint32 seed)
     {
         system->idPool++;
         system->planets = gfc_list_append(system->planets,planet_generate(&system->idPool, (int)(gfc_random()*PC_GasGiant),id + seed,planetPosition));
-        planetPosition.y += 128;
+        planetPosition.y += 256;
     }
     return system;
 }

@@ -3,6 +3,7 @@
 #include "gf2d_mouse.h"
 #include "gf2d_draw.h"
 
+#include "camera.h"
 #include "system_view.h"
 
 typedef struct
@@ -17,7 +18,7 @@ int system_view_draw(Window *win)
     if (!win)return 0;
     if (!win->data)return 0;
     data = (SystemWindowData*)win->data;
-    system_draw_system_view(data->system,vector2d(130  ,130));
+    system_draw_system_view(data->system,camera_get_offset());
     return 1;
 }
 
@@ -37,6 +38,7 @@ int system_view_update(Window *win,List *updateList)
     if (!win)return 0;
     if (!win->data)return 0;
     data = (SystemWindowData*)win->data;
+    camera_update_by_keys();
     return 0;
 }
 

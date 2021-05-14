@@ -7,6 +7,13 @@
 
 #include "gf2d_shape.h"
 
+
+/**
+ * @brief update the camera position by camera input keys
+ * @note cameraleft,cameraright,cameraup,and cameradown are the inputs it checks
+ */
+void camera_update_by_keys();
+
 /**
  * @brief set the position and size of the screen camera
  * @param x the current left position of the camera
@@ -26,8 +33,13 @@ Rect camera_get_dimensions();
  * @brief get the current camera position
  * @return the x,y position of the camera
  */
-
 Vector2D camera_get_position();
+
+/**
+ * @brief get the current camera draw offset
+ * @return the x,y position of the camera
+ */
+Vector2D camera_get_offset();
 
 /**
  * @brief limit the position of the camera by these bounds
