@@ -18,6 +18,8 @@ int system_view_draw(Window *win)
     if (!win)return 0;
     if (!win->data)return 0;
     data = (SystemWindowData*)win->data;
+    system_draw_system_background(data->system);
+    system_draw_system_lines(data->system,camera_get_offset());
     system_draw_system_view(data->system,camera_get_offset());
     return 1;
 }

@@ -69,6 +69,7 @@ void system_free(System* system)
 System *system_generate(Galaxy *galaxy, Uint32 id, Uint32 seed)
 {
     Vector2D planetPosition = {0};
+    Vector2D bottomRight = {0};
     Uint32 i;
     Uint32 starCount;
     Uint32 attempts = 0;
@@ -94,8 +95,8 @@ System *system_generate(Galaxy *galaxy, Uint32 id, Uint32 seed)
     for (i = 0; i < starCount;i++)
     {
         system->idPool++;
-        system->planets = gfc_list_append(system->planets,planet_generate(&system->idPool, (int)(gfc_random()*PC_GasGiant),id + seed,planetPosition));
-        planetPosition.y += 256;
+        system->planets = gfc_list_append(system->planets,planet_generate(&system->idPool, (int)(gfc_random()*PC_GasGiant),id + seed,planetPosition,&bottomRight));
+        planetPosition.y = bottomRight.y + 100;
     }
     return system;
 }
@@ -132,11 +133,30 @@ void system_draw_galaxy_view(System *system)
         
 }
 
+void system_draw_system_lines(System *system, Vector2D offset)
+{
+    int i,count;
+    Planet* planet;
+    if (!system)return;
+    count = gfc_list_get_count(system->planets);
+//    slog("attempting to draw %i stars for system",count);
+    for (i =0 ; i < count; i++)
+    {
+        planet = gfc_list_get_nth(system->planets,i);
+        if (!planet)continue;
+        planet_draw_system_view_lines(planet,offset);
+    }
+}
+
+void system_draw_system_background(System *system)
+{
+    gf2d_sprite_draw_image(system_manager.background,vector2d(0,0));
+}
+
 void system_draw_system_view(System *system, Vector2D offset)
 {
     int i,count;
     Planet* planet;
-    gf2d_sprite_draw_image(system_manager.background,vector2d(0,0));
     if (!system)return;
     count = gfc_list_get_count(system->planets);
 //    slog("attempting to draw %i stars for system",count);

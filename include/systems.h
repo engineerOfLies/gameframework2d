@@ -44,7 +44,9 @@ SJson  *system_save_to_json(System *system);
 List *system_list_load_from_json(SJson *json);
 SJson *system_list_save_to_json(List *systemList);
 
+void system_draw_system_background(System *system);
 void system_draw_galaxy_view(System *system);
 void system_draw_system_view(System *system, Vector2D offset);
+void system_draw_system_lines(System *system, Vector2D offset);
 
 #endif

@@ -43,7 +43,7 @@ List *planet_list_get_from_json(SJson *json);
 SJson planet_list_to_json(List *planetList);
 Planet *planet_get_by_id(List *planetList, Uint32 id);
 
-Planet *planet_generate(Uint32 *id, int planetType, Uint32 seed, Vector2D position);
+Planet *planet_generate(Uint32 *id, int planetType, Uint32 seed, Vector2D position,Vector2D *bottomRight);
 Planet *planet_new();
 void    planet_free(Planet* planet);
 
@@ -51,6 +51,7 @@ Planet *planet_load_from_json(SJson *json);
 SJson *planet_save_to_json(Planet *planet);
 
 void planet_draw_system_view(Planet *planet,Vector2D offset);
+void planet_draw_system_view_lines(Planet *planet,Vector2D offset);
 void planet_draw_planet_view(Planet *planet);
 
 #endif
