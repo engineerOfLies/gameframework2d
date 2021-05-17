@@ -36,6 +36,19 @@ Rect camera_get_dimensions();
 Vector2D camera_get_position();
 
 /**
+ * @brief get the current mouse position relative to the camera position
+ * @return the x,y position of the mouse
+ */
+Vector2D camera_get_mouse_position();
+
+/**
+ * @brief convert a world position to a screen position
+ * @param position a place in the camera world
+ * @return the corresponding position on the screen
+ */
+Vector2D camera_position_to_screen(Vector2D position);
+
+/**
  * @brief get the current camera draw offset
  * @return the x,y position of the camera
  */

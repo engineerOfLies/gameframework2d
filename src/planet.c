@@ -168,7 +168,7 @@ Planet *planet_generate(Uint32 *id, int planetType, Uint32 seed, Vector2D positi
     planet->id = *id;
     vector2d_copy(planet->systemPosition,position);    
     planet->classification = planetType;
-
+    planet->drawSize = planet_manager.planet[planet->classification].drawSize;
     vector2d_copy(newPosition,position);
     srand(*id + seed);
 
@@ -221,13 +221,59 @@ Planet *planet_generate(Uint32 *id, int planetType, Uint32 seed, Vector2D positi
     return planet;
 }
 
-void planet_list_free(List *list);
 List *planet_list_get_from_json(SJson *json);
 SJson planet_list_to_json(List *planetList);
 Planet *planet_get_by_id(List *planetList, Uint32 id);
 
 Planet *planet_load_from_json(SJson *json);
 SJson *planet_save_to_json(Planet *planet);
+
+
+Planet *planet_get_next_child_in_range(Planet *planet, Planet *from,Planet *ignore,Vector2D position,float radius,Uint8 *fromHit)
+{
+    int i,count;
+    Planet *child,*moon;//search item
+    if (!planet)
+    {
+        slog("no planet provided");
+        return NULL;
+    }
+    count = gfc_list_get_count(planet->children);
+    if (from == NULL)
+    {
+        i = 0;
+    }
+    else
+    {
+        for (i =0 ; i < count; i++)
+        {
+            child = gfc_list_get_nth(planet->children,i);
+            if (!child)continue;
+            if (child == from)
+            {
+                if (fromHit)*fromHit = 1;
+                i++;
+                break;
+            }
+            moon = planet_get_next_child_in_range(child, from,ignore,position,radius,fromHit);
+            if (moon != NULL)return moon;
+            if ((fromHit)&&(*fromHit == 1))break;
+        }
+    }
+    for (;i < count; i++)
+    {
+        child = gfc_list_get_nth(planet->children,i);
+        if (!child)continue;
+        if ((child != ignore) && (vector2d_magnitude_between(child->systemPosition,position) <= radius))
+        {
+            return child;
+        }
+        moon = planet_get_next_child_in_range(child, from,ignore,position,radius,NULL);
+        if (moon != NULL)return moon;
+    }
+    return NULL;
+
+}
 
 void planet_draw_system_view_lines(Planet *planet,Vector2D offset)
 {

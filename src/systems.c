@@ -133,6 +133,80 @@ void system_draw_galaxy_view(System *system)
         
 }
 
+
+Planet *system_get_nearest_planet(System *system,Planet *ignore,Vector2D position,float radius)
+{
+    Planet *planet = NULL;//search item
+    Planet *best = NULL;
+    float bestrange = radius * 2;
+    float range;
+    if (!system)
+    {
+        slog("no System provided");
+        return NULL;
+    }
+    do
+    {
+        planet = system_get_next_planet_in_range(system, planet,ignore,position,radius);
+        if (!planet)break;   
+        range = vector2d_magnitude_between(position,planet->systemPosition);
+        if (range < bestrange)
+        {
+            best = planet;
+            bestrange = range;
+        }
+    }while (planet != NULL);
+    return best;
+}
+
+Planet *system_get_next_planet_in_range(System *system, Planet *from,Planet *ignore,Vector2D position,float radius)
+{
+    int i,count;
+    Uint8 fromHit = 0;
+    Planet *planet;//search item
+    Planet *child = NULL;
+    if (!system)
+    {
+        slog("no system provided");
+        return NULL;
+    }
+    count = gfc_list_get_count(system->planets);
+    if (from == NULL)
+    {
+        i = 0;
+    }
+    else
+    {
+        for (i =0 ; i < count; i++)
+        {
+            planet = gfc_list_get_nth(system->planets,i);
+            if (!planet)continue;
+            if (planet == from)
+            {
+                i++;
+                fromHit = 1;
+                break;
+            }
+            child = planet_get_next_child_in_range(planet, from,ignore,position,radius,&fromHit);
+            if (child != NULL)return child;
+            if (fromHit)break;
+        }
+    }
+    for (;i < count; i++)
+    {
+        planet = gfc_list_get_nth(system->planets,i);
+        if (!planet)continue;
+        if ((planet != ignore) && (vector2d_magnitude_between(planet->systemPosition,position) <= radius))
+        {
+            return planet;
+        }
+        child = planet_get_next_child_in_range(planet, from,ignore,position,radius,NULL);
+        if (child != NULL)return child;
+    }
+    return NULL;
+}
+
+
 void system_draw_system_lines(System *system, Vector2D offset)
 {
     int i,count;

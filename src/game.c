@@ -86,7 +86,7 @@ int main(int argc, char * argv[])
     galaxy_init();
     system_init();
     planet_init();
-    galaxy = galaxy_generate(3333,1);    
+    galaxy = galaxy_generate(2,1);    
     srand(SDL_GetTicks());
     
     system = galaxy_get_nearest_system(galaxy,NULL,vector2d(0.5,0.5),0.5);

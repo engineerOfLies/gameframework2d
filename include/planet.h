@@ -30,6 +30,7 @@ typedef struct
     Uint32      allegience;         /**<to whom planet is owned*/
     Uint32      id;                 /**<unique id for the planet*/
     Uint32      size;               /**<how large the body is*/
+    Uint32      drawSize;           /**<in pixels*/
     Color       color;              /**<base planetary color*/
     Uint32      classification;     /**<planetary classification for climate*/
     List       *regions;            /**<list of regions on the planet*/
@@ -50,6 +51,7 @@ void    planet_free(Planet* planet);
 Planet *planet_load_from_json(SJson *json);
 SJson *planet_save_to_json(Planet *planet);
 
+Planet *planet_get_next_child_in_range(Planet *planet, Planet *from,Planet *ignore,Vector2D position,float radius,Uint8 *fromHit);
 void planet_draw_system_view(Planet *planet,Vector2D offset);
 void planet_draw_system_view_lines(Planet *planet,Vector2D offset);
 void planet_draw_planet_view(Planet *planet);

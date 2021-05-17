@@ -1,7 +1,7 @@
 #include "simple_logger.h"
 
 #include "gfc_input.h"
-
+#include "gf2d_mouse.h"
 #include "camera.h"
 
 typedef struct
@@ -44,6 +44,18 @@ Rect camera_get_bounds()
 Rect camera_get_dimensions()
 {
     return _camera.view;
+}
+
+Vector2D camera_get_mouse_position()
+{
+    Vector2D mouse;
+    mouse = gf2d_mouse_get_position();
+    return vector2d(mouse.x + _camera.view.x,mouse.y + _camera.view.y);    
+}
+
+Vector2D camera_position_to_screen(Vector2D position)
+{
+    return vector2d(position.x - _camera.view.x,position.y - _camera.view.y);    
 }
 
 Vector2D camera_get_position()

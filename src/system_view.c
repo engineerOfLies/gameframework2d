@@ -14,6 +14,8 @@ typedef struct
 
 int system_view_draw(Window *win)
 {
+    Planet *planet;
+    Vector2D mouseposition;
     SystemWindowData *data;
     if (!win)return 0;
     if (!win->data)return 0;
@@ -21,6 +23,15 @@ int system_view_draw(Window *win)
     system_draw_system_background(data->system);
     system_draw_system_lines(data->system,camera_get_offset());
     system_draw_system_view(data->system,camera_get_offset());
+    
+    
+    mouseposition = camera_get_mouse_position();
+    planet = system_get_nearest_planet(data->system,NULL,mouseposition,100);
+    if (planet)
+    {
+        gf2d_draw_circle(camera_position_to_screen(planet->systemPosition), (int)(planet->drawSize * 0.5), vector4d(100,255,255,255));
+    }
+
     return 1;
 }
 
