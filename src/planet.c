@@ -15,6 +15,7 @@ typedef struct
     Color   color;
     Uint32  drawSize;   //in pixels
     float   drawScale;  //to scale the drawing
+    int     regionsMin,regionsMax;  //amount of regions to be found on a planet
 }PlanetData;
 
 typedef struct
@@ -92,6 +93,8 @@ void planet_init()
         planet_manager.planet[i].color = gfc_color_hsl(color.x,color.y,color.z,color.w);
         sj_get_float_value(sj_object_get_value(planetData,"drawScale"),&planet_manager.planet[i].drawScale);
         planet_manager.planet[i].drawSize = planet_manager.planet[i].sprite->frame_w * planet_manager.planet[i].drawScale;
+        sj_get_integer_value(sj_object_get_value(planetData,"regionMin"),&planet_manager.planet[i].regionsMin);
+        sj_get_integer_value(sj_object_get_value(planetData,"regionMax"),&planet_manager.planet[i].regionsMax);
     }
     planet_manager.planetCount = count;
     atexit(planet_close);
@@ -154,6 +157,51 @@ void planet_free(Planet* planet)
     free(planet);
 }
 
+void planet_generate_regions(Planet *planet)
+{
+    int startHeight;
+    int i, r, amount = 0;
+    int count;
+    float regionRange = 0;
+    float regionChoice;
+    const char *str;
+    SJson *planetData;
+    SJson *regionData;
+    SJson *frequency;
+    Vector2D position;
+    RegionBiome biome;
+
+    if (!planet)return;
+    
+    amount = (gfc_random() * (planet_manager.planet[planet->classification].regionsMax - planet_manager.planet[planet->classification].regionsMin)) + planet_manager.planet[planet->classification].regionsMin;
+    startHeight = 250 - ((amount / 10) * 100);
+    for (i = 0; i < amount;i++)
+    {
+        position.x = 256 + (i % 5) * 200;
+        position.y = startHeight + (i / 5) * 200;
+        if ((i / 5) % 2)position.x += 128;
+        regionChoice = gfc_random();
+        planetData = sj_array_get_nth(planet_manager.planetList,planet->classification);
+        count = sj_array_get_count(sj_object_get_value(planetData,"regions"));
+        for (r = 0; r < count;r++)
+        {
+            regionData = sj_array_get_nth(sj_object_get_value(planetData,"regions"),r);
+            if (!regionData)continue;
+            frequency = sj_object_get_value(regionData,"frequency");
+            if (!frequency)slog("NO FREQUENCY FOUND");
+            sj_get_float_value(frequency,&regionRange);
+            if (regionChoice < regionRange)
+            {
+                str = sj_get_string_value(sj_object_get_value(regionData,"type"));
+                slog("generating region %s",str);
+                break;
+            }
+        }
+        biome = region_biome_from_name((char *)str);
+        planet->regions = gfc_list_append(planet->regions,region_generate(i,biome,regionChoice , position));
+    }
+}
+
 Planet *planet_generate(Uint32 *id, int planetType, Uint32 seed, Vector2D position,Vector2D *bottomRight)
 {
     int moonCount,i;
@@ -195,6 +243,9 @@ Planet *planet_generate(Uint32 *id, int planetType, Uint32 seed, Vector2D positi
     }
     planet->color = planet_manager.planet[planet->classification].color;
     //    planet->color = gfc_color_hsl(360 * ((float)planet->classification/PC_MAX) - 30,1,0.5,1);
+    
+    
+    planet_generate_regions(planet);
     
     maxBR.x = position.x + (planet_manager.planet[planet->classification].drawSize * 2);
     maxBR.y = position.y + (planet_manager.planet[planet->classification].drawSize * 2);
@@ -347,7 +398,19 @@ void planet_draw_system_view(Planet *planet,Vector2D offset)
 
 void planet_draw_planet_view(Planet *planet)
 {
+    int i,count;
+    Region *region;
+    if (!planet)return;
     gf2d_sprite_draw_image(planet_manager.planet[planet->classification].background,vector2d(0,0));
+    count = gfc_list_get_count(planet->regions);
+    slog("drawing planet type: %i",planet->classification);
+    for (i = 0;i < count; i++)
+    {
+        region = gfc_list_get_nth(planet->regions,i);
+        if (!region)continue;
+        //slog("drawing region biome: %i",region->biome);
+        region_draw_planet_view(region,vector2d(0,0));
+    }
 }
 
 /*the end of the file*/

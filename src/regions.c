@@ -116,7 +116,7 @@ RegionBiome region_biome_from_name(char *biomeName)
     return RB_MAX;
 }
 
-Region *region_generate(Uint32 id,RegionBiome biome, Vector2D position)
+Region *region_generate(Uint32 id,RegionBiome biome,float regionRange, Vector2D position)
 {
     Region *region;
     RegionInfo *info;
@@ -144,7 +144,8 @@ Region *region_generate(Uint32 id,RegionBiome biome, Vector2D position)
     }
     
     region->id = id;
-    
+    region->biome = biome;
+    region->regionRange = regionRange;
     vector2d_copy(region->drawPosition,position);
     
     region->drawRotation = 360 * gfc_random();
@@ -172,7 +173,7 @@ void region_draw_planet_view(Region *region,Vector2D offset)
         slog("no region info for biome %i",region->biome);
         return;
     }
-
+    slog("regionRange for region: %f, biome %i",region->regionRange,region->biome);
     vector2d_add(drawposition,region->drawPosition,offset);
     if (!info->sprite)return;
     

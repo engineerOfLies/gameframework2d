@@ -47,6 +47,7 @@ typedef struct
 {
     Uint32      id;                 /**<unique id for the region*/
     RegionBiome biome;              /**<terrain this region is made up of*/
+    float       regionRange;        /**<*/
     Vector2D    drawPosition;       /**<where on the planet to draw this region*/
     float       drawRotation;       /**<each region will be drawn at a custom rotation to provide variety*/
     Uint32      minerals;           /**<mining quality here*/
@@ -60,9 +61,11 @@ typedef struct
 
 void regions_init();
 
+RegionBiome region_biome_from_name(char *biomeName);
+
 Region *region_new();
 void    region_free(Region* region);
-Region *region_generate(Uint32 id,RegionBiome biome, Vector2D position);
+Region *region_generate(Uint32 id,RegionBiome biome,float regionRange, Vector2D position);
 Region *region_load_from_json(SJson *json);
 SJson  *region_save_to_json(Region *region);
 
