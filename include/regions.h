@@ -12,8 +12,20 @@ typedef enum
     RS_Construction,
     RS_Complete,
     RS_Damaged,
-    RS_Destroyed
+    RS_Destroyed,
+    RS_MAX
 }RegionState;
+
+typedef enum
+{
+    RB_Rocky,
+    RB_Desert,
+    RB_Ocean,
+    RB_Icy,
+    RB_Temperate,
+    RB_Tropical,
+    RB_MAX
+}RegionBiome;
 
 typedef enum
 {
@@ -25,13 +37,16 @@ typedef enum
     IT_Research,
     IT_Cultural,
     IT_Travel,
-    IT_University
+    IT_University,
+    IT_MAX
 }InstallationType;
 
 typedef struct
 {
-    Uint32      minerals;
-    Uint32      fertility;
+    float       drawRotation;       /**<each region will be drawn at a custom rotation to provide variety*/
+    Uint32      minerals;           /**<mining quality here*/
+    Uint32      fertility;          /**<agriculture quality here*/
+    Uint32      habitable;          /**<quality of life factor, population limit for settlements placed here*/
     Uint32      installation;       /**<which development, if any has been installed to this region*/
     Uint32      state;              /**<state of development for the installation*/
     Uint32      strength;           /**<generic score for the strength of the development, if any*/

@@ -3,6 +3,7 @@
 
 #include "gf2d_draw.h"
 #include "gf2d_sprite.h"
+#include "gf2d_config.h"
 
 #include "planet.h"
 #include "regions.h"
@@ -10,6 +11,8 @@
 typedef struct
 {
     Sprite *sprite;
+    Sprite *background; // when drawing planet view, this will be the background fill image
+    Color   color;
     Uint32  drawSize;   //in pixels
     float   drawScale;  //to scale the drawing
 }PlanetData;
@@ -42,6 +45,7 @@ void planet_init()
     SJson *planetData;
     const char *planetSprite;
     int i,count;
+    Vector4D color;
     slog("initializing planet data");
     planet_manager.config = sj_load("config/planets.json");
     if (!planet_manager.config)
@@ -76,8 +80,16 @@ void planet_init()
         if (!planet_manager.planet[i].sprite)
         {
             slog("failed to load planet sprite %s",planetSprite);
-            continue;
         }
+        planetSprite = sj_get_string_value(sj_object_get_value(planetData,"background"));
+        if (!planetSprite)continue;
+        planet_manager.planet[i].background = gf2d_sprite_load_image((char *)planetSprite);
+        if (!planet_manager.planet[i].background)
+        {
+            slog("failed to load planet background sprite %s",planetSprite);
+        }
+        sj_value_as_vector4d(sj_object_get_value(planetData,"colorbase"),&color);
+        planet_manager.planet[i].color = gfc_color_hsl(color.x,color.y,color.z,color.w);
         sj_get_float_value(sj_object_get_value(planetData,"drawScale"),&planet_manager.planet[i].drawScale);
         planet_manager.planet[i].drawSize = planet_manager.planet[i].sprite->frame_w * planet_manager.planet[i].drawScale;
     }
@@ -181,7 +193,8 @@ Planet *planet_generate(Uint32 *id, int planetType, Uint32 seed, Vector2D positi
         childPosition.x = 2;
         childPosition.y = 0;
     }
-    planet->color = gfc_color_hsl(360 * ((float)planet->classification/PC_MAX) - 30,1,0.5,1);
+    planet->color = planet_manager.planet[planet->classification].color;
+    //    planet->color = gfc_color_hsl(360 * ((float)planet->classification/PC_MAX) - 30,1,0.5,1);
     
     maxBR.x = position.x + (planet_manager.planet[planet->classification].drawSize * 2);
     maxBR.y = position.y + (planet_manager.planet[planet->classification].drawSize * 2);

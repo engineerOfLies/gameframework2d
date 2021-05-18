@@ -1,5 +1,18 @@
 #include <simple_logger.h>
+#include <simple_json.h>
+
+#include "gf2d_sprite.h"
+
 #include "regions.h"
+
+
+typedef struct
+{
+    SJson *json;        //file handle for cleanup
+    SJson *regions;     //handle to the region list
+}RegionData;
+
+static RegionData region_data = {0};
 
 Region *region_new()
 {
