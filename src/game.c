@@ -95,7 +95,7 @@ int main(int argc, char * argv[])
     
     system = galaxy_get_nearest_system(galaxy,NULL,vector2d(0.5,0.5),0.5);
     if (!system)slog("found no system");
-    planet = system_get_nearest_planet(system,NULL,vector2d(600,350),1000);
+    planet = system_get_nearest_planet(system,NULL,vector2d(600,350),10);
     if (!planet)slog("found no planet");
 //    system_view_window(system);
 //    galaxy_view_window(galaxy);
