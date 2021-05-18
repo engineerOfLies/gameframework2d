@@ -2,9 +2,11 @@
 #define __REGIONS_H__
 
 #include "simple_json.h"
+
 #include "gfc_types.h"
 #include "gfc_list.h"
 #include "gfc_text.h"
+#include "gfc_vector.h"
 
 typedef enum
 {
@@ -43,6 +45,9 @@ typedef enum
 
 typedef struct
 {
+    Uint32      id;                 /**<unique id for the region*/
+    RegionBiome biome;              /**<terrain this region is made up of*/
+    Vector2D    drawPosition;       /**<where on the planet to draw this region*/
     float       drawRotation;       /**<each region will be drawn at a custom rotation to provide variety*/
     Uint32      minerals;           /**<mining quality here*/
     Uint32      fertility;          /**<agriculture quality here*/
@@ -53,16 +58,18 @@ typedef struct
     Uint32      commanderId;        /**<if the installation has a commander, this is their ID*/
 }Region;
 
+void regions_init();
+
 Region *region_new();
 void    region_free(Region* region);
-Region *region_generate(Uint32 id);
+Region *region_generate(Uint32 id,RegionBiome biome, Vector2D position);
 Region *region_load_from_json(SJson *json);
 SJson  *region_save_to_json(Region *region);
 
 List *region_list_load_from_json(SJson *json);
 SJson *region_list_save_to_json(List *regionList);
 
-void region_draw_planet_view(Region *region);
+void region_draw_planet_view(Region *region,Vector2D offset);
 void region_draw_region_view(Region *region);
 
 #endif

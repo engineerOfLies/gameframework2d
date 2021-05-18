@@ -6,27 +6,35 @@
             "drawScale":1,
             "sprite":"images/star_stellar.png",
             "background":"images/backgrounds/bluestar_background.png",
-            "colorbase":[240,1,.8,1]
+            "colorbase":[240,1,.8,1],
+            "regionMin":0,
+            "regionMax":0
         },
         {
             "classification":"whitedwarf",
             "drawScale":1,
             "sprite":"images/star_stellar.png",
             "background":"images/backgrounds/whitestar_background.png",
-            "colorbase":[0,0.15,1,1]
+            "colorbase":[0,0.15,1,1],
+            "regionMin":0,
+            "regionMax":0
         },
         {
             "classification":"reddwarf",
             "drawScale":1,
             "sprite":"images/star_stellar.png",
             "background":"images/backgrounds/star_background.png",
-            "colorbase":[40,1,0.45,1]
+            "colorbase":[40,1,0.45,1],
+            "regionMin":0,
+            "regionMax":0
         },
         {
             "classification":"gas_giant",
             "drawScale":1,
             "sprite":"images/planet.png",
             "background":"images/backgrounds/gasgiant_background.png",
+            "regionMin":0,
+            "regionMax":0,
             "colorbase":[60,0.25,.7,1]
         },
         {
@@ -34,35 +42,140 @@
             "drawScale":0.9,
             "sprite":"images/planet.png",
             "background":"images/backgrounds/gaseous_background.png",
-            "colorbase":[20,0.5,.5,1]
+            "colorbase":[20,0.5,.5,1],
+            "regionMin":0,
+            "regionMax":10,
+            "regions":
+            [
+                {
+                    "type":"dessert",
+                    "frequency":0.4
+                },
+                {
+                    "type":"rocky",
+                    "frequency":0.8
+                },
+                {
+                    "type":"icy",
+                    "frequency":1
+                }
+            ]
         },
         {
             "classification":"temperate",
             "drawScale":0.8,
             "sprite":"images/planet.png",
             "background":"images/backgrounds/temperate_background.png",
-            "colorbase":[200,0.75,.5,1]
+            "colorbase":[200,0.75,.5,1],
+            "regionMin":20,
+            "regionMax":40,
+            "regions":
+            [
+                {
+                    "type":"ocean",
+                    "frequency":0.4
+                },
+                {
+                    "type":"temperate",
+                    "frequency":0.6
+                },
+                {
+                    "type":"tropical",
+                    "frequency":0.75
+                },
+                {
+                    "type":"dessert",
+                    "frequency":0.85
+                },
+                {
+                    "type":"rocky",
+                    "frequency":0.9
+                },
+                {
+                    "type":"icy",
+                    "frequency":1
+                }
+            ]
         },
         {
             "classification":"thin",
             "drawScale":0.7,
             "sprite":"images/planet.png",
             "background":"images/backgrounds/thin_background.png",
-            "colorbase":[10,0.65,.5,1]
+            "colorbase":[10,0.65,.5,1],
+            "regionMin":10,
+            "regionMax":20,
+            "regions":
+            [
+                {
+                    "type":"ocean",
+                    "frequency":0.1
+                },
+                {
+                    "type":"temperate",
+                    "frequency":0.3
+                },
+                {
+                    "type":"dessert",
+                    "frequency":0.6
+                },
+                {
+                    "type":"rocky",
+                    "frequency":0.8
+                },
+                {
+                    "type":"icy",
+                    "frequency":1
+                }
+            ]
         },
         {
             "classification":"barren",
             "drawScale":0.6,
             "sprite":"images/planet.png",
             "background":"images/backgrounds/barren_background.png",
-            "colorbase":[260,0.15,.5,1]
+            "colorbase":[260,0.15,.5,1],
+            "regionMin":2,
+            "regionMax":8,
+            "regions":
+            [
+                {
+                    "type":"rocky",
+                    "frequency":0.5
+                },
+                {
+                    "type":"dessert",
+                    "frequency":0.75
+                },
+                {
+                    "type":"icy",
+                    "frequency":1
+                }
+            ]
         },
         {
             "classification":"moon",
             "drawScale":0.4,
             "sprite":"images/planet.png",
             "background":"images/backgrounds/moon_background.png",
-            "colorbase":[240,0.05,.8,1]
+            "colorbase":[240,0.05,.8,1],
+            "regionMin":0,
+            "regionMax":4,
+            "regions":
+            [
+                {
+                    "type":"rocky",
+                    "frequency":0.75
+                },
+                {
+                    "type":"dessert",
+                    "frequency":0.95
+                },
+                {
+                    "type":"icy",
+                    "frequency":1
+                }
+            ]
         }
     ]
 }

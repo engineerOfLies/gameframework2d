@@ -19,6 +19,7 @@
 #include "system_view.h"
 #include "systems.h"
 #include "planet.h"
+#include "regions.h"
 
 static int _done = 0;
 static Window *_quit = NULL;
@@ -42,6 +43,7 @@ int main(int argc, char * argv[])
     int debug = 0;
     Galaxy *galaxy;
     System *system;
+    Planet *planet;
     int mx,my;
     for (i = 1; i < argc; i++)
     {
@@ -82,17 +84,20 @@ int main(int argc, char * argv[])
     // game specific setup
         // init mouse, editor window
     gf2d_mouse_load("actors/mouse.actor");
-    /*main game loop*/
+    /*main game initializtion*/
     galaxy_init();
     system_init();
     planet_init();
+    regions_init();
+    
     galaxy = galaxy_generate(2,1);    
     srand(SDL_GetTicks());
     
     system = galaxy_get_nearest_system(galaxy,NULL,vector2d(0.5,0.5),0.5);
-
     if (!system)slog("found no system");
-    system_view_window(system);
+    planet = system_get_nearest_planet(system,NULL,vector2d(664,662),10);
+    if (!planet)slog("found no planet");
+//    system_view_window(system);
 //    galaxy_view_window(galaxy);
     while(!_done)
     {
@@ -107,11 +112,11 @@ int main(int argc, char * argv[])
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
             
+        planet_draw_planet_view(planet);
             gf2d_windows_draw_all();
             //backgrounds drawn first
         
             //UI elements last
-            
             gf2d_font_draw_line_tag("Press F4 to quit!",FT_H1,gfc_color(255,255,255,255), vector2d(0,0));
             
             gf2d_mouse_draw();

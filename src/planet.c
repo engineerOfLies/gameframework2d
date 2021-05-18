@@ -345,6 +345,9 @@ void planet_draw_system_view(Planet *planet,Vector2D offset)
     }
 }
 
-void planet_draw_planet_view(Planet *planet);
+void planet_draw_planet_view(Planet *planet)
+{
+    gf2d_sprite_draw_image(planet_manager.planet[planet->classification].background,vector2d(0,0));
+}
 
 /*the end of the file*/

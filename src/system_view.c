@@ -30,6 +30,7 @@ int system_view_draw(Window *win)
     if (planet)
     {
         gf2d_draw_circle(camera_position_to_screen(planet->systemPosition), (int)(planet->drawSize * 0.5), vector4d(100,255,255,255));
+//        slog("planet position: (%f,%f)",planet->systemPosition.x,planet->systemPosition.y);
     }
 
     return 1;
