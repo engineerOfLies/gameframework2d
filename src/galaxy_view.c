@@ -4,12 +4,14 @@
 #include "gf2d_draw.h"
 
 #include "galaxy_view.h"
+#include "system_view.h"
 
 typedef struct
 {
     Galaxy *galaxy;
     System *selectedSystem;
     System *highlightedSystem;
+    Window *systemViewWindow;
 }GalaxyWindowData;
 
 
@@ -60,14 +62,27 @@ int galaxy_view_free(Window *win)
     return 0;
 }
 
+void galaxy_view_close_child_window(Window *win)
+{
+    GalaxyWindowData *data;
+    if (!win)return 0;
+    if (!win->data)return 0;
+    data = (GalaxyWindowData*)win->data;
+    data->systemViewWindow = NULL;
+    if (win->parent)
+    {
+        gf2d_window_bring_to_front(win->parent);
+    }
+}
+
 int galaxy_view_update(Window *win,List *updateList)
 {
     GalaxyWindowData *data;
     if (!win)return 0;
     if (!win->data)return 0;
     data = (GalaxyWindowData*)win->data;
-    
-    if (gf2d_mouse_button_released(0))
+    if (data->systemViewWindow)return 0;
+    if (gf2d_mouse_button_released(2))
     {
         if (data->highlightedSystem)
         {
@@ -78,10 +93,17 @@ int galaxy_view_update(Window *win,List *updateList)
             data->selectedSystem = NULL;
         }
     }
+    if (gf2d_mouse_button_released(1))
+    {
+        if (data->highlightedSystem)
+        {
+            data->systemViewWindow = system_view_window(data->highlightedSystem,win);
+        }
+    }
     return 0;
 }
 
-Window *galaxy_view_window(Galaxy *galaxy)
+Window *galaxy_view_window(Galaxy *galaxy,Window *parent)
 {
     Window *win;
     GalaxyWindowData *data;
@@ -98,6 +120,7 @@ Window *galaxy_view_window(Galaxy *galaxy)
     data = gfc_allocate_array(sizeof(GalaxyWindowData),1);
     data->galaxy = galaxy;
     win->data = data;
+    win->parent = parent;
     return win;
 
 }

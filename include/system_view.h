@@ -5,6 +5,6 @@
 
 #include "systems.h"
 
-Window *system_view_window(System *system);
+Window *system_view_window(System *system,Window *parent);
 
 #endif

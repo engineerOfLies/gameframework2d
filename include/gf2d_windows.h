@@ -37,6 +37,7 @@ typedef struct Window_S
     int (*draw)(struct Window_S *win);
     int (*free_data)(struct Window_S *win);
     void *data;             /**<custom data*/
+    struct Window_S *parent;/**<handle to parent window if specified*/
 }Window;
 
 /**

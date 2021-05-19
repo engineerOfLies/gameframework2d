@@ -5,6 +5,7 @@
 
 #include "galaxy.h"
 
-Window *galaxy_view_window(Galaxy *galaxy);
+Window *galaxy_view_window(Galaxy *galaxy,Window *parent);
+void galaxy_view_close_child_window(Window *win);
 
 #endif

@@ -2,8 +2,10 @@
 
 #include "gf2d_mouse.h"
 #include "gf2d_draw.h"
+#include "gfc_input.h"
 
 #include "camera.h"
+#include "galaxy_view.h"
 #include "system_view.h"
 
 typedef struct
@@ -53,10 +55,18 @@ int system_view_update(Window *win,List *updateList)
     if (!win->data)return 0;
     data = (SystemWindowData*)win->data;
     camera_update_by_keys();
+    if (win->parent)
+    {
+        if (gfc_input_command_released("cancel"))
+        {
+            galaxy_view_close_child_window(win->parent);
+            gf2d_window_free(win);
+        }
+    }
     return 0;
 }
 
-Window *system_view_window(System *system)
+Window *system_view_window(System *system,Window *parent)
 {
     Window *win;
     SystemWindowData *data;
@@ -73,6 +83,7 @@ Window *system_view_window(System *system)
     data = gfc_allocate_array(sizeof(SystemWindowData),1);
     data->system = system;
     win->data = data;
+    win->parent = parent;
     return win;
 
 }

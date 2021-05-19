@@ -66,7 +66,7 @@ Window *empire_hud_window(Empire *empire,Galaxy *galaxy)
     data = gfc_allocate_array(sizeof(EmpireHudData),1);
     data->galaxy = galaxy;
     data->empire = empire;
-    data->view = galaxy_view_window(galaxy); 
+    data->view = galaxy_view_window(galaxy,win); 
     win->data = data;
     gf2d_window_bring_to_front(win);
     return win;
