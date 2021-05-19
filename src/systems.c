@@ -107,7 +107,7 @@ SJson  *system_save_to_json(System *system);
 List *system_list_load_from_json(SJson *json);
 SJson *system_list_save_to_json(List *systemList);
 
-void system_draw_galaxy_view(System *system)
+void system_draw_galaxy_view(System *system,Vector2D offset)
 {
     Vector2D scale,scalecenter;
     Vector2D drawposition;
@@ -121,6 +121,8 @@ void system_draw_galaxy_view(System *system)
     scalecenter.y = system_manager.starSprite->frame_h * 0.5;
     drawposition.x -= (scalecenter.x * scale.x);
     drawposition.y -= (scalecenter.y * scale.y);
+    drawposition.x += offset.x;
+    drawposition.y += offset.y;
     gf2d_sprite_draw(
         system_manager.starSprite,
         drawposition,

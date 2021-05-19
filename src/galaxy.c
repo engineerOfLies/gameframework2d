@@ -25,7 +25,7 @@ void galaxy_close()
 void galaxy_init()
 {
     slog("initializing galaxy data");
-    galaxy_manager.background = gf2d_sprite_load_image("images/backgrounds/nebulablue.jpg");
+    galaxy_manager.background = gf2d_sprite_load_image("images/backgrounds/galaxy_bg.png");
     atexit(galaxy_close);
 }
 
@@ -85,19 +85,19 @@ Galaxy *galaxy_load_from_json(SJson *json);
 
 SJson  *galaxy_save_to_json(Galaxy *galaxy);
 
-void galaxy_draw(Galaxy *galaxy)
+void galaxy_draw(Galaxy *galaxy,Vector2D offset)
 {
     System *system;
     int count,i;
     if (!galaxy)return;
 
-    gf2d_sprite_draw_image(galaxy_manager.background,vector2d(-(galaxy_manager.background->frame_w *0.5),-(galaxy_manager.background->frame_h *0.5)));
+    gf2d_sprite_draw_image(galaxy_manager.background,offset);
     count = gfc_list_get_count(galaxy->systemList);
     for (i =0 ; i < count; i++)
     {
         system = gfc_list_get_nth(galaxy->systemList,i);
         if (!system)continue;
-        system_draw_galaxy_view(system);
+        system_draw_galaxy_view(system,offset);
     }
 }
 

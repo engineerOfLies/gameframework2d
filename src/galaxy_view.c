@@ -8,23 +8,44 @@
 typedef struct
 {
     Galaxy *galaxy;
+    System *selectedSystem;
+    System *highlightedSystem;
 }GalaxyWindowData;
 
 
 int galaxy_view_draw(Window *win)
 {
     System *system;
+    Vector2D circlePosition;
     Vector2D mouseposition;
     GalaxyWindowData *data;
     if (!win)return 0;
     if (!win->data)return 0;
     data = (GalaxyWindowData*)win->data;
-    galaxy_draw(data->galaxy);
-    mouseposition = galaxy_position_from_screen_position(gf2d_mouse_get_position());
+    galaxy_draw(data->galaxy,vector2d(win->dimensions.x,win->dimensions.y));
+    mouseposition = gf2d_mouse_get_position();
+    mouseposition.x -= win->dimensions.x;
+    mouseposition.y -= win->dimensions.y;
+    mouseposition = galaxy_position_from_screen_position(mouseposition);
     system = galaxy_get_nearest_system(data->galaxy,NULL,mouseposition,0.02);
     if (system)
     {
-        gf2d_draw_circle(galaxy_position_to_screen_position(system->position), 20, vector4d(100,255,255,255));
+        data->highlightedSystem = system;
+        circlePosition = galaxy_position_to_screen_position(system->position);
+        circlePosition.x += win->dimensions.x;
+        circlePosition.y += win->dimensions.y;
+        gf2d_draw_circle(circlePosition, 20, vector4d(100,255,255,255));
+    }
+    else
+    {
+        data->highlightedSystem = NULL;
+    }
+    if (data->selectedSystem != NULL)
+    {
+        circlePosition = galaxy_position_to_screen_position(data->selectedSystem->position);
+        circlePosition.x += win->dimensions.x;
+        circlePosition.y += win->dimensions.y;
+        gf2d_draw_circle(circlePosition, 20, vector4d(255,255,100,255));
     }
     return 1;
 }
@@ -45,6 +66,18 @@ int galaxy_view_update(Window *win,List *updateList)
     if (!win)return 0;
     if (!win->data)return 0;
     data = (GalaxyWindowData*)win->data;
+    
+    if (gf2d_mouse_button_released(0))
+    {
+        if (data->highlightedSystem)
+        {
+            data->selectedSystem = data->highlightedSystem;
+        }
+        else
+        {
+            data->selectedSystem = NULL;
+        }
+    }
     return 0;
 }
 

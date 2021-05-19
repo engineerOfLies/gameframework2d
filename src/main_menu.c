@@ -13,6 +13,10 @@
 
 #include "camera.h"
 #include "windows_common.h"
+#include "galaxy.h"
+#include "empire.h"
+#include "empire_hud.h"
+#include "main_menu.h"
 
 extern void exitGame();
 extern void exitCheck();
@@ -49,6 +53,12 @@ void onFileLoadOk(void *Data)
 
 void main_menu_start_new_game()
 {
+    Galaxy *galaxy;
+    Empire *empire;
+    galaxy = galaxy_generate(2,10);    
+    srand(SDL_GetTicks());
+    empire = empire_new();
+    empire_hud_window(empire,galaxy);
 }
 
 int main_menu_free(Window *win)

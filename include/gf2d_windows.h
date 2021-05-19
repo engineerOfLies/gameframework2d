@@ -97,6 +97,18 @@ int gf2d_window_update(Window *win);
 void gf2d_window_draw(Window *win);
 
 /**
+ * @brief move to the window to the top, drawn last/updated first
+ * @param win the window to move
+ */
+void gf2d_window_bring_to_front(Window *win);
+
+/**
+ * @brief move to the window to the bottom, drawn first/updated last
+ * @param win the window to move
+ */
+void gf2d_window_send_to_back(Window *win);
+
+/**
  * @brief draw a window given the border sprites and background image
  * @param border the sprite containing the border elements
  * @param bg the sprite to use for the background image (it will be stretch to match the rect

@@ -31,7 +31,7 @@ static PlanetManager planet_manager = {0};
 void planet_close()
 {
     int i;
-    slog("freeing system data");
+    slog("freeing planet data");
     for (i = 0;i < planet_manager.planetCount;i++)
     {
         gf2d_sprite_free(planet_manager.planet[i].sprite);

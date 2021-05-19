@@ -304,6 +304,18 @@ int gf2d_windows_update_all()
     return retval;
 }
 
+void gf2d_window_bring_to_front(Window *win)
+{
+    gfc_list_delete_data(window_manager.window_deque,win);
+    window_manager.window_deque = gfc_list_append(window_manager.window_deque,win);
+}
+
+void gf2d_window_send_to_back(Window *win)
+{
+    gfc_list_delete_data(window_manager.window_deque,win);
+    window_manager.window_deque = gfc_list_prepend(window_manager.window_deque,win);
+}
+
 void gf2d_window_align(Window *win,int vertical)
 {
     Vector2D res;

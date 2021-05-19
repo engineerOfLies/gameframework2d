@@ -21,6 +21,7 @@
 #include "systems.h"
 #include "planet.h"
 #include "regions.h"
+#include "empire.h"
 
 static int _done = 0;
 static Window *_quit = NULL;
@@ -46,7 +47,6 @@ int main(int argc, char * argv[])
     int i;
     int fullscreen = 0;
     int debug = 0;
-    Galaxy *galaxy;
     int mx,my;
 
     for (i = 1; i < argc; i++)
@@ -65,7 +65,7 @@ int main(int argc, char * argv[])
     init_logger("conquest.log");
     slog("---==== BEGIN ====---");
     gf2d_graphics_initialize(
-        "Conquest",
+        "Strange Galaxy Conquest",
         1200,
         720,
         1200,
@@ -93,10 +93,8 @@ int main(int argc, char * argv[])
     system_init();
     planet_init();
     regions_init();
+    empire_init();
     
-    galaxy = galaxy_generate(2,1);    
-    srand(SDL_GetTicks());
-
     main_menu();
     while(!_done)
     {
@@ -123,7 +121,6 @@ int main(int argc, char * argv[])
         }
         if (debug)slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
-    galaxy_free(galaxy);
     slog("---==== END ====---");
     return 0;
 }
