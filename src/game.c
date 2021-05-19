@@ -14,6 +14,7 @@
 #include "camera.h"
 #include "windows_common.h"
 
+#include "main_menu.h"
 #include "galaxy.h"
 #include "galaxy_view.h"
 #include "system_view.h"
@@ -34,6 +35,10 @@ void onExit(void *data)
     _quit = NULL;
 }
 
+void exitGame()
+{
+    _done = 1;
+}
 
 int main(int argc, char * argv[])
 {
@@ -42,9 +47,8 @@ int main(int argc, char * argv[])
     int fullscreen = 0;
     int debug = 0;
     Galaxy *galaxy;
-    System *system;
-    Planet *planet;
     int mx,my;
+
     for (i = 1; i < argc; i++)
     {
         if (strcmp(argv[i],"--fullscreen") == 0)
@@ -92,13 +96,8 @@ int main(int argc, char * argv[])
     
     galaxy = galaxy_generate(2,1);    
     srand(SDL_GetTicks());
-    
-    system = galaxy_get_nearest_system(galaxy,NULL,vector2d(0.5,0.5),0.5);
-    if (!system)slog("found no system");
-    planet = system_get_nearest_planet(system,NULL,vector2d(600,350),10);
-    if (!planet)slog("found no planet");
-//    system_view_window(system);
-//    galaxy_view_window(galaxy);
+
+    main_menu();
     while(!_done)
     {
         gfc_input_update();
@@ -112,13 +111,9 @@ int main(int argc, char * argv[])
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
             
-        planet_draw_planet_view(planet);
             gf2d_windows_draw_all();
             //backgrounds drawn first
-        
-            //UI elements last
-            gf2d_font_draw_line_tag("Press F4 to quit!",FT_H1,gfc_color(255,255,255,255), vector2d(0,0));
-            
+                    
             gf2d_mouse_draw();
         gf2d_grahics_next_frame();// render current draw frame and skip to the next frame
         

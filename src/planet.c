@@ -177,7 +177,7 @@ void planet_generate_regions(Planet *planet)
     startHeight = 250 - ((amount / 10) * 100);
     for (i = 0; i < amount;i++)
     {
-        position.x = 256 + (i % 5) * 200;
+        position.x = 128 + (i % 5) * 200;
         position.y = startHeight + (i / 5) * 200;
         if ((i / 5) % 2)position.x += 128;
         regionChoice = gfc_random();
