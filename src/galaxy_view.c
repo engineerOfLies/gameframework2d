@@ -4,6 +4,7 @@
 #include "gf2d_draw.h"
 
 #include "camera.h"
+#include "windows_common.h"
 #include "galaxy_view.h"
 #include "system_view.h"
 
@@ -122,6 +123,7 @@ int galaxy_view_update(Window *win,List *updateList)
         if (data->highlightedSystem)
         {
             data->selectedSystem = data->highlightedSystem;
+            window_alert("system", data->highlightedSystem->name, NULL,NULL);
         }
         else
         {

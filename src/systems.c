@@ -5,8 +5,41 @@
 #include "planet.h"
 #include "galaxy.h"
 
+static char *systemNames[] =
+{
+    "LHS",
+    "Rigel",
+    "Omacron",
+    "Maaz",
+    "Procyon",
+    "Falcyon",
+    "Halceon",
+    "Hyperion",
+    "Wasat",
+    "Sirius",
+    "Cygna",
+    "Algol",
+    "Rao",
+    "Arcturus",
+    "Skaedii",
+    "Abraxus",
+    "Draconis",
+    "Indra",
+    "Polaris",
+    "Centauri",
+    "Narnia",
+    "Fillori",
+    "Regulus",
+    "Vulkan",
+    "Qo'Nos",
+    "Xi Puppies",
+    "Pandemonia",
+    ""
+};
+
 typedef struct
 {
+    Uint32  systemNameCount;
     Sprite *starSprite;
     Sprite *background;
 }SystemManager;
@@ -23,9 +56,13 @@ void system_close()
 
 void system_init()
 {
+    int i;
     slog("initializing system data");
     system_manager.starSprite = gf2d_sprite_load_image("images/star.png");
     system_manager.background = gf2d_sprite_load_image("images/backgrounds/starsystem.png");
+    for (i = 0;strcmp(systemNames[i],"") != 0;i++);
+    system_manager.systemNameCount = i;
+    slog("we have %i system name roots",system_manager.systemNameCount);
     atexit(system_close);
 }
 
@@ -68,6 +105,7 @@ void system_free(System* system)
 
 System *system_generate(Galaxy *galaxy, Uint32 id, Uint32 seed)
 {
+    int nameIndex;
     Vector2D planetPosition = {0};
     Vector2D bottomRight = {0};
     Uint32 i;
@@ -80,6 +118,8 @@ System *system_generate(Galaxy *galaxy, Uint32 id, Uint32 seed)
     
     srand(id + seed);
 
+    nameIndex = (int)(gfc_random() * system_manager.systemNameCount);
+    gfc_line_sprintf(system->name,"%s-%i",systemNames[nameIndex],system->id);
     starCount = (int)(gfc_random()*4.0) + 1;
     do
     {
@@ -88,7 +128,7 @@ System *system_generate(Galaxy *galaxy, Uint32 id, Uint32 seed)
         attempts++;
     }while ((attempts < 1000)&&(galaxy_get_next_system_in_range(galaxy, NULL,system,system->position,0.1)!= NULL));
     
-    slog("Generating System %i at (%f,%f) with %i stars", system->id,system->position.x,system->position.y,starCount);
+    //slog("Generating System %i at (%f,%f) with %i stars", system->id,system->position.x,system->position.y,starCount);
     
     system->size = (starCount * 0.25) + 0.5;
     system->color = gfc_color_hsl((gfc_random() * (10 * system->size) + 30),1,0.5 + (gfc_random() *system->size),1);
