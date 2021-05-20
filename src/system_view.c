@@ -10,6 +10,8 @@
 
 typedef struct
 {
+    Vector2D pressPosition;
+    Vector2D cameraPosition;
     System *system;
     Window *childWindow;
 }SystemWindowData;
@@ -53,10 +55,27 @@ int system_view_free(Window *win)
 
 int system_view_update(Window *win,List *updateList)
 {
+    Vector2D delta = {0};
     SystemWindowData *data;
     if (!win)return 0;
     if (!win->data)return 0;
     data = (SystemWindowData*)win->data;
+
+    if (!gf2d_window_mouse_in(win))
+    {
+        return 0;//if outside the window rect, its over something else
+    }
+    
+    if (gf2d_mouse_button_pressed(1))
+    {
+        data->pressPosition = gf2d_mouse_get_position();
+        data->cameraPosition = camera_get_position();
+    }
+    else if (gf2d_mouse_button_held(1))
+    {
+        vector2d_sub(delta,gf2d_mouse_get_position(),data->pressPosition);
+        camera_set_position(vector2d(data->cameraPosition.x - delta.x,data->cameraPosition.y - delta.y));
+    }
     camera_update_by_keys();
     if (win->parent)
     {
