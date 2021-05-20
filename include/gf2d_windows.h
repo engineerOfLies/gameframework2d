@@ -136,7 +136,7 @@ Element *gf2d_window_get_element_by_id(Window *win,int id);
 /**
  * @brief check if the mouse is currently over the window specified
  * @param win the window to check;
- * @return 0 if the mouse is over the window, 1 otherwise
+ * @return 1 if the mouse is over the window, 0 otherwise
  */
 int gf2d_window_mouse_in(Window *win);
 

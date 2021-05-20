@@ -199,10 +199,7 @@ void gf2d_window_draw(Window *win)
     int count,i;
     Vector2D offset;
     if (!win)return;
-    if (!win->no_draw_generic)
-    {
-        gf2d_draw_window_border_generic(win->dimensions,win->color);
-    }
+    gf2d_draw_window_border_generic(win->dimensions,win->color);
     offset.x = win->dimensions.x + win->canvas.x;
     offset.y = win->dimensions.y + win->canvas.y;
     count = gfc_list_get_count(win->elements);
@@ -284,10 +281,10 @@ void gf2d_windows_draw_all()
         {
             if (!win->draw(win))
             {
-                gf2d_window_draw(win);
+                if (!win->no_draw_generic)gf2d_window_draw(win);
             }
         }
-        else gf2d_window_draw(win);
+        else if (!win->no_draw_generic)gf2d_window_draw(win);
     }
 }
 

@@ -11,6 +11,7 @@
 typedef struct
 {
     System *system;
+    Window *childWindow;
 }SystemWindowData;
 
 
@@ -19,12 +20,14 @@ int system_view_draw(Window *win)
     Planet *planet;
     Vector2D mouseposition;
     SystemWindowData *data;
+    Vector2D drawOffset;
     if (!win)return 0;
     if (!win->data)return 0;
     data = (SystemWindowData*)win->data;
-    system_draw_system_background(data->system);
-    system_draw_system_lines(data->system,camera_get_offset());
-    system_draw_system_view(data->system,camera_get_offset());
+    system_draw_system_background(data->system,vector2d(win->dimensions.x,win->dimensions.y));
+    drawOffset = camera_get_offset();
+    system_draw_system_lines(data->system,drawOffset);
+    system_draw_system_view(data->system,drawOffset);
     
     
     mouseposition = camera_get_mouse_position();
@@ -84,6 +87,7 @@ Window *system_view_window(System *system,Window *parent)
     data->system = system;
     win->data = data;
     win->parent = parent;
+    camera_set_position(vector2d(-128,-128));
     return win;
 
 }

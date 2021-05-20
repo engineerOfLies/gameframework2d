@@ -1,8 +1,8 @@
 {
 "window":{
     "color" : [255,255,255, 255],
-    "dimensions" : [0,0,1,24],
-    "justify" : "center",
+    "dimensions" : [0,0,0.20,1],
+    "justify" : "right",
     "align" : "top",
     "elements":
     [

@@ -91,7 +91,7 @@ void galaxy_draw(Galaxy *galaxy,Vector2D offset)
     int count,i;
     if (!galaxy)return;
 
-    gf2d_sprite_draw_image(galaxy_manager.background,offset);
+    gf2d_sprite_draw_image(galaxy_manager.background,vector2d(0,24));
     count = gfc_list_get_count(galaxy->systemList);
     for (i =0 ; i < count; i++)
     {

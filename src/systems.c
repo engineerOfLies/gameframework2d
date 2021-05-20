@@ -224,9 +224,9 @@ void system_draw_system_lines(System *system, Vector2D offset)
     }
 }
 
-void system_draw_system_background(System *system)
+void system_draw_system_background(System *system, Vector2D offset)
 {
-    gf2d_sprite_draw_image(system_manager.background,vector2d(0,0));
+    gf2d_sprite_draw_image(system_manager.background,offset);
 }
 
 void system_draw_system_view(System *system, Vector2D offset)

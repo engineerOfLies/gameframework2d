@@ -21,6 +21,8 @@ typedef struct
     List       *armada;         /**<list of aramda controlled by this empire*/
     List       *ships;          /**<list of ships controlled by this empire*/
     List       *technologies;   /**<list of technologies developed by this empire*/
+    Uint32      approval;       /**<how well liked you are by your people*/
+    Uint32      credits;        /**<how many credits are at the empire's disposal*/
     Uint32      minerals;       /**<how many minerals are at the empire's disposal*/
     Uint32      population;     /**<how many workers are at the empire's disposal*/
     Uint32      agriculture;    /**<how much food has been produced by the empire*/
