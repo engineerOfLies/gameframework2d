@@ -46,9 +46,26 @@ void empire_hud_draw_titlebar(Empire *empire,EmpireHudData *data)
             NULL,
             i);
     }
+    //credits
     gfc_line_sprintf(line,"%i",empire->credits);
     bounds = gf2d_font_get_bounds_tag(line,FT_H5);
     gf2d_font_draw_line_tag(line,FT_H5,gfc_color_hsl(120,1,0.5,1), vector2d(680 - bounds.x,6));
+    //minerals
+    gfc_line_sprintf(line,"%i",empire->minerals);
+    bounds = gf2d_font_get_bounds_tag(line,FT_H5);
+    gf2d_font_draw_line_tag(line,FT_H5,gfc_color_hsl(120,1,0.5,1), vector2d(808 - bounds.x,6));
+    //agriculture
+    gfc_line_sprintf(line,"%i",empire->agriculture);
+    bounds = gf2d_font_get_bounds_tag(line,FT_H5);
+    gf2d_font_draw_line_tag(line,FT_H5,gfc_color_hsl(120,1,0.5,1), vector2d(936 - bounds.x,6));
+    //population
+    gfc_line_sprintf(line,"%i",empire->population);
+    bounds = gf2d_font_get_bounds_tag(line,FT_H5);
+    gf2d_font_draw_line_tag(line,FT_H5,gfc_color_hsl(120,1,0.5,1), vector2d(1064 - bounds.x,6));
+    //approval
+    gfc_line_sprintf(line,"%i",empire->approval);
+    bounds = gf2d_font_get_bounds_tag(line,FT_H5);
+    gf2d_font_draw_line_tag(line,FT_H5,gfc_color_hsl(120,1,0.5,1), vector2d(1192 - bounds.x,6));
 }
 
 int empire_hud_draw(Window *win)
