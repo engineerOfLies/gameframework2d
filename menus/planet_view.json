@@ -1,0 +1,11 @@
+{
+"window":{
+    "color" : [255,255,255, 255],
+    "dimensions" : [24,48,0.8,700],
+    "justify" : "left",
+    "align" : "bottom",
+    "elements":
+    [
+    ]
+    }
+}

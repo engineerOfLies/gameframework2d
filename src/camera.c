@@ -8,8 +8,25 @@ typedef struct
 {
     Rect view;
     Rect bounds;
+    Vector2D pressPosition,cameraPosition;// for panning
 }Camera;
 static Camera _camera = {0};
+
+
+void camera_mouse_pan()
+{
+    Vector2D delta;
+    if (gf2d_mouse_button_pressed(1))
+    {
+        _camera.pressPosition = gf2d_mouse_get_position();
+        _camera.cameraPosition = camera_get_position();
+    }
+    else if (gf2d_mouse_button_held(1))
+    {
+        vector2d_sub(delta,gf2d_mouse_get_position(),_camera.pressPosition);
+        camera_set_position(vector2d(_camera.cameraPosition.x - delta.x,_camera.cameraPosition.y - delta.y));
+    }
+}
 
 void camera_update_by_keys()
 {

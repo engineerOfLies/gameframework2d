@@ -15,7 +15,6 @@
 #include "system_view.h"
 #include "empire_hud.h"
 
-
 typedef struct
 {
     Sprite *titlebar;
@@ -24,6 +23,13 @@ typedef struct
     Empire *empire;
     Window *view;
 }EmpireHudData;
+
+static Window *empire_window = NULL;
+
+void empire_hud_bubble()
+{
+    gf2d_window_bring_to_front(empire_window);
+}
 
 void empire_hud_draw_titlebar(Empire *empire,EmpireHudData *data)
 {
@@ -126,7 +132,8 @@ Window *empire_hud_window(Empire *empire,Galaxy *galaxy)
     data->titlebar = gf2d_sprite_load_image("images/ui/titlebar.png");
     data->icons = gf2d_sprite_load_all("images/ui/iconsprite.png",24,24,1,0);
     win->data = data;
-    gf2d_window_bring_to_front(win);
+    empire_window = win;
+    empire_hud_bubble();
     return win;
 
 }

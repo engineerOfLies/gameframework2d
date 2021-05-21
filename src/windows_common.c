@@ -141,7 +141,7 @@ int alert_update(Window *win,List *updateList)
     Callback *callback;
     if (!win)return 0;
     callbacks = (List*)win->data;
-    if (gf2d_mouse_button_released(0))
+    if (gf2d_mouse_button_released(0)||gf2d_mouse_button_released(1)||gf2d_mouse_button_released(2))
     {
         if (callbacks)
         {
@@ -173,7 +173,7 @@ int alert_update(Window *win,List *updateList)
                 break;
         }
     }
-    return 0;
+    return 1;
 }
 
 

@@ -54,6 +54,6 @@ SJson *planet_save_to_json(Planet *planet);
 Planet *planet_get_next_child_in_range(Planet *planet, Planet *from,Planet *ignore,Vector2D position,float radius,Uint8 *fromHit);
 void planet_draw_system_view(Planet *planet,Vector2D offset);
 void planet_draw_system_view_lines(Planet *planet,Vector2D offset);
-void planet_draw_planet_view(Planet *planet);
+void planet_draw_planet_view(Planet *planet,Vector2D offset);
 
 #endif

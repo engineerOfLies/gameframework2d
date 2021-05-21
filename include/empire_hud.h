@@ -8,4 +8,10 @@
 
 Window *empire_hud_window(Empire *empire,Galaxy *galaxy);
 
+/**
+ * @brief bring the hud to the top of the window stack.
+ */
+void empire_hud_bubble();
+
+
 #endif

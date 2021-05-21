@@ -396,12 +396,12 @@ void planet_draw_system_view(Planet *planet,Vector2D offset)
     }
 }
 
-void planet_draw_planet_view(Planet *planet)
+void planet_draw_planet_view(Planet *planet,Vector2D offset)
 {
     int i,count;
     Region *region;
     if (!planet)return;
-    gf2d_sprite_draw_image(planet_manager.planet[planet->classification].background,vector2d(0,0));
+    gf2d_sprite_draw_image(planet_manager.planet[planet->classification].background,vector2d(0,40));
     count = gfc_list_get_count(planet->regions);
     slog("drawing planet type: %i",planet->classification);
     for (i = 0;i < count; i++)
@@ -409,7 +409,7 @@ void planet_draw_planet_view(Planet *planet)
         region = gfc_list_get_nth(planet->regions,i);
         if (!region)continue;
         //slog("drawing region biome: %i",region->biome);
-        region_draw_planet_view(region,vector2d(0,0));
+        region_draw_planet_view(region,offset);
     }
 }
 

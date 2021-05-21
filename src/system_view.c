@@ -5,17 +5,31 @@
 #include "gfc_input.h"
 
 #include "camera.h"
+#include "empire_hud.h"
 #include "galaxy_view.h"
 #include "system_view.h"
+#include "planet_view.h"
 
 typedef struct
 {
-    Vector2D pressPosition;
     Vector2D cameraPosition;
     System *system;
     Window *childWindow;
+    Planet *selectedPlanet;
+    Planet *highlightedPlanet;
 }SystemWindowData;
 
+
+void system_view_close_child_window(Window *win)
+{
+    SystemWindowData *data;
+    if (!win)return;
+    if (!win->data)return;
+    data = (SystemWindowData*)win->data;
+    data->childWindow = NULL;
+    camera_set_position(data->cameraPosition);
+    empire_hud_bubble();
+}
 
 int system_view_draw(Window *win)
 {
@@ -26,6 +40,9 @@ int system_view_draw(Window *win)
     if (!win)return 0;
     if (!win->data)return 0;
     data = (SystemWindowData*)win->data;
+    if (data->childWindow)return 0;
+
+    
     system_draw_system_background(data->system,vector2d(win->dimensions.x,win->dimensions.y));
     drawOffset = camera_get_offset();
     system_draw_system_lines(data->system,drawOffset);
@@ -33,11 +50,10 @@ int system_view_draw(Window *win)
     
     
     mouseposition = camera_get_mouse_position();
-    planet = system_get_nearest_planet(data->system,NULL,mouseposition,100);
-    if (planet)
+    data->highlightedPlanet = system_get_nearest_planet(data->system,NULL,mouseposition,100);
+    if (data->highlightedPlanet)
     {
-        gf2d_draw_circle(camera_position_to_screen(planet->systemPosition), (int)(planet->drawSize * 0.5), vector4d(100,255,255,255));
-        slog("planet position: (%f,%f)",planet->systemPosition.x,planet->systemPosition.y);
+        gf2d_draw_circle(camera_position_to_screen(data->highlightedPlanet->systemPosition), (int)(data->highlightedPlanet->drawSize * 0.5), vector4d(100,255,255,255));
     }
 
     return 1;
@@ -55,36 +71,39 @@ int system_view_free(Window *win)
 
 int system_view_update(Window *win,List *updateList)
 {
-    Vector2D delta = {0};
     SystemWindowData *data;
     if (!win)return 0;
     if (!win->data)return 0;
     data = (SystemWindowData*)win->data;
+    if (data->childWindow)return 0;
 
+    camera_update_by_keys();
     if (!gf2d_window_mouse_in(win))
     {
         return 0;//if outside the window rect, its over something else
     }
-    
-    if (gf2d_mouse_button_pressed(1))
-    {
-        data->pressPosition = gf2d_mouse_get_position();
-        data->cameraPosition = camera_get_position();
-    }
-    else if (gf2d_mouse_button_held(1))
-    {
-        vector2d_sub(delta,gf2d_mouse_get_position(),data->pressPosition);
-        camera_set_position(vector2d(data->cameraPosition.x - delta.x,data->cameraPosition.y - delta.y));
-    }
-    camera_update_by_keys();
+    camera_mouse_pan();
     if (win->parent)
     {
         if (gfc_input_command_released("cancel"))
         {
             galaxy_view_close_child_window(win->parent);
             gf2d_window_free(win);
+            return 1;
         }
     }
+    
+    if (gf2d_mouse_button_released(0))
+    {
+        if (data->highlightedPlanet)
+        {
+            data->cameraPosition = camera_get_position();
+            data->childWindow =  planet_view_window(data->highlightedPlanet,win);
+            empire_hud_bubble();
+        }
+    }
+
+    
     return 0;
 }
 

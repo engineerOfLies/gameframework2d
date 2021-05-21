@@ -9,6 +9,11 @@
 
 
 /**
+ * @brief pan the camera by dragging the middle mouse buttom
+ */
+void camera_mouse_pan();
+
+/**
  * @brief update the camera position by camera input keys
  * @note cameraleft,cameraright,cameraup,and cameradown are the inputs it checks
  */

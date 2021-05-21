@@ -6,5 +6,6 @@
 #include "systems.h"
 
 Window *system_view_window(System *system,Window *parent);
+void system_view_close_child_window(Window *win);
 
 #endif

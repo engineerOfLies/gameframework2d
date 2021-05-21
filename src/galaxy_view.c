@@ -7,11 +7,11 @@
 #include "windows_common.h"
 #include "galaxy_view.h"
 #include "system_view.h"
+#include "empire_hud.h"
 
 typedef struct
 {
     Vector2D cameraPosition;
-    Vector2D pressPosition;
     Galaxy *galaxy;
     System *selectedSystem;
     System *highlightedSystem;
@@ -85,15 +85,11 @@ void galaxy_view_close_child_window(Window *win)
     data = (GalaxyWindowData*)win->data;
     data->childWindow = NULL;
     camera_set_position(data->cameraPosition);
-    if (win->parent)
-    {
-        gf2d_window_bring_to_front(win->parent);
-    }
+    empire_hud_bubble();
 }
 
 int galaxy_view_update(Window *win,List *updateList)
 {
-    Vector2D delta = {0};
     GalaxyWindowData *data;
     if (!win)return 0;
     if (!win->data)return 0;
@@ -107,17 +103,8 @@ int galaxy_view_update(Window *win,List *updateList)
     {
         return 0;//if outside the window rect, its over something else
     }
-    
-    if (gf2d_mouse_button_pressed(1))
-    {
-        data->pressPosition = gf2d_mouse_get_position();
-        data->cameraPosition = camera_get_position();
-    }
-    else if (gf2d_mouse_button_held(1))
-    {
-        vector2d_sub(delta,gf2d_mouse_get_position(),data->pressPosition);
-        camera_set_position(vector2d(data->cameraPosition.x - delta.x,data->cameraPosition.y - delta.y));
-    }
+    camera_mouse_pan();
+  
     if (gf2d_mouse_button_released(2))
     {
         if (data->highlightedSystem)
@@ -136,10 +123,7 @@ int galaxy_view_update(Window *win,List *updateList)
         {
             data->cameraPosition = camera_get_position();
             data->childWindow = system_view_window(data->highlightedSystem,win);
-            if (win->parent)
-            {
-                gf2d_window_bring_to_front(win->parent);
-            }
+            empire_hud_bubble();
         }
     }
     return 0;
@@ -163,6 +147,7 @@ Window *galaxy_view_window(Galaxy *galaxy,Window *parent)
     data->galaxy = galaxy;
     win->data = data;
     win->parent = parent;
+    empire_hud_bubble();
     return win;
 }
 
