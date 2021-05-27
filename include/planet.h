@@ -7,6 +7,7 @@
 #include "gfc_color.h"
 #include "gfc_text.h"
 #include "gfc_vector.h"
+#include "regions.h"
 
 
 typedef enum
@@ -52,6 +53,14 @@ void    planet_free(Planet* planet);
 Planet *planet_load_from_json(SJson *json);
 SJson *planet_save_to_json(Planet *planet);
 
+/**
+ * @brief get a region based on a position
+ * @param planet the planet to check
+ * @param position the position to check
+ * @return NULL on error or no regions, a pointer to the region otherwise
+ */
+Region *planet_get_region_by_position(Planet *planet,Vector2D position);
+Region *planet_get_next_region(Planet *planet, Region *from,Region *ignore);
 Planet *planet_get_next_child_in_range(Planet *planet, Planet *from,Planet *ignore,Vector2D position,float radius,Uint8 *fromHit);
 void planet_draw_system_view(Planet *planet,Vector2D offset);
 void planet_draw_system_view_lines(Planet *planet,Vector2D offset);

@@ -6,6 +6,7 @@
 
 #include "camera.h"
 #include "empire_hud.h"
+#include "windows_common.h"
 #include "galaxy_view.h"
 #include "system_view.h"
 #include "planet_view.h"
@@ -15,15 +16,17 @@ typedef struct
     Vector2D pressPosition;
     Vector2D cameraPosition;
     Planet *planet;
+    Region *selectedRegion;
+    Region *highlightedRegion;
     Window *childWindow;
 }PlanetWindowData;
 
 
 int planet_view_draw(Window *win)
 {
-    Planet *planet;
+    Region *region;
     PlanetWindowData *data;
-    Vector2D drawOffset;
+    Vector2D drawOffset, mousePosition;
     if (!win)return 0;
     if (!win->data)return 0;
     data = (PlanetWindowData*)win->data;
@@ -37,6 +40,22 @@ int planet_view_draw(Window *win)
         return 0;//if outside the window rect, its over something else
     }
 
+    mousePosition = camera_get_mouse_position();
+    region = planet_get_region_by_position(data->planet,mousePosition);
+    if (region)
+    {
+        data->highlightedRegion = region;
+        drawOffset = camera_position_to_screen(region->drawPosition);
+        drawOffset.y += 40;
+        gf2d_draw_circle(drawOffset, 128, vector4d(100,255,255,255));
+    }
+    
+    if (data->selectedRegion)
+    {
+        drawOffset = camera_position_to_screen(data->selectedRegion->drawPosition);
+        drawOffset.y += 40;
+        gf2d_draw_circle(drawOffset, 128, vector4d(255,255,100,255));        
+    }
     
     return 1;
 }
@@ -75,6 +94,27 @@ int planet_view_update(Window *win,List *updateList)
             return 1;
         }
     }
+    
+    if (gf2d_mouse_button_released(2))
+    {
+        if (data->highlightedRegion)
+        {
+            data->selectedRegion = data->highlightedRegion;
+            window_alert("region", region_name_from_biome(data->selectedRegion->biome), NULL,NULL);
+        }
+        else
+        {
+            data->selectedRegion = NULL;
+        }
+    }
+    if (gf2d_mouse_button_released(0))
+    {
+        if (data->highlightedRegion)
+        {
+            //open up region window
+        }
+    }
+
     return 0;
 }
 

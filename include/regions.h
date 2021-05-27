@@ -62,12 +62,22 @@ typedef struct
 void regions_init();
 
 RegionBiome region_biome_from_name(char *biomeName);
+const char *region_name_from_biome(RegionBiome biome);
 
 Region *region_new();
 void    region_free(Region* region);
 Region *region_generate(Uint32 id,RegionBiome biome,float regionRange, Vector2D position);
 Region *region_load_from_json(SJson *json);
 SJson  *region_save_to_json(Region *region);
+
+/**
+ * @brief check if the point in question is overlapping the region
+ * @param region the region to cehck against
+ * @param position the position to check
+ * @return 0 on error or no clip.  1 if there is clip
+ */
+int region_point_check(Region *region,Vector2D position);
+
 
 List *region_list_load_from_json(SJson *json);
 SJson *region_list_save_to_json(List *regionList);

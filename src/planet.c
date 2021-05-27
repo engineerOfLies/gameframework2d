@@ -408,6 +408,53 @@ void planet_draw_system_view(Planet *planet,Vector2D offset)
     }
 }
 
+Region *planet_get_region_by_position(Planet *planet,Vector2D position)
+{
+    Region *region = NULL;
+    while((region = planet_get_next_region(planet, region,NULL)))
+    {
+        if (!region)continue;
+        if (region_point_check(region,position))
+            return region;
+    }
+    return NULL;
+}
+
+Region *planet_get_next_region(Planet *planet, Region *from,Region *ignore)
+{
+    int i,count;
+    Region *region;//search item
+    if (!planet)
+    {
+        slog("no planet provided");
+        return NULL;
+    }
+    count = gfc_list_get_count(planet->regions);
+    if (from == NULL)
+    {
+        i = 0;
+    }
+    else
+    {
+        for (i =0 ; i < count; i++)
+        {
+            region = gfc_list_get_nth(planet->regions,i);
+            if (!region)continue;
+            if (region == from)
+            {
+                i++;
+                break;
+            }
+        }
+    }
+    for (;i < count; i++)
+    {
+        region = gfc_list_get_nth(planet->regions,i);
+        if (!region)continue;
+        return region;
+    }
+    return NULL;
+}
 
 
 void planet_draw_planet_view(Planet *planet,Vector2D offset)

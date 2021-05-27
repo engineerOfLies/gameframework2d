@@ -1,16 +1,15 @@
 {
 "window":{
     "color" : [255,255,255, 255],
-    "dimensions" : [0,620,1200,100],
+    "dimensions" : [0,580,1200,60],
     "justify" : "center",
-    "align" : "bottom",
     "elements":
     [
       {
         "type": "list",
         "name": "list",
         "id" : 0,
-        "bounds": [0,0,1,1],
+        "bounds": [0,-86,1,1],
         "color" : [255,255,255,255],
         "style": "vertical",
         "packed":true,
@@ -21,12 +20,11 @@
                 "type": "label",
                 "name": "title",
                 "id" : 1,
-                "bounds": [0,0,1,20],
+                "bounds": [0,0,1,22],
                 "color" : [255,255,255,255],
                 "text":"?",
                 "justify" : "center",
-                "align" : "middle",
-                "style":"H4"
+                "style":"H6"
             },
             {
                 "type": "label",
@@ -38,7 +36,7 @@
                 "wraps":true,
                 "justify" : "left",
                 "align" : "top",
-                "style":"H5"
+                "style":"H6"
             },
             {
                 "type": "button",

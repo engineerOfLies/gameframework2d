@@ -76,7 +76,7 @@ int yes_no_update(Window *win,List *updateList)
     return 0;
 }
 
-Window *window_yes_no(char *text, void(*onYes)(void *),void(*onNo)(void *),void *yesData,void *noData)
+Window *window_yes_no(const char *text, void(*onYes)(void *),void(*onNo)(void *),void *yesData,void *noData)
 {
     Window *win;
     List *callbacks;
@@ -86,7 +86,7 @@ Window *window_yes_no(char *text, void(*onYes)(void *),void(*onNo)(void *),void 
         slog("failed to load yes/no window");
         return NULL;
     }
-    gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,1),text);
+    gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,1),(char *)text);
     win->update = yes_no_update;
     win->free_data = yes_no_free;
     callbacks = gfc_list_new();
@@ -177,7 +177,7 @@ int alert_update(Window *win,List *updateList)
 }
 
 
-Window *window_alert(char *title, char *text, void(*onOK)(void *),void *okData)
+Window *window_alert(const char *title,const char *text, void(*onOK)(void *),void *okData)
 {
     Window *win;
     List *callbacks;
@@ -187,8 +187,8 @@ Window *window_alert(char *title, char *text, void(*onOK)(void *),void *okData)
         slog("failed to load alert window");
         return NULL;
     }
-    gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,1),title);
-    gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,2),text);
+    gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,1),(char *)title);
+    gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,2),(char *)text);
     win->update = alert_update;
     win->free_data = yes_no_free;
     if (onOK)
@@ -200,7 +200,7 @@ Window *window_alert(char *title, char *text, void(*onOK)(void *),void *okData)
     return win;
 }
 
-Window *window_dialog(char *title, char *text, void(*onOK)(void *),void *okData)
+Window *window_dialog(const char *title,const char *text, void(*onOK)(void *),void *okData)
 {
     Window *win;
     List *callbacks;
@@ -210,8 +210,8 @@ Window *window_dialog(char *title, char *text, void(*onOK)(void *),void *okData)
         slog("failed to load alert window");
         return NULL;
     }
-    gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,1),title);
-    gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,2),text);
+    gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,1),(char *)title);
+    gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,2),(char *)text);
     win->update = alert_update;
     win->free_data = yes_no_free;
     if (onOK)
@@ -224,7 +224,7 @@ Window *window_dialog(char *title, char *text, void(*onOK)(void *),void *okData)
 }
 
 
-Window *window_text_entry(char *question, char *defaultText,void *callbackData, size_t length, void(*onOk)(void *),void(*onCancel)(void *))
+Window *window_text_entry(const char *question, char *defaultText,void *callbackData, size_t length, void(*onOk)(void *),void(*onCancel)(void *))
 {
     Window *win;
     List *callbacks;
@@ -234,8 +234,8 @@ Window *window_text_entry(char *question, char *defaultText,void *callbackData, 
         slog("failed to load yes/no window");
         return NULL;
     }
-    gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,1),question);
-    gf2d_element_entry_set_text_pointer(gf2d_window_get_element_by_id(win,2),defaultText,length);
+    gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,1),(char *)question);
+    gf2d_element_entry_set_text_pointer(gf2d_window_get_element_by_id(win,2),(char *)defaultText,length);
     win->update = yes_no_update;
     win->free_data = yes_no_free;
     callbacks = gfc_list_new();

@@ -4,6 +4,7 @@
 #include "gfc_list.h"
 
 #include "gf2d_sprite.h"
+#include "gf2d_shape.h"
 
 #include "regions.h"
 
@@ -20,6 +21,17 @@ typedef struct
 }RegionData;
 
 static RegionData region_data = {0};
+
+static char *biome_names[] =
+{
+    "Rocky",
+    "Desert",
+    "Ocean",
+    "Icy",
+    "Temperate",
+    "Tropical",
+    "RB_MAX"
+};
 
 void regions_close()
 {
@@ -99,6 +111,13 @@ void region_free(Region* region)
     free(region);
 }
 
+const char *region_name_from_biome(RegionBiome biome)
+{
+    if (biome >= RB_MAX)
+        return NULL;
+    return biome_names[biome];
+}
+
 RegionBiome region_biome_from_name(char *biomeName)
 {
     if (gfc_stricmp(biomeName,"rocky")==0)
@@ -114,6 +133,16 @@ RegionBiome region_biome_from_name(char *biomeName)
     if (gfc_stricmp(biomeName,"tropical")==0)
         return RB_Tropical;
     return RB_MAX;
+}
+
+int region_point_check(Region *region,Vector2D position)
+{
+    if (!region)
+    {
+        slog("no region provided!");
+        return 0;
+    }
+    return gf2d_point_in_cicle(position,gf2d_circle(region->drawPosition.x,region->drawPosition.y,128));
 }
 
 Region *region_generate(Uint32 id,RegionBiome biome,float regionRange, Vector2D position)
