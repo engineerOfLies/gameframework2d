@@ -1,6 +1,7 @@
 #include <simple_logger.h>
 #include <simple_json.h>
 
+#include "gf2d_graphics.h"
 #include "gf2d_draw.h"
 #include "gf2d_sprite.h"
 #include "gf2d_config.h"
@@ -10,12 +11,12 @@
 
 typedef struct
 {
-    Sprite *sprite;
-    Sprite *background; // when drawing planet view, this will be the background fill image
-    Color   color;
-    Uint32  drawSize;   //in pixels
-    float   drawScale;  //to scale the drawing
-    int     regionsMin,regionsMax;  //amount of regions to be found on a planet
+    Sprite     *sprite;
+    Sprite     *background; // when drawing planet view, this will be the background fill image
+    Color       color;
+    Uint32      drawSize;   //in pixels
+    float       drawScale;  //to scale the drawing
+    int         regionsMin,regionsMax;  //amount of regions to be found on a planet
 }PlanetData;
 
 typedef struct
@@ -159,6 +160,8 @@ void planet_free(Planet* planet)
 
 void planet_generate_regions(Planet *planet)
 {
+    Vector2D maxArea = {0};
+    int regionsPerLine = 5;
     int startHeight;
     int i, r, amount = 0;
     int count;
@@ -175,11 +178,18 @@ void planet_generate_regions(Planet *planet)
     
     amount = (gfc_random() * (planet_manager.planet[planet->classification].regionsMax - planet_manager.planet[planet->classification].regionsMin)) + planet_manager.planet[planet->classification].regionsMin;
     startHeight = 250 - ((amount / 10) * 100);
+    if (amount > 3)
+    {
+        regionsPerLine = amount / 3;
+    }
     for (i = 0; i < amount;i++)
     {
-        position.x = 128 + (i % 5) * 200;
-        position.y = startHeight + (i / 5) * 200;
-        if ((i / 5) % 2)position.x += 128;
+        position.x = 128 + (i % regionsPerLine) * 300;
+        position.y = startHeight + (i / regionsPerLine) * 300;
+        if ((i / regionsPerLine) % 2)position.x += 128;
+        
+        if (position.x > maxArea.x)maxArea.x = position.x;
+        if (position.y > maxArea.y)maxArea.y = position.y;
         regionChoice = gfc_random();
         planetData = sj_array_get_nth(planet_manager.planetList,planet->classification);
         count = sj_array_get_count(sj_object_get_value(planetData,"regions"));
@@ -200,6 +210,8 @@ void planet_generate_regions(Planet *planet)
         biome = region_biome_from_name((char *)str);
         planet->regions = gfc_list_append(planet->regions,region_generate(i,biome,regionChoice , position));
     }
+    planet->area.x = maxArea.x + 300;
+    planet->area.y = maxArea.y + 400;
 }
 
 Planet *planet_generate(Uint32 *id, int planetType, Uint32 seed, Vector2D position,Vector2D *bottomRight)
@@ -396,14 +408,30 @@ void planet_draw_system_view(Planet *planet,Vector2D offset)
     }
 }
 
+
+
 void planet_draw_planet_view(Planet *planet,Vector2D offset)
 {
     int i,count;
+    Vector2D drawOffset,resolution;
     Region *region;
     if (!planet)return;
-    gf2d_sprite_draw_image(planet_manager.planet[planet->classification].background,vector2d(0,40));
+    
+    resolution = gf2d_graphics_get_resolution();
+    drawOffset = vector2d(offset.x, 40);
+    while(drawOffset.x < 0)
+    {
+        drawOffset.x += resolution.x;
+    }
+    while(drawOffset.x > resolution.x)
+    {
+        drawOffset.x -= resolution.x;
+    }
+
+    gf2d_sprite_draw_image(planet_manager.planet[planet->classification].background,drawOffset);
+    gf2d_sprite_draw_image(planet_manager.planet[planet->classification].background,vector2d(drawOffset.x - resolution.x,drawOffset.y));
     count = gfc_list_get_count(planet->regions);
-    slog("drawing planet type: %i",planet->classification);
+//    slog("drawing planet type: %i",planet->classification);
     for (i = 0;i < count; i++)
     {
         region = gfc_list_get_nth(planet->regions,i);

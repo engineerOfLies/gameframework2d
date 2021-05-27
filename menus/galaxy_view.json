@@ -1,9 +1,9 @@
 {
 "window":{
     "color" : [255,255,255, 255],
-    "dimensions" : [0,48,0.8,700],
+    "dimensions" : [0,20,1,634],
     "justify" : "left",
-    "align" : "bottom",
+    "align" : "top",
     "elements":
     [
     ]

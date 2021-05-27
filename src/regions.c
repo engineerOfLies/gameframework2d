@@ -165,6 +165,7 @@ void region_draw_planet_view(Region *region,Vector2D offset)
 {
     RegionInfo *info;
     Vector2D drawposition;
+    Vector3D rotation;
     if (!region)return;
 
     info = gfc_list_get_nth(region_data.info,region->biome);
@@ -173,19 +174,22 @@ void region_draw_planet_view(Region *region,Vector2D offset)
         slog("no region info for biome %i",region->biome);
         return;
     }
-    slog("regionRange for region: %f, biome %i",region->regionRange,region->biome);
+//    slog("regionRange for region: %f, biome %i",region->regionRange,region->biome);
     vector2d_add(drawposition,region->drawPosition,offset);
     if (!info->sprite)return;
     
-    drawposition.x -= (info->sprite->frame_w * 0.5);
-    drawposition.y -= (info->sprite->frame_h * 0.5);
+    rotation.x = (info->sprite->frame_w * 0.5);
+    rotation.y = (info->sprite->frame_h * 0.5);
+    rotation.z = (region->drawRotation);
+    drawposition.x -= rotation.x;
+    drawposition.y -= rotation.y;
 
     gf2d_sprite_draw(
         info->sprite,
         drawposition,
         NULL,
         NULL,
-        NULL,
+        &rotation,
         NULL,
         NULL,
         0);

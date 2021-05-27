@@ -1,11 +1,240 @@
 {
 "window":{
     "color" : [255,255,255, 255],
-    "dimensions" : [0,0,0.20,1],
+    "dimensions" : [0,0,1,64],
     "justify" : "right",
-    "align" : "top",
+    "align" : "bottom",
     "elements":
     [
+        {
+            "type": "list",
+            "name": "list",
+            "id" : 0,
+            "bounds": [16,0,1,1],
+            "color" : [255,255,255,255],
+            "justify" : "center",
+            "style": "horizontal",
+            "item_size" : [168,64],
+            "elements":
+            [
+                {
+                    "type": "button",
+                    "name": "galaxy",
+                    "id" : 11,
+                    "bounds": [0,0,168,64],
+                    "hotkey":"galaxy_view",
+                    "color" : [255,255,255,255],
+                    "highColor" : [255,255,255,255],
+                    "pressColor" : [255,255,255,255],
+                    "label" :
+                        {
+                        "type": "label",
+                        "name": "yes_l",
+                        "id" : 111,
+                        "bounds": [0,0,168,64],
+                        "color" : [255,255,255,255],
+                        "text":"Galaxy",
+                        "justify" : "center",
+                        "align" : "middle",
+                        "style":"H5"
+                        },
+                    "actor" :
+                        {
+                        "type": "actor",
+                        "name": "image",
+                        "id" : 112,
+                        "bounds": [0,0,168,64],
+                        "color" : [255,255,255,255],
+                        "actor" : "actors/button.actor"
+                        }
+                },
+                {
+                    "type": "button",
+                    "name": "shipyard",
+                    "id" : 21,
+                    "bounds": [0,0,168,64],
+                    "hotkey":"yes",
+                    "color" : [255,255,255,255],
+                    "highColor" : [255,255,255,255],
+                    "pressColor" : [255,255,255,255],
+                    "label" :
+                        {
+                        "type": "label",
+                        "id" : 211,
+                        "bounds": [0,0,168,64],
+                        "color" : [255,255,255,255],
+                        "text":"Shipyard",
+                        "justify" : "center",
+                        "align" : "middle",
+                        "style":"H5"
+                        },
+                    "actor" :
+                        {
+                        "type": "actor",
+                        "name": "image",
+                        "id" : 212,
+                        "bounds": [0,0,168,64],
+                        "color" : [255,255,255,255],
+                        "actor" : "actors/button.actor"
+                        }
+                },
+                {
+                    "type": "button",
+                    "name": "research",
+                    "id" : 31,
+                    "bounds": [0,0,168,64],
+                    "hotkey":"yes",
+                    "color" : [255,255,255,255],
+                    "highColor" : [255,255,255,255],
+                    "pressColor" : [255,255,255,255],
+                    "label" :
+                        {
+                        "type": "label",
+                        "name": "yes_l",
+                        "id" : 311,
+                        "bounds": [0,0,168,64],
+                        "color" : [255,255,255,255],
+                        "text":"Research",
+                        "justify" : "center",
+                        "align" : "middle",
+                        "style":"H5"
+                        },
+                    "actor" :
+                        {
+                        "type": "actor",
+                        "name": "image",
+                        "id" : 312,
+                        "bounds": [0,0,168,64],
+                        "color" : [255,255,255,255],
+                        "actor" : "actors/button.actor"
+                        }
+                },
+                {
+                    "type": "button",
+                    "name": "intelligence",
+                    "id" : 41,
+                    "bounds": [0,0,168,64],
+                    "hotkey":"yes",
+                    "color" : [255,255,255,255],
+                    "highColor" : [255,255,255,255],
+                    "pressColor" : [255,255,255,255],
+                    "label" :
+                        {
+                        "type": "label",
+                        "name": "yes_l",
+                        "id" : 411,
+                        "bounds": [0,0,168,64],
+                        "color" : [255,255,255,255],
+                        "text":"Intelligence",
+                        "justify" : "center",
+                        "align" : "middle",
+                        "style":"H5"
+                        },
+                    "actor" :
+                        {
+                        "type": "actor",
+                        "name": "image",
+                        "id" : 412,
+                        "bounds": [0,0,168,64],
+                        "color" : [255,255,255,255],
+                        "actor" : "actors/button.actor"
+                        }
+                },
+                {
+                    "type": "button",
+                    "name": "economy",
+                    "id" : 51,
+                    "bounds": [0,0,168,64],
+                    "hotkey":"yes",
+                    "color" : [255,255,255,255],
+                    "highColor" : [255,255,255,255],
+                    "pressColor" : [255,255,255,255],
+                    "label" :
+                        {
+                        "type": "label",
+                        "name": "yes_l",
+                        "id" : 511,
+                        "bounds": [0,0,168,64],
+                        "color" : [255,255,255,255],
+                        "text":"Economy",
+                        "justify" : "center",
+                        "align" : "middle",
+                        "style":"H5"
+                        },
+                    "actor" :
+                        {
+                        "type": "actor",
+                        "name": "image",
+                        "id" : 512,
+                        "bounds": [0,0,168,64],
+                        "color" : [255,255,255,255],
+                        "actor" : "actors/button.actor"
+                        }
+                },
+                {
+                    "type": "button",
+                    "name": "personnel",
+                    "id" : 61,
+                    "bounds": [0,0,168,64],
+                    "hotkey":"yes",
+                    "color" : [255,255,255,255],
+                    "highColor" : [255,255,255,255],
+                    "pressColor" : [255,255,255,255],
+                    "label" :
+                        {
+                        "type": "label",
+                        "name": "yes_l",
+                        "id" : 611,
+                        "bounds": [0,0,168,64],
+                        "color" : [255,255,255,255],
+                        "text":"Personnel",
+                        "justify" : "center",
+                        "align" : "middle",
+                        "style":"H5"
+                        },
+                    "actor" :
+                        {
+                        "type": "actor",
+                        "name": "image",
+                        "id" : 612,
+                        "bounds": [0,0,168,64],
+                        "color" : [255,255,255,255],
+                        "actor" : "actors/button.actor"
+                        }
+                },
+                {
+                    "type": "button",
+                    "name": "options",
+                    "id" : 71,
+                    "bounds": [0,0,168,64],
+                    "hotkey":"yes",
+                    "color" : [255,255,255,255],
+                    "highColor" : [255,255,255,255],
+                    "pressColor" : [255,255,255,255],
+                    "label" :
+                        {
+                        "type": "label",
+                        "name": "yes_l",
+                        "id" : 711,
+                        "bounds": [0,0,168,64],
+                        "color" : [255,255,255,255],
+                        "text":"Options",
+                        "justify" : "center",
+                        "align" : "middle",
+                        "style":"H5"
+                        },
+                    "actor" :
+                        {
+                        "type": "actor",
+                        "name": "image",
+                        "id" : 712,
+                        "bounds": [0,0,168,64],
+                        "color" : [255,255,255,255],
+                        "actor" : "actors/button.actor"
+                        }
+                }
+            ]
+        }
     ]
     }
 }

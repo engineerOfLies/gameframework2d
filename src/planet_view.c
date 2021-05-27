@@ -28,7 +28,15 @@ int planet_view_draw(Window *win)
     if (!win->data)return 0;
     data = (PlanetWindowData*)win->data;
     drawOffset = camera_get_offset();
+    drawOffset.y += 40;
     planet_draw_planet_view(data->planet,drawOffset);
+    
+    
+    if (!gf2d_window_mouse_in(win))
+    {
+        return 0;//if outside the window rect, its over something else
+    }
+
     
     return 1;
 }
@@ -57,6 +65,7 @@ int planet_view_update(Window *win,List *updateList)
     }
     
     camera_update_by_keys();
+    camera_bind();
     if (win->parent)
     {
         if (gfc_input_command_released("cancel"))
@@ -87,8 +96,10 @@ Window *planet_view_window(Planet *planet,Window *parent)
     data->planet = planet;
     win->data = data;
     win->parent = parent;
+    camera_set_bounds(-128,-128,planet->area.x,planet->area.y);
     camera_set_position(vector2d(-128,-128));
     empire_hud_bubble();
+    slog("planet draw area: (%f,%f)",planet->area.x,planet->area.y);
     return win;
 
 }

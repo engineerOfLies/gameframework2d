@@ -30,6 +30,7 @@ typedef struct
     Uint32      allegience;         /**<to whom planet is owned*/
     Uint32      id;                 /**<unique id for the planet*/
     Uint32      size;               /**<how large the body is*/
+    Vector2D    area;       // how much draw area is needed for planet view
     Uint32      drawSize;           /**<in pixels*/
     Color       color;              /**<base planetary color*/
     Uint32      classification;     /**<planetary classification for climate*/

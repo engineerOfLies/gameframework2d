@@ -66,13 +66,20 @@ Vector2D camera_get_offset();
  * @param w the right bounds
  * @param w the bottom bounds
  */
-void camera_set_bounds(Sint32 x,Sint32 y,Uint32 w,Uint32 h);
+void camera_set_bounds(float x,float y,float w,float h);
 
 /**
  * @brief get the current camera bounds
  * @return the camera bounding rect
  */
 Rect camera_get_bounds();
+
+
+/**
+ * @brief snap the camera to its bounds
+ */
+void camera_bind();
+
 
 /**
  * @brief move the camera, but limit by bounds

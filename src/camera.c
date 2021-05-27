@@ -85,17 +85,18 @@ Vector2D camera_get_offset()
     return vector2d(-_camera.view.x,-_camera.view.y);
 }
 
-void camera_set_bounds(Sint32 x,Sint32 y,Uint32 w,Uint32 h)
+void camera_set_bounds(float x,float y,float w,float h)
 {
     gf2d_rect_set(_camera.bounds,x,y,w,h);
+    slog("camera bounds set to [%f,%f,%f,%f]",_camera.bounds.x,_camera.bounds.y,_camera.bounds.w,_camera.bounds.h);
 }
 
 void camera_bind()
 {
-    if (_camera.view.x < _camera.bounds.x)_camera.view.x = _camera.bounds.x;
     if (_camera.view.x + _camera.view.w > _camera.bounds.x + _camera.bounds.w)_camera.view.x = _camera.bounds.x + _camera.bounds.w - _camera.view.w;
-    if (_camera.view.y < _camera.bounds.y)_camera.view.y = _camera.bounds.y;
+    if (_camera.view.x < _camera.bounds.x)_camera.view.x = _camera.bounds.x;
     if (_camera.view.y + _camera.view.h > _camera.bounds.y + _camera.bounds.h)_camera.view.y = _camera.bounds.y + _camera.bounds.h - _camera.view.h;
+    if (_camera.view.y < _camera.bounds.y)_camera.view.y = _camera.bounds.y;
 }
 
 void camera_move(Vector2D v)

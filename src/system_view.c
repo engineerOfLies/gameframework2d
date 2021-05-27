@@ -48,7 +48,11 @@ int system_view_draw(Window *win)
     system_draw_system_lines(data->system,drawOffset);
     system_draw_system_view(data->system,drawOffset);
     
-    
+    if (!gf2d_window_mouse_in(win))
+    {
+        return 0;//if outside the window rect, its over something else
+    }
+
     mouseposition = camera_get_mouse_position();
     data->highlightedPlanet = system_get_nearest_planet(data->system,NULL,mouseposition,100);
     if (data->highlightedPlanet)
