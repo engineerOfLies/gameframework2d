@@ -106,6 +106,8 @@ void system_free(System* system)
 System *system_generate(Galaxy *galaxy, Uint32 id, Uint32 seed)
 {
     int nameIndex;
+    TextLine planetName;
+    char Designation = '';
     Vector2D planetPosition = {0};
     Vector2D bottomRight = {0};
     Uint32 i;
@@ -132,8 +134,21 @@ System *system_generate(Galaxy *galaxy, Uint32 id, Uint32 seed)
     
     system->size = (starCount * 0.25) + 0.5;
     system->color = gfc_color_hsl((gfc_random() * (10 * system->size) + 30),1,0.5 + (gfc_random() *system->size),1);
+    if (starCount > 1)
+    {
+        Designation = 'A';
+    }
     for (i = 0; i < starCount;i++)
     {
+        if (starCount > 1)
+        {
+            gfc_line_sprintf(planetName,"%s %c",system->name,Designation);
+            Designation++;
+        }
+        else
+        {
+            gfc_line_sprintf(planetName,"%s",system->name);
+        }
         system->idPool++;
         system->planets = gfc_list_append(system->planets,planet_generate(&system->idPool, (int)(gfc_random()*PC_GasGiant),id + seed,planetPosition,&bottomRight));
         planetPosition.y = bottomRight.y + 100;
