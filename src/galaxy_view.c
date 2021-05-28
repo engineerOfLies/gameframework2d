@@ -1,5 +1,6 @@
 #include <simple_logger.h>
 
+#include "gfc_input.h"
 #include "gf2d_mouse.h"
 #include "gf2d_draw.h"
 
@@ -11,6 +12,7 @@
 
 typedef struct
 {
+    float scale;
     Vector2D cameraPosition;
     Galaxy *galaxy;
     System *selectedSystem;
@@ -33,7 +35,7 @@ int galaxy_view_draw(Window *win)
     
     cameraOffset = camera_get_offset();
     
-    galaxy_draw(data->galaxy,vector2d(win->dimensions.x + cameraOffset.x,win->dimensions.y + cameraOffset.y));
+    galaxy_draw(data->galaxy,vector2d(win->dimensions.x + cameraOffset.x,win->dimensions.y + cameraOffset.y),data->scale);
     
     if (!gf2d_window_mouse_in(win))
     {
@@ -126,6 +128,16 @@ int galaxy_view_update(Window *win,List *updateList)
             empire_hud_bubble();
         }
     }
+    
+    if (gfc_input_mouse_wheel_up())
+    {
+        data->scale += 0.1;
+    }
+    if (gfc_input_mouse_wheel_down())
+    {
+        data->scale -= 0.1;
+    }
+
     return 0;
 }
 
@@ -145,6 +157,7 @@ Window *galaxy_view_window(Galaxy *galaxy,Window *parent)
     win->free_data = galaxy_view_free;
     data = gfc_allocate_array(sizeof(GalaxyWindowData),1);
     data->galaxy = galaxy;
+    data->scale = 1;
     win->data = data;
     win->parent = parent;
     empire_hud_bubble();

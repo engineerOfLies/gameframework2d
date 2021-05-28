@@ -29,7 +29,14 @@ Galaxy *galaxy_generate(Uint32 seed, Uint32 count);
 void    galaxy_free(Galaxy *galaxy);
 Galaxy *galaxy_load_from_json(SJson *json);
 SJson  *galaxy_save_to_json(Galaxy *galaxy);
-void galaxy_draw(Galaxy *galaxy,Vector2D offset);
+
+/**
+ * @brief draw the galaxy
+ * @param galaxy the galaxy to draw
+ * @param offset with this offset (camera stuff)
+ * @param scale with this scale
+ */
+void galaxy_draw(Galaxy *galaxy,Vector2D offset,float scale);
 
 /**
  * @brief perform an iterative search through the systems for one within range of the provided system

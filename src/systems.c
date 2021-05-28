@@ -166,26 +166,28 @@ SJson  *system_save_to_json(System *system);
 List *system_list_load_from_json(SJson *json);
 SJson *system_list_save_to_json(List *systemList);
 
-void system_draw_galaxy_view(System *system,Vector2D offset)
+void system_draw_galaxy_view(System *system,Vector2D offset,float scale)
 {
-    Vector2D scale,scalecenter;
+    Vector2D systemScale,scalecenter;
     Vector2D drawposition;
     Vector4D color;
     if (!system)return;
     if (system_manager.starSprite == NULL)return;
     drawposition = galaxy_position_to_screen_position(system->position);
-    scale = vector2d(system->size,system->size);
+    systemScale = vector2d(system->size,system->size);
     color = gfc_color_to_vector4(system->color);
     scalecenter.x = system_manager.starSprite->frame_w * 0.5;
     scalecenter.y = system_manager.starSprite->frame_h * 0.5;
-    drawposition.x -= (scalecenter.x * scale.x);
-    drawposition.y -= (scalecenter.y * scale.y);
+    drawposition.x -= (scalecenter.x * systemScale.x);
+    drawposition.y -= (scalecenter.y * systemScale.y);
     drawposition.x += offset.x;
     drawposition.y += offset.y;
+    vector2d_scale(drawposition,drawposition,scale);
+    vector2d_scale(systemScale,systemScale,scale);
     gf2d_sprite_draw(
         system_manager.starSprite,
         drawposition,
-        &scale,
+        &systemScale,
         NULL,
         NULL,
         NULL,

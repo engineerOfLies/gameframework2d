@@ -85,7 +85,7 @@ Galaxy *galaxy_load_from_json(SJson *json);
 
 SJson  *galaxy_save_to_json(Galaxy *galaxy);
 
-void galaxy_draw(Galaxy *galaxy,Vector2D offset)
+void galaxy_draw(Galaxy *galaxy,Vector2D offset,float scale)
 {
     System *system;
     int count,i;
@@ -97,7 +97,7 @@ void galaxy_draw(Galaxy *galaxy,Vector2D offset)
     {
         system = gfc_list_get_nth(galaxy->systemList,i);
         if (!system)continue;
-        system_draw_galaxy_view(system,offset);
+        system_draw_galaxy_view(system,offset,scale);
     }
 }
 

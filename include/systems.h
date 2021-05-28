@@ -48,7 +48,7 @@ Planet *system_get_nearest_planet(System *system,Planet *ignore,Vector2D positio
 Planet *system_get_next_planet_in_range(System *system, Planet *from,Planet *ignore,Vector2D position,float radius);
 
 void system_draw_system_background(System *system, Vector2D offset);
-void system_draw_galaxy_view(System *system,Vector2D offset);
+void system_draw_galaxy_view(System *system,Vector2D offset,float scale);
 void system_draw_system_view(System *system, Vector2D offset);
 void system_draw_system_lines(System *system, Vector2D offset);
 
