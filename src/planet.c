@@ -214,9 +214,11 @@ void planet_generate_regions(Planet *planet)
     planet->area.y = maxArea.y + 400;
 }
 
-Planet *planet_generate(Uint32 *id, int planetType, Uint32 seed, Vector2D position,Vector2D *bottomRight)
+Planet *planet_generate(Uint32 *id, int planetType, Uint32 seed, Vector2D position,Vector2D *bottomRight,char *name)
 {
     int moonCount,i;
+    char designation;
+    TextLine childName;
     Vector2D newPosition = {0}, childPosition= {0};
     Uint32 childPlanetType;
     Vector2D childBR = {0};
@@ -237,6 +239,7 @@ Planet *planet_generate(Uint32 *id, int planetType, Uint32 seed, Vector2D positi
     {
         slog("error: generating a planet(%i) of type %i, out of range",id, planetType);
     }
+    gfc_line_cpy(planet->name,name);
     planet->id = *id;
     vector2d_copy(planet->systemPosition,position);    
     planet->classification = planetType;
@@ -248,11 +251,14 @@ Planet *planet_generate(Uint32 *id, int planetType, Uint32 seed, Vector2D positi
     childPlanetType = PC_Moon;// DEFAULT
     childPosition.x = 0;
     childPosition.y = 2;
+    designation = 'a';
     if (planet->classification <= PC_Star)
     {
         childPosition.x = 2;
         childPosition.y = 0;
+        designation = '1';
     }
+
     planet->color = planet_manager.planet[planet->classification].color;
     //    planet->color = gfc_color_hsl(360 * ((float)planet->classification/PC_MAX) - 30,1,0.5,1);
     
@@ -278,12 +284,14 @@ Planet *planet_generate(Uint32 *id, int planetType, Uint32 seed, Vector2D positi
     newPosition.y = position.y + (planet_manager.planet[planet->classification].drawSize * childPosition.y);
     for (i = 0; i < moonCount;i++)
     {
+        gfc_line_sprintf(childName,"%s-%c",name,designation++);
+
         *id = *id + 1;
         if (planet->classification <= PC_Star)
         {
             childPlanetType = (int)(gfc_random() * (PC_Moon - PC_GasGiant)) + PC_GasGiant;
         }
-        planet->children = gfc_list_append(planet->children,planet_generate(id, childPlanetType, seed,newPosition,&childBR));
+        planet->children = gfc_list_append(planet->children,planet_generate(id, childPlanetType, seed,newPosition,&childBR,childName));
         if (childBR.x > maxBR.x)maxBR.x = childBR.x;
         if (childBR.y > maxBR.y)maxBR.y = childBR.y;
         if (childPosition.x)newPosition.x = maxBR.x;

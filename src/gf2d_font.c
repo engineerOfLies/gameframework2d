@@ -363,9 +363,9 @@ Rect gf2d_font_get_text_wrap_bounds(
         strncpy(textline,temptextline,GFCTEXTLEN);/*keep the last line that worked*/
         for(i = 0;i < (space - 1);i++)
         {
-            gfc_block_sprintf(temptextline,"%s%c",temptextline,' '); /*add spaces*/
+            sprintf(temptextline,"%s%c",temptextline,' '); /*add spaces*/
         }
-        gfc_block_sprintf(temptextline,"%s %s",temptextline,word); /*add a word*/
+        sprintf(temptextline,"%s %s",temptextline,word); /*add a word*/
         TTF_SizeText(font->font, temptextline, &tw, &th); /*see how big it is now*/
         lindex += strlen(word);
         if(tw > w)         /*see if we have gone over*/
@@ -378,7 +378,7 @@ Rect gf2d_font_get_text_wrap_bounds(
                     break;
                 }
             }
-            gfc_block_sprintf(temptextline,"%s",word); /*add a word*/
+            sprintf(temptextline,"%s",word); /*add a word*/
         }
         else if (tw > r.w)
         {
@@ -464,9 +464,9 @@ void gf2d_font_draw_text_wrap(
         strncpy(textline,temptextline,GFCTEXTLEN);/*keep the last line that worked*/
         for (i = 0;i < (space - 1);i++)
         {
-            gfc_block_sprintf(temptextline,"%s%c",temptextline,' '); /*add spaces*/
+            sprintf(temptextline,"%s%c",temptextline,' '); /*add spaces*/
         }
-        gfc_block_sprintf(temptextline,"%s %s",temptextline,word); /*add a word*/
+        sprintf(temptextline,"%s %s",temptextline,word); /*add a word*/
         TTF_SizeText(font->font, temptextline, &w, &h); /*see how big it is now*/
         lindex += strlen(word);
         if(w > block.w)         /*see if we have gone over*/
@@ -482,7 +482,7 @@ void gf2d_font_draw_text_wrap(
                     break;
                 }
             }
-            gfc_block_sprintf(temptextline,"%s",word); /*add a word*/
+            sprintf(temptextline,"%s",word); /*add a word*/
         }
     }while(1);
     

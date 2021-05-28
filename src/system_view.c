@@ -5,6 +5,7 @@
 #include "gfc_input.h"
 
 #include "camera.h"
+#include "windows_common.h"
 #include "empire_hud.h"
 #include "galaxy_view.h"
 #include "system_view.h"
@@ -97,6 +98,19 @@ int system_view_update(Window *win,List *updateList)
         }
     }
     
+    if (gf2d_mouse_button_released(2))
+    {
+        if (data->highlightedPlanet)
+        {
+            data->selectedPlanet = data->highlightedPlanet;
+            window_alert("planet", data->selectedPlanet->name, NULL,NULL);
+            slog("planet name: [%s]",data->selectedPlanet->name);
+        }
+        else
+        {
+            data->selectedPlanet = NULL;
+        }
+    }
     if (gf2d_mouse_button_released(0))
     {
         if (data->highlightedPlanet)

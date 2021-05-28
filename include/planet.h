@@ -46,7 +46,7 @@ List *planet_list_get_from_json(SJson *json);
 SJson planet_list_to_json(List *planetList);
 Planet *planet_get_by_id(List *planetList, Uint32 id);
 
-Planet *planet_generate(Uint32 *id, int planetType, Uint32 seed, Vector2D position,Vector2D *bottomRight);
+Planet *planet_generate(Uint32 *id, int planetType, Uint32 seed, Vector2D position,Vector2D *bottomRight,char *name);
 Planet *planet_new();
 void    planet_free(Planet* planet);
 
