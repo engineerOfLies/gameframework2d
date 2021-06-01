@@ -1,17 +1,21 @@
 #ifndef __EMPIRE_H__
 #define __EMPIRE_H__
 
+#include "simple_json.h"
+
 #include "gfc_list.h"
 #include "gfc_text.h"
 #include "gfc_types.h"
 #include "gfc_vector.h"
 
+#include "regions.h"
 #include "systems.h"
 #include "planet.h"
 
 typedef struct
 {
     Uint32      id;             /**<unique id for the empire*/
+    Uint64      gameTime;       /**<time for the empire*/
     TextLine    leaderName;     /**<leader of the empire's name*/
     TextLine    empireName;     /**<name of the player's empire*/
     System     *homeSystem;     /**<this empire's home system*/
@@ -26,6 +30,7 @@ typedef struct
     Uint32      minerals;       /**<how many minerals are at the empire's disposal*/
     Uint32      population;     /**<how many workers are at the empire's disposal*/
     Uint32      agriculture;    /**<how much food has been produced by the empire*/
+    SJson      *progress;       /**<keeps track of updates throughout the galaxy*/
 }Empire;
 
 /**
@@ -42,5 +47,10 @@ void empire_set_home_system(Empire *empire,System *system);
 void empire_set_home_planet(Empire *empire,Planet *planet);
 
 Empire *empire_load();
+
+
+SurveyState empire_region_get_survey_state(Empire *empire,Uint32 regionId,SurveyType surveyType);
+
+
 
 #endif

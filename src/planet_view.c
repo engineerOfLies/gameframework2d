@@ -10,9 +10,11 @@
 #include "galaxy_view.h"
 #include "system_view.h"
 #include "planet_view.h"
+#include "region_menu.h"
 
 typedef struct
 {
+    Empire *empire;
     Vector2D pressPosition;
     Vector2D cameraPosition;
     Planet *planet;
@@ -21,6 +23,17 @@ typedef struct
     Window *childWindow;
 }PlanetWindowData;
 
+
+void planet_view_close_child_window(Window *win)
+{
+    PlanetWindowData *data;
+    if (!win)return;
+    if (!win->data)return;
+    data = (PlanetWindowData*)win->data;
+    data->childWindow = NULL;
+    camera_set_position(data->cameraPosition);
+    empire_hud_bubble();
+}
 
 int planet_view_draw(Window *win)
 {
@@ -35,10 +48,18 @@ int planet_view_draw(Window *win)
     planet_draw_planet_view(data->planet,drawOffset);
     
     
+    if (data->selectedRegion)
+    {
+        drawOffset = camera_position_to_screen(data->selectedRegion->drawPosition);
+        drawOffset.y += 40;
+        gf2d_draw_circle(drawOffset, 128, vector4d(255,255,100,255));        
+    }
     if (!gf2d_window_mouse_in(win))
     {
         return 0;//if outside the window rect, its over something else
     }
+
+    if (data->childWindow)return 0;
 
     mousePosition = camera_get_mouse_position();
     region = planet_get_region_by_position(data->planet,mousePosition);
@@ -50,12 +71,6 @@ int planet_view_draw(Window *win)
         gf2d_draw_circle(drawOffset, 128, vector4d(100,255,255,255));
     }
     
-    if (data->selectedRegion)
-    {
-        drawOffset = camera_position_to_screen(data->selectedRegion->drawPosition);
-        drawOffset.y += 40;
-        gf2d_draw_circle(drawOffset, 128, vector4d(255,255,100,255));        
-    }
     
     return 1;
 }
@@ -76,6 +91,7 @@ int planet_view_update(Window *win,List *updateList)
     if (!win)return 0;
     if (!win->data)return 0;
     data = (PlanetWindowData*)win->data;
+    if (data->childWindow)return 0;
 
     camera_mouse_pan();
     if (!gf2d_window_mouse_in(win))
@@ -111,14 +127,17 @@ int planet_view_update(Window *win,List *updateList)
     {
         if (data->highlightedRegion)
         {
-            //open up region window
+            data->selectedRegion = data->highlightedRegion;
+            data->cameraPosition = camera_get_position();
+            data->childWindow =  region_menu(data->empire,data->highlightedRegion,win);
+            empire_hud_bubble();
         }
     }
 
     return 0;
 }
 
-Window *planet_view_window(Planet *planet,Window *parent)
+Window *planet_view_window(Empire *empire,Planet *planet,Window *parent)
 {
     Window *win;
     PlanetWindowData *data;
@@ -134,6 +153,7 @@ Window *planet_view_window(Planet *planet,Window *parent)
     win->free_data = planet_view_free;
     data = gfc_allocate_array(sizeof(PlanetWindowData),1);
     data->planet = planet;
+    data->empire = empire;
     win->data = data;
     win->parent = parent;
     camera_set_bounds(-128,-128,planet->area.x,planet->area.y);

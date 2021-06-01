@@ -31,6 +31,23 @@ typedef enum
 
 typedef enum
 {
+    ST_Fertility,
+    ST_Minerals,
+    ST_Habitable,
+    ST_MAX
+}SurveyType;
+
+typedef enum
+{
+    SS_Unserveyed,
+    SS_Started,
+    SS_Underway,
+    SS_Completed,
+    SS_Max
+}SurveyState;
+
+typedef enum
+{
     IT_None,
     IT_Population,
     IT_Agriculture,
@@ -46,6 +63,7 @@ typedef enum
 typedef struct
 {
     Uint32      id;                 /**<unique id for the region*/
+    TextLine    name;
     RegionBiome biome;              /**<terrain this region is made up of*/
     float       regionRange;        /**<*/
     Vector2D    drawPosition;       /**<where on the planet to draw this region*/

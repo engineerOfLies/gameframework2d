@@ -194,6 +194,13 @@ void gf2d_window_set_position(Window *win,Vector2D position)
     vector2d_copy(win->dimensions,position);
 }
 
+void gf2d_window_set_size(Window *win,Vector2D size)
+{
+    if (!win)return;
+    win->dimensions.w = size.x;
+    win->dimensions.y = size.y;
+}
+
 void gf2d_window_draw(Window *win)
 {
     int count,i;

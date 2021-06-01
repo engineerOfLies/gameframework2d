@@ -174,6 +174,8 @@ Region *region_generate(Uint32 id,RegionBiome biome,float regionRange, Vector2D 
     
     region->id = id;
     region->biome = biome;
+    
+    gfc_line_cpy(region->name,region_name_from_biome(biome));
     region->regionRange = regionRange;
     vector2d_copy(region->drawPosition,position);
     

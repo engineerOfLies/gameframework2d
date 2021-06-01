@@ -3,19 +3,6 @@
 
 #include "gf2d_elements.h"
 
-typedef enum
-{
-    LJ_Left,
-    LJ_Center,
-    LJ_Right
-}LabelJustification;
-
-typedef enum
-{
-    LA_Top,
-    LA_Middle,
-    LA_Bottom
-}LabelAlignment;
 
 typedef struct
 {

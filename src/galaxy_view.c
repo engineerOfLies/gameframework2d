@@ -13,6 +13,7 @@
 typedef struct
 {
     float scale;
+    Empire *empire;
     Vector2D cameraPosition;
     Galaxy *galaxy;
     System *selectedSystem;
@@ -124,24 +125,16 @@ int galaxy_view_update(Window *win,List *updateList)
         if (data->highlightedSystem)
         {
             data->cameraPosition = camera_get_position();
-            data->childWindow = system_view_window(data->highlightedSystem,win);
+            data->childWindow = system_view_window(data->empire,data->highlightedSystem,win);
             empire_hud_bubble();
         }
     }
     
-    if (gfc_input_mouse_wheel_up())
-    {
-        data->scale += 0.1;
-    }
-    if (gfc_input_mouse_wheel_down())
-    {
-        data->scale -= 0.1;
-    }
 
     return 0;
 }
 
-Window *galaxy_view_window(Galaxy *galaxy,Window *parent)
+Window *galaxy_view_window(Empire *empire, Galaxy *galaxy,Window *parent)
 {
     Window *win;
     GalaxyWindowData *data;
@@ -158,6 +151,7 @@ Window *galaxy_view_window(Galaxy *galaxy,Window *parent)
     data = gfc_allocate_array(sizeof(GalaxyWindowData),1);
     data->galaxy = galaxy;
     data->scale = 1;
+    data->empire = empire;
     win->data = data;
     win->parent = parent;
     empire_hud_bubble();

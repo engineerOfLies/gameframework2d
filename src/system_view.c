@@ -13,6 +13,7 @@
 
 typedef struct
 {
+    Empire *empire;
     Vector2D cameraPosition;
     System *system;
     Window *childWindow;
@@ -116,7 +117,7 @@ int system_view_update(Window *win,List *updateList)
         if (data->highlightedPlanet)
         {
             data->cameraPosition = camera_get_position();
-            data->childWindow =  planet_view_window(data->highlightedPlanet,win);
+            data->childWindow =  planet_view_window(data->empire,data->highlightedPlanet,win);
             empire_hud_bubble();
         }
     }
@@ -125,7 +126,7 @@ int system_view_update(Window *win,List *updateList)
     return 0;
 }
 
-Window *system_view_window(System *system,Window *parent)
+Window *system_view_window(Empire *empire,System *system,Window *parent)
 {
     Window *win;
     SystemWindowData *data;
@@ -141,6 +142,7 @@ Window *system_view_window(System *system,Window *parent)
     win->free_data = system_view_free;
     data = gfc_allocate_array(sizeof(SystemWindowData),1);
     data->system = system;
+    data->empire = empire;
     win->data = data;
     win->parent = parent;
     camera_set_position(vector2d(-128,-128));

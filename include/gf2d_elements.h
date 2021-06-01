@@ -18,6 +18,21 @@
 
 typedef enum
 {
+    LJ_Left,
+    LJ_Center,
+    LJ_Right
+}LJustification;
+
+typedef enum
+{
+    LA_Top,
+    LA_Middle,
+    LA_Bottom
+}LAlignment;
+
+
+typedef enum
+{
     ES_idle,        /**<normal*/
     ES_disable,     /**<greyed out*/
     ES_highlight,   /**<selected*/

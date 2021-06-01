@@ -147,4 +147,18 @@ int gf2d_window_mouse_in(Window *win);
  */
 void gf2d_window_set_position(Window *win,Vector2D position);
 
+/**
+ * @brief realign window to the screen
+ * @param win the window to align
+ * @param vertical if < 0 snap to top, if 0 then center vertically, otherwise snap to the bottom
+ */
+void gf2d_window_align(Window *win,int vertical);
+
+/**
+ * @brief change the size of the window
+ * @param win the window to resize
+ * @param size the new size for the window
+ */
+void gf2d_window_set_size(Window *win,Vector2D size);
+
 #endif

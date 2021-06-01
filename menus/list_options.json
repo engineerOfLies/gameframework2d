@@ -1,0 +1,47 @@
+{
+"window":{
+    "color" : [255,255,255, 255],
+    "dimensions" : [0,0,350,44],
+    "justify" : "center",
+    "align" : "middle",
+    "elements":
+    [
+      {
+        "type": "list",
+        "name": "list",
+        "id" : 0,
+        "bounds": [10,10,1,1],
+        "color" : [255,255,255,255],
+        "style": "vertical",
+        "item_size" : [1,40],
+        "elements":
+        [
+            {
+            "type": "label",
+            "name": "question",
+            "id" : 1,
+            "bounds": [0,0,1,40],
+            "color" : [255,255,255,255],
+            "text":"?",
+            "justify" : "center",
+            "align" : "middle",
+            "style":"H2"
+            },
+            {
+            "type": "list",
+            "name": "options",
+            "id" : 50,
+            "bounds": [91,0,168,1],
+            "color" : [255,255,255,255],
+            "justify" : "center",
+            "style": "vertical",
+            "item_size" : [168,64],
+            "elements":
+            [
+            ]
+            }
+        ]
+      }
+    ]
+    }
+}

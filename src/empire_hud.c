@@ -108,6 +108,8 @@ int empire_hud_update(Window *win,List *updateList)
     if (!win)return 0;
     if (!win->data)return 0;
     data = (EmpireHudData*)win->data;
+    // NOTE : Update game time for the empire
+    data->empire->gameTime++;
     return 0;
 }
 
@@ -128,7 +130,7 @@ Window *empire_hud_window(Empire *empire,Galaxy *galaxy)
     data = gfc_allocate_array(sizeof(EmpireHudData),1);
     data->galaxy = galaxy;
     data->empire = empire;
-    data->view = galaxy_view_window(galaxy,win); 
+    data->view = galaxy_view_window(empire,galaxy,win); 
     data->titlebar = gf2d_sprite_load_image("images/ui/titlebar.png");
     data->icons = gf2d_sprite_load_all("images/ui/iconsprite.png",24,24,1,0);
     win->data = data;
