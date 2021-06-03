@@ -73,7 +73,7 @@ Galaxy *galaxy_generate(Uint32 seed, Uint32 count)
     if (!galaxy)return NULL;
     galaxy->seed = seed;
     srand(galaxy->seed);
-    slog("generating galaxy with seed (%i) with %i star systems",galaxy->seed,count);
+    if (gf2d_graphics_debug_mode())slog("generating galaxy with seed (%i) with %i star systems",galaxy->seed,count);
     for (i = 0; i < count;i++)
     {
         galaxy->systemList = gfc_list_append(galaxy->systemList,system_generate(galaxy,++galaxy->idPool,galaxy->seed));

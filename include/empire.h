@@ -39,6 +39,12 @@ typedef struct
 void empire_init();
 
 Empire *empire_new();
+
+/**
+ * @brief perform all upkeep needed for an empire
+ * @param empire the one in question
+ */
+void empire_update(Empire *empire);
 void empire_free(Empire *empire);
 
 void empire_give_system(Empire *empire,System *system);
@@ -50,6 +56,7 @@ Empire *empire_load();
 
 
 SurveyState empire_region_get_survey_state(Empire *empire,Uint32 regionId,SurveyType surveyType);
+int empire_survery_region(Empire *empire,Uint32 regionId,SurveyType surveyType);
 
 
 

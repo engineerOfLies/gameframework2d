@@ -7,6 +7,7 @@
 #include "gf2d_font.h"
 
 #include "camera.h"
+#include "message_buffer.h"
 
 #include "galaxy.h"
 #include "empire.h"
@@ -29,6 +30,7 @@ static Window *empire_window = NULL;
 void empire_hud_bubble()
 {
     gf2d_window_bring_to_front(empire_window);
+    message_buffer_bubble();
 }
 
 void empire_hud_draw_titlebar(Empire *empire,EmpireHudData *data)
@@ -108,8 +110,7 @@ int empire_hud_update(Window *win,List *updateList)
     if (!win)return 0;
     if (!win->data)return 0;
     data = (EmpireHudData*)win->data;
-    // NOTE : Update game time for the empire
-    data->empire->gameTime++;
+    empire_update(data->empire);
     return 0;
 }
 
@@ -136,6 +137,7 @@ Window *empire_hud_window(Empire *empire,Galaxy *galaxy)
     win->data = data;
     empire_window = win;
     empire_hud_bubble();
+    message_new("Welcome Emperor");
     return win;
 
 }

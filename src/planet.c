@@ -203,7 +203,7 @@ void planet_generate_regions(Planet *planet)
             if (regionChoice < regionRange)
             {
                 str = sj_get_string_value(sj_object_get_value(regionData,"type"));
-                slog("generating region %s",str);
+                if (gf2d_graphics_debug_mode())slog("generating region %s",str);
                 break;
             }
         }
@@ -269,7 +269,7 @@ Planet *planet_generate(Uint32 *id, int planetType, Uint32 seed, Vector2D positi
     maxBR.y = position.y + (planet_manager.planet[planet->classification].drawSize * 2);
     if (planet->classification == PC_Moon)
     {
-        slog("generating moon %i",planet->id);
+        if (gf2d_graphics_debug_mode())slog("generating moon %i",planet->id);
         if (bottomRight)
         {
         bottomRight->x = maxBR.x;
@@ -278,7 +278,7 @@ Planet *planet_generate(Uint32 *id, int planetType, Uint32 seed, Vector2D positi
         return planet;// moons are done
     }
     moonCount = (int)(gfc_random() * 5);
-    slog("generating planet %i of type %i with %i moons",planet->id,planet->classification,moonCount);
+    if (gf2d_graphics_debug_mode())slog("generating planet %i of type %i with %i moons",planet->id,planet->classification,moonCount);
     //moons!
     newPosition.x = position.x + (planet_manager.planet[planet->classification].drawSize * childPosition.x);
     newPosition.y = position.y + (planet_manager.planet[planet->classification].drawSize * childPosition.y);

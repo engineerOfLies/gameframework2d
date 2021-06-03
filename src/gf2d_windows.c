@@ -206,7 +206,10 @@ void gf2d_window_draw(Window *win)
     int count,i;
     Vector2D offset;
     if (!win)return;
-    gf2d_draw_window_border_generic(win->dimensions,win->color);
+    if (!win->no_draw_default_window)
+    {
+        gf2d_draw_window_border_generic(win->dimensions,win->color);
+    }
     offset.x = win->dimensions.x + win->canvas.x;
     offset.y = win->dimensions.y + win->canvas.y;
     count = gfc_list_get_count(win->elements);

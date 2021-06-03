@@ -14,6 +14,7 @@
 
 #include "camera.h"
 #include "windows_common.h"
+#include "message_buffer.h"
 #include "regions.h"
 #include "planet_view.h"
 #include "region_menu.h"
@@ -48,9 +49,32 @@ static const char *options[] =
     "Habitable"
 };
 
-void onFertility(void *data)
+void onFertility(void *cData)
 {
-    slog("Fertility survey ordered");
+    int survey;
+    RegionMenuData* data;
+    Window *win = (Window *)cData;
+    if (!win)return;
+    data = win->data;
+    survey = empire_survery_region(data->empire,data->region->id,ST_Fertility);
+    if (survey < 0)
+    {
+        slog("Servey","Error, cannot survery");
+        return;
+    }
+    if (survey == SS_Started)
+    {
+        message_new("Fertility Survey has been started");
+    }
+    else if (survey == SS_Underway)
+    {
+        message_new("Fertility servey already underway!");
+    }
+    else if (survey == SS_Completed)
+    {
+        message_new("Fertility servey already completed!");
+    }
+    
 }
 void onMinerals(void *data)
 {
@@ -107,7 +131,7 @@ int region_menu_update(Window *win,List *updateList)
 Window *region_menu(Empire *empire, Region *region,Window *parent)
 {
     SurveyState state;
-    TextLine line;
+//    TextLine line;
     Window *win;
     RegionMenuData* data;
     if (!region)

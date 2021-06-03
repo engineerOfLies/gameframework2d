@@ -120,6 +120,7 @@ System *system_generate(Galaxy *galaxy, Uint32 id, Uint32 seed)
     
     srand(id + seed);
 
+    if (gf2d_graphics_debug_mode())slog("generating system with id %i",id);
     nameIndex = (int)(gfc_random() * system_manager.systemNameCount);
     gfc_line_sprintf(system->name,"%s-%i",systemNames[nameIndex],system->id);
     starCount = (int)(gfc_random()*4.0) + 1;

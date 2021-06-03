@@ -13,6 +13,7 @@
 #include "gf2d_draw.h"
 #include "camera.h"
 #include "windows_common.h"
+#include "message_buffer.h"
 
 #include "main_menu.h"
 #include "galaxy.h"
@@ -94,6 +95,8 @@ int main(int argc, char * argv[])
     planet_init();
     regions_init();
     empire_init();
+    
+    message_buffer_init(8,500, gfc_color8(255,255,255,255));
     
     main_menu();
     while(!_done)

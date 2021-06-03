@@ -26,6 +26,7 @@ typedef struct Window_S
     int _inuse;             /**<do not touch*/
     TextLine    name;       /**<name of window*/
     int no_draw_generic;    /**<if true, do not use the generic window draw style*/
+    int no_draw_default_window;/**<if true, do not draw the bordered window background*/
     List *elements;         /**<all the components of the window*/
     Sprite *background;     /**<background image*/
     Sprite *border;         /**<border sprites*/

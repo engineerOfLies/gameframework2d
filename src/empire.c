@@ -2,6 +2,7 @@
 #include <simple_json.h>
 
 
+#include "message_buffer.h"
 #include "galaxy.h"
 #include "systems.h"
 #include "planet.h"
@@ -60,6 +61,8 @@ Empire *empire_new()
     empire->technologies = gfc_list_new();
     empire_data.list = gfc_list_append(empire_data.list,empire);
     empire->progress = sj_object_new();
+    sj_object_insert(empire->progress,"surveys",sj_array_new());
+
     slog("generated new empire");
     return empire;
 }
@@ -109,16 +112,16 @@ void empire_free(Empire *empire)
     free(empire);
 }
 
-SurveyState empire_region_get_survey_state(Empire *empire,Uint32 regionId,SurveyType surveyType)
+SJson *empire_region_get_survey_json(Empire *empire,Uint32 regionId,SurveyType surveyType)
 {
-    int i,c,id,state = 0;
+    int i,c,id;
     int survey_type;
     SJson *surveys,*survey;
-    if (!empire)return SS_Max;
+    if (!empire)return NULL;
     surveys = sj_object_get_value(empire->progress,"surveys");
     if (!surveys)
     {
-        return SS_Max;
+        return NULL;
     }
     // check if the survey has already been ordered
     c = sj_array_get_count(surveys);
@@ -135,40 +138,102 @@ SurveyState empire_region_get_survey_state(Empire *empire,Uint32 regionId,Survey
                 {
                     if (survey_type == surveyType)
                     {
-                        // this exact survey type has already been started
-                        sj_get_integer_value(sj_object_get_value(survey,"surveyState"),&state);
-                        return (SurveyState)state;
+                        return survey;
                     }
                 }
             }
         }
     }
-    return SS_Unserveyed;
+    return NULL;
+}
+
+SurveyState empire_region_get_survey_state(Empire *empire,Uint32 regionId,SurveyType surveyType)
+{
+    int state = 0;
+    SJson *survey;
+    if (!empire)return SS_Max;
+    
+    survey = empire_region_get_survey_json(empire,regionId,surveyType);
+    if (!survey)
+    {
+        //not there
+        return SS_Unserveyed;
+    }
+    sj_get_integer_value(sj_object_get_value(survey,"surveyState"),&state);
+    return (SurveyState)state;
+}
+
+void empire_surveys_update(Empire *empire)
+{
+    int i,c,id;
+    int state = 0;
+    int startTime = 0;
+    int survey_type;
+    SJson *surveys,*survey;
+    if (!empire)return;
+    surveys = sj_object_get_value(empire->progress,"surveys");
+    if (!surveys)
+    {
+//        slog("no surveys ordered");
+        return;
+    }
+    // check if the survey has already been ordered
+    c = sj_array_get_count(surveys);
+    for (i = 0;i < c;i ++)
+    {
+        survey = sj_array_get_nth(surveys,i);
+        if (!survey)continue;
+        // do survey update
+        sj_get_integer_value(sj_object_get_value(survey,"surveyState"),&state);
+        if (state == SS_Completed)continue;
+        sj_get_integer_value(sj_object_get_value(survey,"startTime"),&startTime);
+        switch(state)
+        {
+            case    SS_Started:
+                if (startTime < empire->gameTime)
+                {
+                    sj_object_delete_key(survey,"surveyState");
+                    sj_object_insert(survey,"surveyState",sj_new_int((int)SS_Underway));
+                }
+                break;
+            case    SS_Underway:
+                if ((startTime + 100) < empire->gameTime)   //TODO: take this from a config
+                {
+                    sj_object_delete_key(survey,"surveyState");
+                    sj_object_insert(survey,"surveyState",sj_new_int((int)SS_Completed));
+                    message_new("survey complete");
+                }
+            default:
+                continue;
+        }
+    }
 }
 
 int empire_survery_region(Empire *empire,Uint32 regionId,SurveyType surveyType)
 {
     SurveyState state;
     SJson *surveys,*survey;
-    if (!empire)return -1;
+    if (!empire)
+    {
+        slog("no empire provided");
+        return -1;
+    }
     
     state = empire_region_get_survey_state(empire,regionId,surveyType);
     if (state == SS_Max)
     {
-        surveys = sj_array_new();
-        if (!surveys)
-        {
-            slog("failed to allocate memory for survey progress!!");
-            return -1;
-        }
-        sj_object_insert(empire->progress,"surveys",surveys);
+        return -1;
     }
     else if (state != SS_Unserveyed)
     {
         return (int)state;
     }
     surveys = sj_object_get_value(empire->progress,"surveys");
-
+    if (!surveys)
+    {
+        slog("surveys list not found");
+        return -1;
+    }
     
     // this exact type of survey has not been started for this regionId yet
     survey = sj_object_new();// so build it
@@ -177,7 +242,8 @@ int empire_survery_region(Empire *empire,Uint32 regionId,SurveyType surveyType)
         slog("failed to create object data for survey");
         return -1;
     }
-    
+
+    sj_object_insert(survey,"startTime",sj_new_int((int)empire->gameTime));    
     sj_object_insert(survey,"regionId",sj_new_int((int)regionId));
     sj_object_insert(survey,"surveyType",sj_new_int((int)surveyType));
     sj_object_insert(survey,"surveyState",sj_new_int((int)SS_Started));
@@ -185,5 +251,17 @@ int empire_survery_region(Empire *empire,Uint32 regionId,SurveyType surveyType)
     sj_array_append(surveys,survey);
     return SS_Started;
 }
+
+void empire_update(Empire *empire)
+{
+    if (!empire)
+    {
+        slog("no empire provided");
+        return;
+    }
+    empire->gameTime++;
+    empire_surveys_update(empire);
+}
+
 
 /*eol@eof*/

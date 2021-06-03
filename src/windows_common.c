@@ -158,7 +158,7 @@ int alert_update(Window *win,List *updateList)
             }
         }
         gf2d_window_free(win);
-        return 1;
+        return 0;
     }
     if (!updateList)return 0;
     count = gfc_list_get_count(updateList);
@@ -175,11 +175,11 @@ int alert_update(Window *win,List *updateList)
                     gfc_callback_call(callback);
                 }
                 gf2d_window_free(win);
-                return 1;
+                return 0;
                 break;
         }
     }
-    return 1;
+    return 0;
 }
 
 
