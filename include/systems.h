@@ -52,4 +52,12 @@ void system_draw_galaxy_view(System *system,Vector2D offset,float scale);
 void system_draw_system_view(System *system, Vector2D offset);
 void system_draw_system_lines(System *system, Vector2D offset);
 
+/**
+ * @brief check if the system can be seen by the empire
+ * @param system the system to check
+ * @param empireId the empire in question
+ */
+Uint8 system_can_view(System *system,Uint32 empireId);
+
+
 #endif

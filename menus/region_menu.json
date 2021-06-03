@@ -1,7 +1,7 @@
 {
 "window":{
     "color" : [255,255,255, 255],
-    "dimensions" : [0,40,168,1],
+    "dimensions" : [0,40,200,1],
     "justify" : "right",
     "elements":
     [
@@ -28,11 +28,11 @@
             },
             {
                 "type": "label",
-                "name": "minerals",
-                "id" : 2,
+                "name": "fertility",
+                "id" : 3,
                 "bounds": [10,0,1,30],
                 "color" : [255,255,255,255],
-                "text":"Minerals: ?",
+                "text":"Fertility: ?",
                 "wraps":true,
                 "justify" : "left",
                 "align" : "top",
@@ -40,11 +40,11 @@
             },
             {
                 "type": "label",
-                "name": "fertility",
-                "id" : 3,
+                "name": "minerals",
+                "id" : 2,
                 "bounds": [10,0,1,30],
                 "color" : [255,255,255,255],
-                "text":"Fertility: ?",
+                "text":"Minerals: ?",
                 "wraps":true,
                 "justify" : "left",
                 "align" : "top",

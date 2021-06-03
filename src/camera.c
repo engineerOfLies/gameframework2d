@@ -88,7 +88,7 @@ Vector2D camera_get_offset()
 void camera_set_bounds(float x,float y,float w,float h)
 {
     gf2d_rect_set(_camera.bounds,x,y,w,h);
-    slog("camera bounds set to [%f,%f,%f,%f]",_camera.bounds.x,_camera.bounds.y,_camera.bounds.w,_camera.bounds.h);
+//    slog("camera bounds set to [%f,%f,%f,%f]",_camera.bounds.x,_camera.bounds.y,_camera.bounds.w,_camera.bounds.h);
 }
 
 void camera_bind()

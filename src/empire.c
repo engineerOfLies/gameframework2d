@@ -3,7 +3,6 @@
 
 
 #include "message_buffer.h"
-#include "galaxy.h"
 #include "systems.h"
 #include "planet.h"
 
@@ -17,6 +16,7 @@ typedef struct
 
 static EmpireData empire_data = {0};
 
+void empire_give_planet_recursively(Empire *empire,Planet *planet);
 
 void empire_close()
 {
@@ -42,6 +42,20 @@ void empire_init()
     slog("empire system initialized");
 }
 
+Empire *empire_get_by_id(Uint32 id)
+{
+    int i,count;
+    Empire *empire;
+    count = gfc_list_get_count(empire_data.list);
+    for (i = 0; i < count;i++)
+    {
+        empire = gfc_list_get_nth(empire_data.list,i);
+        if (!empire)continue;
+        if (empire->id == id)return empire;
+    }
+    return NULL;
+}
+
 Empire *empire_new()
 {
     Empire *empire;
@@ -53,7 +67,7 @@ Empire *empire_new()
         slog("failed to allocate memory for a new empire");
         return NULL;
     }
-    empire->id = empire_data.idPool++;
+    empire->id = 1 + empire_data.idPool++;
     empire->systems = gfc_list_new();
     empire->planets = gfc_list_new();
     empire->armada = gfc_list_new();
@@ -67,15 +81,61 @@ Empire *empire_new()
     return empire;
 }
 
+void empire_setup(Empire *empire)
+{
+    Planet *planet;
+    int i,count;
+    Galaxy *galaxy;
+
+    if (!empire)return;
+
+    galaxy = galaxy_generate(2,10);     //TODO: from config
+
+    empire->galaxy = galaxy;
+    empire->empireColor = gfc_color(0.6,0.6,1,1);
+    
+    // designate a home system near the galactic center
+    empire->homeSystem = galaxy_get_nearest_system(galaxy,NULL,vector2d(0.5,0.5),0.5);
+    gfc_line_sprintf(empire->empireName,"The %s Empire",empire->homeSystem->name);
+    
+    // TODO: be more selective in what system can be chosen for a homeSystem
+    empire_give_system(empire,empire->homeSystem);
+    // now give every planet in that system to the player
+    count = gfc_list_get_count(empire->homeSystem->planets);
+    for (i = 0; i < count;i++)
+    {
+        planet = gfc_list_get_nth(empire->homeSystem->planets,i);
+        if (!planet)continue;
+        empire_give_planet_recursively(empire,planet);
+    }
+}
+
 void empire_give_system(Empire *empire,System *system)
 {
     if ((!empire)||(!system))return;
+    system->allegience = empire->id;
     empire->systems = gfc_list_append(empire->systems,system);
+}
+
+void empire_give_planet_recursively(Empire *empire,Planet *planet)
+{
+    int i,count;
+    Planet *child;
+    if ((!empire)||(!planet))return;
+    empire_give_planet(empire,planet);
+    count = gfc_list_get_count(planet->children);
+    for (i = 0; i < count; i++)
+    {
+        child = gfc_list_get_nth(planet->children,i);
+        if (!child)continue;
+        empire_give_planet_recursively(empire,child);
+    }
 }
 
 void empire_give_planet(Empire *empire,Planet *planet)
 {
     if ((!empire)||(!planet))return;
+    planet->allegience = empire->id;
     empire->planets = gfc_list_append(empire->planets,planet);
 }
 
@@ -165,10 +225,9 @@ SurveyState empire_region_get_survey_state(Empire *empire,Uint32 regionId,Survey
 
 void empire_surveys_update(Empire *empire)
 {
-    int i,c,id;
+    int i,c;
     int state = 0;
     int startTime = 0;
-    int survey_type;
     SJson *surveys,*survey;
     if (!empire)return;
     surveys = sj_object_get_value(empire->progress,"surveys");
@@ -263,5 +322,17 @@ void empire_update(Empire *empire)
     empire_surveys_update(empire);
 }
 
+int empire_get_credits(Empire *empire)
+{
+    if (!empire)return 0;
+    return empire->credits;
+}
+
+int empire_change_credits(Empire *empire,int credits)
+{
+    if (!empire)return 0;
+    empire->credits += credits;
+    return empire->credits;
+}
 
 /*eol@eof*/

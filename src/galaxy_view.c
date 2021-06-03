@@ -6,6 +6,7 @@
 
 #include "camera.h"
 #include "windows_common.h"
+#include "message_buffer.h"
 #include "galaxy_view.h"
 #include "system_view.h"
 #include "empire_hud.h"
@@ -19,8 +20,46 @@ typedef struct
     System *selectedSystem;
     System *highlightedSystem;
     Window *childWindow;
+    Sprite *home_star;
 }GalaxyWindowData;
 
+void galaxy_draw_empire_systems(Empire *empire,GalaxyWindowData *data)
+{
+    int i,count;
+    System *system;
+    Vector4D homeColorShift = {100,100,255,255};
+    Vector4D colorShift = {100,255,100,255};
+    Vector2D position;
+    if (empire->homeSystem)
+    {
+        position = galaxy_position_to_screen_position(empire->homeSystem->position);
+        gf2d_sprite_draw(
+            data->home_star,
+            vector2d(position.x - 32,position.y - 32),
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            &homeColorShift,
+            0);
+    }
+    count = gfc_list_get_count(empire->systems);
+    for (i = 0; i < count; i++)
+    {
+        system = gfc_list_get_nth(empire->systems,i);
+        if ((!system)||(system == empire->homeSystem))continue;
+        position = galaxy_position_to_screen_position(system->position);
+        gf2d_sprite_draw(
+            data->home_star,
+            vector2d(position.x - 32,position.y - 32),
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            &colorShift,
+            0);
+    }
+}
 
 int galaxy_view_draw(Window *win)
 {
@@ -37,12 +76,13 @@ int galaxy_view_draw(Window *win)
     cameraOffset = camera_get_offset();
     
     galaxy_draw(data->galaxy,vector2d(win->dimensions.x + cameraOffset.x,win->dimensions.y + cameraOffset.y),data->scale);
+    galaxy_draw_empire_systems(data->empire,data);
     
     if (!gf2d_window_mouse_in(win))
     {
         return 0;//if outside the window rect, its over something else
     }
-
+    
     mouseposition = gf2d_mouse_get_position();
     mouseposition.x -= win->dimensions.x + cameraOffset.x;
     mouseposition.y -= win->dimensions.y + cameraOffset.y;
@@ -76,6 +116,8 @@ int galaxy_view_free(Window *win)
     if (!win)return 0;
     if (!win->data)return 0;
     data = (GalaxyWindowData*)win->data;
+    gf2d_window_free(data->childWindow);
+    gf2d_sprite_free(data->home_star);
     free(data);
     return 0;
 }
@@ -86,6 +128,7 @@ void galaxy_view_close_child_window(Window *win)
     if (!win)return;
     if (!win->data)return;
     data = (GalaxyWindowData*)win->data;
+    gf2d_window_free(data->childWindow);
     data->childWindow = NULL;
     camera_set_position(data->cameraPosition);
     empire_hud_bubble();
@@ -124,9 +167,16 @@ int galaxy_view_update(Window *win,List *updateList)
     {
         if (data->highlightedSystem)
         {
-            data->cameraPosition = camera_get_position();
-            data->childWindow = system_view_window(data->empire,data->highlightedSystem,win);
-            empire_hud_bubble();
+            if (system_can_view(data->highlightedSystem,data->empire->id))
+            {
+                data->cameraPosition = camera_get_position();
+                data->childWindow = system_view_window(data->empire,data->highlightedSystem,win);
+                empire_hud_bubble();
+            }
+            else
+            {
+                message_new("cannot view this system");
+            }
         }
     }
     
@@ -149,11 +199,14 @@ Window *galaxy_view_window(Empire *empire, Galaxy *galaxy,Window *parent)
     win->update = galaxy_view_update;
     win->free_data = galaxy_view_free;
     data = gfc_allocate_array(sizeof(GalaxyWindowData),1);
+    gfc_line_cpy(win->name,"galaxy_view");
     data->galaxy = galaxy;
     data->scale = 1;
     data->empire = empire;
+    data->home_star = gf2d_sprite_load_image("images/home_star.png");
     win->data = data;
     win->parent = parent;
+    camera_set_position(vector2d(0,0));
     empire_hud_bubble();
     return win;
 }

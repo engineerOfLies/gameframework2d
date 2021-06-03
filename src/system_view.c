@@ -6,6 +6,7 @@
 
 #include "camera.h"
 #include "windows_common.h"
+#include "message_buffer.h"
 #include "empire_hud.h"
 #include "galaxy_view.h"
 #include "system_view.h"
@@ -35,7 +36,6 @@ void system_view_close_child_window(Window *win)
 
 int system_view_draw(Window *win)
 {
-    Planet *planet;
     Vector2D mouseposition;
     SystemWindowData *data;
     Vector2D drawOffset;
@@ -71,6 +71,7 @@ int system_view_free(Window *win)
     if (!win)return 0;
     if (!win->data)return 0;
     data = (SystemWindowData*)win->data;
+    if (data->childWindow)gf2d_window_free(data->childWindow);
     free(data);
     return 0;
 }
@@ -94,7 +95,6 @@ int system_view_update(Window *win,List *updateList)
         if (gfc_input_command_released("cancel"))
         {
             galaxy_view_close_child_window(win->parent);
-            gf2d_window_free(win);
             return 1;
         }
     }
@@ -146,6 +146,7 @@ Window *system_view_window(Empire *empire,System *system,Window *parent)
     win->data = data;
     win->parent = parent;
     camera_set_position(vector2d(-128,-128));
+    message_new(system->name);
     return win;
 
 }

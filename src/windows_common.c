@@ -297,6 +297,11 @@ int option_list_update(Window *win,List *updateList)
     count = gfc_list_get_count(updateList);
     if (gfc_input_command_released("cancel"))
     {
+        callback = (Callback*)gfc_list_get_nth(callbacks,count);
+        if (callback)
+        {   
+            gfc_callback_call(callback);
+        }
         gf2d_window_free(win);
         return 1;
     }
@@ -320,7 +325,7 @@ int option_list_update(Window *win,List *updateList)
     return 0;
 }
 
-Window *window_list_options(const char *question, int n, const char*optionText[], void(*onOption[])(void *),void *data)
+Window *window_list_options(const char *question, int n, const char*optionText[], void(*onOption[])(void *),void(*onCancel)(void *),void *data)
 {
     int i;
     ButtonElement *button;
@@ -339,7 +344,6 @@ Window *window_list_options(const char *question, int n, const char*optionText[]
     win->update = option_list_update;
     win->free_data = option_list_free;
     win->dimensions.h += (n * 68);
-    slog("window size is set to: %f,%f",win->dimensions.w,win->dimensions.h);
     gf2d_window_align(win,0);
     callbacks = gfc_list_new();
     p = gf2d_window_get_element_by_id(win,50);
@@ -399,6 +403,7 @@ Window *window_list_options(const char *question, int n, const char*optionText[]
 
         callbacks = gfc_list_append(callbacks,gfc_callback_new(onOption[i],data));
     }
+    callbacks = gfc_list_append(callbacks,gfc_callback_new(onCancel,data));
     win->data = callbacks;
     return win;
 }

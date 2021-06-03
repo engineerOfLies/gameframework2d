@@ -7,6 +7,7 @@
 #include "camera.h"
 #include "empire_hud.h"
 #include "windows_common.h"
+#include "message_buffer.h"
 #include "galaxy_view.h"
 #include "system_view.h"
 #include "planet_view.h"
@@ -54,12 +55,17 @@ int planet_view_draw(Window *win)
         drawOffset.y += 40;
         gf2d_draw_circle(drawOffset, 128, vector4d(255,255,100,255));        
     }
+    if (data->childWindow)
+    {
+        // if the mouse is over the child window, do not check for mouse over events
+        if(gf2d_window_mouse_in(data->childWindow))return 0;
+    }
     if (!gf2d_window_mouse_in(win))
     {
         return 0;//if outside the window rect, its over something else
     }
 
-    if (data->childWindow)return 0;
+  //  if (data->childWindow)return 0;
 
     mousePosition = camera_get_mouse_position();
     region = planet_get_region_by_position(data->planet,mousePosition);
@@ -81,6 +87,7 @@ int planet_view_free(Window *win)
     if (!win)return 0;
     if (!win->data)return 0;
     data = (PlanetWindowData*)win->data;
+    if (data->childWindow)gf2d_window_free(data->childWindow);
     free(data);
     return 0;
 }
@@ -91,7 +98,7 @@ int planet_view_update(Window *win,List *updateList)
     if (!win)return 0;
     if (!win->data)return 0;
     data = (PlanetWindowData*)win->data;
-    if (data->childWindow)return 0;
+//    if (data->childWindow)return 0;
 
     camera_mouse_pan();
     if (!gf2d_window_mouse_in(win))
@@ -116,7 +123,6 @@ int planet_view_update(Window *win,List *updateList)
         if (data->highlightedRegion)
         {
             data->selectedRegion = data->highlightedRegion;
-            window_alert("region", region_name_from_biome(data->selectedRegion->biome), NULL,NULL);
         }
         else
         {
@@ -129,6 +135,10 @@ int planet_view_update(Window *win,List *updateList)
         {
             data->selectedRegion = data->highlightedRegion;
             data->cameraPosition = camera_get_position();
+            if (data->childWindow)
+            {
+                gf2d_window_free(data->childWindow);
+            }
             data->childWindow =  region_menu(data->empire,data->highlightedRegion,win);
             empire_hud_bubble();
         }
@@ -159,7 +169,7 @@ Window *planet_view_window(Empire *empire,Planet *planet,Window *parent)
     camera_set_bounds(-128,-128,planet->area.x,planet->area.y);
     camera_set_position(vector2d(-128,-128));
     empire_hud_bubble();
-    slog("planet draw area: (%f,%f)",planet->area.x,planet->area.y);
+    message_new(planet->name);
     return win;
 
 }

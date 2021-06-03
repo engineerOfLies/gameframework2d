@@ -5,6 +5,7 @@
 #include "gf2d_mouse.h"
 #include "gf2d_draw.h"
 #include "gf2d_font.h"
+#include "gf2d_elements.h"
 
 #include "camera.h"
 #include "message_buffer.h"
@@ -54,6 +55,9 @@ void empire_hud_draw_titlebar(Empire *empire,EmpireHudData *data)
             NULL,
             i);
     }
+    // titlebar
+    gf2d_font_draw_line_tag(empire->empireName,FT_H6,gfc_color(1,1,1,1), vector2d(10,4));
+    
     //credits
     gfc_line_sprintf(line,"%i",empire->credits);
     bounds = gf2d_font_get_bounds_tag(line,FT_H5);
@@ -106,11 +110,36 @@ int empire_hud_free(Window *win)
 
 int empire_hud_update(Window *win,List *updateList)
 {
+    int i,count;
+    Element *e;
     EmpireHudData *data;
     if (!win)return 0;
     if (!win->data)return 0;
     data = (EmpireHudData*)win->data;
     empire_update(data->empire);
+    
+    count = gfc_list_get_count(updateList);
+    for (i = 0; i < count; i++)
+    {
+        e = gfc_list_get_nth(updateList,i);
+        if (!e)continue;
+        switch(e->index)
+        {
+            case 11:
+                if (gfc_line_cmp(data->view->name,"galaxy_view")==0)
+                {
+                    slog("child view is already galaxy view");
+                    galaxy_view_close_child_window(data->view);
+                }
+                else
+                {
+                    gf2d_window_free(data->view);
+                    data->view = galaxy_view_window(data->empire,data->galaxy,win); 
+                }
+                return 1;
+        }
+    }
+
     return 0;
 }
 

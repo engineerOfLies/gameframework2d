@@ -53,12 +53,11 @@ void onFileLoadOk(void *Data)
 
 void main_menu_start_new_game()
 {
-    Galaxy *galaxy;
     Empire *empire;
-    galaxy = galaxy_generate(2,10);    
-    srand(SDL_GetTicks());
     empire = empire_new();
-    empire_hud_window(empire,galaxy);
+    empire_setup(empire);
+    srand(SDL_GetTicks());
+    empire_hud_window(empire,empire->galaxy);
 }
 
 int main_menu_free(Window *win)

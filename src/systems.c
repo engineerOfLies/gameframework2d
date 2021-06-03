@@ -307,5 +307,15 @@ void system_draw_system_view(System *system, Vector2D offset)
 
 }
 
+Uint8 system_can_view(System *system,Uint32 empire_id)
+{
+    if ((!system)||(!empire_id))return 0;
+    if (system->allegience == empire_id)return 1;
+    
+    
+    //TODO:  provide other criteria, such as alliances, spies, and ships in the area
+    return 0;
+}
+
 
 /*end of the line*/

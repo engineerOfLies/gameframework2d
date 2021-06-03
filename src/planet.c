@@ -8,6 +8,7 @@
 
 #include "planet.h"
 #include "regions.h"
+#include "empire.h"
 
 typedef struct
 {
@@ -382,6 +383,7 @@ void planet_draw_system_view_lines(Planet *planet,Vector2D offset)
 
 void planet_draw_system_view(Planet *planet,Vector2D offset)
 {
+    Empire *empire;
     int i,count;
     Planet *moon;
     Vector4D color;
@@ -398,6 +400,7 @@ void planet_draw_system_view(Planet *planet,Vector2D offset)
     drawposition.x -= (scalecenter.x * scale.x);
     drawposition.y -= (scalecenter.y * scale.y);
 
+    
     gf2d_sprite_draw(
         planet_manager.planet[planet->classification].sprite,
         drawposition,
@@ -407,6 +410,21 @@ void planet_draw_system_view(Planet *planet,Vector2D offset)
         NULL,
         &color,
         0);
+
+    if (planet->allegience)
+    {
+        drawposition.x += (scalecenter.x * scale.x);
+        drawposition.y += (scalecenter.y * scale.y);
+
+        empire = empire_get_by_id(planet->allegience);
+        if (empire)
+        {
+            gf2d_draw_circle(
+                drawposition,
+                (scalecenter.x * scale.x)+2,
+                gfc_color_to_vector4(empire->empireColor));
+        }
+    }
     count = gfc_list_get_count(planet->children);
     for (i =0 ; i < count; i++)
     {

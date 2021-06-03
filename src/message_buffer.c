@@ -77,7 +77,6 @@ int message_buffer_update(Window *win,List *updateList)
         {
             gfc_list_delete_nth(data->messages,i);
             free(message);
-            slog("message timed out");
         }
     }
     //reset labels
