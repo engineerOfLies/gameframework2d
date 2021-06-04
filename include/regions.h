@@ -53,6 +53,7 @@ typedef enum
     IT_Agriculture,
     IT_Military,
     IT_Mining,
+    IT_Refinery,
     IT_Research,
     IT_Cultural,
     IT_Travel,

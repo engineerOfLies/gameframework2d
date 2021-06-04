@@ -150,7 +150,7 @@ Region *region_generate(Uint32 id,RegionBiome biome,float regionRange, Vector2D 
     Region *region;
     RegionInfo *info;
     SJson *json;
-    int     tempInt = 0;
+    float     tempFloat = 0;
 
     if (biome == RB_MAX)return NULL;
     region = region_new();
@@ -180,14 +180,14 @@ Region *region_generate(Uint32 id,RegionBiome biome,float regionRange, Vector2D 
     vector2d_copy(region->drawPosition,position);
     
     region->drawRotation = 360 * gfc_random();
-    sj_get_integer_value(sj_object_get_value(json,"minerals"),&tempInt);
-    region->minerals = (Uint32)(gfc_random() * tempInt);
+    sj_get_float_value(sj_object_get_value(json,"minerals"),&tempFloat);
+    region->minerals = (Uint32)(gfc_random() * tempFloat);
 
-    sj_get_integer_value(sj_object_get_value(json,"fertility"),&tempInt);
-    region->fertility = (Uint32)(gfc_random() * tempInt);
+    sj_get_float_value(sj_object_get_value(json,"fertility"),&tempFloat);
+    region->fertility = (Uint32)(gfc_random() * tempFloat);
 
-    sj_get_integer_value(sj_object_get_value(json,"habitable"),&tempInt);
-    region->habitable = (Uint32)(gfc_random() * tempInt);
+    sj_get_float_value(sj_object_get_value(json,"habitable"),&tempFloat);
+    region->habitable = (Uint32)(gfc_random() * tempFloat);
     
     return region;
 }

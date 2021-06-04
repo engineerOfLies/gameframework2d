@@ -43,12 +43,20 @@ int region_menu_draw(Window *win)
     return 0;
 }
 
-static const char *options[] = 
+static const char *surveyOptions[] = 
 {
     "Fertility",
     "Minerals",
     "Habitable"
 };
+
+static const char *developOptions[] = 
+{
+    "Fertility",
+    "Minerals",
+    "Habitable"
+};
+
 
 static void onCancel(void *cData)
 {
@@ -141,12 +149,14 @@ void onHabitable(void *cData)
     }
 }
 
-static void(*onOption[])(void *) = 
+static void(*onSurveyOption[])(void *) = 
 {
     onFertility,
     onMinerals,
     onHabitable
 };
+
+
 
 int region_menu_update(Window *win,List *updateList)
 {
@@ -183,7 +193,7 @@ int region_menu_update(Window *win,List *updateList)
     }
     else if (state == SS_Completed)
     {
-        gfc_line_sprintf(line,"Habitability: %i",data->region->fertility);
+        gfc_line_sprintf(line,"Habitability: %i",data->region->habitable);
         gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,4),line);
     }
 
@@ -213,7 +223,7 @@ int region_menu_update(Window *win,List *updateList)
     }
     else if (state == SS_Completed)
     {
-        gfc_line_sprintf(line,"Minerals: %i",data->region->fertility);
+        gfc_line_sprintf(line,"Minerals: %i",data->region->minerals);
         gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,2),line);
     }
 
@@ -225,7 +235,7 @@ int region_menu_update(Window *win,List *updateList)
         switch(e->index)
         {
             case 40:
-                if (data->childWindow == NULL)data->childWindow = window_list_options("Survey Type", 3, options, onOption,onCancel,win);
+                if (data->childWindow == NULL)data->childWindow = window_list_options("Survey Type", 3, surveyOptions, onSurveyOption,onCancel,win);
                 return 1;
         }
     }

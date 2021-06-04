@@ -31,11 +31,11 @@
             "type": "list",
             "name": "options",
             "id" : 50,
-            "bounds": [91,0,168,1],
+            "bounds": [10,0,200,1],
             "color" : [255,255,255,255],
             "justify" : "center",
             "style": "vertical",
-            "item_size" : [168,64],
+            "item_size" : [200,38],
             "elements":
             [
             ]

@@ -292,7 +292,6 @@ int option_list_update(Window *win,List *updateList)
     List *callbacks;
     Callback *callback;
     if (!win)return 0;
-    if (!updateList)return 0;
     callbacks = (List*)win->data;
     count = gfc_list_get_count(updateList);
     if (gfc_input_command_released("cancel"))
@@ -322,6 +321,7 @@ int option_list_update(Window *win,List *updateList)
                 break;
         }
     }
+    if (gf2d_window_mouse_in(win))return 1;
     return 0;
 }
 
@@ -354,7 +354,7 @@ Window *window_list_options(const char *question, int n, const char*optionText[]
             p,
             500 + i,
             "button",
-            gf2d_rect(0,0,164,68),
+            gf2d_rect(0,0,200,37),
             gfc_color8(255,255,255,255),
             0,
             gfc_color8(255,255,255,255),
@@ -363,7 +363,7 @@ Window *window_list_options(const char *question, int n, const char*optionText[]
             e,
             5000 + i,
             "label",
-            gf2d_rect(0,0,164,68),
+            gf2d_rect(0,0,200,37),
             gfc_color8(255,255,255,255),
             0,
             gfc_color8(255,255,255,255),
@@ -372,7 +372,7 @@ Window *window_list_options(const char *question, int n, const char*optionText[]
             e,
             50000 + i,
             "label",
-            gf2d_rect(0,0,164,68),
+            gf2d_rect(0,0,200,37),
             gfc_color8(255,255,255,255),
             0,
             gfc_color8(255,255,255,255),
@@ -387,7 +387,7 @@ Window *window_list_options(const char *question, int n, const char*optionText[]
             0);
         gf2d_element_make_label(l,label);
 
-        actor = gf2d_element_actor_new_full("actors/button.actor", "idle",vector2d(1,1),NULL);
+        actor = gf2d_element_actor_new_full("actors/list_button.actor", "idle",vector2d(1,1),NULL);
         gf2d_element_make_actor(a,actor);
 
         
