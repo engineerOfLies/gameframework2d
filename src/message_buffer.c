@@ -164,6 +164,17 @@ void message_new(const char *newMessage)
     data->messages = gfc_list_append(data->messages,message);
 }
 
+void message_printf(const char *newMessage,...)
+{
+    TextLine msg;
+    va_list ap;
+    /*echo all logging to stdout*/
+    va_start(ap,newMessage);
+    vsprintf(msg,newMessage,ap);
+    va_end(ap);
+    message_new(msg);
+}
+
 void message_buffer_bubble()
 {
     gf2d_window_bring_to_front(MessageWindow);

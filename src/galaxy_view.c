@@ -23,7 +23,7 @@ typedef struct
     Sprite *home_star;
 }GalaxyWindowData;
 
-void galaxy_draw_empire_systems(Empire *empire,GalaxyWindowData *data)
+void galaxy_draw_empire_systems(Empire *empire,GalaxyWindowData *data,Vector2D offset)
 {
     int i,count;
     System *system;
@@ -35,7 +35,7 @@ void galaxy_draw_empire_systems(Empire *empire,GalaxyWindowData *data)
         position = galaxy_position_to_screen_position(empire->homeSystem->position);
         gf2d_sprite_draw(
             data->home_star,
-            vector2d(position.x - 32,position.y - 32),
+            vector2d(position.x - 32 + offset.x,position.y - 32 + offset.y),
             NULL,
             NULL,
             NULL,
@@ -51,7 +51,7 @@ void galaxy_draw_empire_systems(Empire *empire,GalaxyWindowData *data)
         position = galaxy_position_to_screen_position(system->position);
         gf2d_sprite_draw(
             data->home_star,
-            vector2d(position.x - 32,position.y - 32),
+            vector2d(position.x - 32 + offset.x,position.y - 32 + offset.y),
             NULL,
             NULL,
             NULL,
@@ -76,7 +76,7 @@ int galaxy_view_draw(Window *win)
     cameraOffset = camera_get_offset();
     
     galaxy_draw(data->galaxy,vector2d(win->dimensions.x + cameraOffset.x,win->dimensions.y + cameraOffset.y),data->scale);
-    galaxy_draw_empire_systems(data->empire,data);
+    galaxy_draw_empire_systems(data->empire,data,cameraOffset);
     
     if (!gf2d_window_mouse_in(win))
     {
@@ -156,7 +156,7 @@ int galaxy_view_update(Window *win,List *updateList)
         if (data->highlightedSystem)
         {
             data->selectedSystem = data->highlightedSystem;
-            window_alert("system", data->highlightedSystem->name, NULL,NULL);
+            message_new(data->highlightedSystem->name);
         }
         else
         {

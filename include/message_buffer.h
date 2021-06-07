@@ -10,6 +10,7 @@
 void message_buffer_init(int count,Uint32 timeout, Color defaultColor);
 
 void message_new(const char *newMessage);
+void message_printf(const char *newMessage,...);
 void message_buffer_bubble();
 
 

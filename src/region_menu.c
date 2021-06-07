@@ -16,16 +16,21 @@
 #include "windows_common.h"
 #include "message_buffer.h"
 #include "regions.h"
+#include "buy_menu.h"
 #include "planet_view.h"
 #include "region_menu.h"
 
 typedef struct
 {
+    int         surveyChoice;
+    int         buyChoice;
     Empire     *empire;
     Region     *region;
     TextLine    filename;
     Window     *childWindow;
 }RegionMenuData;
+
+static void onCancel(void *cData);
 
 int region_menu_free(Window *win)
 {
@@ -50,21 +55,14 @@ static const char *surveyOptions[] =
     "Habitable"
 };
 
-static const char *developOptions[] = 
-{
-    "Fertility",
-    "Minerals",
-    "Habitable"
-};
-
-
-static void onCancel(void *cData)
+void onDevelop(void *cData)
 {
     RegionMenuData* data;
     Window *win = (Window *)cData;
     if (!win)return;
     data = win->data;
     data->childWindow = NULL;
+    message_printf("Development Chosen: %i",data->buyChoice);
 }
 
 void onFertility(void *cData)
@@ -73,8 +71,8 @@ void onFertility(void *cData)
     RegionMenuData* data;
     Window *win = (Window *)cData;
     if (!win)return;
-    onCancel(cData);
     data = win->data;
+    data->childWindow = NULL;
     survey = empire_survery_region(data->empire,data->region->id,ST_Fertility);
     if (survey < 0)
     {
@@ -100,8 +98,8 @@ void onMinerals(void *cData)
     RegionMenuData* data;
     Window *win = (Window *)cData;
     if (!win)return;
-    onCancel(cData);
     data = win->data;
+    data->childWindow = NULL;
     survey = empire_survery_region(data->empire,data->region->id,ST_Minerals);
     if (survey < 0)
     {
@@ -121,14 +119,15 @@ void onMinerals(void *cData)
         message_new("Mineral servey already completed!");
     }
 }
+
 void onHabitable(void *cData)
 {
     int survey;
     RegionMenuData* data;
     Window *win = (Window *)cData;
     if (!win)return;
-    onCancel(cData);
     data = win->data;
+    data->childWindow = NULL;
     survey = empire_survery_region(data->empire,data->region->id,ST_Habitable);
     if (survey < 0)
     {
@@ -156,7 +155,14 @@ static void(*onSurveyOption[])(void *) =
     onHabitable
 };
 
-
+static void onCancel(void *cData)
+{
+    RegionMenuData* data;
+    Window *win = (Window *)cData;
+    if (!win)return;
+    data = win->data;
+    data->childWindow = NULL;
+}
 
 int region_menu_update(Window *win,List *updateList)
 {
@@ -235,7 +241,10 @@ int region_menu_update(Window *win,List *updateList)
         switch(e->index)
         {
             case 40:
-                if (data->childWindow == NULL)data->childWindow = window_list_options("Survey Type", 3, surveyOptions, onSurveyOption,onCancel,win);
+                if (data->childWindow == NULL)data->childWindow = window_list_options(vector2d(win->dimensions.x - 200,200),"Survey Type", 3, surveyOptions, onSurveyOption,onCancel,win,&data->surveyChoice);
+                return 1;
+            case 50:
+                if (data->childWindow == NULL)data->childWindow = buy_menu(data->empire,"config/developments.json",&data->buyChoice,onDevelop,onCancel,win);
                 return 1;
         }
     }

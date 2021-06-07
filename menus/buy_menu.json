@@ -1,0 +1,217 @@
+{
+"window":
+    {
+    "color" : [255,255,255, 255],
+    "dimensions" : [10,50,968,580],
+    "justify" : "center",
+    "align" : "middle",
+    "elements":
+    [
+      {
+        "type": "list",
+        "name": "list",
+        "id" : 0,
+        "bounds": [0,10,1,1],
+        "color" : [255,255,255,255],
+        "style": "vertical",
+        "item_size" : [1,40],
+        "elements":
+        [
+            {
+            "type": "label",
+            "id" : 1,
+            "bounds": [0,0,1,40],
+            "color" : [255,255,255,255],
+            "text":"Buy Menu Title",
+            "justify" : "center",
+            "align" : "middle",
+            "style":"H2"
+            },
+            {
+            "type": "list",
+            "name": "columns",
+            "id" : 2,
+            "bounds": [0,0,1,1],
+            "color" : [255,255,255,255],
+            "style": "horizontal",
+            "item_size" : [322,1],
+            "elements":
+            [
+                {
+                "type": "list",
+                "name": "left",
+                "id" : 100,
+                "bounds": [0,0,322,1],
+                "color" : [255,255,255,255],
+                "style": "vertical",
+                "packed":true,
+                "item_size" : [322,40],
+                "elements":
+                [
+                    {
+                    "type": "label",
+                    "name": "itemname",
+                    "id" : 101,
+                    "bounds": [0,0,1,40],
+                    "color" : [255,255,255,255],
+                    "text":"Item Name",
+                    "justify" : "center",
+                    "align" : "middle",
+                    "style":"H3"
+                    },
+                    {
+                    "type": "actor",
+                    "id" : 110,
+                    "bounds": [0,0,1,420],
+                    "color" : [255,255,255,255]
+                    },
+                    {
+                    "type": "list",
+                    "name": "buycancel",
+                    "id" : 150,
+                    "bounds": [0,0,200,1],
+                    "color" : [255,255,255,255],
+                    "style": "horizontal",
+                    "item_size" : [168,64],
+                    "elements":
+                    [
+                        {
+                        "type": "button",
+                        "name": "buy",
+                        "id" : 151,
+                        "bounds": [0,0,168,64],
+                        "hotkey":"buy",
+                        "color" : [255,255,255,255],
+                        "highColor" : [255,255,255,255],
+                        "pressColor" : [255,255,255,255],
+                        "label" :
+                            {
+                            "type": "label",
+                            "name": "yes_l",
+                            "id" : 1511,
+                            "bounds": [0,0,168,64],
+                            "color" : [255,255,255,255],
+                            "text":"Purchase",
+                            "justify" : "center",
+                            "align" : "middle",
+                            "style":"H5"
+                            },
+                        "actor" :
+                            {
+                            "type": "actor",
+                            "name": "image",
+                            "id" : 1512,
+                            "bounds": [0,0,168,64],
+                            "color" : [255,255,255,255],
+                            "actor" : "actors/button.actor"
+                            }
+                        },
+                        {
+                        "type": "button",
+                        "name": "no",
+                        "id" : 152,
+                        "bounds": [0,0,164,68],
+                        "color" : [255,255,255,255],
+                        "hotkey":"no",
+                        "highColor" : [255,255,255,255],
+                        "pressColor" : [255,255,255,255],
+                        "label" :
+                            {
+                            "type": "label",
+                            "name": "No_l",
+                            "id" : 1521,
+                            "bounds": [0,0,168,64],
+                            "color" : [255,255,255,255],
+                            "text":"Cancel",
+                            "align" : "middle",
+                            "justify" : "center",
+                            "style":"H5"
+                            },
+                        "actor" :
+                            {
+                            "type": "actor",
+                            "name": "image",
+                            "id" : 1522,
+                            "bounds": [0,0,168,64],
+                            "color" : [255,255,255,255],
+                            "actor" : "actors/button.actor"
+                            }
+                        }
+                    ]
+                    }
+
+                ]
+                },
+                {
+                "type": "list",
+                "name": "center",
+                "id" : 200,
+                "bounds": [0,0,322,1],
+                "color" : [255,255,255,255],
+                "style": "vertical",
+                "packed":true,
+                "item_size" : [322,40],
+                "elements":
+                [
+                    {
+                    "type": "label",
+                    "id" : 201,
+                    "bounds": [0,0,1,40],
+                    "color" : [255,255,255,255],
+                    "text":"Costs:",
+                    "justify" : "Center",
+                    "align" : "middle",
+                    "style":"H3"
+                    },
+                    {
+                    "type": "label",
+                    "id" : 202,
+                    "bounds": [0,0,1,40],
+                    "color" : [255,255,255,255],
+                    "text":"Credits: #",
+                    "justify" : "left",
+                    "align" : "middle",
+                    "style":"H4"
+                    },
+                    {
+                    "type": "label",
+                    "id" : 203,
+                    "bounds": [0,0,1,40],
+                    "color" : [255,255,255,255],
+                    "text":"Minerals: #",
+                    "justify" : "left",
+                    "align" : "middle",
+                    "style":"H4"
+                    },
+                    {
+                    "type": "label",
+                    "id" : 204,
+                    "bounds": [0,0,1,40],
+                    "color" : [255,255,255,255],
+                    "text":"Personnel: #",
+                    "justify" : "left",
+                    "align" : "middle",
+                    "style":"H4"
+                    }
+                ]
+                },
+                {
+                "type": "list",
+                "name": "options",
+                "id" : 300,
+                "bounds": [0,0,1,1],
+                "color" : [255,255,255,255],
+                "justify" : "center",
+                "style": "vertical",
+                "item_size" : [322,38],
+                "elements":
+                [
+                ]
+                }
+            ]
+            }
+        ]
+        }
+    ]
+    }
+}

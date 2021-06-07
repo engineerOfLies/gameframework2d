@@ -1,7 +1,7 @@
 {
 "window":{
     "color" : [255,255,255, 255],
-    "dimensions" : [0,0,355,320],
+    "dimensions" : [0,0,510,320],
     "justify" : "center",
     "align" : "middle",
     "elements":
@@ -30,7 +30,7 @@
             "type": "list",
             "name": "buttons",
             "id" : 50,
-            "bounds": [90,10,160,1],
+            "bounds": [180,10,160,1],
             "color" : [255,255,255,255],
             "style": "vertical",
             "item_size" : [1,64],

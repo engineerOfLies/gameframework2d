@@ -16,6 +16,12 @@
 
 #include "windows_common.h"
 
+typedef struct
+{
+    List *callbacks;
+    int *returnValue;
+}WindowData;
+
 int yes_no_free(Window *win)
 {
     List *list;
@@ -261,16 +267,17 @@ int option_list_free(Window *win)
 {
     List *list;
     int count,i;
+    WindowData *wdata;
     Callback *callback;
 
     if (!win)return 0;
     if (!win->data)return 0;
 
-    list = (List*)win->data;
+    wdata = win->data;
+    list = (List*)wdata->callbacks;
     if (list)
     {
-    count = gfc_list_get_count(list);
-
+        count = gfc_list_get_count(list);
         for (i = 0; i < count; i++)
         {
             callback = (Callback*)gfc_list_get_nth(list,i);
@@ -289,21 +296,19 @@ int option_list_update(Window *win,List *updateList)
 {
     int i,count,n;
     Element *e;
+    WindowData *wdata;
     List *callbacks;
     Callback *callback;
     if (!win)return 0;
-    callbacks = (List*)win->data;
-    count = gfc_list_get_count(updateList);
+    wdata = win->data;
+    callbacks = (List*)wdata->callbacks;
+
     if (gfc_input_command_released("cancel"))
     {
-        callback = (Callback*)gfc_list_get_nth(callbacks,count);
-        if (callback)
-        {   
-            gfc_callback_call(callback);
-        }
-        gf2d_window_free(win);
+        window_list_options_cancel(win);
         return 1;
     }
+    count = gfc_list_get_count(updateList);
     for (i = 0; i < count; i++)
     {
         e = gfc_list_get_nth(updateList,i);
@@ -311,7 +316,11 @@ int option_list_update(Window *win,List *updateList)
         if ((e->index >= 500)&& (e->index < 5000))
         {
             n = e->index - 500;
-            callback = (Callback*)gfc_list_get_nth(callbacks,n);
+            callback = (Callback*)gfc_list_get_nth(callbacks,n + 1);
+            if (wdata->returnValue != NULL)
+            {
+                *wdata->returnValue = n;
+            }
             if (callback)
                 {
                     gfc_callback_call(callback);
@@ -325,36 +334,57 @@ int option_list_update(Window *win,List *updateList)
     return 0;
 }
 
-Window *window_list_options(const char *question, int n, const char*optionText[], void(*onOption[])(void *),void(*onCancel)(void *),void *data)
+void window_list_options_cancel(Window *win)
+{
+    List *callbacks;
+    Callback *callback;
+    if (!win)return;
+    callbacks = (List*)win->data;
+    callback = (Callback*)gfc_list_get_nth(callbacks,0);
+    if (callback)
+    {   
+        gfc_callback_call(callback);
+    }
+    gf2d_window_free(win);
+}
+
+Window *window_list_options(Vector2D position,const char *question, int n, const char*optionText[], void(*onOption[])(void *),void(*onCancel)(void *),void *data,int *returnValue)
 {
     int i;
+    WindowData *wdata;
     ButtonElement *button;
     LabelElement *label;
     ActorElement *actor;
     Element *e,*p,*l,*a;
     Window *win;
-    List *callbacks;
     win = gf2d_window_load("menus/list_options.json");
     if (!win)
     {
         slog("failed to load list of options menu");
         return NULL;
     }
+    
+    wdata = gfc_allocate_array(sizeof(WindowData),1);
+    
     gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,1),(char *)question);
     win->update = option_list_update;
     win->free_data = option_list_free;
+    win->dimensions.x = position.x;
+    win->dimensions.y = position.y;
     win->dimensions.h += (n * 68);
     gf2d_window_align(win,0);
-    callbacks = gfc_list_new();
+    wdata->callbacks = gfc_list_new();
+    wdata->returnValue = returnValue;
     p = gf2d_window_get_element_by_id(win,50);
-
+    
+    wdata->callbacks = gfc_list_append(wdata->callbacks,gfc_callback_new(onCancel,data));
     for (i = 0; i < n; i++)
     {
         e = gf2d_element_new_full(
             p,
             500 + i,
             "button",
-            gf2d_rect(0,0,200,37),
+            gf2d_rect(0,0,300,37),
             gfc_color8(255,255,255,255),
             0,
             gfc_color8(255,255,255,255),
@@ -363,7 +393,7 @@ Window *window_list_options(const char *question, int n, const char*optionText[]
             e,
             5000 + i,
             "label",
-            gf2d_rect(0,0,200,37),
+            gf2d_rect(0,0,300,37),
             gfc_color8(255,255,255,255),
             0,
             gfc_color8(255,255,255,255),
@@ -372,7 +402,7 @@ Window *window_list_options(const char *question, int n, const char*optionText[]
             e,
             50000 + i,
             "label",
-            gf2d_rect(0,0,200,37),
+            gf2d_rect(0,0,300,37),
             gfc_color8(255,255,255,255),
             0,
             gfc_color8(255,255,255,255),
@@ -401,10 +431,9 @@ Window *window_list_options(const char *question, int n, const char*optionText[]
         
         gf2d_element_list_add_item(p,e);
 
-        callbacks = gfc_list_append(callbacks,gfc_callback_new(onOption[i],data));
+        wdata->callbacks = gfc_list_append(wdata->callbacks,gfc_callback_new(onOption[i],data));
     }
-    callbacks = gfc_list_append(callbacks,gfc_callback_new(onCancel,data));
-    win->data = callbacks;
+    win->data = wdata;
     return win;
 }
 /*eol@eof*/

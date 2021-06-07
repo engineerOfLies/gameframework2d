@@ -93,7 +93,12 @@ void empire_setup(Empire *empire)
 
     empire->galaxy = galaxy;
     empire->empireColor = gfc_color(0.6,0.6,1,1);
-    
+
+    empire->credits = 1000;
+    empire->minerals = 1000;
+    empire->population = 100;
+    empire->agriculture = 100;
+
     // designate a home system near the galactic center
     empire->homeSystem = galaxy_get_nearest_system(galaxy,NULL,vector2d(0.5,0.5),0.5);
     gfc_line_sprintf(empire->empireName,"The %s Empire",empire->homeSystem->name);
