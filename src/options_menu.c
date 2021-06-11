@@ -26,19 +26,19 @@ typedef struct
 
 void onPartySaveCancel(void *Data)
 {
-    OptionsMenuData* data;
+/*    OptionsMenuData* data;
     if (!Data)return;
     data = Data;
-    return;
+    return;*/
 }
 
 void onPartySaveOk(void *Data)
-{
+{/*
     OptionsMenuData* data;
     if (!Data)return;
     data = Data;
     
-    return;
+    return;*/
 }
 
 

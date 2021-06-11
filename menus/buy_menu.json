@@ -63,6 +63,8 @@
                     "type": "actor",
                     "id" : 110,
                     "bounds": [0,0,1,420],
+                    "align" : "middle",
+                    "justify" : "center",
                     "color" : [255,255,255,255]
                     },
                     {
@@ -158,8 +160,8 @@
                     "id" : 201,
                     "bounds": [0,0,1,40],
                     "color" : [255,255,255,255],
-                    "text":"Costs:",
-                    "justify" : "Center",
+                    "text":"Costs",
+                    "justify" : "center",
                     "align" : "middle",
                     "style":"H3"
                     },
@@ -192,6 +194,17 @@
                     "justify" : "left",
                     "align" : "middle",
                     "style":"H4"
+                    },
+                    {
+                    "type": "label",
+                    "id" : 205,
+                    "bounds": [0,0,1,320],
+                    "color" : [255,255,255,255],
+                    "text":"Description",
+                    "justify" : "left",
+                    "align" : "top",
+                    "wraps":true,
+                    "style":"H5"
                     }
                 ]
                 },

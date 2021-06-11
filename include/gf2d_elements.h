@@ -69,12 +69,25 @@ struct Element_S
     
     int state;                  /**<if true, drawn with highlight*/
     int type;                   /**<which type of element this is*/
+    
+    int justify;                /**<leaning left or right*/
+    int alignment;              /**<vertical alignment top, middle or bottom*/
+
     void (*draw)        (struct Element_S *element,Vector2D offset); /**<draw function, offset comes from draw position of window*/
     List *(*update)     (struct Element_S *element,Vector2D offset); /**<function called for updates  returns alist of all elements updated with input*/
     void (*free_data)   (struct Element_S *element);    /**<free function for the element to clean up any loaded custom data*/
     struct Element_S *(*get_by_name)(struct Element_S *element,char *name);/**<get element by name, searches sub elements as well*/
     void *data;                 /**<custom element data*/
 };
+
+/**
+ * @brief return the draw offset for an element based on its alignment / justify
+ * options
+ * @param e the element in question
+ * @param size the size of the element to draw (this can be variable depending on length of text/size of image, etc)
+ * @return an offset to draw the element by (this does not take into account parental offsets)
+ */
+Vector2D gf2d_element_get_alignment(Element *e,Vector2D size);
 
 /**
  * @brief allocate and initialize a new element
@@ -92,6 +105,8 @@ w color of the element
  * @param state the initial state of the element
  * @param backgroundColor the color to draw for the background
  * @param backgroundDraw if true, draw a background for the element
+ * @param justify the LabelJustification
+ * @param align the vertical alignment
  * @return NULL on error or a new element otherwise;
  */
 Element *gf2d_element_new_full(
@@ -102,8 +117,17 @@ Element *gf2d_element_new_full(
     Color color,
     int state,
     Color backgroundColor,
-    int backgroundDraw
+    int backgroundDraw,
+    int justify,
+    int align
 );
+
+/**
+ * @brief change the element color
+ * @param element the element to change
+ * @param color the color to set the element to
+ */
+void gf2d_element_set_color(Element *element, Color color);
 
 /**
  * @brief free an element.  Calls the custom free element as needed

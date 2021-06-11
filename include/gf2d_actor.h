@@ -78,7 +78,7 @@ void gf2d_action_list_init(Uint32 max);
  * @return NULL on error or a pointer to the action list
  */
 ActionList *gf2d_action_list_load(
-    char *filename
+    const char *filename
 );
 
 /**
@@ -97,7 +97,7 @@ void gf2d_action_list_free(ActionList *actionList);
 ActionReturnType gf2d_action_list_get_next_frame(
     ActionList *al,
     float * frame,
-    char *name);
+    const char *name);
 
 /**
  * @brief get the starting frame of an action
@@ -105,7 +105,7 @@ ActionReturnType gf2d_action_list_get_next_frame(
  * @param name the action to set the frame to
  * @return the frame
  */
-float gf2d_action_set(ActionList *al,char *name);
+float gf2d_action_set(ActionList *al,const char *name);
 
 /**
  * @brief load actor information from file into the actor provided
@@ -113,7 +113,7 @@ float gf2d_action_set(ActionList *al,char *name);
  * @param file the file path to load
  * @returns true on success or false on failure
  */
-int gf2d_actor_load(Actor *actor,char *file);
+int gf2d_actor_load(Actor *actor,const char *file);
 
 /**
  * @brief free all assets loaded for the actor and set its data to 0
@@ -144,7 +144,7 @@ void gf2d_actor_draw(
  * @param actor the actor to set
  * @param action the action to set it to
  */
-void gf2d_actor_set_action(Actor *actor,char *action);
+void gf2d_actor_set_action(Actor *actor,const char *action);
 
 /**
  * @brief based on the actor's current action set the next frame and return type

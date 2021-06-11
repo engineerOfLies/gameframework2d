@@ -6,6 +6,7 @@
 #include "gf2d_sprite.h"
 #include "gf2d_shape.h"
 
+#include "installations.h"
 #include "regions.h"
 
 typedef struct
@@ -101,13 +102,23 @@ Region *region_new()
         slog("failed to allocate memory for a new region");
         return NULL;
     }
+    region->installations = gfc_list_new();
     return region;
 }
 
 
 void region_free(Region* region)
 {
+    int i,c;
+    Installation *inst;
     if (!region)return;
+    c = gfc_list_get_count(region->installations);
+    for (i = 0; i < c; i++)
+    {
+        inst = gfc_list_get_nth(region->installations,i);
+        if (!inst)continue;
+        installation_free(inst);
+    }
     free(region);
 }
 
@@ -194,8 +205,10 @@ Region *region_generate(Uint32 id,RegionBiome biome,float regionRange, Vector2D 
 
 void region_draw_planet_view(Region *region,Vector2D offset)
 {
+    Installation *inst;
+    int i,c;
     RegionInfo *info;
-    Vector2D drawposition;
+    Vector2D drawposition,drawpositionCenter;
     Vector3D rotation;
     if (!region)return;
 
@@ -207,6 +220,7 @@ void region_draw_planet_view(Region *region,Vector2D offset)
     }
 //    slog("regionRange for region: %f, biome %i",region->regionRange,region->biome);
     vector2d_add(drawposition,region->drawPosition,offset);
+    vector2d_copy(drawpositionCenter,drawposition);
     if (!info->sprite)return;
     
     rotation.x = (info->sprite->frame_w * 0.5);
@@ -224,6 +238,13 @@ void region_draw_planet_view(Region *region,Vector2D offset)
         NULL,
         NULL,
         0);
+    c = gfc_list_get_count(region->installations);
+    for (i = 0; i < c; i++)
+    {
+        inst = gfc_list_get_nth(region->installations,i);
+        if (!inst)continue;
+        installation_draw(inst,drawpositionCenter);
+    }
 }
 
 

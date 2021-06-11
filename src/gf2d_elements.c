@@ -34,7 +34,9 @@ Element *gf2d_element_new_full(
     Color color,
     int state,
     Color backgroundColor,
-    int backgroundDraw
+    int backgroundDraw,
+    int justify,
+    int align
 )
 {
     Element *e;
@@ -47,6 +49,8 @@ Element *gf2d_element_new_full(
     e->bounds = bounds;
     e->backgroundColor = backgroundColor;
     e->backgroundDraw = backgroundDraw;
+    e->justify = justify;
+    e->alignment = align;
     return e;
 }
 
@@ -144,10 +148,19 @@ void gf2d_element_calibrate(Element *e,Element *parent, Window *win)
     }
 }
 
+void gf2d_element_set_color(Element *element, Color color)
+{
+    if (!element)return;
+    gfc_color_copy(element->color,color);
+}
+
 Element *gf2d_element_load_from_config(SJson *json,Element *parent,Window *win)
 {
     Element *e = NULL;
     SJson *value;
+    const char *buffer;
+    int justify = LJ_Left;  
+    int align = LA_Top;
     const char *type;
     Vector4D vector;
     if (!sj_is_object(json))return NULL;
@@ -183,6 +196,45 @@ Element *gf2d_element_load_from_config(SJson *json,Element *parent,Window *win)
     sj_value_as_vector4d(value,&vector);
     gf2d_rect_set(e->bounds,vector.x,vector.y,vector.z,vector.w);
     gf2d_element_calibrate(e,parent, win);
+    
+    value = sj_object_get_value(json,"justify");
+    buffer = sj_get_string_value(value);
+    if (buffer)
+    {
+        if (strcmp(buffer,"left") == 0)
+        {
+            justify = LJ_Left;
+        }
+        else if (strcmp(buffer,"center") == 0)
+        {
+            justify = LJ_Center;
+        }
+        else if (strcmp(buffer,"right") == 0)
+        {
+            justify = LJ_Right;
+        }
+    }
+
+    value = sj_object_get_value(json,"align");
+    buffer = sj_get_string_value(value);
+    if (buffer)
+    {
+        if (strcmp(buffer,"top") == 0)
+        {
+            align = LA_Top;
+        }
+        else if (strcmp(buffer,"middle") == 0)
+        {
+            align = LA_Middle;
+        }
+        else if (strcmp(buffer,"bottom") == 0)
+        {
+            align = LA_Bottom;
+        }
+    }
+    e->justify = justify;
+    e->alignment = align;
+
     
     value = sj_object_get_value(json,"type");
     if (value)
@@ -245,6 +297,35 @@ Element *gf2d_element_get_by_id(Element *e,int id)
     }
 }
 
+Vector2D gf2d_element_get_alignment(Element *element,Vector2D size)
+{
+    Vector2D position = {0};
+    if (!element)return position;
+    
+    switch(element->justify)
+    {
+        case LJ_Left:
+            break;
+        case LJ_Center:
+            position.x += (element->bounds.w - size.x)/2 ;
+            break;
+        case LJ_Right:
+            position.x += (element->bounds.w - size.x);
+            break;
+    }
+    switch(element->alignment)
+    {
+        case LA_Top:
+            break;
+        case LA_Middle:
+            position.y += (element->bounds.h - size.y)/2 ;
+            break;
+        case LA_Bottom:
+            position.y += (element->bounds.h - size.y);
+            break;
+    }
+    return position;
+}
 
 Element *gf2d_get_element_by_name(Element *e,char *name)
 {

@@ -1,0 +1,44 @@
+{
+    "actor":
+    {
+        "sprite": "images/developments.png",
+        "frameWidth": 128,
+        "frameHeight": 113,
+        "framesPerLine": 16,
+        "drawOffset": [0,0],
+        "scale": [1,1],
+        "color": [255,255,255,255],
+        "colorSpecial": [255,255,255,255],
+        "actionList":
+        [
+            {
+                "action": "population",
+                "startFrame": 0,
+                "endFrame": 0,
+                "frameRate": 0,
+                "type": "loop"
+            },
+            {
+                "action": "mines",
+                "startFrame": 1,
+                "endFrame": 1,
+                "frameRate": 0,
+                "type": "loop"
+            },
+            {
+                "action": "farms",
+                "startFrame": 2,
+                "endFrame": 2,
+                "frameRate": 0,
+                "type": "loop"
+            },
+            {
+                "action": "military",
+                "startFrame": 3,
+                "endFrame": 3,
+                "frameRate": 0,
+                "type": "loop"
+            }
+        ]
+    }
+}

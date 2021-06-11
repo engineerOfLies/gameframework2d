@@ -9,6 +9,7 @@ void gf2d_element_label_draw(Element *element,Vector2D offset)
 {
     LabelElement *label;
     Vector2D position;
+    Vector2D justifyOffset;
     Vector2D size = {0};
     Rect r;
     if (!element)return;
@@ -35,28 +36,10 @@ void gf2d_element_label_draw(Element *element,Vector2D offset)
     }
     // adjust position to top left
     vector2d_add(position,offset,element->bounds);
-    switch(label->justify)
-    {
-        case LJ_Left:
-            break;
-        case LJ_Center:
-            position.x += (element->bounds.w - size.x)/2 ;
-            break;
-        case LJ_Right:
-            position.x += (element->bounds.w - size.x);
-            break;
-    }
-    switch(label->alignment)
-    {
-        case LA_Top:
-            break;
-        case LA_Middle:
-            position.y += (element->bounds.h - size.y)/2 ;
-            break;
-        case LA_Bottom:
-            position.y += (element->bounds.h - size.y);
-            break;
-    }
+    justifyOffset = gf2d_element_get_alignment(element,size);
+
+    vector2d_add(position,position,justifyOffset);
+
     if (label->wraps)
     {
         gf2d_font_draw_text_wrap_tag(label->text,label->style,element->color, gf2d_rect(position.x, position.y, element->bounds.w, element->bounds.h));
@@ -97,7 +80,7 @@ LabelElement *gf2d_element_label_new()
 }
 
 
-LabelElement *gf2d_element_label_new_full(char *text,Color color,int style,int justify,int align,int wraps)
+LabelElement *gf2d_element_label_new_full(char *text,Color color,int style,int wraps)
 {
     LabelElement *label;
     label = gf2d_element_label_new();
@@ -108,8 +91,6 @@ LabelElement *gf2d_element_label_new_full(char *text,Color color,int style,int j
     gfc_block_cpy(label->text,text);
     label->bgcolor = color;
     label->style = style;
-    label->justify = justify;
-    label->alignment = align;
     label->wraps = wraps;
     return label;
 }
@@ -151,8 +132,6 @@ void gf2d_element_load_label_from_config(Element *e,SJson *json)
     Color color;
     const char *buffer;
     int style = FT_Normal;
-    int justify = LJ_Left;  
-    int align = LA_Top;
     int wraps = 0;
     if ((!e) || (!json))
     {
@@ -202,41 +181,6 @@ void gf2d_element_load_label_from_config(Element *e,SJson *json)
     {
         sj_get_bool_value(value,(short int *)&wraps);
     }
-    value = sj_object_get_value(json,"justify");
-    buffer = sj_get_string_value(value);
-    if (buffer)
-    {
-        if (strcmp(buffer,"left") == 0)
-        {
-            justify = LJ_Left;
-        }
-        else if (strcmp(buffer,"center") == 0)
-        {
-            justify = LJ_Center;
-        }
-        else if (strcmp(buffer,"right") == 0)
-        {
-            justify = LJ_Right;
-        }
-    }
-
-    value = sj_object_get_value(json,"align");
-    buffer = sj_get_string_value(value);
-    if (buffer)
-    {
-        if (strcmp(buffer,"top") == 0)
-        {
-            align = LA_Top;
-        }
-        else if (strcmp(buffer,"middle") == 0)
-        {
-            align = LA_Middle;
-        }
-        else if (strcmp(buffer,"bottom") == 0)
-        {
-            align = LA_Bottom;
-        }
-    }
     value = sj_object_get_value(json,"color");
     vector4d_set(vector,255,255,255,255);
     sj_value_as_vector4d(value,&vector);
@@ -244,7 +188,7 @@ void gf2d_element_load_label_from_config(Element *e,SJson *json)
 
     value = sj_object_get_value(json,"text");
     buffer = sj_get_string_value(value);
-    gf2d_element_make_label(e,gf2d_element_label_new_full((char *)buffer,color,style,justify,align,wraps));
+    gf2d_element_make_label(e,gf2d_element_label_new_full((char *)buffer,color,style,wraps));
 }
 
 /*eol@eof*/

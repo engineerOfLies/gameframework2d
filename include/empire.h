@@ -25,6 +25,7 @@ typedef struct
     Planet     *homeWorld;      /**<seat of power for this empire*/
     List       *systems;        /**<list of systems controlled by this empire*/
     List       *planets;        /**<list of planets developed by this empire*/
+    List       *installations;  /**<list of installations owned by this empire*/
     List       *armada;         /**<list of aramda controlled by this empire*/
     List       *ships;          /**<list of ships controlled by this empire*/
     List       *technologies;   /**<list of technologies developed by this empire*/

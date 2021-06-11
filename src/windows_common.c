@@ -316,11 +316,11 @@ int option_list_update(Window *win,List *updateList)
         if ((e->index >= 500)&& (e->index < 5000))
         {
             n = e->index - 500;
-            callback = (Callback*)gfc_list_get_nth(callbacks,n + 1);
             if (wdata->returnValue != NULL)
             {
                 *wdata->returnValue = n;
             }
+            callback = (Callback*)gfc_list_get_nth(callbacks,1);
             if (callback)
                 {
                     gfc_callback_call(callback);
@@ -348,7 +348,7 @@ void window_list_options_cancel(Window *win)
     gf2d_window_free(win);
 }
 
-Window *window_list_options(Vector2D position,const char *question, int n, const char*optionText[], void(*onOption[])(void *),void(*onCancel)(void *),void *data,int *returnValue)
+Window *window_list_options(Vector2D position,const char *question, int n, const char*optionText[], void(*onOption)(void *),void(*onCancel)(void *),void *data,int *returnValue)
 {
     int i;
     WindowData *wdata;
@@ -388,6 +388,8 @@ Window *window_list_options(Vector2D position,const char *question, int n, const
             gfc_color8(255,255,255,255),
             0,
             gfc_color8(255,255,255,255),
+            0,
+            0,
             0);
         l = gf2d_element_new_full(
             e,
@@ -397,7 +399,9 @@ Window *window_list_options(Vector2D position,const char *question, int n, const
             gfc_color8(255,255,255,255),
             0,
             gfc_color8(255,255,255,255),
-            0);
+            0,
+            LJ_Center,
+            LA_Middle);
         a = gf2d_element_new_full(
             e,
             50000 + i,
@@ -406,14 +410,14 @@ Window *window_list_options(Vector2D position,const char *question, int n, const
             gfc_color8(255,255,255,255),
             0,
             gfc_color8(255,255,255,255),
+            0,
+            0,
             0);
         
         label = gf2d_element_label_new_full(
             (char *)optionText[i],
             gfc_color8(255,255,255,255),
             FT_H5,
-            LJ_Center,
-            LA_Middle,
             0);
         gf2d_element_make_label(l,label);
 
@@ -431,8 +435,8 @@ Window *window_list_options(Vector2D position,const char *question, int n, const
         
         gf2d_element_list_add_item(p,e);
 
-        wdata->callbacks = gfc_list_append(wdata->callbacks,gfc_callback_new(onOption[i],data));
     }
+    wdata->callbacks = gfc_list_append(wdata->callbacks,gfc_callback_new(onOption,data));
     win->data = wdata;
     return win;
 }

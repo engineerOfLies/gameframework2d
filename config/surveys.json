@@ -1,0 +1,48 @@
+{
+    "title":"Suveys",
+    "items":
+    [
+        {
+            "id":"survey_fertility",
+            "name":"Fertility Survey",
+            "actor":"actors/developments.json",
+            "action":"farms",
+            "cost":
+            {
+                "credits":100,
+                "minerals":0,
+                "personnel":0
+            },
+            "description":"Survey a region for fertility.   Fertility is a key factor in the cultivation of agriculture.  More fertile land can support more aggriculture.",
+            "time":100
+        },
+        {
+            "id":"suvey_minerals",
+            "name":"Minerals",
+            "actor":"actors/developments.json",
+            "action":"mines",
+            "cost":
+            {
+                "credits":200,
+                "minerals":0,
+                "personnel":0
+            },
+            "description":"Survey a region for rare and exotic mineral deposits.  This will be a key factor in the ouput for any mining operations developed here.",
+            "time":200
+        },
+        {
+            "id":"survey_habitable",
+            "name":"Habitability Survey",
+            "actor":"actors/developments.json",
+            "action":"population",
+            "cost":
+            {
+                "credits":300,
+                "minerals":0,
+                "personnel":0
+            },
+            "description":"Perform an extensive survey looking into the region's suitability to support a colony.  Population centers will perform better with better approval ratings when built in more suitable environments.",
+            "time":300
+        }
+    ]
+}

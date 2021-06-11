@@ -93,7 +93,7 @@ ActionList *gf2d_action_list_new()
     return NULL;
 }
 
-ActionList *gf2d_action_list_get_by_filename(char * filename)
+ActionList *gf2d_action_list_get_by_filename(const char * filename)
 {
     int i;
     if (!filename)
@@ -226,7 +226,7 @@ void gf2d_action_file_load_actions(FILE *file,ActionList *actionList)
 
 
 ActionList *gf2d_action_list_load_parse(
-    char *filename
+    const char *filename
 )
 {
     FILE *file;
@@ -296,7 +296,7 @@ void gf2d_action_json_parse_action(
 
 ActionList *gf2d_action_list_load_json(
     SJson *json,
-    char *filename
+    const char *filename
 )
 {
     ActionList *actionList;
@@ -353,7 +353,7 @@ ActionList *gf2d_action_list_load_json(
 }
 
 ActionList *gf2d_action_list_load(
-    char *filename
+    const char *filename
 )
 {
     SJson *json;
@@ -376,7 +376,7 @@ ActionList *gf2d_action_list_load(
     return gf2d_action_list_load_parse(filename);
 }
 
-Action *gf2d_action_list_get_action(ActionList *al, char *name)
+Action *gf2d_action_list_get_action(ActionList *al, const char *name)
 {
     int i;
     if (!al)
@@ -399,7 +399,7 @@ Action *gf2d_action_list_get_action(ActionList *al, char *name)
     return NULL;// not found
 }
 
-float gf2d_action_set(ActionList *al,char *name)
+float gf2d_action_set(ActionList *al,const char *name)
 {
     Action *action;
     action = gf2d_action_list_get_action(al, name);
@@ -414,7 +414,7 @@ float gf2d_action_set(ActionList *al,char *name)
 ActionReturnType gf2d_action_list_get_next_frame(
     ActionList *al,
     float * frame,
-    char *name)
+    const char *name)
 {
     Action *action;
     if (!frame)
@@ -454,7 +454,7 @@ void gf2d_actor_free(Actor *actor)
     memset(actor,0,sizeof(Actor));
 }
 
-int gf2d_actor_load(Actor *actor,char *file)
+int gf2d_actor_load(Actor *actor,const char *file)
 {
     if (!file)
     {
@@ -494,7 +494,7 @@ const char *gf2d_actor_get_action_name(Actor *actor)
 Action *gf2d_actor_get_current_action(Actor *actor)
 {
     if (!actor)return NULL;
-    return gf2d_action_list_get_action(actor->al, (char *)gf2d_actor_get_action_name(actor));
+    return gf2d_action_list_get_action(actor->al, gf2d_actor_get_action_name(actor));
 }
 
 void gf2d_actor_next_action(Actor *actor)
@@ -516,7 +516,7 @@ void gf2d_actor_next_action(Actor *actor)
     gf2d_actor_set_action(actor,action->name);
 }
 
-void gf2d_actor_set_action(Actor *actor,char *action)
+void gf2d_actor_set_action(Actor *actor,const char *action)
 {
     if ((!actor)||(!actor->_inuse)||(!action))return;
     actor->frame = gf2d_action_set(actor->al,action);

@@ -7,11 +7,13 @@
 void gf2d_element_actor_draw(Element *element,Vector2D offset)
 {
     ActorElement *actor;
-    Vector2D position;
+    Vector2D position,centering;
     if (!element)return;
     actor = (ActorElement*)element->data;
     if (!actor)return;
+    centering = gf2d_element_get_alignment(element,vector2d(actor->actor.al->frameWidth,actor->actor.al->frameHeight));
     vector2d_add(position,offset,element->bounds);
+    vector2d_add(position,position,centering);
     if (actor->image)
     {
         gf2d_sprite_draw_image(actor->image,position);
@@ -64,7 +66,7 @@ ActorElement *gf2d_element_actor_new()
 }
 
 
-ActorElement *gf2d_element_actor_new_full(char *actorFile, char *action,Vector2D scale,const char *image)
+ActorElement *gf2d_element_actor_new_full(const char *actorFile, const char *action,Vector2D scale,const char *image)
 {
     ActorElement *ae;
     ae = gf2d_element_actor_new();
@@ -112,7 +114,7 @@ void gf2d_element_actor_auto_scale(Element *e)
     ae->scale.y = e->bounds.h /ae->actor.size.y;
 }
 
-void gf2d_element_actor_set_actor(Element *e, char *actorFile)
+void gf2d_element_actor_set_actor(Element *e, const char *actorFile)
 {
     ActorElement *ae;
     if (!e)return;
@@ -121,7 +123,7 @@ void gf2d_element_actor_set_actor(Element *e, char *actorFile)
     gf2d_actor_load(&ae->actor,actorFile);
 }
 
-void gf2d_element_actor_set_action(Element *e, char *action)
+void gf2d_element_actor_set_action(Element *e, const char *action)
 {
     ActorElement *ae;
     if (!e)return;

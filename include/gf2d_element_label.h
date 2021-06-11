@@ -10,8 +10,6 @@ typedef struct
     Color bgcolor;      /**<background color for the text*/
     int wraps;          /**<if the text should word wrap to match the dimensional width of its element space*/
     int style;          /**<which font style to use*/
-    int justify;        /**<leaning left or right*/
-    int alignment;      /**<vertical alignment top, middle or bottom*/
 }LabelElement;
 
 /**
@@ -19,12 +17,10 @@ typedef struct
  * @param text the label text
  * @param color the label text color
  * @param style the font style
- * @param justify the LabelJustification
- * @param align the vertical alignment
  * @param wraps if the label should word wrap
  * @return NULL on error or a new label element
  */
-LabelElement *gf2d_element_label_new_full(char *text,Color color,int style,int justify,int align,int wraps);
+LabelElement *gf2d_element_label_new_full(char *text,Color color,int style,int wraps);
 
 /**
  * @brief set an element to be the label provided

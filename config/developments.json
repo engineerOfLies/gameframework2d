@@ -5,7 +5,8 @@
         {
             "id":"dev_population",
             "name":"Population Center",
-            "image":"images/population.png",
+            "actor":"actors/developments.json",
+            "action":"population",
             "cost":
             {
                 "credits":1000,
@@ -27,7 +28,8 @@
         {
             "id":"dev_agriculture",
             "name":"Agriculture",
-            "image":"images/farms.png",
+            "actor":"actors/developments.json",
+            "action":"farms",
             "cost":
             {
                 "credits":1000,
@@ -48,7 +50,8 @@
         {
             "id":"dev_mining",
             "name":"Mining Operation",
-            "image":"images/mines.png",
+            "actor":"actors/developments.json",
+            "action":"mines",
             "cost":
             {
                 "credits":2000,

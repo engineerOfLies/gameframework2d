@@ -132,13 +132,13 @@ Window *window_message_buffer(int count, Uint32 timeout, Color defaultColor)
             gfc_color8(255,255,255,255),
             0,
             gfc_color8(255,255,255,255),
-            0);
+            0,
+            LJ_Left,
+            LA_Middle);
         label = gf2d_element_label_new_full(
             "",
             gfc_color8(255,255,255,255),
             FT_H6,
-            LJ_Left,
-            LA_Middle,
             0);
         gf2d_element_make_label(l,label);
         gf2d_element_list_add_item(p,l);

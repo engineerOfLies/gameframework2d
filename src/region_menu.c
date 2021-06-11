@@ -15,6 +15,7 @@
 #include "camera.h"
 #include "windows_common.h"
 #include "message_buffer.h"
+#include "installations.h"
 #include "regions.h"
 #include "buy_menu.h"
 #include "planet_view.h"
@@ -48,24 +49,21 @@ int region_menu_draw(Window *win)
     return 0;
 }
 
-static const char *surveyOptions[] = 
-{
-    "Fertility",
-    "Minerals",
-    "Habitable"
-};
-
 void onDevelop(void *cData)
 {
+    Installation *inst;
     RegionMenuData* data;
     Window *win = (Window *)cData;
     if (!win)return;
     data = win->data;
     data->childWindow = NULL;
     message_printf("Development Chosen: %i",data->buyChoice);
+    inst = installation_create_by_type(data->buyChoice + 1,vector2d(0,0),data->region,data->empire);
+    data->region->installations = gfc_list_append(data->region->installations,inst);
+    data->empire->installations = gfc_list_append(data->empire->installations,inst);
 }
 
-void onFertility(void *cData)
+void onSurvey(void *cData)
 {
     int survey;
     RegionMenuData* data;
@@ -73,7 +71,7 @@ void onFertility(void *cData)
     if (!win)return;
     data = win->data;
     data->childWindow = NULL;
-    survey = empire_survery_region(data->empire,data->region->id,ST_Fertility);
+    survey = empire_survery_region(data->empire,data->region->id,data->surveyChoice);
     if (survey < 0)
     {
         slog("Servey","Error, cannot survery");
@@ -81,79 +79,17 @@ void onFertility(void *cData)
     }
     if (survey == SS_Started)
     {
-        message_new("Fertility Survey has been started");
+        message_new("Survey has been started");
     }
     else if (survey == SS_Underway)
     {
-        message_new("Fertility servey already underway!");
+        message_new("servey already underway!");
     }
     else if (survey == SS_Completed)
     {
-        message_new("Fertility servey already completed!");
+        message_new("servey already completed!");
     }
 }
-void onMinerals(void *cData)
-{
-    int survey;
-    RegionMenuData* data;
-    Window *win = (Window *)cData;
-    if (!win)return;
-    data = win->data;
-    data->childWindow = NULL;
-    survey = empire_survery_region(data->empire,data->region->id,ST_Minerals);
-    if (survey < 0)
-    {
-        slog("Servey","Error, cannot survery");
-        return;
-    }
-    if (survey == SS_Started)
-    {
-        message_new("Mineral Survey has been started");
-    }
-    else if (survey == SS_Underway)
-    {
-        message_new("Mineral servey already underway!");
-    }
-    else if (survey == SS_Completed)
-    {
-        message_new("Mineral servey already completed!");
-    }
-}
-
-void onHabitable(void *cData)
-{
-    int survey;
-    RegionMenuData* data;
-    Window *win = (Window *)cData;
-    if (!win)return;
-    data = win->data;
-    data->childWindow = NULL;
-    survey = empire_survery_region(data->empire,data->region->id,ST_Habitable);
-    if (survey < 0)
-    {
-        slog("Servey","Error, cannot survery");
-        return;
-    }
-    if (survey == SS_Started)
-    {
-        message_new("Habitability Survey has been started");
-    }
-    else if (survey == SS_Underway)
-    {
-        message_new("Habitability servey already underway!");
-    }
-    else if (survey == SS_Completed)
-    {
-        message_new("Habitability servey already completed!");
-    }
-}
-
-static void(*onSurveyOption[])(void *) = 
-{
-    onFertility,
-    onMinerals,
-    onHabitable
-};
 
 static void onCancel(void *cData)
 {
@@ -241,9 +177,14 @@ int region_menu_update(Window *win,List *updateList)
         switch(e->index)
         {
             case 40:
-                if (data->childWindow == NULL)data->childWindow = window_list_options(vector2d(win->dimensions.x - 200,200),"Survey Type", 3, surveyOptions, onSurveyOption,onCancel,win,&data->surveyChoice);
+                if (data->childWindow == NULL)data->childWindow = buy_menu(data->empire,"config/surveys.json",&data->surveyChoice,onSurvey,onCancel,win);
                 return 1;
             case 50:
+                if (gfc_list_get_count(data->region->installations) > 0)
+                {
+                    message_new("Development already installed");
+                    return 1;
+                }
                 if (data->childWindow == NULL)data->childWindow = buy_menu(data->empire,"config/developments.json",&data->buyChoice,onDevelop,onCancel,win);
                 return 1;
         }

@@ -15,13 +15,13 @@ Window *window_text_entry(const char *question,char *defaultText, void *callback
  * @param question the question/title of the options list
  * @param n the number of options
  * @param optionText an array of n strings for each option
- * @param onOption an array of n callback functions to call on the event of the option in question being selected
+ * @param onOption a callback function to call on the event of an option in question being selected
  * @param onCancel if the user cancels (ESC by default) the options, call this function instead
  * @param data the data to be provided to the callbacks
  * @param returnValue if not NULL the integer provided will be populated with the selected option if a choice is made (not touched on cancel)
  * @return a pointer to the window created
  */
-Window *window_list_options(Vector2D position,const char *question, int n, const char*optionText[], void(*onOption[])(void *),void(*onCancel)(void *),void *data,int *returnValue);
+Window *window_list_options(Vector2D position,const char *question, int n, const char*optionText[], void(*onOption)(void *),void(*onCancel)(void *),void *data,int *returnValue);
 
 
 /**

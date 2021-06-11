@@ -72,6 +72,7 @@ Empire *empire_new()
     empire->planets = gfc_list_new();
     empire->armada = gfc_list_new();
     empire->ships = gfc_list_new();
+    empire->installations = gfc_list_new();
     empire->technologies = gfc_list_new();
     empire_data.list = gfc_list_append(empire_data.list,empire);
     empire->progress = sj_object_new();

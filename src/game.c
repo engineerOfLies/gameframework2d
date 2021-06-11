@@ -22,6 +22,7 @@
 #include "systems.h"
 #include "planet.h"
 #include "regions.h"
+#include "installations.h"
 #include "empire.h"
 
 static int _done = 0;
@@ -94,6 +95,7 @@ int main(int argc, char * argv[])
     system_init();
     planet_init();
     regions_init();
+    installations_init();
     empire_init();
     
     message_buffer_init(8,500, gfc_color8(255,255,255,255));

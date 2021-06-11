@@ -31,6 +31,8 @@ typedef struct
 {
     int *choice;
     int selection;
+    int cost;
+    Empire *empire;
     TextLine filename;
     Callback *onBuy;
     Callback *onCancel;
@@ -59,7 +61,10 @@ int buy_menu_draw(Window *win)
 
 void buy_menu_select(Window *win,int index)
 {
-    SJson *item;
+    int credits;
+    SJson *item,*cost;
+    const char *actorFile,*action;
+    int tempInt;
     TextLine textline;
     BuyMenuData* data;
 
@@ -71,9 +76,42 @@ void buy_menu_select(Window *win,int index)
     data->selection = index;
     item = sj_array_get_nth(data->items,index);
     if (!item)return;
-    
     gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,101),(char *)sj_get_string_value(sj_object_get_value(item,"name")));
+    gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,205),(char *)sj_get_string_value(sj_object_get_value(item,"description")));
     
+    actorFile = sj_get_string_value(sj_object_get_value(item,"actor"));
+    action = sj_get_string_value(sj_object_get_value(item,"action"));
+    
+    gf2d_element_actor_set_actor(gf2d_window_get_element_by_id(win,110), actorFile);
+    gf2d_element_actor_set_action(gf2d_window_get_element_by_id(win,110), action);
+    
+    
+    cost = sj_object_get_value(item,"cost");
+    if (!cost)return;
+    
+    credits = empire_get_credits(data->empire);
+    
+    sj_get_integer_value(sj_object_get_value(cost,"credits"),&tempInt);
+    gfc_line_sprintf(textline,"Credits:            $%6i",tempInt);
+    data->cost = tempInt;
+    if (credits < tempInt)
+    {
+        gf2d_element_set_color(gf2d_window_get_element_by_id(win,202), gfc_color8(255,100,100,255));
+    }
+    else
+    {
+        gf2d_element_set_color(gf2d_window_get_element_by_id(win,202), gfc_color8(255,255,255,255));
+    }
+
+    gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,202),textline);
+
+    sj_get_integer_value(sj_object_get_value(cost,"minerals"),&tempInt);
+    gfc_line_sprintf(textline,"Minerals:           $%6i",tempInt);
+    gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,203),textline);
+    
+    sj_get_integer_value(sj_object_get_value(cost,"personnel"),&tempInt);
+    gfc_line_sprintf(textline,"Personnel:        $%6i",tempInt);
+    gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,204),textline);
 }
 
 int buy_menu_update(Window *win,List *updateList)
@@ -99,6 +137,12 @@ int buy_menu_update(Window *win,List *updateList)
         switch(e->index)
         {
             case 151:
+                if (empire_get_credits(data->empire) < data->cost)
+                {
+                    message_new("insufficient funds!");
+                    return 1;
+                }
+                empire_change_credits(data->empire,-data->cost);
                 if (data->choice)
                 {
                     *data->choice = data->selection;
@@ -182,7 +226,10 @@ Window *buy_menu(Empire *empire,const char *shopConfig,int *choice, void(*onBuy)
                 gfc_color8(255,255,255,255),
                 0,
                 gfc_color8(255,255,255,255),
+                0,
+                0,
                 0);
+
             l = gf2d_element_new_full(
                 e,
                 3000 + i,
@@ -191,7 +238,9 @@ Window *buy_menu(Empire *empire,const char *shopConfig,int *choice, void(*onBuy)
                 gfc_color8(255,255,255,255),
                 0,
                 gfc_color8(255,255,255,255),
-                0);
+                0,
+                LJ_Center,
+                LA_Middle);
             a = gf2d_element_new_full(
                 e,
                 30000 + i,
@@ -200,14 +249,14 @@ Window *buy_menu(Empire *empire,const char *shopConfig,int *choice, void(*onBuy)
                 gfc_color8(255,255,255,255),
                 0,
                 gfc_color8(255,255,255,255),
+                0,
+                0,
                 0);
             
             label = gf2d_element_label_new_full(
                 (char *)sj_get_string_value(sj_object_get_value(item,"name")),
                 gfc_color8(255,255,255,255),
                 FT_H5,
-                LJ_Center,
-                LA_Middle,
                 0);
             gf2d_element_make_label(l,label);
 
@@ -227,9 +276,11 @@ Window *buy_menu(Empire *empire,const char *shopConfig,int *choice, void(*onBuy)
         }
     }
     data->items = items;
+    data->empire = empire;
     win->data = data;
     
     buy_menu_select(win,0);
+    message_buffer_bubble();
     return win;
 }
 

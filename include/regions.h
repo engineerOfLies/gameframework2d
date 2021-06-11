@@ -10,16 +10,6 @@
 
 typedef enum
 {
-    RS_Plotted,
-    RS_Construction,
-    RS_Complete,
-    RS_Damaged,
-    RS_Destroyed,
-    RS_MAX
-}RegionState;
-
-typedef enum
-{
     RB_Rocky,
     RB_Desert,
     RB_Ocean,
@@ -46,36 +36,23 @@ typedef enum
     SS_Max
 }SurveyState;
 
-typedef enum
-{
-    IT_None,
-    IT_Population,
-    IT_Agriculture,
-    IT_Military,
-    IT_Mining,
-    IT_Refinery,
-    IT_Research,
-    IT_Cultural,
-    IT_Travel,
-    IT_University,
-    IT_MAX
-}InstallationType;
+
 
 typedef struct
 {
-    Uint32      id;                 /**<unique id for the region*/
-    TextLine    name;
-    RegionBiome biome;              /**<terrain this region is made up of*/
-    float       regionRange;        /**<*/
-    Vector2D    drawPosition;       /**<where on the planet to draw this region*/
-    float       drawRotation;       /**<each region will be drawn at a custom rotation to provide variety*/
-    Uint32      minerals;           /**<mining quality here*/
-    Uint32      fertility;          /**<agriculture quality here*/
-    Uint32      habitable;          /**<quality of life factor, population limit for settlements placed here*/
-    Uint32      installation;       /**<which development, if any has been installed to this region*/
-    Uint32      state;              /**<state of development for the installation*/
-    Uint32      strength;           /**<generic score for the strength of the development, if any*/
-    Uint32      commanderId;        /**<if the installation has a commander, this is their ID*/
+    Uint32          id;                 /**<unique id for the region*/
+    TextLine        name;
+    RegionBiome     biome;              /**<terrain this region is made up of*/
+    float           regionRange;        /**<*/
+    Vector2D        drawPosition;       /**<where on the planet to draw this region*/
+    float           drawRotation;       /**<each region will be drawn at a custom rotation to provide variety*/
+    Uint32          minerals;           /**<mining quality here*/
+    Uint32          fertility;          /**<agriculture quality here*/
+    Uint32          habitable;          /**<quality of life factor, population limit for settlements placed here*/
+    Uint32          state;              /**<state of development for the installation*/
+    Uint32          strength;           /**<generic score for the strength of the development, if any*/
+    Uint32          commanderId;        /**<if the installation has a commander, this is their ID*/
+    List           *installations;      /**<this might become a list*/
 }Region;
 
 void regions_init();
