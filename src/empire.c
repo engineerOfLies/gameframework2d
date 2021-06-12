@@ -5,7 +5,7 @@
 #include "message_buffer.h"
 #include "systems.h"
 #include "planet.h"
-
+#include "installations.h"
 #include "empire.h"
 
 typedef struct
@@ -95,10 +95,10 @@ void empire_setup(Empire *empire)
     empire->galaxy = galaxy;
     empire->empireColor = gfc_color(0.6,0.6,1,1);
 
-    empire->credits = 5000;
-    empire->minerals = 1000;
-    empire->population = 100;
-    empire->agriculture = 100;
+    empire->resources.credits = 5000;
+    empire->resources.minerals = 5000;
+    empire->resources.population = 500;
+    empire->resources.agriculture = 500;
 
     // designate a home system near the galactic center
     empire->homeSystem = galaxy_get_nearest_system(galaxy,NULL,vector2d(0.5,0.5),0.5);
@@ -319,6 +319,8 @@ int empire_survery_region(Empire *empire,Uint32 regionId,SurveyType surveyType)
 
 void empire_update(Empire *empire)
 {
+    Installation *inst;
+    int i,c;
     if (!empire)
     {
         slog("no empire provided");
@@ -326,45 +328,68 @@ void empire_update(Empire *empire)
     }
     empire->gameTime++;
     empire_surveys_update(empire);
+    
+    if ((empire->gameTime % 400) == 0)
+    {
+        c = gfc_list_get_count(empire->installations);
+        for (i = 0; i < c; i++)
+        {
+            inst = gfc_list_get_nth(empire->installations,i);
+            if (!inst)continue;
+            installation_update(inst);
+        }
+    }
 }
 
 int empire_get_credits(Empire *empire)
 {
     if (!empire)return 0;
-    return empire->credits;
+    return (int)empire->resources.credits;
 }
 
-int empire_change_credits(Empire *empire,int credits)
+int empire_change_credits(Empire *empire,double credits)
 {
     if (!empire)return 0;
-    empire->credits += credits;
-    return empire->credits;
+    empire->resources.credits += credits;
+    return (int)empire->resources.credits;
 }
 
 int empire_get_population(Empire *empire)
 {
     if (!empire)return 0;
-    return empire->population;
+    return (int)empire->resources.population;
 }
 
-int empire_change_population(Empire *empire,int population)
+int empire_change_population(Empire *empire,double population)
 {
     if (!empire)return 0;
-    empire->population += population;
-    return empire->population;
+    empire->resources.population += population;
+    return (int)empire->resources.population;
 }
 
 int empire_get_minerals(Empire *empire)
 {
     if (!empire)return 0;
-    return empire->minerals;
+    return (int)empire->resources.minerals;
 }
 
-int empire_change_minerals(Empire *empire,int minerals)
+int empire_change_minerals(Empire *empire,double minerals)
 {
     if (!empire)return 0;
-    empire->minerals += minerals;
-    return empire->minerals;
+    empire->resources.minerals += minerals;
+    return (int)empire->resources.minerals;
 }
 
+int empire_get_agriculture(Empire *empire)
+{
+    if (!empire)return 0;
+    return (int)empire->resources.agriculture;
+}
+
+int empire_change_agriculture(Empire *empire,double agriculture)
+{
+    if (!empire)return 0;
+    empire->resources.agriculture += agriculture;
+    return (int)empire->resources.agriculture;
+}
 /*eol@eof*/

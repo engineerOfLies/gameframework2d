@@ -28,11 +28,13 @@ typedef enum
 typedef enum
 {
     RS_Empty,
-    RS_Plotted,
-    RS_Construction,
-    RS_Complete,
-    RS_Damaged,
-    RS_Destroyed,
+    RS_Plotted,         // initially plotted, but construction hasn't begun yet
+    RS_Construction,    // under construction, no upkeep
+    RS_Operational,     // Up and running, upkeep and production at full capacity
+    RS_Starved,         // not enough resources to operate.  Will not come back online until resources are available. 
+    RS_Offline,         // taken offline by the player/ will no longer produce or cost upkeep until returned to operational
+    RS_Damaged,         // Needs to be repaired before it can produce again. It will still cost upkeep.  Can be repaired to return to operational / Destroyed to remove
+    RS_Destroyed,       // Dead, must be removed to rebuild in this spot
     RS_MAX
 }InstallationState;
 
@@ -47,6 +49,9 @@ typedef struct
     int                 startTime;      /**<gametime when this was built*/
     Actor               actor;          /**<drawing*/
     Vector2D            position;       /**<draw position*/
+    Uint32              personnel;      /**<number of staff assigned to this outpost could be a factor in output/upkeep*/
+    EmpireResources     upkeep;         /**<costs per update for the installation to keep running*/
+    EmpireResources     production;     /**<ammount of resources produced per update, assuming upkeep went smoothly*/
     Region             *region;         /**<region where this installation was built*/
 }Installation;
 
@@ -81,6 +86,11 @@ Installation *installation_create_by_type(InstallationType iType,Vector2D positi
  * @brief draw an installation to the screen with the given offset
  */
 void installation_draw(Installation *inst,Vector2D offset);
+
+/**
+ * @brief update the given installations, running upkeep and production
+ */
+void installation_update(Installation *inst);
 
 
 #endif

@@ -15,26 +15,31 @@
 
 typedef struct
 {
-    Uint32      id;             /**<unique id for the empire*/
-    Uint64      gameTime;       /**<time for the empire*/
-    TextLine    leaderName;     /**<leader of the empire's name*/
-    TextLine    empireName;     /**<name of the player's empire*/
-    Color       empireColor;    /**<highlight color for this empire*/
-    Galaxy     *galaxy;         /**<the galaxy to rule*/
-    System     *homeSystem;     /**<this empire's home system*/
-    Planet     *homeWorld;      /**<seat of power for this empire*/
-    List       *systems;        /**<list of systems controlled by this empire*/
-    List       *planets;        /**<list of planets developed by this empire*/
-    List       *installations;  /**<list of installations owned by this empire*/
-    List       *armada;         /**<list of aramda controlled by this empire*/
-    List       *ships;          /**<list of ships controlled by this empire*/
-    List       *technologies;   /**<list of technologies developed by this empire*/
-    Sint32      approval;       /**<how well liked you are by your people*/
-    Sint32      credits;        /**<how many credits are at the empire's disposal*/
-    Sint32      minerals;       /**<how many minerals are at the empire's disposal*/
-    Uint32      population;     /**<how many workers are at the empire's disposal*/
-    Sint32      agriculture;    /**<how much food has been produced by the empire*/
-    SJson      *progress;       /**<keeps track of updates throughout the galaxy*/
+    double      approval;       /**<how well liked you are by your people*/
+    double      credits;        /**<how many credits are at the empire's disposal*/
+    double      minerals;       /**<how many minerals are at the empire's disposal*/
+    double      population;     /**<how many workers are at the empire's disposal*/
+    double      agriculture;    /**<how much food has been produced by the empire*/
+}EmpireResources;
+
+typedef struct
+{
+    Uint32          id;             /**<unique id for the empire*/
+    Uint64          gameTime;       /**<time for the empire*/
+    TextLine        leaderName;     /**<leader of the empire's name*/
+    TextLine        empireName;     /**<name of the player's empire*/
+    Color           empireColor;    /**<highlight color for this empire*/
+    Galaxy         *galaxy;         /**<the galaxy to rule*/
+    System         *homeSystem;     /**<this empire's home system*/
+    Planet         *homeWorld;      /**<seat of power for this empire*/
+    List           *systems;        /**<list of systems controlled by this empire*/
+    List           *planets;        /**<list of planets developed by this empire*/
+    List           *installations;  /**<list of installations owned by this empire*/
+    List           *armada;         /**<list of aramda controlled by this empire*/
+    List           *ships;          /**<list of ships controlled by this empire*/
+    List           *technologies;   /**<list of technologies developed by this empire*/
+    EmpireResources resources;      /**<empire's resources*/
+    SJson          *progress;       /**<keeps track of updates throughout the galaxy*/
 }Empire;
 
 /**
@@ -91,11 +96,14 @@ int empire_get_credits(Empire *empire);
  * @param empire the empire;
  * @param credits the amount to change it by (yes even negative)
  */
-int empire_change_credits(Empire *empire,int credits);
+int empire_change_credits(Empire *empire,double credits);
 
 int empire_get_population(Empire *empire);
-int empire_change_population(Empire *empire,int population);
-int empire_get_minerals(Empire *empire);
-int empire_change_minerals(Empire *empire,int minerals);
+int empire_change_population(Empire *empire,double population);
+int  empire_get_minerals(Empire *empire);
+int empire_change_minerals(Empire *empire,double minerals);
+int empire_get_agriculture(Empire *empire);
+int empire_change_agriculture(Empire *empire,double agriculture);
+
 
 #endif

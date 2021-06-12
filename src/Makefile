@@ -55,7 +55,7 @@ clean:
 	rm *.o
 
 count:
-	wc -l *.c $(foreach d, $(INC_PATHS), $d/*.h) makefile
+	wc -l *.c $(foreach d, $(INC_PATHS), $d/*.h) $(foreach d, $(INC_PATHS), $d/../src/*.c) makefile
 
 #
 # Dependencies.

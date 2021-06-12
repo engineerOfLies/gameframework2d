@@ -4,70 +4,76 @@
     [
         {
             "id":"dev_population",
+            "iType":1,
             "name":"Population Center",
             "actor":"actors/developments.json",
             "action":"population",
             "cost":
             {
-                "credits":1000,
+                "credits":500,
                 "minerals":500,
                 "personnel":100
             },
             "description":"Population centers are colonies for your citizens.  Here they will live and build lives for themselves.  As the population grows you will have more personnel to help staff your endeavors.  Population centers also generate tax revenue.  There are upkeep costs in the form of credits and agriculture.",
             "upkeep":
             {
-                "credits":-100,
-                "agriculture":-200
+                "credits":50,
+                "agriculture":50
             },
             "production":
             {
                 "personnel":0.01,
-                "credits":0.07
+                "credits":0.5
             }
         },
         {
             "id":"dev_agriculture",
+            "iType":2,
             "name":"Agriculture",
             "actor":"actors/developments.json",
             "action":"farms",
             "cost":
             {
-                "credits":1000,
+                "credits":500,
                 "minerals":500,
                 "personnel":50
             },
             "description":"Agriculture installations cultivate farmland in order to generate the food needed to sustain a population.  These are needed to feed your people.  They work best on fertile land.",
             "upkeep":
             {
-                "credits":-200,
-                "minerals":-100
+                "credits":50,
+                "minerals":50,
+                "agriculture":25
             },
             "production":
             {
-                "agriculture":0.1
+                "agriculture":0.75,
+                "credits":0.75
             }
         },
         {
             "id":"dev_mining",
             "name":"Mining Operation",
+            "iType":1,
             "actor":"actors/developments.json",
             "action":"mines",
             "cost":
             {
-                "credits":2000,
+                "credits":800,
                 "minerals":100,
                 "personnel":50
             },
             "description":"Mining Operations are at the heart of your economy.  The exotic minerals produced are needed for building planetary installations as well as your armada.  Valuable minerals will be sold automatically to help fuel your economy.",
             "upkeep":
             {
-                "credits":-200,
-                "minerals":-100
+                "credits":50,
+                "minerals":50,
+                "agriculture":25
             },
             "production":
             {
-                "minerals":0.1,
-                "credits":0.15
+                "minerals":0.75,
+                "credits":0.75
             }
         }
     ]
