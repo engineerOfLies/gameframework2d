@@ -17,7 +17,7 @@
             "description":"Population centers are colonies for your citizens.  Here they will live and build lives for themselves.  As the population grows you will have more personnel to help staff your endeavors.  Population centers also generate tax revenue.  There are upkeep costs in the form of credits and agriculture.",
             "upkeep":
             {
-                "credits":50,
+                "credits":20,
                 "agriculture":50
             },
             "production":
@@ -41,9 +41,9 @@
             "description":"Agriculture installations cultivate farmland in order to generate the food needed to sustain a population.  These are needed to feed your people.  They work best on fertile land.",
             "upkeep":
             {
-                "credits":50,
-                "minerals":50,
-                "agriculture":25
+                "credits":25,
+                "minerals":25,
+                "agriculture":10
             },
             "production":
             {
@@ -66,8 +66,8 @@
             "description":"Mining Operations are at the heart of your economy.  The exotic minerals produced are needed for building planetary installations as well as your armada.  Valuable minerals will be sold automatically to help fuel your economy.",
             "upkeep":
             {
-                "credits":50,
-                "minerals":50,
+                "credits":25,
+                "minerals":10,
                 "agriculture":25
             },
             "production":
