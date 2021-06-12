@@ -95,7 +95,7 @@ void empire_setup(Empire *empire)
     empire->galaxy = galaxy;
     empire->empireColor = gfc_color(0.6,0.6,1,1);
 
-    empire->credits = 1000;
+    empire->credits = 5000;
     empire->minerals = 1000;
     empire->population = 100;
     empire->agriculture = 100;
@@ -339,6 +339,32 @@ int empire_change_credits(Empire *empire,int credits)
     if (!empire)return 0;
     empire->credits += credits;
     return empire->credits;
+}
+
+int empire_get_population(Empire *empire)
+{
+    if (!empire)return 0;
+    return empire->population;
+}
+
+int empire_change_population(Empire *empire,int population)
+{
+    if (!empire)return 0;
+    empire->population += population;
+    return empire->population;
+}
+
+int empire_get_minerals(Empire *empire)
+{
+    if (!empire)return 0;
+    return empire->minerals;
+}
+
+int empire_change_minerals(Empire *empire,int minerals)
+{
+    if (!empire)return 0;
+    empire->minerals += minerals;
+    return empire->minerals;
 }
 
 /*eol@eof*/

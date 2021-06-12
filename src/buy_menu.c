@@ -32,6 +32,8 @@ typedef struct
     int *choice;
     int selection;
     int cost;
+    int minerals;
+    int population;
     Empire *empire;
     TextLine filename;
     Callback *onBuy;
@@ -62,6 +64,8 @@ int buy_menu_draw(Window *win)
 void buy_menu_select(Window *win,int index)
 {
     int credits;
+    int minerals;
+    int population;
     SJson *item,*cost;
     const char *actorFile,*action;
     int tempInt;
@@ -90,6 +94,8 @@ void buy_menu_select(Window *win,int index)
     if (!cost)return;
     
     credits = empire_get_credits(data->empire);
+    minerals = empire_get_minerals(data->empire);
+    population = empire_get_population(data->empire);
     
     sj_get_integer_value(sj_object_get_value(cost,"credits"),&tempInt);
     gfc_line_sprintf(textline,"Credits:            $%6i",tempInt);
@@ -102,14 +108,32 @@ void buy_menu_select(Window *win,int index)
     {
         gf2d_element_set_color(gf2d_window_get_element_by_id(win,202), gfc_color8(255,255,255,255));
     }
-
     gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,202),textline);
 
     sj_get_integer_value(sj_object_get_value(cost,"minerals"),&tempInt);
+    data->minerals = tempInt;
+    if (minerals < tempInt)
+    {
+        gf2d_element_set_color(gf2d_window_get_element_by_id(win,203), gfc_color8(255,100,100,255));
+    }
+    else
+    {
+        gf2d_element_set_color(gf2d_window_get_element_by_id(win,203), gfc_color8(255,255,255,255));
+    }
     gfc_line_sprintf(textline,"Minerals:           $%6i",tempInt);
     gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,203),textline);
     
+    
     sj_get_integer_value(sj_object_get_value(cost,"personnel"),&tempInt);
+    data->population = tempInt;
+    if (population < tempInt)
+    {
+        gf2d_element_set_color(gf2d_window_get_element_by_id(win,204), gfc_color8(255,100,100,255));
+    }
+    else
+    {
+        gf2d_element_set_color(gf2d_window_get_element_by_id(win,204), gfc_color8(255,255,255,255));
+    }
     gfc_line_sprintf(textline,"Personnel:        $%6i",tempInt);
     gf2d_element_label_set_text(gf2d_window_get_element_by_id(win,204),textline);
 }
@@ -142,7 +166,19 @@ int buy_menu_update(Window *win,List *updateList)
                     message_new("insufficient funds!");
                     return 1;
                 }
+                if (empire_get_minerals(data->empire) < data->minerals)
+                {
+                    message_new("not enough minerals!");
+                    return 1;
+                }
+                if (empire_get_population(data->empire) < data->population)
+                {
+                    message_new("not enough available personnel!");
+                    return 1;
+                }
                 empire_change_credits(data->empire,-data->cost);
+                empire_change_minerals(data->empire,-data->minerals);
+                empire_change_population(data->empire,-data->population);
                 if (data->choice)
                 {
                     *data->choice = data->selection;

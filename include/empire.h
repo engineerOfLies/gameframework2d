@@ -93,4 +93,9 @@ int empire_get_credits(Empire *empire);
  */
 int empire_change_credits(Empire *empire,int credits);
 
+int empire_get_population(Empire *empire);
+int empire_change_population(Empire *empire,int population);
+int empire_get_minerals(Empire *empire);
+int empire_change_minerals(Empire *empire,int minerals);
+
 #endif
