@@ -42,7 +42,9 @@ typedef enum
 typedef struct
 {
     Uint32              id;             /**<this installation's id*/
+    int                 health;         /**<100 is functional, 0 is dead.  other is damaged*/
     TextLine            name;           /**<name of installation*/
+    TextLine            actions[6];     /**<actor actions for different states*/
     Empire             *empire;         /**<who owns this*/
     InstallationType    iType;          /**<which type of installation this is*/
     InstallationState   iState;         /**<current installation state*/
@@ -92,5 +94,9 @@ void installation_draw(Installation *inst,Vector2D offset);
  */
 void installation_update(Installation *inst);
 
+/**
+ * @brief change the current state of the installation
+ */
+void installation_set_state(Installation *inst,InstallationState iState);
 
 #endif

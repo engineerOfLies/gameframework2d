@@ -18,7 +18,7 @@
         },
         {
             "id":"suvey_minerals",
-            "name":"Minerals",
+            "name":"Minerals Deposits",
             "actor":"actors/developments.json",
             "action":"mines",
             "cost":

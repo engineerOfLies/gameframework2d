@@ -331,6 +331,7 @@ void empire_update(Empire *empire)
     
     if ((empire->gameTime % 400) == 0)
     {
+        memset(&empire->resourcesDelta,0,sizeof(EmpireResources));
         c = gfc_list_get_count(empire->installations);
         for (i = 0; i < c; i++)
         {
@@ -350,8 +351,9 @@ int empire_get_credits(Empire *empire)
 int empire_change_credits(Empire *empire,double credits)
 {
     if (!empire)return 0;
+    empire->resourcesDelta.credits += credits;
     empire->resources.credits += credits;
-    return (int)empire->resources.credits;
+    return (int)empire->resourcesDelta.credits;
 }
 
 int empire_get_population(Empire *empire)
@@ -363,8 +365,10 @@ int empire_get_population(Empire *empire)
 int empire_change_population(Empire *empire,double population)
 {
     if (!empire)return 0;
+    empire->resourcesDelta.population += population;
     empire->resources.population += population;
-    return (int)empire->resources.population;
+    if (empire->resources.population < 0)empire->resources.population = 0;
+    return (int)empire->resourcesDelta.population;
 }
 
 int empire_get_minerals(Empire *empire)
@@ -376,8 +380,10 @@ int empire_get_minerals(Empire *empire)
 int empire_change_minerals(Empire *empire,double minerals)
 {
     if (!empire)return 0;
+    empire->resourcesDelta.minerals += minerals;
     empire->resources.minerals += minerals;
-    return (int)empire->resources.minerals;
+    if (empire->resources.minerals < 0)empire->resources.minerals = 0;
+    return (int)empire->resourcesDelta.minerals;
 }
 
 int empire_get_agriculture(Empire *empire)
@@ -389,7 +395,15 @@ int empire_get_agriculture(Empire *empire)
 int empire_change_agriculture(Empire *empire,double agriculture)
 {
     if (!empire)return 0;
+    empire->resourcesDelta.agriculture += agriculture;
     empire->resources.agriculture += agriculture;
-    return (int)empire->resources.agriculture;
+    if (empire->resources.agriculture < 0)empire->resources.agriculture = 0;
+    return (int)empire->resourcesDelta.agriculture;
+}
+
+Uint32 empire_get_gametime(Empire *empire)
+{
+    if (!empire)return 0;
+    return empire->gameTime;
 }
 /*eol@eof*/

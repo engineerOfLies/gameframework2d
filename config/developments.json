@@ -8,6 +8,8 @@
             "name":"Population Center",
             "actor":"actors/developments.json",
             "action":"population",
+            "active":"population_active",
+            "damaged":"population_damaged",
             "cost":
             {
                 "credits":500,
@@ -32,6 +34,8 @@
             "name":"Agriculture",
             "actor":"actors/developments.json",
             "action":"farms",
+            "active":"farms_active",
+            "damaged":"farms_damaged",
             "cost":
             {
                 "credits":500,
@@ -57,6 +61,8 @@
             "iType":1,
             "actor":"actors/developments.json",
             "action":"mines",
+            "active":"mines_active",
+            "damaged":"mines_damaged",
             "cost":
             {
                 "credits":800,

@@ -37,6 +37,7 @@ void empire_hud_bubble()
 void empire_hud_draw_titlebar(Empire *empire,EmpireHudData *data)
 {
     int i;
+    Color color;
     TextLine line;
     Vector2D bounds;
     if ((!empire)||(!data))return;
@@ -59,25 +60,73 @@ void empire_hud_draw_titlebar(Empire *empire,EmpireHudData *data)
     gf2d_font_draw_line_tag(empire->empireName,FT_H6,gfc_color(1,1,1,1), vector2d(10,4));
     
     //credits
+    if (empire->resourcesDelta.credits > 0)
+    {
+        color = gfc_color_hsl(120,1,0.5,1);
+    }
+    else if (empire->resourcesDelta.credits < 0)
+    {
+        color = gfc_color_hsl(0,1,0.5,1);
+    }
+    else
+    {
+        color = gfc_color8(255,255,255,255);
+    }
     gfc_line_sprintf(line,"%i",(int)empire->resources.credits);
     bounds = gf2d_font_get_bounds_tag(line,FT_H5);
-    gf2d_font_draw_line_tag(line,FT_H5,gfc_color_hsl(120,1,0.5,1), vector2d(680 - bounds.x,6));
+    gf2d_font_draw_line_tag(line,FT_H5,color, vector2d(680 - bounds.x,6));
     //minerals
+    if (empire->resourcesDelta.minerals> 0)
+    {
+        color = gfc_color_hsl(120,1,0.5,1);
+    }
+    else if (empire->resourcesDelta.minerals< 0)
+    {
+        color = gfc_color_hsl(0,1,0.5,1);
+    }
+    else
+    {
+        color = gfc_color8(255,255,255,255);
+    }
     gfc_line_sprintf(line,"%i",(int)empire->resources.minerals);
     bounds = gf2d_font_get_bounds_tag(line,FT_H5);
-    gf2d_font_draw_line_tag(line,FT_H5,gfc_color_hsl(120,1,0.5,1), vector2d(808 - bounds.x,6));
+    gf2d_font_draw_line_tag(line,FT_H5,color, vector2d(808 - bounds.x,6));
     //agriculture
+    if (empire->resourcesDelta.agriculture > 0)
+    {
+        color = gfc_color_hsl(120,1,0.5,1);
+    }
+    else if (empire->resourcesDelta.agriculture < 0)
+    {
+        color = gfc_color_hsl(0,1,0.5,1);
+    }
+    else
+    {
+        color = gfc_color8(255,255,255,255);
+    }
     gfc_line_sprintf(line,"%i",(int)empire->resources.agriculture);
     bounds = gf2d_font_get_bounds_tag(line,FT_H5);
-    gf2d_font_draw_line_tag(line,FT_H5,gfc_color_hsl(120,1,0.5,1), vector2d(936 - bounds.x,6));
+    gf2d_font_draw_line_tag(line,FT_H5,color, vector2d(936 - bounds.x,6));
     //population
+    if (empire->resourcesDelta.population > 0)
+    {
+        color = gfc_color_hsl(120,1,0.5,1);
+    }
+    else if (empire->resourcesDelta.population < 0)
+    {
+        color = gfc_color_hsl(0,1,0.5,1);
+    }
+    else
+    {
+        color = gfc_color8(255,255,255,255);
+    }
     gfc_line_sprintf(line,"%i",(int)empire->resources.population);
     bounds = gf2d_font_get_bounds_tag(line,FT_H5);
-    gf2d_font_draw_line_tag(line,FT_H5,gfc_color_hsl(120,1,0.5,1), vector2d(1064 - bounds.x,6));
+    gf2d_font_draw_line_tag(line,FT_H5,color, vector2d(1064 - bounds.x,6));
     //approval
     gfc_line_sprintf(line,"%i",(int)empire->resources.approval);
     bounds = gf2d_font_get_bounds_tag(line,FT_H5);
-    gf2d_font_draw_line_tag(line,FT_H5,gfc_color_hsl(120,1,0.5,1), vector2d(1192 - bounds.x,6));
+    gf2d_font_draw_line_tag(line,FT_H5,gfc_color8(255,255,255,255), vector2d(1192 - bounds.x,6));
 }
 
 int empire_hud_draw(Window *win)

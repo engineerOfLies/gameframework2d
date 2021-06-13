@@ -39,6 +39,7 @@ typedef struct
     List           *ships;          /**<list of ships controlled by this empire*/
     List           *technologies;   /**<list of technologies developed by this empire*/
     EmpireResources resources;      /**<empire's resources*/
+    EmpireResources resourcesDelta; /**<empire's resources as changed per update*/
     SJson          *progress;       /**<keeps track of updates throughout the galaxy*/
 }Empire;
 
@@ -84,6 +85,8 @@ Empire *empire_load();
 SurveyState empire_region_get_survey_state(Empire *empire,Uint32 regionId,SurveyType surveyType);
 int empire_survery_region(Empire *empire,Uint32 regionId,SurveyType surveyType);
 
+
+Uint32 empire_get_gametime(Empire *empire);
 /**
  * @brief get the empire's current credits
  * @param empire the empire

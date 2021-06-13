@@ -43,7 +43,7 @@ Installation *installation_create_from_config(SJson *config,Vector2D position,Re
     int tempInt;
     float tempFloat;
     SJson *resources;
-    const char *actorFile,*action;
+    const char *actorFile;
     Installation *inst;
     if (config == NULL)
     {
@@ -63,12 +63,19 @@ Installation *installation_create_from_config(SJson *config,Vector2D position,Re
     }
     inst->id = ++installation_data.idPool;
     inst->iType = tempInt;
+    inst->iState = RS_Plotted;
+    inst->startTime = empire_get_gametime(empire);
     vector2d_copy(inst->position,position);
     inst->region = region;
     inst->empire = empire;
     gfc_line_cpy(inst->name,sj_get_string_value(sj_object_get_value(config,"name")));
     actorFile = sj_get_string_value(sj_object_get_value(config,"actor"));
-    action = sj_get_string_value(sj_object_get_value(config,"action"));
+    gfc_line_cpy(inst->actions[0],"plotted");
+    gfc_line_cpy(inst->actions[1],"construction");
+    gfc_line_cpy(inst->actions[2],sj_get_string_value(sj_object_get_value(config,"action")));
+    gfc_line_cpy(inst->actions[3],sj_get_string_value(sj_object_get_value(config,"active")));
+    gfc_line_cpy(inst->actions[4],sj_get_string_value(sj_object_get_value(config,"damaged")));
+    gfc_line_cpy(inst->actions[5],"destroyed");
     
     resources = sj_object_get_value(config,"upkeep");
     if (sj_get_float_value(sj_object_get_value(resources,"minerals"),&tempFloat))
@@ -116,8 +123,7 @@ Installation *installation_create_from_config(SJson *config,Vector2D position,Re
     
     
     gf2d_actor_load(&inst->actor,actorFile);
-    gf2d_actor_set_action(&inst->actor,action);
-    
+    installation_set_state(inst,RS_Plotted);    
     
     return inst;
 }
@@ -152,7 +158,7 @@ void installation_free(Installation *inst)
     free(inst);
 }
 
-void installation_update(Installation *inst)
+void installation_active_update(Installation *inst)
 {
     int upkeepFail = 0;
     Empire *empire;
@@ -167,6 +173,34 @@ void installation_update(Installation *inst)
     memcpy(&resources,&empire->resources,sizeof(EmpireResources));
     // TODO: check state, and dispatch correct action
     
+    //do production
+    if (upkeepFail)
+    {
+        installation_set_state(inst,RS_Starved);
+        message_printf("not enough resources to run facility %s:%i!",inst->name,inst->id);
+        return;
+    }
+    if (inst->production.minerals > 0)
+    {
+        produce += region->minerals * inst->production.minerals;
+        empire_change_minerals(empire,produce);
+    }
+    if (inst->production.agriculture > 0)
+    {
+        produce += region->fertility * inst->production.agriculture;
+        empire_change_agriculture(empire,region->fertility * inst->production.agriculture);
+    }
+    if (inst->production.population > 0)
+    {
+        produce += region->habitable * inst->production.population;
+        empire_change_population(empire,region->habitable * inst->production.population);
+    }
+    if (inst->production.credits > 0)
+    {
+        produce = produce * inst->production.credits;
+        empire_change_credits(empire,produce);
+    }
+
     // do upkeep
     if (inst->upkeep.credits > 0)
     {
@@ -194,34 +228,82 @@ void installation_update(Installation *inst)
         empire_change_minerals(empire,-inst->upkeep.minerals);
     }
 
-    
-    
-    //do production
-    if (upkeepFail)
+}
+
+void installation_set_state(Installation *inst,InstallationState iState)
+{
+    if (!inst)return;
+    inst->iState = iState;
+    switch(iState)
     {
-        inst->iState = RS_Starved;
-        message_printf("not enough resources to run facility %s:%i!",inst->name,inst->id);
-        return;
+        case RS_Plotted:
+            gf2d_actor_set_action(&inst->actor,inst->actions[0]);
+            break;
+        case RS_Construction:
+            gf2d_actor_set_action(&inst->actor,inst->actions[1]);
+            break;
+        case RS_Operational:
+            gf2d_actor_set_action(&inst->actor,inst->actions[3]);
+            break;
+        case RS_Starved:
+            gf2d_actor_set_action(&inst->actor,inst->actions[2]);
+            break;
+        case RS_Offline:
+            gf2d_actor_set_action(&inst->actor,inst->actions[2]);
+            break;
+        case RS_Damaged:
+            gf2d_actor_set_action(&inst->actor,inst->actions[4]);
+            break;
+        case RS_Destroyed:
+            gf2d_actor_set_action(&inst->actor,inst->actions[5]);
+            break;
+        default:
+            break;
     }
-    if (inst->production.minerals > 0)
+}
+
+void installation_update(Installation *inst)
+{
+    if (!inst)return;
+    if (!inst->empire)return;
+    switch(inst->iState)
     {
-        produce += region->minerals * inst->production.minerals;
-        empire_change_minerals(empire,produce);
-    }
-    if (inst->production.agriculture > 0)
-    {
-        produce += region->fertility * inst->production.agriculture;
-        empire_change_agriculture(empire,region->fertility * inst->production.agriculture);
-    }
-    if (inst->production.population > 0)
-    {
-        produce += region->habitable * inst->production.population;
-        empire_change_population(empire,region->habitable * inst->production.population);
-    }
-    if (inst->production.credits > 0)
-    {
-        produce = produce * inst->production.credits;
-        empire_change_credits(empire,produce);
+        case RS_Plotted:
+            if ((inst->startTime + 100) < empire_get_gametime(inst->empire))
+            {
+                message_printf("starting construction on %s",inst->name);
+                installation_set_state(inst,RS_Construction);
+            }
+            break;
+        case RS_Construction:
+            inst->health+=20;
+            if (inst->health == 100)
+            {
+                message_printf("finished construction on %s",inst->name);
+                installation_set_state(inst,RS_Operational);
+            }
+            break;
+        case RS_Operational:
+            installation_active_update(inst);
+            break;
+        case RS_Starved:
+            //check if resources have rebounded, if so return to operational
+            break;
+        case RS_Offline:
+            // do nothing, we are offline
+            break;
+        case RS_Damaged:
+            inst->health--;
+            if (inst->health <= 0)
+            {
+                inst->iState = RS_Destroyed;
+                gf2d_actor_set_action(&inst->actor,inst->actions[2]);
+            }
+            break;
+        case RS_Destroyed:
+            break;
+        default:
+            break;
     }
 }
 

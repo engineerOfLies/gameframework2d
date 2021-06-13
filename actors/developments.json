@@ -12,30 +12,107 @@
         "actionList":
         [
             {
-                "action": "population",
+                "action": "destroyed",
+                "startFrame": 17,
+                "endFrame": 17,
+                "frameRate": 0,
+                "type": "loop"
+            },
+            {
+                "action": "plotted",
+                "startFrame": 16,
+                "endFrame": 16,
+                "frameRate": 0,
+                "type": "loop"
+            },
+            {
+                "action": "construction",
                 "startFrame": 0,
                 "endFrame": 0,
                 "frameRate": 0,
                 "type": "loop"
             },
             {
-                "action": "mines",
+                "action": "population",
                 "startFrame": 1,
                 "endFrame": 1,
                 "frameRate": 0,
                 "type": "loop"
             },
             {
-                "action": "farms",
+                "action": "population_active",
                 "startFrame": 2,
                 "endFrame": 2,
                 "frameRate": 0,
                 "type": "loop"
             },
             {
-                "action": "military",
+                "action": "population_damaged",
                 "startFrame": 3,
                 "endFrame": 3,
+                "frameRate": 0,
+                "type": "loop"
+            },
+            {
+                "action": "mines",
+                "startFrame": 4,
+                "endFrame": 4,
+                "frameRate": 0,
+                "type": "loop"
+            },
+            {
+                "action": "mines_active",
+                "startFrame": 5,
+                "endFrame": 5,
+                "frameRate": 0,
+                "type": "loop"
+            },
+            {
+                "action": "mines_damaged",
+                "startFrame": 6,
+                "endFrame": 6,
+                "frameRate": 0,
+                "type": "loop"
+            },
+            {
+                "action": "farms",
+                "startFrame": 7,
+                "endFrame": 7,
+                "frameRate": 0,
+                "type": "loop"
+            },
+            {
+                "action": "farms_active",
+                "startFrame": 8,
+                "endFrame": 8,
+                "frameRate": 0,
+                "type": "loop"
+            },
+            {
+                "action": "farms_damages",
+                "startFrame": 9,
+                "endFrame": 9,
+                "frameRate": 0,
+                "type": "loop"
+            },
+            {
+                "action": "military",
+                "startFrame": 10,
+                "endFrame": 10,
+                "frameRate": 0,
+                "type": "loop"
+            },
+            {
+                "action": "military_active",
+                "startFrame": 11,
+                "endFrame": 11,
+                "frameRate": 0,
+                "type": "loop"
+            },
+            {
+                "action": "military_damaged",
+                "startFrame": 12,
+                "endFrame": 12,
                 "frameRate": 0,
                 "type": "loop"
             }
