@@ -3,13 +3,36 @@
 #include "simple_logger.h"
 #include "gf2d_element_list.h"
 
+int gf2d_element_list_get_items_per_line(Element *element)
+{
+    ListElement *list;
+    if (!element)return 0;
+    list = (ListElement*)element->data;
+    return list->itemsPerLine;
+}
+
+void gf2d_element_list_set_scroll_offset(Element *element,int offset)
+{
+    ListElement *list;
+    if (!element)return;
+    list = (ListElement*)element->data;
+    list->scrollOffset = offset;
+}
+
+int gf2d_element_list_get_items_per_column(Element *element)
+{
+//     ListElement *list;
+//     if (!element)return 0;
+//     list = (ListElement*)element->data;
+    return 0;
+}
+
 Vector2D gf2d_element_get_item_position(Element *element,int i,Vector2D lastPosition)
 {
     ListElement* list;
     Element *item;
     Vector2D itemSize;
     Vector2D position = {0};
-    int itemsPerLine;
     if (i == 0)return lastPosition;
     if (!element)return lastPosition;
     list = (ListElement*)element->data;
@@ -27,8 +50,8 @@ Vector2D gf2d_element_get_item_position(Element *element,int i,Vector2D lastPosi
     }
     if ((list->listStyle == LS_Horizontal) && (list->wraps))
     {
-        itemsPerLine = element->bounds.w / itemSize.x;
-        if (((i % itemsPerLine) == 0)&&(i != 0))
+        list->itemsPerLine = element->bounds.w / itemSize.x;
+        if (((i % list->itemsPerLine) == 0)&&(i != 0))
         {
             // this is a new line
             position.x = element->bounds.x;
@@ -43,8 +66,8 @@ Vector2D gf2d_element_get_item_position(Element *element,int i,Vector2D lastPosi
     }
     if ((list->listStyle == LS_Vertical) && (list->wraps))
     {
-        itemsPerLine = element->bounds.h / itemSize.y;
-        if (((i % itemsPerLine) == 0)&&(i != 0))
+        list->itemsPerColumn = element->bounds.h / itemSize.y;
+        if (((i % list->itemsPerColumn) == 0)&&(i != 0))
         {
             position.x = lastPosition.x + itemSize.x;
             position.y = element->bounds.y;
@@ -73,6 +96,7 @@ Vector2D gf2d_element_get_item_position(Element *element,int i,Vector2D lastPosi
 
 void gf2d_element_list_draw(Element *element,Vector2D offset)
 {
+    int skip;
     ListElement *list;
     Vector2D position = {0};
     Vector2D drawPosition = {0};
@@ -83,18 +107,88 @@ void gf2d_element_list_draw(Element *element,Vector2D offset)
     if (!list)return;
     position.x = element->bounds.x;
     position.y = element->bounds.y;
+    if (list->scrolls)
+    {
+        if ((list->listStyle == LS_Horizontal) && (list->wraps))
+        {
+            position.y -= list->scrollOffset * list->itemSize.y;
+        }
+        else if ((list->listStyle == LS_Vertical) && (list->wraps))
+        {
+            position.x -= list->scrollOffset * list->itemSize.x;
+        }
+        else if (list->listStyle == LS_Horizontal)
+        {
+            position.x -= list->scrollOffset * list->itemSize.x;
+        }
+        else if (list->listStyle == LS_Vertical)
+        {
+            position.y -= list->scrollOffset * list->itemSize.y;
+        }
+    }
     count = gfc_list_get_count(list->list);
     for (i = 0; i < count; i++)
     {
         e = (Element *)gfc_list_get_nth(list->list,i);
         if (!e)continue;
+        skip = 0;
         position = gf2d_element_get_item_position(element,i,position);
+        if (list->cropped)
+        {
+            if ((position.x < 0)||(position.y < 0))
+            {
+                skip = 1;
+            }
+            if ((position.x > element->bounds.w)||(position.y > element->bounds.h))
+            {
+                skip = 1;//skip outside of range
+            }
+        }
         vector2d_add(drawPosition,position,offset);
+        if (skip)continue;
         gf2d_element_draw(e, drawPosition);
     }
 }
 
-Element *list_get_by_name(Element *element,char *name)
+Element *gf2d_list_get_next(Element *element,Element *from)
+{
+    ListElement *list;
+    int i,c;
+    Element *e,*sub;
+    if (!element)return NULL;
+    list = (ListElement*)element->data;
+    if (!list)return NULL;
+    c = gfc_list_get_count(list->list);
+    if (element == from)
+    {
+        e = gfc_list_get_nth(list->list,0);
+        if (e == NULL)
+        {
+            return from;//its me, but I have no children
+        }
+        return e;
+    }
+    for (i = 0; i < c; i++)
+    {
+        e = gfc_list_get_nth(list->list,i);
+        if (!e)continue;
+        sub = e->get_next(e,from);
+        if (sub == NULL)continue;//nothing found that matches
+        if (sub == from)
+        {
+            e = gfc_list_get_nth(list->list,i+1);
+            if (e)
+            {
+                return e;
+            }
+            return from;
+        }
+        return sub;
+    }
+    return NULL;
+}
+
+Element *list_get_by_name(Element *element,const char *name)
 {
     ListElement *list;
     int count,i;
@@ -146,6 +240,28 @@ List *gf2d_element_list_update(Element *element,Vector2D offset)
     return ret;
 }
 
+void gf2d_element_list_free_items(Element *element)
+{
+    int count,i;
+    Element *e;
+    ListElement *list;
+    if (!element)return;
+    list = (ListElement*)element->data;
+    if ((list != NULL)&&(list->list != NULL))
+    {
+        /*for each item, free it*/
+        count = gfc_list_get_count(list->list);
+        for (i = 0; i < count; i++)
+        {
+            e = (Element *)gfc_list_get_nth(list->list,i);
+            if (!e)continue;
+            gf2d_element_free(e);
+        }
+        gfc_list_delete(list->list);
+        list->list = gfc_list_new();
+    }
+}
+
 void gf2d_element_list_free(Element *element)
 {
     int count,i;
@@ -183,7 +299,7 @@ ListElement *gf2d_element_list_new()
 }
 
 
-ListElement *gf2d_element_list_new_full(Rect bounds,Vector2D itemSize,ListStyle ls,int wraps,int scrolls,int packed)
+ListElement *gf2d_element_list_new_full(Rect bounds,Vector2D itemSize,ListStyle ls,int wraps,int scrolls,int packed,int cropped)
 {
     ListElement *list;
     list = gf2d_element_list_new();
@@ -198,6 +314,7 @@ ListElement *gf2d_element_list_new_full(Rect bounds,Vector2D itemSize,ListStyle 
     list->wraps = wraps;
     list->scrolls = scrolls;
     list->packed = packed;
+    list->cropped = cropped;
     return list;
 }
 
@@ -210,6 +327,7 @@ void gf2d_element_make_list(Element *e,ListElement *list)
     e->update = gf2d_element_list_update;
     e->free_data = gf2d_element_list_free;
     e->get_by_name = list_get_by_name;
+    e->get_next = gf2d_list_get_next;
 }
 
 void gf2d_element_list_remove_item(Element *e,Element *item)
@@ -258,16 +376,14 @@ void gf2d_element_load_list_from_config(Element *e,SJson *json,Window *win)
     int i,count;
     const char *style = NULL;
     short int wraps = 0,scrolls = 0;
-    short int packed = 0;
+    short int packed = 0,cropped = 0;
     if ((!e) || (!json))
     {
         slog("call missing parameters");
         return;
     }
         
-        
-    value = sj_object_get_value(json,"style");
-    style = sj_get_string_value(value);
+    style = sj_get_string_value(sj_object_get_value(json,"style"));
     if (style)
     {
         if (strcmp(style,"horizontal") == 0)
@@ -279,17 +395,14 @@ void gf2d_element_load_list_from_config(Element *e,SJson *json,Window *win)
             ls = LS_Vertical;
         }
     }
-    value = sj_object_get_value(json,"wraps");
-    sj_get_bool_value(value,&wraps);
-    value = sj_object_get_value(json,"packed");
-    sj_get_bool_value(value,&packed);
-    value = sj_object_get_value(json,"scrolls");
-    sj_get_bool_value(value,&scrolls);
     
-    value = sj_object_get_value(json,"item_size");
-    sj_value_as_vector2d(value,&vector);
+    sj_get_bool_value(sj_object_get_value(json,"cropped"),&cropped);
+    sj_get_bool_value(sj_object_get_value(json,"wraps"),&wraps);
+    sj_get_bool_value(sj_object_get_value(json,"packed"),&packed);
+    sj_get_bool_value(sj_object_get_value(json,"scrolls"),&scrolls);
+    sj_value_as_vector2d(sj_object_get_value(json,"item_size"),&vector);
     
-    list = gf2d_element_list_new_full(e->bounds,vector,ls,wraps,scrolls,packed);
+    list = gf2d_element_list_new_full(e->bounds,vector,ls,wraps,scrolls,packed,cropped);
     gf2d_element_make_list(e,list);
     
     value = sj_object_get_value(json,"elements");

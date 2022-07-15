@@ -11,6 +11,13 @@ typedef enum
     BE_Both = 3
 }BE_Style;
 
+typedef enum
+{
+    BCA_Default = 0,
+    BCA_Nothing,        // do nothing at all
+    BCA_BackgroundHighlight //use the highColors for the background
+}ButtonCustomAction;
+
 typedef struct
 {
     Element *label;
@@ -21,6 +28,7 @@ typedef struct
     // base color comes from element
     Color highColor;    /**<color used when button is in highlight*/
     Color pressColor;   /**<color used while pressed*/
+    TextLine sound;//sound file to play when pressed
 }ButtonElement;
 
 /**

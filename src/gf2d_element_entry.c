@@ -1,6 +1,7 @@
 #include "simple_logger.h"
 #include "gfc_input.h"
 
+#include "gf2d_draw.h"
 #include "gf2d_element_entry.h"
 #include "gf2d_element_label.h"
 #include "gf2d_mouse.h"
@@ -14,10 +15,10 @@ void gf2d_element_entry_draw(Element *element,Vector2D offset)
     if (!entry)return;
     vector2d_add(position,offset,element->bounds);
     gf2d_element_draw(entry->label,position);
-    if (!entry->has_focus)
+    if (!element->hasFocus)
     {
-        gf2d_rect_draw(
-            gf2d_rect(
+        gf2d_draw_rect(
+            gfc_rect(
                 element->bounds.x + position.x,
                 element->bounds.y + position.y,
                 element->bounds.w,
@@ -26,8 +27,8 @@ void gf2d_element_entry_draw(Element *element,Vector2D offset)
     }
     else
     {
-        gf2d_rect_draw(
-            gf2d_rect(
+        gf2d_draw_rect(
+            gfc_rect(
                 element->bounds.x + position.x,
                 element->bounds.y + position.y,
                 element->bounds.w,
@@ -52,14 +53,8 @@ List *gf2d_element_entry_update(Element *element,Vector2D offset)
     {
         if (gf2d_mouse_button_pressed(0))
         {
-            entry->has_focus = 1;
-        }
-    }
-    else
-    {
-        if (gf2d_mouse_button_pressed(0))
-        {
-            entry->has_focus = 0;
+//            slog("giving entry focus");
+            gf2d_window_set_focus_to(element->win,element);
         }
     }
     // check for keyboard input
@@ -68,7 +63,7 @@ List *gf2d_element_entry_update(Element *element,Vector2D offset)
         slog("no text buffer provided for entry");
         return NULL;
     }
-    if (entry->has_focus)
+    if (element->hasFocus)
     {
         mods = SDL_GetModState();
         if (entry->cursor_pos < (GFCTEXTLEN -1))
@@ -250,7 +245,7 @@ List *gf2d_element_entry_update(Element *element,Vector2D offset)
     return NULL;
 }
 
-Element *entry_get_by_name(Element *e,char *name)
+Element *entry_get_by_name(Element *e,const char *name)
 {
     EntryElement *entry;
     Element *r;
@@ -273,6 +268,20 @@ void gf2d_element_entry_free(Element *element)
     }
 }
 
+Element *gf2d_element_entry_get_next(Element *element,Element *from)
+{
+    EntryElement *entry;
+    if (!element)return NULL;
+    entry = (EntryElement*)element->data;
+    if (!entry)return NULL;
+    if (element == from)
+    {
+        return entry->label;
+    }
+    if (entry->label == from)return from;
+    return NULL;
+}
+
 void gf2d_element_make_entry(Element *e,EntryElement *entry)
 {
     if (!e)return;
@@ -282,6 +291,8 @@ void gf2d_element_make_entry(Element *e,EntryElement *entry)
     e->update = gf2d_element_entry_update;
     e->free_data = gf2d_element_entry_free;
     e->get_by_name = entry_get_by_name;
+    e->get_next = gf2d_element_entry_get_next;
+    e->canHasFocus = 1;
 }
 
 EntryElement *gf2d_element_entry_new()
@@ -303,7 +314,6 @@ EntryElement *gf2d_element_entry_new_full(Element *label)
     entry = gf2d_element_entry_new();
     if (!entry)return NULL;
     entry->label = label;
-    entry->has_focus = 1;
     return entry;
 }
 

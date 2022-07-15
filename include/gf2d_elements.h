@@ -10,10 +10,10 @@
 #include "gfc_list.h"
 #include "gfc_text.h"
 #include "gfc_color.h"
+#include "gfc_config.h"
+#include "gfc_shape.h"
 
 #include "gf2d_sprite.h"
-#include "gf2d_shape.h"
-#include "gf2d_config.h"
 #include "gf2d_windows.h"
 
 typedef enum
@@ -46,7 +46,10 @@ struct Element_S
     int      index;             /**<order of highlight in the menu, -1 for does not receive highlight*/
     TextLine name;              /**<name of the element should be unique per window*/
     
+    Uint8   canHasFocus;        /**<if true, this element can be the focus for keyboard input*/
+    Uint8   hasFocus;           /**<if true, this element does have focus*/
     Rect bounds;                /**<drawing bounds for the element*/
+    Vector2D lastDrawPosition;  /**<location of the element on the screen of its last draw position*/
     Color color;                /**<color for the element*/
     
     Color backgroundColor;      /**<color for background of element*/
@@ -55,9 +58,11 @@ struct Element_S
     int state;                  /**<if true, drawn with highlight*/
     int type;                   /**<which type of element this is*/
     void (*draw)        (struct Element_S *element,Vector2D offset); /**<draw function, offset comes from draw position of window*/
+    struct Element_S *(*get_next)(struct Element_S *element,struct Element_S *from); /**<search for the next element from (if NULL, it returns itself*/
     List *(*update)     (struct Element_S *element,Vector2D offset); /**<function called for updates  returns alist of all elements updated with input*/
     void (*free_data)   (struct Element_S *element);    /**<free function for the element to clean up any loaded custom data*/
-    struct Element_S *(*get_by_name)(struct Element_S *element,char *name);/**<get element by name, searches sub elements as well*/
+    struct Element_S *(*get_by_name)(struct Element_S *element,const char *name);/**<get element by name, searches sub elements as well*/
+    Window *win;                /**<my parent window*/
     void *data;                 /**<custom element data*/
 };
 
@@ -77,6 +82,7 @@ w color of the element
  * @param state the initial state of the element
  * @param backgroundColor the color to draw for the background
  * @param backgroundDraw if true, draw a background for the element
+ * @param win the window this element ultimately belongs to
  * @return NULL on error or a new element otherwise;
  */
 Element *gf2d_element_new_full(
@@ -87,7 +93,8 @@ Element *gf2d_element_new_full(
     Color color,
     int state,
     Color backgroundColor,
-    int backgroundDraw
+    int backgroundDraw,
+    Window *win
 );
 
 /**
@@ -102,6 +109,28 @@ void gf2d_element_free(Element *element);
  * @param offset comes from parent window position
  */
 void gf2d_element_draw(Element *element, Vector2D offset);
+
+/**
+ * @brief get the screen position of the last time this element was drawn
+ * @param e the element to draw
+ * @return a zero vector on NULL entity, or the entity's position
+ */
+Vector2D gf2d_element_get_draw_position(Element *e);
+
+/**
+ * @brief set if the element has the focus.
+ * @param element the element to modify
+ * @param focus 1 if it has the keyboard focus, 0 if not.
+ * @return returns 0 if the element can't have focus, 1 otherwise after it was set
+ */
+int gf2d_element_set_focus(Element *element,int focus);
+
+/**
+ * @brief set the color for the given element
+ * @param element the element to set
+ * @param color the color to set it to
+ */
+void gf2d_element_set_color(Element *element,Color color);
 
 /**
  * @brief update an element.  checks input
@@ -137,6 +166,6 @@ Element *gf2d_element_get_by_id(Element *e,int id);
  * @param name the name to search for
  * @returns NULL if not found, or a pointer to the element found
  */
-Element *gf2d_get_element_by_name(Element *e,char *name);
+Element *gf2d_get_element_by_name(Element *e,const char *name);
 
 #endif

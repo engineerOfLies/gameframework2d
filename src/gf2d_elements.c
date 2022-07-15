@@ -2,9 +2,10 @@
 #include <string.h>
 
 #include "simple_logger.h"
+#include "gfc_shape.h"
 
 #include "gf2d_graphics.h"
-
+#include "gf2d_draw.h"
 #include "gf2d_elements.h"
 #include "gf2d_element_actor.h"
 #include "gf2d_element_button.h"
@@ -12,6 +13,7 @@
 #include "gf2d_element_list.h"
 #include "gf2d_element_label.h"
 
+extern int __DebugMode;
 
 Element *gf2d_element_new()
 {
@@ -34,19 +36,24 @@ Element *gf2d_element_new_full(
     Color color,
     int state,
     Color backgroundColor,
-    int backgroundDraw
+    int backgroundDraw,
+    Window *win
 )
 {
     Element *e;
     e = gf2d_element_new();
     if (!e)return NULL;
-    gfc_line_cpy(e->name,name);
+    if (name)
+    {
+        gfc_line_cpy(e->name,name);
+    }
     e->index = index;
     e->color = color;
     e->state = state;
     e->bounds = bounds;
     e->backgroundColor = backgroundColor;
     e->backgroundDraw = backgroundDraw;
+    e->win = win;
     return e;
 }
 
@@ -60,6 +67,12 @@ void gf2d_element_free(Element *e)
     free(e);
 }
 
+Vector2D gf2d_element_get_draw_position(Element *e)
+{
+    if (!e)return vector2d(0,0);
+    return e->lastDrawPosition;
+}
+
 void gf2d_element_draw(Element *e, Vector2D offset)
 {
     Rect rect;
@@ -67,15 +80,18 @@ void gf2d_element_draw(Element *e, Vector2D offset)
     {
         return;
     }
-    gf2d_rect_set(rect,offset.x + e->bounds.x,offset.y + e->bounds.y,e->bounds.w,e->bounds.h);
+    gfc_rect_set(rect,offset.x + e->bounds.x,offset.y + e->bounds.y,e->bounds.w,e->bounds.h);
+    e->lastDrawPosition.x = rect.x;
+    e->lastDrawPosition.y = rect.y;
     if (e->backgroundDraw)
     {
-        gf2d_rect_draw_filled(rect,e->backgroundColor);
+        gf2d_graphics_set_blend_mode(SDL_BLENDMODE_BLEND);
+        gf2d_draw_rect_filled(rect,e->backgroundColor);
     }
     if (e->draw)e->draw(e,offset);
-    if (gf2d_graphics_debug_mode())
+    if (__DebugMode)
     {
-        gf2d_rect_draw(rect,gfc_color8(100,255,100,255));
+        gf2d_draw_rect(rect,gfc_color8(100,255,100,255));
     }
 }
 
@@ -96,11 +112,11 @@ void gf2d_element_calibrate(Element *e,Element *parent, Window *win)
     if (!e)return;
     if (parent != NULL)
     {
-        gf2d_rect_copy(res,parent->bounds);
+        gfc_rect_copy(res,parent->bounds);
     }
     else if (win != NULL)
     {
-        gf2d_rect_copy(res,win->dimensions);
+        gfc_rect_copy(res,win->dimensions);
     }
     else
     {
@@ -149,7 +165,7 @@ Element *gf2d_element_load_from_config(SJson *json,Element *parent,Window *win)
     Element *e = NULL;
     SJson *value;
     const char *type;
-    Vector4D vector;
+    Vector4D vector ={0,0,0,0};
     if (!sj_is_object(json))return NULL;
     e = gf2d_element_new();
     if (!e)return NULL;
@@ -159,29 +175,26 @@ Element *gf2d_element_load_from_config(SJson *json,Element *parent,Window *win)
         gfc_line_cpy(e->name,sj_get_string_value(value));
     }
     
+    e->win = win;
     value = sj_object_get_value(json,"id");
     sj_get_integer_value(value,&e->index);
 
     value = sj_object_get_value(json,"state");
     sj_get_integer_value(value,&e->index);
 
-    value = sj_object_get_value(json,"color");
-    vector4d_set(vector,255,255,255,255);
-    sj_value_as_vector4d(value,&vector);
-    e->color = gfc_color_from_vector4(vector);
-
-    value = sj_object_get_value(json,"backgroundColor");
-    vector4d_set(vector,255,255,255,0);
-    sj_value_as_vector4d(value,&vector);
-    e->color = gfc_color_from_vector4(vector);
+    e->color = sj_value_as_color(sj_object_get_value(json,"color"));
+    e->backgroundColor = sj_value_as_color(sj_object_get_value(json,"backgroundColor"));
 
     value = sj_object_get_value(json,"backgroundDraw");
-    sj_get_integer_value(value,&e->backgroundDraw);
-    
+    if (value)
+    {
+        sj_get_integer_value(value,&e->backgroundDraw);
+    }
+    sj_get_bool_value(sj_object_get_value(json,"canHasFocus"),(short int *)&e->canHasFocus);
 
     value = sj_object_get_value(json,"bounds");
     sj_value_as_vector4d(value,&vector);
-    gf2d_rect_set(e->bounds,vector.x,vector.y,vector.z,vector.w);
+    gfc_rect_set(e->bounds,vector.x,vector.y,vector.z,vector.w);
     gf2d_element_calibrate(e,parent, win);
     
     value = sj_object_get_value(json,"type");
@@ -216,6 +229,19 @@ Element *gf2d_element_load_from_config(SJson *json,Element *parent,Window *win)
     return e;
 }
 
+void gf2d_element_set_color(Element *element,Color color)
+{
+    if (!element)return;
+    element->color = color;
+}
+
+int gf2d_element_set_focus(Element *element,int focus)
+{
+    if (!element->canHasFocus)return 0;
+    element->hasFocus = focus;
+    return 1;
+}
+
 Rect gf2d_element_get_absolute_bounds(Element *element,Vector2D offset)
 {
     Rect r = {0};
@@ -246,7 +272,7 @@ Element *gf2d_element_get_by_id(Element *e,int id)
 }
 
 
-Element *gf2d_get_element_by_name(Element *e,char *name)
+Element *gf2d_get_element_by_name(Element *e,const char *name)
 {
     if (!e)return NULL;
     if (gfc_line_cmp(e->name,name)==0)return e;

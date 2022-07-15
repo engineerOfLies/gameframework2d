@@ -29,9 +29,9 @@
 #include <SDL_ttf.h>
 
 #include "gfc_types.h"
+#include "gfc_text.h"
 #include "gfc_color.h"
-
-#include "gf2d_shape.h"
+#include "gfc_shape.h"
 
 typedef enum
 {
@@ -58,7 +58,7 @@ typedef struct
  * @brief initialized text drawing system
  * @param configFile the file to load font information from
  */
-void gf2d_font_init(char *configFile);
+void gf2d_font_init(const char *configFile);
 
 void gf2d_font_draw_line_named(char *text,char *filename,Color color, Vector2D position);
 void gf2d_font_draw_line_tag(char *text,FontTypes tag,Color color, Vector2D position);

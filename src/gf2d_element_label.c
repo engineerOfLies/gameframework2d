@@ -59,7 +59,7 @@ void gf2d_element_label_draw(Element *element,Vector2D offset)
     }
     if (label->wraps)
     {
-        gf2d_font_draw_text_wrap_tag(label->text,label->style,element->color, gf2d_rect(position.x, position.y, element->bounds.w, element->bounds.h));
+        gf2d_font_draw_text_wrap_tag(label->text,label->style,element->color, gfc_rect(position.x, position.y, element->bounds.w, element->bounds.h));
     }
     else 
     {
@@ -82,6 +82,15 @@ void gf2d_element_label_free(Element *element)
         free(label);
     }
 }
+//returns itself if it was found.  Caller should then check if from == this return
+Element *gf2d_label_get_next(Element *element, Element *from)
+{
+    if (element == from)
+    {
+        return from;
+    }
+    return NULL;
+}
 
 LabelElement *gf2d_element_label_new()
 {
@@ -97,7 +106,7 @@ LabelElement *gf2d_element_label_new()
 }
 
 
-LabelElement *gf2d_element_label_new_full(char *text,Color color,int style,int justify,int align,int wraps)
+LabelElement *gf2d_element_label_new_full(const char *text,Color color,int style,int justify,int align,int wraps)
 {
     LabelElement *label;
     label = gf2d_element_label_new();
@@ -105,7 +114,10 @@ LabelElement *gf2d_element_label_new_full(char *text,Color color,int style,int j
     {
         return NULL;
     }
-    gfc_block_cpy(label->text,text);
+    if (text)
+    {
+        gfc_block_cpy(label->text,text);
+    }
     label->bgcolor = color;
     label->style = style;
     label->justify = justify;
@@ -122,6 +134,7 @@ void gf2d_element_make_label(Element *e,LabelElement *label)
     e->draw = gf2d_element_label_draw;
     e->update = gf2d_element_label_update;
     e->free_data = gf2d_element_label_free;
+    e->get_next = gf2d_label_get_next;
 }
 
 const char *gf2d_element_label_get_text(Element *e)
@@ -134,13 +147,18 @@ const char *gf2d_element_label_get_text(Element *e)
     return label->text;
 }
 
-void gf2d_element_label_set_text(Element *e,char *text)
+void gf2d_element_label_set_text(Element *e,const char *text)
 {
     if (!e)return;
     if (e->type != ET_Label)return;
     LabelElement *label;
     label = (LabelElement *)e->data;
     if (!label)return;
+    if ((!text)||(!strlen(text)))
+    {
+        gfc_block_clear(label->text);
+        return;
+    }
     gfc_block_cpy(label->text,text);
 }
 

@@ -3,6 +3,7 @@
 
 #include <SDL.h>
 #include "gfc_types.h"
+#include "gfc_color.h"
 #include "gfc_vector.h"
 #include "gfc_text.h"
 
@@ -27,7 +28,7 @@ void gf2d_sprite_init(Uint32 max);
  * @param filename the image file to load
  * @returns NULL on error or the sprite loaded
  */
-Sprite *gf2d_sprite_load_image(char *filename);
+Sprite *gf2d_sprite_load_image(const char *filename);
 
 /**
  * @brief draw a simple image to screen at the position provided
@@ -45,7 +46,7 @@ void gf2d_sprite_draw_image(Sprite *image,Vector2D position);
  * @param keepSurface if you plan on doing surface editing with this sprite, set to true otherwise the surface data is cleaned up
  */
 Sprite *gf2d_sprite_load_all(
-    char *filename,
+    const char *filename,
     Sint32 frameWidth,
     Sint32 frameHeigh,
     Sint32 framesPerLine,
@@ -53,12 +54,36 @@ Sprite *gf2d_sprite_load_all(
 );
 
 /**
+ * @brief draw a sprite to the screen with all options
+ * @param sprite the sprite to draw
+ * @param position here on the screen to draw it
+ * @param scale (optional) if you want to scale the sprite
+ * @param center (optional) the center point for scaling and rotating
+ * @param rotation (optional) the angle in degrees to rotate
+ * @param flip (optional) set to 1 if you want to flip in the horizontal,vertical axis
+ * @param colorShift (optional) if you want to gamma shift the sprite or set an alpha value
+ * @param clip (optional) a clip rectangle (left,top, width,height) as percentages of the whole frame
+ * @note {0,0,1,1} is no clipping, while {.25,.25,.25,.25} will clip a border of 25% of the frame
+ * @param frame which frame to draw
+ */
+void gf2d_sprite_render(
+    Sprite * sprite,
+    Vector2D position,
+    Vector2D * scale,
+    Vector2D * center,
+    float    * rotation,
+    Vector2D * flip,
+    Color    * color,
+    Vector4D * clip,
+    Uint32 frame);
+
+/**
  * @brief draw a sprite to the screen
  * @param sprite the sprite to draw
  * @param position here on the screen to draw it
  * @param scale (optional) if you want to scale the sprite
- * @param scaleCenter (optional) scale the sprite from the position in the sprite
- * @param rotation (optional) the position of the rotation center and the angle in degrees to rotate
+ * @param center (optional) the center point for scaling and rotating
+ * @param rotation (optional) the angle in degrees to rotate
  * @param flip (optional) set to 1 if you want to flip in the horizontal,vertical axis
  * @param colorShift (optional) if you want to gamma shift the sprite or set an alpha value
  * @param frame which frame to draw
@@ -67,10 +92,10 @@ void gf2d_sprite_draw(
     Sprite * sprite,
     Vector2D position,
     Vector2D * scale,
-    Vector2D * scaleCenter,
-    Vector3D * rotation,
+    Vector2D * center,
+    float    * rotation,
     Vector2D * flip,
-    Vector4D * colorShift,
+    Color    * colorShift,
     Uint32 frame);
 
 /**
@@ -79,6 +104,12 @@ void gf2d_sprite_draw(
  * @param sprite the sprite to free
  */
 void gf2d_sprite_free(Sprite *sprite);
+
+/**
+ * @brief completely removes sprite from memory.  Only use when you know you wont need it again
+ * @param sprite the sprite to delete
+ */
+void gf2d_sprite_delete(Sprite *sprite);
 
 /**
  * @brief delete all loaded sprites from memory

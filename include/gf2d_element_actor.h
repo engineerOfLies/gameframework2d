@@ -6,14 +6,18 @@
 
 typedef struct
 {
-    Actor actor;
-    Vector2D scale;
-    Sprite *image;
+    Actor       *actor;
+    Action      *action;
+    Vector2D    scale;
+    Vector2D    flip;
+    Sprite      *image;
+    Vector2D    center;
+    float       frame;
 }ActorElement;
 
 ActorElement *gf2d_element_actor_new();
 
-ActorElement *gf2d_element_actor_new_full(char *actorFile, char *action,Vector2D scale,const char *image);
+ActorElement *gf2d_element_actor_new_full(const char *actorFile, const char *action,Vector2D scale,const char *image,Vector2D center,Vector2D flip  );
 
 /**
  * @brief get a pointer to the actor data in this element
@@ -27,14 +31,21 @@ Actor *gf2d_element_actor_get_actor(Element *e);
  * @param e the element to set the actor for
  * @param actorFile the file to set it to
  */
-void gf2d_element_actor_set_actor(Element *e, char *actorFile);
+void gf2d_element_actor_set_actor(Element *e, const char *actorFile);
+
+/**
+ * @brief set the frame for the current actor
+ * @param e the element to set
+ * @param i the index of the frame to set it to
+ */
+void gf2d_element_actor_set_frame(Element *e, Uint32 i);
 
 /**
  * @brief set the action for a given actor element
  * @param e the element to set the action for
  * @param action the action to set the actor to
  */
-void gf2d_element_actor_set_action(Element *e, char *action);
+void gf2d_element_actor_set_action(Element *e, const char *action);
 
 /**
  * @brief scale the actor to fit the element bounds

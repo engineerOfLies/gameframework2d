@@ -14,17 +14,35 @@ void gf2d_element_actor_draw(Element *element,Vector2D offset)
     vector2d_add(position,offset,element->bounds);
     if (actor->image)
     {
-        gf2d_sprite_draw_image(actor->image,position);
-    }
-    else
-    {
-        gf2d_actor_draw(
-            &actor->actor,
+        gf2d_sprite_draw(
+            actor->image,
             position,
             &actor->scale,
             NULL,
             NULL,
-            NULL);
+            &actor->flip,
+            &element->color,
+            actor->frame);
+    }
+    else if (actor->actor)
+    {
+        if (actor->center.x)
+        {
+            position.x += element->bounds.w / 2;
+        }
+        if (actor->center.y)
+        {
+            position.y += element->bounds.h / 2;
+        }
+        gf2d_actor_draw(
+            actor->actor,
+            actor->frame,
+            position,
+            &actor->scale,
+            NULL,
+            NULL,
+            &element->color,
+            &actor->flip);
     }
 }
 
@@ -34,7 +52,7 @@ List * gf2d_element_actor_update(Element *element,Vector2D offset)
     if (!element)return NULL;
     actor = (ActorElement*)element->data;
     if (!actor)return NULL;
-    gf2d_actor_next_frame(&actor->actor);
+    gf2d_action_next_frame(actor->action,&actor->frame);
     return NULL;
 }
 
@@ -45,7 +63,7 @@ void gf2d_element_actor_free(Element *element)
     actor = (ActorElement*)element->data;
     if (actor != NULL)
     {
-        gf2d_actor_free(&actor->actor);
+        gf2d_actor_free(actor->actor);
         free(actor);
     }
 }
@@ -64,7 +82,7 @@ ActorElement *gf2d_element_actor_new()
 }
 
 
-ActorElement *gf2d_element_actor_new_full(char *actorFile, char *action,Vector2D scale,const char *image)
+ActorElement *gf2d_element_actor_new_full(const char *actorFile, const char *action,Vector2D scale,const char *image,Vector2D center,Vector2D flip)
 {
     ActorElement *ae;
     ae = gf2d_element_actor_new();
@@ -73,11 +91,14 @@ ActorElement *gf2d_element_actor_new_full(char *actorFile, char *action,Vector2D
         return NULL;
     }
     vector2d_copy(ae->scale,scale);
-    if ((actorFile)&&(strlen(actorFile))&&(gf2d_actor_load(&ae->actor,actorFile)))
+    vector2d_copy(ae->center,center);
+    vector2d_copy(ae->flip,flip);
+    if ((actorFile)&&(strlen(actorFile)))
     {
+        ae->actor = gf2d_actor_load(actorFile);
         if ((action) && (strlen(action) > 0))
         {
-            gf2d_actor_set_action(&ae->actor,action);
+            ae->action = gf2d_actor_set_action(ae->actor, action ,&ae->frame);
         }
     }
     else if (image != NULL)
@@ -90,53 +111,87 @@ ActorElement *gf2d_element_actor_new_full(char *actorFile, char *action,Vector2D
 const char *gf2d_element_actor_get_action_name(Element *e)
 {
     ActorElement *ae;
-    if (!e)return NULL;
+    if ((!e)||(e->type != ET_Actor))return NULL;
+
     ae = (ActorElement *)e->data;
-    return gf2d_actor_get_action_name(&ae->actor);
+    if (!ae->action)return NULL;
+    return ae->action->name;
 }
 
 void gf2d_element_actor_next_action(Element *e)
 {
     ActorElement *ae;
-    if (!e)return;
+    if ((!e)||(e->type != ET_Actor))return;
+
     ae = (ActorElement *)e->data;
-    gf2d_actor_next_action(&ae->actor);
+    ae->action = gf2d_actor_get_next_action(ae->actor,ae->action);
+    if (ae->action)ae->frame = ae->action->startFrame;
 }
 
 void gf2d_element_actor_auto_scale(Element *e)
 {
     ActorElement *ae;
-    if (!e)return;
+    if ((!e)||(e->type != ET_Actor))return;
+
     ae = (ActorElement *)e->data;
-    ae->scale.x = e->bounds.w/ ae->actor.size.x ;
-    ae->scale.y = e->bounds.h /ae->actor.size.y;
+    if (ae->actor->size.x)ae->scale.x = e->bounds.w/ ae->actor->size.x ;
+    if (ae->actor->size.y)ae->scale.y = e->bounds.h /ae->actor->size.y;
 }
 
-void gf2d_element_actor_set_actor(Element *e, char *actorFile)
+void gf2d_element_actor_set_actor(Element *e, const char *actorFile)
 {
     ActorElement *ae;
-    if (!e)return;
+    if ((!e)||(e->type != ET_Actor))return;
+
     ae = (ActorElement *)e->data;
-    gf2d_actor_free(&ae->actor);
-    gf2d_actor_load(&ae->actor,actorFile);
+    if (ae->actor)
+    {
+        gf2d_actor_free(ae->actor);
+        ae->actor = NULL;
+    }
+    if (actorFile)
+    {
+        ae->actor = gf2d_actor_load(actorFile);
+    }
+    ae->action = NULL;
+    ae->frame = 0;
 }
 
-void gf2d_element_actor_set_action(Element *e, char *action)
+void gf2d_element_actor_set_frame(Element *e, Uint32 i)
 {
     ActorElement *ae;
-    if (!e)return;
+    if ((!e)||(e->type != ET_Actor))return;
+
     ae = (ActorElement *)e->data;
-    gf2d_actor_set_action(&ae->actor,action);
+    ae->frame = i;
+}
+
+void gf2d_element_actor_set_action(Element *e, const char *action)
+{
+    ActorElement *ae;
+    if ((!e)||(e->type != ET_Actor))return;
+
+    if (e->type != ET_Actor)return;
+    ae = (ActorElement *)e->data;
+    if (!ae->actor)return;
+    ae->action = gf2d_actor_set_action(ae->actor, action,&ae->frame);
 }
 
 
 Actor *gf2d_element_actor_get_actor(Element *e)
 {
     ActorElement *ae;
-    if (!e)return NULL;
+    if ((!e)||(e->type != ET_Actor))return NULL;
+
     ae = (ActorElement *)e->data;
     if (!ae)return NULL;
-    return &ae->actor;
+    return ae->actor;
+}
+
+Element *gf2d_actor_get_next(Element *element, Element *from)
+{
+    if (element == from)return from;
+    return NULL;
 }
 
 void gf2d_element_make_actor(Element *e,ActorElement *actor)
@@ -147,10 +202,13 @@ void gf2d_element_make_actor(Element *e,ActorElement *actor)
     e->draw = gf2d_element_actor_draw;
     e->update = gf2d_element_actor_update;
     e->free_data = gf2d_element_actor_free;
+    e->get_next = gf2d_actor_get_next;
 }
 
 void gf2d_element_load_actor_from_config(Element *e,SJson *json)
 {
+    Vector2D flip = {0};
+    Vector2D center = {0};
     SJson *value;
     const char *buffer = NULL;
     const char *action = NULL;
@@ -176,10 +234,13 @@ void gf2d_element_load_actor_from_config(Element *e,SJson *json)
         value = sj_object_get_value(json,"image");
         image = sj_get_string_value(value);
     }
+
+    sj_value_as_vector2d(sj_object_get_value(json,"flip"),&flip);
+    sj_value_as_vector2d(sj_object_get_value(json,"center"),&center);
     
 
     scale.x = scale.y = 1;
     sj_value_as_vector2d(sj_object_get_value(json,"scale"),&scale);
-    gf2d_element_make_actor(e,gf2d_element_actor_new_full((char *)buffer,(char *)action,scale,image));
+    gf2d_element_make_actor(e,gf2d_element_actor_new_full((char *)buffer,(char *)action,scale,image,center,flip));
 }
 /*eol@eof*/

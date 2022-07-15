@@ -1,9 +1,10 @@
 #include "simple_logger.h"
+
 #include "gfc_text.h"
 #include "gfc_color.h"
+#include "gfc_shape.h"
 
 #include "gf2d_graphics.h"
-#include "gf2d_shape.h"
 #include "gf2d_font.h"
 
 typedef struct
@@ -15,7 +16,8 @@ typedef struct
 
 static FontManager font_manager = {0};
 
-void gf2d_fonts_load(char *filename);
+void gf2d_fonts_load(const char *filename);
+void gf2d_fonts_load_json(const char *filename);
 
 void gf2d_font_close()
 {
@@ -31,14 +33,15 @@ void gf2d_font_close()
     slog("text system closed");
 }
 
-void gf2d_font_init(char *configFile)
+void gf2d_font_init(const char *configFile)
 {
     if (TTF_Init() == -1)
     {
         slog("TTF_Init: %s\n", TTF_GetError());
         return;
     }
-    gf2d_fonts_load(configFile);
+    gf2d_fonts_load_json(configFile);
+//    gf2d_fonts_load(configFile);
     slog("text system initialized");
     atexit(gf2d_font_close);
 }
@@ -60,8 +63,46 @@ int gf2d_fonts_get_count(FILE *file)
     return count;
 }
 
+FontTypes gf2d_font_type_from_text(const char *buf)
+{
+    if (strcmp(buf,"normal")==0)
+    {
+        return FT_Normal;
+    }
+    else if (strcmp(buf,"small")==0)
+    {
+        return FT_Small;
+    }
+    else if (strcmp(buf,"H1")==0)
+    {
+        return FT_H1;
+    }
+    else if (strcmp(buf,"H2")==0)
+    {
+        return FT_H2;
+    }
+    else if (strcmp(buf,"H3")==0)
+    {
+        return FT_H3;
+    }
+    else if (strcmp(buf,"H4")==0)
+    {
+        return FT_H4;
+    }
+    else if (strcmp(buf,"H5")==0)
+    {
+        return FT_H5;
+    }
+    else if (strcmp(buf,"H6")==0)
+    {
+        return FT_H6;
+    }
+    return FT_MAX;
+}
+
 void gf2d_fonts_parse(FILE *file)
 {
+    FontTypes fontType;
     Font *font;
     char buf[512];
     if (!file)return;
@@ -84,45 +125,68 @@ void gf2d_fonts_parse(FILE *file)
         if(strcmp(buf,"tag:") == 0)
         {
             fscanf(file,"%s",buf);
-            if (strcmp(buf,"normal")==0)
+            fontType = gf2d_font_type_from_text(buf);
+            if (fontType == FT_MAX)
             {
-                font_manager.font_tags[FT_Normal] = font;
+                fgets(buf, sizeof(buf), file);
+                continue;
             }
-            else if (strcmp(buf,"small")==0)
-            {
-                font_manager.font_tags[FT_Small] = font;
-            }
-            else if (strcmp(buf,"H1")==0)
-            {
-                font_manager.font_tags[FT_H1] = font;
-            }
-            else if (strcmp(buf,"H2")==0)
-            {
-                font_manager.font_tags[FT_H2] = font;
-            }
-            else if (strcmp(buf,"H3")==0)
-            {
-                font_manager.font_tags[FT_H3] = font;
-            }
-            else if (strcmp(buf,"H4")==0)
-            {
-                font_manager.font_tags[FT_H4] = font;
-            }
-            else if (strcmp(buf,"H5")==0)
-            {
-                font_manager.font_tags[FT_H5] = font;
-            }
-            else if (strcmp(buf,"H6")==0)
-            {
-                font_manager.font_tags[FT_H6] = font;
-            }
+            font_manager.font_tags[fontType] = font;
             continue;
         }
         fgets(buf, sizeof(buf), file);
     }
 }
 
-void gf2d_fonts_load(char *filename)
+void gf2d_fonts_load_json(const char *filename)
+{
+    int i;
+    int count = 0;
+    const char *str;
+    int size = 10;
+    FontTypes fontType;
+    SJson *file,*fonts,*item;
+    file = sj_load(filename);
+    if (!file)return;
+    fonts = sj_object_get_value(file,"fonts");
+    if (!fonts)
+    {
+        slog("font config %s does not contain fonts list",filename);
+        sj_free(file);
+        return;
+    }
+    count = sj_array_get_count(fonts);
+    if (!count)
+    {
+        slog("font config has no fonts");
+        sj_free(file);
+        return;
+    }
+    font_manager.font_list = (Font*)gfc_allocate_array(sizeof(Font),count);
+    for (i = 0; i < count; i++)
+    {
+        item = sj_array_get_nth(fonts,i);
+        if (!item)continue;
+        str = sj_get_string_value(sj_object_get_value(item,"font"));
+        if (str)
+        {
+            gfc_line_cpy(font_manager.font_list[i].filename,str);
+        }
+        str = sj_get_string_value(sj_object_get_value(item,"tag"));
+        if (str)
+        {
+            fontType = gf2d_font_type_from_text(str);
+            if (fontType < FT_MAX)
+            font_manager.font_tags[fontType] = &font_manager.font_list[i];
+        }
+        sj_get_integer_value(sj_object_get_value(item,"size"),&size);
+        font_manager.font_list[i].pointSize = size;
+        font_manager.font_list[i].font = TTF_OpenFont(font_manager.font_list[i].filename, font_manager.font_list[i].pointSize);
+    }
+    sj_free(file);
+}
+
+void gf2d_fonts_load(const char *filename)
 {
     FILE *file;
     int count;
@@ -140,7 +204,7 @@ void gf2d_fonts_load(char *filename)
         fclose(file);
         return;
     }
-    font_manager.font_list = (Font*)malloc(sizeof(Font)*count);
+    font_manager.font_list = (Font*)gfc_allocate_array(sizeof(Font),count);
     if (!font_manager.font_list)
     {
         slog("failed to allocate memory for %i fonts",count);
@@ -219,7 +283,6 @@ void gf2d_font_draw_line(char *text,Font *font,Color color, Vector2D position)
     surface = TTF_RenderUTF8_Blended(font->font, text, gfc_color_to_sdl(color));
     if (!surface)
     {
-        slog("failed to render text for text '%s'",text);
         return;
     }
     surface = gf2d_graphics_screen_convert(&surface);
@@ -314,6 +377,7 @@ Rect gf2d_font_get_text_wrap_bounds(
     Rect r = {0,0,0,0};
     TextBlock textline;
     TextBlock temptextline;
+    TextBlock tempBuffer;
     TextBlock text;
     TextLine word;
     Bool whitespace;
@@ -363,9 +427,11 @@ Rect gf2d_font_get_text_wrap_bounds(
         strncpy(textline,temptextline,GFCTEXTLEN);/*keep the last line that worked*/
         for(i = 0;i < (space - 1);i++)
         {
-            gfc_block_sprintf(temptextline,"%s%c",temptextline,' '); /*add spaces*/
+            gfc_block_sprintf(tempBuffer,"%s%c",temptextline,' '); /*add spaces*/
+            gfc_block_cpy(temptextline,tempBuffer);
         }
-        gfc_block_sprintf(temptextline,"%s %s",temptextline,word); /*add a word*/
+        gfc_block_sprintf(tempBuffer,"%s %s",temptextline,word); /*add a word*/
+        gfc_block_cpy(temptextline,tempBuffer);
         TTF_SizeText(font->font, temptextline, &tw, &th); /*see how big it is now*/
         lindex += strlen(word);
         if(tw > w)         /*see if we have gone over*/
@@ -406,6 +472,7 @@ void gf2d_font_draw_text_wrap(
 {
     TextBlock textline;
     TextBlock temptextline;
+    TextBlock tempBuffer;
     TextBlock text;
     TextLine word;
     Bool whitespace;
@@ -464,9 +531,11 @@ void gf2d_font_draw_text_wrap(
         strncpy(textline,temptextline,GFCTEXTLEN);/*keep the last line that worked*/
         for (i = 0;i < (space - 1);i++)
         {
-            gfc_block_sprintf(temptextline,"%s%c",temptextline,' '); /*add spaces*/
+            gfc_block_sprintf(tempBuffer,"%s%c",temptextline,' '); /*add spaces*/
+            gfc_block_cpy(temptextline,tempBuffer);
         }
-        gfc_block_sprintf(temptextline,"%s %s",temptextline,word); /*add a word*/
+        gfc_block_sprintf(tempBuffer,"%s %s",temptextline,word); /*add a word*/
+        gfc_block_cpy(temptextline,tempBuffer);
         TTF_SizeText(font->font, temptextline, &w, &h); /*see how big it is now*/
         lindex += strlen(word);
         if(w > block.w)         /*see if we have gone over*/

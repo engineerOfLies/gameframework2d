@@ -2,15 +2,35 @@
 #define __GF2D_MOUSE_H__
 
 #include "gfc_vector.h"
+#include "gfc_shape.h"
 
-#include "gf2d_shape.h"
+#include "gf2d_actor.h"
 
 /**
  * @brief load a mouse graphic from an actor
  * @param actorFile the file to use to load the mouse information
  * @note it automatically frees previously loaded actor information
  */
-void gf2d_mouse_load(char *actorFile);
+void gf2d_mouse_load(const char *actorFile);
+
+/**
+ * @brief check if the mouse is hidden or not.
+ * @return > 0 if the mouse is hidden.  Otherwise the mouse is shown
+ */
+int gf2d_mouse_hidden();
+
+/**
+ * @brief hide the mouse
+ * This increments a hidden counter so that it can be nested.
+ */
+void gf2d_mouse_hide();
+
+/**
+ * @brief show the mouse
+ * This decrements a hidden counter so that it can be nested.
+ */
+void gf2d_mouse_show();
+
 
 /**
  * @brief call once per frame to update the internal mouse information
@@ -51,7 +71,7 @@ int gf2d_mouse_button_pressed(int button);
 int gf2d_mouse_button_held(int button);
 
 /**
- * @brief check if the mouse button was pressed this frame
+ * @brief check if the mouse button was released this frame
  * @param button the button number to check (left mouse button is 0, right mouse button is 1, etc)
  * @return 1 if it has, 0 otherwise
  */
@@ -71,6 +91,13 @@ int gf2d_mouse_button_state(int button);
 Vector2D gf2d_mouse_get_position();
 
 /**
+ * @brief get the angle to the mouse with respect to the provided point
+ * @param point the relative point to check from
+ * @return the angle, in degrees (with 0 being UP)
+ */
+float gf2d_mouse_get_angle_to(Vector2D point);
+
+/**
  * @brief get the change in position from the last frame
  * @return a vector containing the change in mouse position.
  */
@@ -82,4 +109,13 @@ Vector2D gf2d_mouse_get_movement();
  * @return 1 if it is within the rect, 0 otherwise
  */
 int gf2d_mouse_in_rect(Rect r);
+
+/**
+ * @brief set the action for the mouse icon
+ * @param action the name of the action to set it to
+ */
+void gf2d_mouse_set_action(const char *action);
+
+
+
 #endif

@@ -9,7 +9,6 @@ typedef struct
 {
     Element *label;
     Uint8 cursor_pos;
-    Uint8 has_focus;
     char *text;         /**<pointer to string to modify*/
     size_t max_len;     /**<how many letter to support for text entry*/
 }EntryElement;

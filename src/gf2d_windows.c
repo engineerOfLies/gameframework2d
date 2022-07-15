@@ -4,34 +4,222 @@
 
 #include "simple_logger.h"
 
+#include "gfc_hashmap.h"
+#include "gfc_audio.h"
+
 #include "gf2d_graphics.h"
+#include "gf2d_draw.h"
 #include "gf2d_mouse.h"
 #include "gf2d_windows.h"
 #include "gf2d_elements.h"
 
+typedef enum
+{
+    WDS_Tiled,
+    WDS_Stretched,
+    WDS_Max
+}WindowDrawStyle;
+
 typedef struct
 {
-    Sprite *generic_border;
-    Sprite *generic_background;
-    Window *window_list;    /**<*/
-    int window_max;         /**<how many windows can exist at once*/
-    List *window_deque;     /**<draw order is back to front, update order is front to back*/
-    int drawbounds;         /**<if true draw rects around window bounds*/
+    Sprite *generic_border;     /**<sprite to use to draw the border*/
+    Sprite *generic_background; /**<sprite to use to draw the background*/
+    WindowDrawStyle style;      /**<tiled or stretched*/
+    Window *window_list;        /**<list of all active windows*/
+    int window_max;             /**<how many windows can exist at once*/
+    List *window_deque;         /**<draw order is back to front, update order is front to back*/
+    int drawbounds;             /**<if true draw rects around window bounds*/
+    HashMap *sounds;            /**<sound pack for windows and elements*/
 }WindowManager;
 
 static WindowManager window_manager = {0};
 
 Window *gf2d_window_load_from_json(SJson *json);
+Element *gf2d_window_get_next_element(Window *win,Element *from);
 
-void gf2d_draw_window_border_generic(Rect rect,Vector4D color)
+void gf2d_draw_window_border_generic(Rect rect,Color color)
 {
-    gf2d_draw_window_border(window_manager.generic_border,window_manager.generic_background,rect,color);
+    if (window_manager.style == WDS_Tiled)
+    {
+        gf2d_draw_window_border_tiled(window_manager.generic_border,window_manager.generic_background,rect,color);
+    }
+    else if (window_manager.style == WDS_Stretched)
+    {
+        gf2d_draw_window_border_stretched(window_manager.generic_border,window_manager.generic_background,rect,color);
+    }
 }
 
-void gf2d_draw_window_border(Sprite *border,Sprite *bg,Rect rect,Vector4D color)
+void gf2d_draw_window_border_tiled(Sprite *border,Sprite *bg,Rect rect,Color color)
+{
+    int i;
+    Vector4D clip = {0,0,1,1};
+    Vector2D count = {0};
+    Vector2D fraction = {0};
+    Vector2D scale = {0};
+    if ((bg)&&(bg->frame_w != 0)&&(bg->frame_h != 0))
+    {
+        
+        scale.x = rect.w/bg->frame_w;
+        scale.y = rect.h/bg->frame_h;
+        gf2d_sprite_draw(
+            bg,
+            vector2d(rect.x,rect.y),
+            &scale,
+            NULL,
+            NULL,
+            NULL,
+            &color,
+            0);
+    }
+    if ((border->frame_w == 0)||(border->frame_h == 0))return;
+    count.x = (int)(rect.w / border->frame_w) - 1;
+    fraction.x = ((float)rect.w / (float)border->frame_w) - 1;
+    count.y = (int)(rect.h / border->frame_h) - 1;
+    fraction.y = ((float)rect.h / (float)border->frame_h) - 1;
+    vector2d_sub(fraction,fraction,count);
+    // draw horizontal borders
+    for (i = 0; i  < count.x; i++)
+    {
+        gf2d_sprite_draw(
+            border,
+            vector2d(rect.x + border->frame_w/2 + (i * border->frame_w),rect.y - border->frame_w/2),
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            &color,
+            BE_Top);
+        gf2d_sprite_draw(
+            border,
+            vector2d(rect.x + border->frame_w/2 + (i * border->frame_w),rect.y + rect.h - border->frame_w/2),
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            &color,
+            BE_Bottom);
+    }
+    if (fraction.x > 0)
+    {
+        clip.z = fraction.x;
+        clip.w = 1;
+        gf2d_sprite_render(
+            border,
+            vector2d(rect.x + border->frame_w/2 + (i * border->frame_w),rect.y - border->frame_w/2),
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            &color,
+            &clip,
+            BE_Top);
+        gf2d_sprite_render(
+            border,
+            vector2d(rect.x + border->frame_w/2 + (i * border->frame_w),rect.y + rect.h - border->frame_w/2),
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            &color,
+            &clip,
+            BE_Bottom);
+    }
+    
+    //vertical borders
+    for (i = 0; i  < count.y; i++)
+    {
+        gf2d_sprite_draw(
+            border,
+            vector2d(rect.x - border->frame_w/2,rect.y + border->frame_w/2 +  + (i * border->frame_h)),
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            &color,
+            BE_Left);
+        gf2d_sprite_draw(
+            border,
+            vector2d(rect.x + rect.w - border->frame_w/2,rect.y + border->frame_w/2 +  + (i * border->frame_h)),
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            &color,
+            BE_Right);
+    }
+    if (fraction.y > 0)
+    {
+        clip.z = 1;
+        clip.w = fraction.y;
+        gf2d_sprite_render(
+            border,
+            vector2d(rect.x - border->frame_w/2,rect.y + border->frame_w/2 +  + (i * border->frame_h)),
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            &color,
+            &clip,
+            BE_Left);
+        gf2d_sprite_render(
+            border,
+            vector2d(rect.x + rect.w - border->frame_w/2,rect.y + border->frame_w/2 +  + (i * border->frame_h)),
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            &color,
+            &clip,
+            BE_Right);
+    }
+    //corners
+    gf2d_sprite_draw(
+        border,
+        vector2d(rect.x + rect.w - border->frame_w/2,rect.y - border->frame_w/2),
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        &color,
+        BE_TR);
+    gf2d_sprite_draw(
+        border,
+        vector2d(rect.x - border->frame_w/2,rect.y + rect.h - border->frame_w/2),
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        &color,
+        BE_BL);
+    gf2d_sprite_draw(
+        border,
+        vector2d(rect.x - border->frame_w/2,rect.y - border->frame_w/2),
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        &color,
+        BE_TL);
+    gf2d_sprite_draw(
+        border,
+        vector2d(rect.x + rect.w - border->frame_w/2,rect.y + rect.h - border->frame_w/2),
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        &color,
+        BE_BR);
+    if (window_manager.drawbounds)
+    {
+        gf2d_draw_rect(rect,gfc_color8(255,100,100,255));
+    }
+
+}
+
+void gf2d_draw_window_border_stretched(Sprite *border,Sprite *bg,Rect rect,Color color)
 {
     Vector2D scale = {0};
-    if (bg)
+    if ((bg)&&(bg->frame_w != 0)&&(bg->frame_h != 0))
     {
         scale.x = rect.w/bg->frame_w;
         scale.y = rect.h/bg->frame_h;
@@ -45,7 +233,7 @@ void gf2d_draw_window_border(Sprite *border,Sprite *bg,Rect rect,Vector4D color)
             &color,
             0);
     }
-    if (!border)return;
+    if ((!border)||(border->frame_h == 0)||(border->frame_w == 0))return;
     scale.x = (rect.w - border->frame_w)/(float)border->frame_w;
     scale.y = 1;
     gf2d_sprite_draw(
@@ -88,7 +276,7 @@ void gf2d_draw_window_border(Sprite *border,Sprite *bg,Rect rect,Vector4D color)
         NULL,
         &color,
         BE_Right);
-    
+    //corners
     gf2d_sprite_draw(
         border,
         vector2d(rect.x + rect.w - border->frame_w/2,rect.y - border->frame_w/2),
@@ -127,7 +315,7 @@ void gf2d_draw_window_border(Sprite *border,Sprite *bg,Rect rect,Vector4D color)
         BE_BR);
     if (window_manager.drawbounds)
     {
-        gf2d_rect_draw(rect,gfc_color8(255,100,100,255));
+        gf2d_draw_rect(rect,gfc_color8(255,100,100,255));
     }
 }
 
@@ -145,8 +333,13 @@ void gf2d_windows_close()
     slog("window system closed");
 }
 
-void gf2d_windows_init(int max_windows)
+void gf2d_windows_init(int max_windows,const char *config)
 {
+    TextLine background,border;
+    const char *str;
+    Vector2D borderSize = {64,64};
+    int      borderFPL = 8;
+    SJson *file,*window,*sounds;
     if (max_windows <= 0)
     {
         slog("cannot initilize window system for 0 windows");
@@ -161,11 +354,54 @@ void gf2d_windows_init(int max_windows)
     memset(window_manager.window_list,0,sizeof(Window)*max_windows);
     window_manager.window_max = max_windows;
     window_manager.window_deque = gfc_list_new();
-    window_manager.generic_background = gf2d_sprite_load_image("images/window_background.png");
-    window_manager.generic_border = gf2d_sprite_load_all("images/window_border.png",64,64,8,false);
+    //defaults
+    gfc_line_cpy(background,"images/ui/window_background.png");
+    gfc_line_cpy(border,"images/ui/window_border.png");
+    
+    //config overrides
+    if (config)
+    {
+        file = sj_load(config);
+        if (file)
+        {
+            window = sj_object_get_value(file,"window");
+            if (window)
+            {
+                str = sj_get_string_value(sj_object_get_value(window,"background"));
+                if (str)gfc_line_cpy(background,str);
+                str = sj_get_string_value(sj_object_get_value(window,"border"));
+                if (str)gfc_line_cpy(border,str);
+                sj_value_as_vector2d(sj_object_get_value(window,"borderSize"),&borderSize);
+                sj_get_integer_value(sj_object_get_value(window,"borderFPL"),&borderFPL);
+                str = sj_get_string_value(sj_object_get_value(window,"drawStyle"));
+                if (str)
+                {
+                    if (strcmp(str,"tiled")==0)window_manager.style = WDS_Tiled;
+                    else if (strcmp(str,"stretched")==0)window_manager.style = WDS_Stretched;
+                }
+            }
+            sounds = sj_object_get_value(file,"sounds");
+            if (sounds)
+            {
+                window_manager.sounds = gfc_sound_pack_parse(sounds);
+            }
+        }
+        sj_free(file);
+    }
+    window_manager.generic_background = gf2d_sprite_load_image(background);
+    window_manager.generic_border = gf2d_sprite_load_all(border,borderSize.x,borderSize.y,borderFPL,false);
     window_manager.drawbounds = 0;
     slog("window system initilized");
     atexit(gf2d_windows_close);
+}
+
+void gf2d_window_close_child(Window *parent,Window *child)
+{
+    if ((!parent)||(!child))return;
+    if (parent->child == child)// double check that we are closing the reference to ourselves
+    {
+        parent->child = NULL;
+    }
 }
 
 void gf2d_window_free(Window *win)
@@ -183,9 +419,16 @@ void gf2d_window_free(Window *win)
         gf2d_element_free((Element*)gfc_list_get_nth(win->elements,i));
     }
     gfc_list_delete(win->elements);
+    gfc_list_delete(win->focus_elements);// only delete the list, the data is handled by the other list
     gf2d_sprite_free(win->background);
     gf2d_sprite_free(win->border);
     memset(win,0,sizeof(Window));
+}
+
+void gf2d_window_set_dimensions(Window *win,Rect dimensions)
+{
+    if (!win)return;
+    gfc_rect_copy(win->dimensions,dimensions);
 }
 
 void gf2d_window_set_position(Window *win,Vector2D position)
@@ -194,11 +437,25 @@ void gf2d_window_set_position(Window *win,Vector2D position)
     vector2d_copy(win->dimensions,position);
 }
 
+void gf2d_window_hide(Window *win)
+{
+    if (!win)return;
+    win->hidden = 1;
+}
+
+void gf2d_window_unhide(Window *win)
+{
+    if (!win)return;
+    win->hidden = 0;
+}
+
+
 void gf2d_window_draw(Window *win)
 {
     int count,i;
     Vector2D offset;
     if (!win)return;
+    if (win->hidden)return;
     if (!win->no_draw_generic)
     {
         gf2d_draw_window_border_generic(win->dimensions,win->color);
@@ -221,6 +478,7 @@ int gf2d_window_update(Window *win)
     List *updated = NULL;
     Element *e;
     if (!win)return 0;
+    if (win->hidden)return 0;
     updateList = gfc_list_new();
     offset.x = win->dimensions.x + win->canvas.x;
     offset.y = win->dimensions.y + win->canvas.y;
@@ -247,8 +505,149 @@ int gf2d_window_update(Window *win)
     return retval;
 }
 
+void gf2d_window_make_focus_list(Window *win)
+{
+    Element *element = NULL;
+    if (!win)return;
+    element = gf2d_window_get_next_element(win,NULL);
+    if (win->focus_elements)
+    {
+        gfc_list_delete(win->focus_elements);
+        win->focus_elements = gfc_list_new();
+    }
+    while(element)
+    {
+        if (element->canHasFocus)
+        {
+            win->focus_elements = gfc_list_append(win->focus_elements,element);
+        }
+        element = gf2d_window_get_next_element(win,element);
+    }
+}
+
+Element *gf2d_window_get_next_element(Window *win,Element *from)
+{
+    int c,i;
+    Element *e,*sub,*e2;
+    if (!win)return NULL;
+    if (from == NULL)
+    {
+        return gfc_list_get_nth(win->elements,0);
+    }
+    c = gfc_list_get_count(win->elements);
+    for (i = 0; i < c; i++)
+    {
+        e = gfc_list_get_nth(win->elements,i);
+        if (!e)continue;
+        if (e == from)
+        {
+            sub = e->get_next(e,from);
+            if (sub == NULL)
+            {
+                //get next in the array
+                e2 = gfc_list_get_nth(win->elements,i+1);
+                if (!e2)// no more elements
+                {
+                    return NULL;// there is nothing left in the list
+                }
+                return e2;//next aquired
+            }
+            if (sub == from)
+            {
+                return NULL;
+            }
+            return sub;
+        }
+        sub = e->get_next(e,from);
+        if (sub == from)
+        {
+            if ((i +1) >= c)return NULL;
+            return gfc_list_get_nth(win->elements,i+1);
+        }        
+        if (sub != NULL)
+        {
+            return sub;
+        }
+    }
+    return NULL;
+}
+
+Element *gf2d_window_get_element_by_focus(Window *win)
+{
+    int i,c;
+    Element *e;
+    if (!win)return NULL;
+    if (win->focus) return win->focus;
+    c = gfc_list_get_count(win->focus_elements);
+    for (i = 0; i < c; i++)
+    {
+        e = gfc_list_get_nth(win->focus_elements,i);
+        if (!e)continue;
+        if (e->hasFocus)return e;
+    }
+    return NULL;
+}
+
+void gf2d_windows_play_sound(const char *name)
+{
+    if ((!name)||(!strlen(name)))return;
+    gfc_sound_pack_play(window_manager.sounds, name,0,1,0,0);
+}
+
+void gf2d_window_set_focus_to(Window *win,Element *e)
+{
+    Element *f;
+    if (e == NULL)
+    {
+        return;
+    }
+    if (!e->canHasFocus)
+    {
+        return;
+    }
+    f = gf2d_window_get_element_by_focus(win);
+    if (f)
+    {
+        f->hasFocus = 0;
+        gfc_sound_pack_play(window_manager.sounds, "select",0,1,0,0);
+        //only play select sound when selection CHANGES, not when initially set
+    }
+    e->hasFocus = 1;
+    win->focus = e;
+}
+
+void gf2d_window_prev_focus(Window *win)
+{
+    int c;
+    Uint32 index;
+    Element *old;
+    
+    old = gf2d_window_get_element_by_focus(win);
+    c = gfc_list_get_count(win->focus_elements);
+    index = gfc_list_get_item_index(win->focus_elements,old);
+    if (index == 0)index = c;
+    index--;
+    gf2d_window_set_focus_to(win,gfc_list_get_nth(win->focus_elements,index));
+}
+
+void gf2d_window_next_focus(Window *win)
+{
+    Element *e;
+    int c;
+    Uint32 index;
+    Element *old;
+    old = gf2d_window_get_element_by_focus(win);
+    c = gfc_list_get_count(win->focus_elements);
+    index = gfc_list_get_item_index(win->focus_elements,old);
+    index++;
+    if (index >= c)index = 0;
+    e = gfc_list_get_nth(win->focus_elements,index);
+    gf2d_window_set_focus_to(win,e);
+}
+
 Window *gf2d_window_new()
 {
+    
     int i;
     for (i = 0;i < window_manager.window_max;i++)
     {
@@ -258,6 +657,7 @@ Window *gf2d_window_new()
            window_manager.window_list[i]._inuse = 1;
            window_manager.window_deque = gfc_list_append(window_manager.window_deque,&window_manager.window_list[i]);
            window_manager.window_list[i].elements = gfc_list_new();
+           window_manager.window_list[i].focus_elements = gfc_list_new();
            return &window_manager.window_list[i];
         }
     }
@@ -382,15 +782,15 @@ Window *gf2d_window_load(char *filename)
     json = sj_load(filename);
     win = gf2d_window_load_from_json(json);
     sj_free(json);
+    if (win)gf2d_window_make_focus_list(win);
     return win;
 }
-
-
 
 Window *gf2d_window_load_from_json(SJson *json)
 {
     Window *win = NULL;
     int i,count;
+    short int buul = 0;
     Vector4D vector = {255,255,255,255};
     SJson *elements,*value;
     const char *buffer;
@@ -411,12 +811,16 @@ Window *gf2d_window_load_from_json(SJson *json)
         slog("failed to create new window");
         return NULL;
     }
+    
+    
+    sj_get_bool_value(sj_object_get_value(json,"no_draw_generic"),&buul);
+    if (buul)win->no_draw_generic = 1;
     sj_value_as_vector4d(sj_object_get_value(json,"color"),&vector);
-    win->color = vector;
+    win->color = gfc_color_from_vector4(vector);
     
     vector4d_clear(vector);
     sj_value_as_vector4d(sj_object_get_value(json,"dimensions"),&vector);
-    win->dimensions = gf2d_rect(vector.x,vector.y,vector.z,vector.w);
+    win->dimensions = gfc_rect(vector.x,vector.y,vector.z,vector.w);
     gf2d_window_calibrate(win);
     
     value = sj_object_get_value(json,"justify");
@@ -464,6 +868,34 @@ Window *gf2d_window_load_from_json(SJson *json)
         gf2d_window_add_element(win,gf2d_element_load_from_config(value,NULL,win));
     }
     return win;
+}
+
+Element *gf2d_window_get_element_by_name(Window *win,const char *name)
+{
+    Element *e,*q;
+    int count, i;
+    if (!win)return NULL;
+    count = gfc_list_get_count(win->elements);
+    for (i = 0;i < count;i++)
+    {
+        e = (Element *)gfc_list_get_nth(win->elements,i);
+        if (!e)continue;
+        q = gf2d_get_element_by_name(e,name);
+        if (q)return q;
+    }
+    return NULL;
+}
+
+void gf2d_window_bring_to_front(Window *win)
+{
+    gfc_list_delete_data(window_manager.window_deque,win);
+    window_manager.window_deque = gfc_list_append(window_manager.window_deque,win);
+}
+
+void gf2d_window_send_to_back(Window *win)
+{
+    gfc_list_delete_data(window_manager.window_deque,win);
+    window_manager.window_deque = gfc_list_prepend(window_manager.window_deque,win);
 }
 
 Element *gf2d_window_get_element_by_id(Window *win,int id)

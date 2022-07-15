@@ -37,7 +37,7 @@ typedef struct
  * @param wraps if the label should word wrap
  * @return NULL on error or a new label element
  */
-LabelElement *gf2d_element_label_new_full(char *text,Color color,int style,int justify,int align,int wraps);
+LabelElement *gf2d_element_label_new_full(const char *text,Color color,int style,int justify,int align,int wraps);
 
 /**
  * @brief set an element to be the label provided
@@ -56,9 +56,10 @@ void gf2d_element_load_label_from_config(Element *e,SJson *json);
 /**
  * @brief set the label text
  * @param e the element to set the text to
+ * @note the label keeps its own copy of the text it will not automatically update
  * @param text the text
  */
-void gf2d_element_label_set_text(Element *e,char *text);
+void gf2d_element_label_set_text(Element *e,const char *text);
 
 /**
  * @brief get the label text

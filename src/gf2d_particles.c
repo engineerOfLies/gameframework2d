@@ -1,13 +1,8 @@
 #include "simple_logger.h"
 
-#include "gfc_vector.h"
-#include "gfc_types.h"
-#include "gfc_text.h"
-
 #include "gf2d_sprite.h"
 #include "gf2d_draw.h"
 #include "gf2d_graphics.h"
-
 #include "gf2d_particles.h"
 
 struct ParticleEmitter_S
@@ -40,7 +35,7 @@ struct ParticleEmitter_S
 };
 
 void gf2d_particle_update(Particle *p,Uint32 now);
-void gf2d_particle_draw(Particle *p);
+void gf2d_particle_draw(Particle *p, Vector2D offset);
 
 void gf2d_particle_free(Particle *p)
 {
@@ -85,7 +80,7 @@ ParticleEmitter *gf2d_particle_emitter_new_full(
     Uint32      startFrame,
     Uint32      endFrame,
     Uint32      frameVariance,
-    TextLine    spriteFile,
+    const char *spriteFile,
     Uint32      frameWidth,
     Uint32      frameHeight,
     Uint32      framesPerLine,
@@ -110,7 +105,7 @@ ParticleEmitter *gf2d_particle_emitter_new_full(
     pe->startFrame = startFrame;
     pe->endFrame = endFrame;
     frameVariance = frameVariance;
-    gfc_line_cpy(pe->spriteFile,spriteFile);
+    if (spriteFile)gfc_line_cpy(pe->spriteFile,spriteFile);
     pe->frameWidth = frameWidth;
     pe->frameHeight = frameHeight;
     pe->framesPerLine = framesPerLine;
@@ -118,7 +113,7 @@ ParticleEmitter *gf2d_particle_emitter_new_full(
     pe->mode = mode;
     if (shape)
     {
-        gf2d_shape_copy(&pe->shape,*shape);
+        gfc_shape_copy(&pe->shape,*shape);
     }
     return pe;
 }
@@ -163,13 +158,13 @@ void gf2d_particle_emitter_update(ParticleEmitter *pe)
     }
 }
 
-void gf2d_particle_emitter_draw(ParticleEmitter *pe)
+void gf2d_particle_emitter_draw(ParticleEmitter *pe, Vector2D offset)
 {
     int i;
     if (!pe)return;
     for (i = 0;i < pe->maxParticles;i++)
     {
-        gf2d_particle_draw(&pe->particleList[i]);
+        gf2d_particle_draw(&pe->particleList[i],offset);
     }
 }
 
@@ -300,7 +295,7 @@ void gf2d_particle_new_full(
     p->mode = mode;
     if (shape)
     {
-        gf2d_shape_copy(&p->shape,*shape);
+        gfc_shape_copy(&p->shape,*shape);
     }
 }
 
@@ -330,38 +325,37 @@ Particle * gf2d_particle_new(ParticleEmitter *pe)
     return NULL;
 }
 
-void gf2d_particle_draw(Particle *p)
+void gf2d_particle_draw(Particle *p, Vector2D offset)
 {
-    Vector4D color;
+    Vector2D position;
     Shape shape;
     if ((!p)||(p->inuse == 0))return;
     switch(p->type)
     {
         case PT_Pixel:
+            vector2d_add(position,p->position,offset);
             SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),p->mode);
-            color = gfc_color_to_vector4(p->color);
-            gf2d_draw_pixel(p->position,gfc_color_to_vector4(p->color));
+            gf2d_draw_pixel(position,p->color);
             SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),SDL_BLENDMODE_BLEND);
             break;
         case PT_Shape:
-            gf2d_shape_copy(&shape,p->shape);
-            gf2d_shape_move(&shape,p->position);
+            gfc_shape_copy(&shape,p->shape);
+            gfc_shape_move(&shape,p->position);
             SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),p->mode);
-            color = gfc_color_to_vector4(p->color);
-            gf2d_shape_draw(shape,p->color,vector2d(0,0));
+            gf2d_draw_shape(shape,p->color,offset);
             SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),SDL_BLENDMODE_BLEND);
             break;
         case PT_Sprite:
+            vector2d_add(position,p->position,offset);
             SDL_SetTextureBlendMode(p->sprite->texture,p->mode);
-            color = gfc_color_to_vector4(p->color);
             gf2d_sprite_draw(
                 p->sprite,
-                vector2d(p->position.x - (p->sprite->frame_w/2),p->position.y - (p->sprite->frame_h/2)),
+                vector2d(position.x - (p->sprite->frame_w/2),position.y - (p->sprite->frame_h/2)),
                 NULL,
                 NULL,
                 NULL,
                 NULL,
-                &color,
+                &p->color,
                 (int)p->frame);
             SDL_SetTextureBlendMode(p->sprite->texture,SDL_BLENDMODE_BLEND);
             break;

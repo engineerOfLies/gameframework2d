@@ -15,9 +15,13 @@ typedef struct
     List *list;
     Vector2D itemSize;
     ListStyle listStyle;
+    int   cropped;          /**<if true, check for items being out bounds of the list, skip the ones that are*/
     int   packed;           /**<if true, items are spaced by their individual size, otherwise by the list itemSize*/
-    int   wraps;
-    int   scrolls;
+    int   wraps;            /**<if true, this will wrap when the items clip the edge*/
+    int   scrolls;          /**<if true, allow for scrolling position*/
+    int   scrollOffset;     /**<offset for drawing based on scrolling position*/
+    int   itemsPerLine;     /**<how many items will fit per line*/
+    int   itemsPerColumn;   /**<how many items will fit per columns*/
 }ListElement;
 
 
@@ -29,9 +33,23 @@ typedef struct
  * @param wraps if the list should wrap around if it exceeds the width
  * @param scrolls if the list should scroll (not yet implemented)
  * @param packed if the items should be spaced according to their own size or the itemSize
+ * @param packed if true, items will be skipped if they are out of bounds of the list
  * @return NULL on error or a formatted listElement otherwise
  */
-ListElement *gf2d_element_list_new_full(Rect bounds,Vector2D itemSize,ListStyle ls,int wraps,int scrolls,int packed);
+ListElement *gf2d_element_list_new_full(
+    Rect bounds,
+    Vector2D itemSize,
+    ListStyle ls,
+    int wraps,
+    int scrolls,
+    int packed,
+    int cropped);
+
+/**
+ * @brief free all of the elements in the list, leaving the list element, but empty
+ * @param list the list element to clear our
+ */
+void gf2d_element_list_free_items(Element *list);
 
 /**
  * @brief add an element to the list
@@ -61,5 +79,24 @@ void gf2d_element_load_list_from_config(Element *e,SJson *json,Window *win);
  * @returns NULL on not found or error, the element with index that matches otherwise
  */
 Element *gf2d_element_list_get_item_by_id(Element *e,int id);
+
+/**
+ * @brief set the scroll offset
+ */
+void gf2d_element_list_set_scroll_offset(Element *element,int offset);
+
+/**
+ * @brief get the number of items that fit per line in a wrapping list
+ * @param e the list element to check
+ * @returns 0 on error, the number of items otherwise
+ */
+int gf2d_element_list_get_items_per_line(Element *e);
+
+/**
+ * @brief get the number of items that fit per column in a wrapping list
+ * @param e the list element to check
+ * @returns 0 on error, the number of items otherwise
+ */
+int gf2d_element_list_get_items_per_column(Element *e);
 
 #endif

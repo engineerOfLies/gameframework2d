@@ -3,8 +3,7 @@
 
 #include "gfc_list.h"
 #include "gfc_text.h"
-
-#include "gf2d_shape.h"
+#include "gfc_shape.h"
 
 typedef struct Body_S
 {
@@ -22,6 +21,7 @@ typedef struct Body_S
     float       elasticity;     /**<how much bounce this body has*/
     Shape      *shape;          /**<which shape data will be used to collide for this body*/
     void       *data;           /**<custom data pointer*/
+    struct Body_S *ignore;      /**<if true, ignore this body   */
     int       (*touch)(struct Body_S *self, List *collision);/**< function to call when two bodies collide*/
 }Body;
 
@@ -66,8 +66,8 @@ void gf2d_body_clear(Body *body);
  * @param worldTouch the callback to invoke when this body touches the world
  */
 void gf2d_body_set(
-    Body *body,
-    char       *name,
+    Body       *body,
+    const char *name,
     Uint8       worldclip,
     Uint32      cliplayer,
     Uint32      touchlayer, 

@@ -3,8 +3,8 @@
 
 #include "gfc_list.h"
 #include "gfc_text.h"
+#include "gfc_shape.h"
 
-#include "gf2d_shape.h"
 #include "gf2d_space.h"
 
 #include "gf2d_body.h"
@@ -15,6 +15,7 @@
 #define PLAYER_LAYER 4
 #define MONSTER_LAYER 8
 #define OBJECT_LAYER 16
+#define PLATFORM_LAYER 32
 
 typedef struct Collision_S
 {
@@ -22,7 +23,7 @@ typedef struct Collision_S
     Uint8    blocked;           /**<true if this blocked any further movement.  Default for non elastic collisions*/
     Vector2D pointOfContact;    /**<point in space that contact was made*/
     Vector2D normal;            /**<normal vector at the point of contact*/
-    Shape   *shape;             /**<shape information on what what contacted*/
+    Shape    shape;             /**<shape information on what what contacted*/
     Body    *body;              /**<body information if a body was collided with*/
     Uint8    bounds;            /**<true if this collision was with the space bounds*/
     float    timeStep;          /**<at what time step contact was made*/
@@ -79,5 +80,14 @@ List *gf2d_collision_check_space_shape(Space *space, Shape shape,CollisionFilter
  * @return a collision structure.  Note the timeStep will be the percentage of the trace that was completed before a collision was triggered
  */
 Collision gf2d_collision_trace_space(Space *space, Vector2D start, Vector2D end ,CollisionFilter filter);
+
+/**
+ * @brief check if the two shapes overlap, and if they do build a collsion info
+ * @param a a shape to check against
+ * @param s a shape to check against
+ * @return NULL on no collision, Collsion information otherwise
+ * @note if it returns data, it must be freed
+ */
+Collision *gf2d_collision_space_static_shape_clip(Shape a, Shape s);
 
 #endif

@@ -15,7 +15,6 @@
  * @param renderHeight How much draw height you want to work with logically
  * @param bgcolor what you want the default background color to be
  * @param fullscreen if you want the window to render full screen or not
- * @param debug if you want debug rendering enabled.  Set to true to draw boarders and other helpful effects
  */
 void gf2d_graphics_initialize(
     char *windowName,
@@ -24,8 +23,7 @@ void gf2d_graphics_initialize(
     int renderWidth,
     int renderHeight,
     Vector4D bgcolor,
-    Bool fullscreen,
-    Bool debug
+    Bool fullscreen
 );
 
 /**
@@ -52,6 +50,23 @@ Vector2D gf2d_graphics_get_resolution();
 SDL_Renderer *gf2d_graphics_get_renderer();
 
 /**
+ * @brief set the blend mode for the next draw calls (until this is changed)
+ * @param mode the mode to set it to,  Supports all SDL_BlendModes
+ */
+void gf2d_graphics_set_blend_mode(SDL_BlendMode mode);
+
+/**
+ * @brief get the blend mode for a custom draw mode
+ * @note this takes the minimum of both source and dest alpha, while using the src colors
+ */
+SDL_BlendMode gf2d_graphics_get_light_blend_mode();
+
+/**
+ * @brief get the blend mode for a custom subtract blend mode
+ */
+SDL_BlendMode gf2d_graphics_get_subtract_blend_mode();
+
+/**
  * @brief render the current frame to screen
  */
 void gf2d_grahics_next_frame();
@@ -60,6 +75,12 @@ void gf2d_grahics_next_frame();
  * @brief clears drawing buffer.  Should be called each frame before drawing
  */
 void gf2d_graphics_clear_screen();
+
+/**
+ * @brief get the image format for the screen
+ * @return the image bit format
+ */
+Uint32 gf2d_graphics_get_image_format();
 
 /*drawing support functions*/
 
@@ -86,12 +107,19 @@ void gf2d_graphics_blit_surface_to_screen(SDL_Surface *surface,const SDL_Rect * 
  */
 SDL_Surface *gf2d_graphics_screen_convert(SDL_Surface **surface);
 
+/**
+ * @brief convert the texture texture target into an SDL surface.
+ * @note: this is slow don't do this often
+ * @return NULL on no texture target or error.  A surface otherwise
+ */
+SDL_Surface *gf2d_graphics_get_render();
 
 /**
- * @brief check if debug mode is set
- * @return true if debug mode is enabled, false if not
+ * @brief save the last render to a PNG
+ * @param filename the filepath and name of the screenshot to save
  */
-Bool gf2d_graphics_debug_mode();
+void gf2d_graphics_save_screenshot(const char *filename);
+
 
 
 #endif

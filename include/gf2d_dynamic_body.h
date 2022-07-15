@@ -8,11 +8,14 @@ typedef struct
 {
     Uint32      id;
     Body       *body;
+    Shape       shape;          /**<shape with offset from the body*/
     Uint8       blocked;        /**<true once this body has been blocked and no longer moves*/
     Vector2D    position;       /**<temp position during update*/
+    Vector2D    oldPosition;    /**<previous position during update*/
     Vector2D    velocity;       /**<scaled velocity based on space step*/
     double      speed;          /**<scalar speed of velocity of the body*/
     List       *collisionList;  /**<list of collisions accrued during space update*/
+    List       *bucketList;     /**<list of space buckets we sit in*/
 }DynamicBody;
 
 DynamicBody *gf2d_dynamic_body_new();
@@ -58,7 +61,7 @@ Collision *gf2d_dynamic_body_collision_check(DynamicBody *dba,DynamicBody *dbb,f
  * @param timeStep the time segment for the current update round
  * @return NULL on error or no collision, a pointer to the collision data otherwise
  */
-Collision *gf2d_dynamic_body_shape_collision_check(DynamicBody *dba,Shape *shape,float timeStep);
+Collision *gf2d_dynamic_body_shape_collision_check(DynamicBody *dba,Shape shape,float timeStep);
 
 /**
  * @brief check if a dynamic body is clipping the bounds of a space
