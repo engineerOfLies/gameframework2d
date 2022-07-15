@@ -13,6 +13,7 @@
 PROJECT = gf2d
 CC      = gcc
 
+LIB_PATH = ../libs
 LIB_LIST = ../gfc/libs/libgfc.a ../gfc/simple_json/libs/libsj.a ../gfc/simple_logger/libs/libsl.a 
 OBJECTS = $(patsubst %.c,%.o,$(wildcard *.c))
 
@@ -23,7 +24,8 @@ OBJECTS = $(patsubst %.c,%.o,$(wildcard *.c))
 
 SDL_CFLAGS = `sdl2-config --cflags` $(INC_PARAMS)
 SDL_LDFLAGS = `sdl2-config --libs` -lSDL2_image -lpng -ljpeg -lz -lSDL2_ttf -lSDL2_mixer -lm
-LFLAGS = -g  -o ../$(PROJECT) -lm
+
+LFLAGS = -g  -shared -Wl,-soname,lib$(PROJECT).so.1 -o $(LIB_PATH)/lib$(PROJECT).so.1 
 CFLAGS = -g  -fPIC -Wall -pedantic -std=gnu99 -fgnu89-inline -Wno-unknown-pragmas -Wno-variadic-macros -Wformat-truncation=0
 
 DOXYGEN = doxygen
@@ -53,6 +55,9 @@ depend:
 
 clean:
 	rm *.o
+
+static:
+	ar rcs $(LIB_PATH)/lib$(PROJECT).a $(OBJECTS)
 
 count:
 	wc -l *.c $(foreach d, $(INC_PATHS), $d/*.h) makefile

@@ -5,6 +5,9 @@ While the main branch project is specifically intended to function as an educati
 
 Currently the project is in a WIP state, however it is very functional
 
+# How To Use
+Check this repository out as a submodule of your project.  Checkout the build process below.
+
 # Features
 
 ## Graphics
@@ -84,5 +87,7 @@ Go into each submodule's src directory and type:
 
 Once each submodule has been made you can go into the base project src folder anre simply type:
 `make`
+`make static`
 
-You should now have a `gf2d` binary within the root of your git repository. Executing this will start your game.
+You should now have a `gf2d` binary within the library folder of your git repository.
+You can now link against in your own project statically (with libs/gf2d.a) or dynamically (with libs/gf2d.so)
