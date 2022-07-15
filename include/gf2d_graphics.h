@@ -69,7 +69,7 @@ SDL_BlendMode gf2d_graphics_get_subtract_blend_mode();
 /**
  * @brief render the current frame to screen
  */
-void gf2d_grahics_next_frame();
+void gf2d_graphics_next_frame();
 
 /**
  * @brief clears drawing buffer.  Should be called each frame before drawing
