@@ -65,7 +65,7 @@ int main(int argc, char * argv[])
             //UI elements last
             gf2d_windows_draw_all();
             gf2d_mouse_draw();
-        gf2d_grahics_next_frame();// render current draw frame and skip to the next frame
+        gf2d_graphics_next_frame();// render current draw frame and skip to the next frame
         
         if ((gfc_input_command_down("exit"))&&(_quit == NULL))
         {
