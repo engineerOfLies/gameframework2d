@@ -109,7 +109,7 @@ void gf2d_draw_polygon(List *points,Color color)
     free(array);
 }
 
-void gf2d_draw_free_points(void *data,void *context)
+void gf2d_draw_free_points(void *data)
 {
     Vector2D *vec;
     if (data)
@@ -146,7 +146,7 @@ void gf2d_draw_bezier_curve(Vector2D p0, Vector2D p1, Vector2D p2,Color color)
     points = gf2d_draw_get_bezier_points(p0, p1, p2);
     if (!points)return;
     gf2d_draw_point_list(points,color);
-    gfc_list_foreach(points,gf2d_draw_free_points,NULL);
+    gfc_list_foreach(points,gf2d_draw_free_points);
     gfc_list_delete(points);
 }
 
@@ -464,7 +464,7 @@ void gf2d_bezier4_draw(
     points = gf2d_draw_get_bezier4_points(ep1,rp1,rp2,ep2);
     if (!points)return;
     gf2d_draw_point_list(points,color);
-    gfc_list_foreach(points,gf2d_draw_free_points,NULL);
+    gfc_list_foreach(points,gf2d_draw_free_points);
     gfc_list_delete(points);
 }
 

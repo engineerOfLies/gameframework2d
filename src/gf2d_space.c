@@ -12,19 +12,6 @@ extern int __DebugMode;
 Uint8 gf2d_body_shape_collide(Body *a,Shape *s,Vector2D *poc, Vector2D *normal);
 void gf2d_space_remove_body_from_buckets(Space *space, DynamicBody *db);
 
-void gf2d_free_shapes(void *data,void *context)
-{
-    Shape *shape;
-    if (!data)return;
-    shape = (Shape*)data;
-    free(shape);
-}
-
-void gf2d_free_dynamic_bodies(void *data,void *context)
-{
-    if (!data)return;
-    gf2d_dynamic_body_free((DynamicBody*)data);
-}
 SpaceBucket *gf2d_space_bucket_new()
 {
     SpaceBucket *bucket;
@@ -51,8 +38,8 @@ void gf2d_space_free(Space *space)
     if (!space)return;
     
     //static shapes ARE owned by the space, so are deleted when the space goes away
-    gfc_list_foreach(space->staticShapes,gf2d_free_shapes,NULL);
-    gfc_list_foreach(space->dynamicBodyList,gf2d_free_dynamic_bodies,NULL);
+    gfc_list_foreach(space->staticShapes,free);
+    gfc_list_foreach(space->dynamicBodyList,(gfc_work_func*)gf2d_dynamic_body_free);
     gfc_list_delete(space->staticShapes);
     gf2d_space_bucket_free(space->voidBucket);
     c = gfc_list_get_count(space->buckets);
