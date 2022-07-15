@@ -7,6 +7,7 @@ Currently the project is in a WIP state, however it is very functional
 
 # How To Use
 Check this repository out as a submodule of your project.  Checkout the build process below.
+documentation found out: https://engineeroflies.github.io/gameframework2d/
 
 # Features
 
