@@ -3,8 +3,8 @@
 #include "gfc_config.h"
 
 #include "gf2d_draw.h"
+#include "gf2d_entity_common.h"
 
-#include "entity_common.h"
 #include "monsters.h"
 #include "level.h"
 #include "player.h"

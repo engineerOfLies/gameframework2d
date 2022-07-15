@@ -3,6 +3,10 @@
 
 #include "gf2d_windows.h"
 
+/**
+ * @purpose this file contains common window that can be customized through modifying their menus/config file
+ */
+
 Window *window_alert(char *title, char *text, void(*onOK)(void *),void *okData);
 
 Window *window_dialog(char *title, char *text, void(*onOK)(void *),void *okData);

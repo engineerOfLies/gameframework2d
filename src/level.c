@@ -11,8 +11,8 @@
 #include "gf2d_mouse.h"
 #include "gf2d_camera.h"
 #include "gf2d_lighting.h"
+#include "gf2d_entity_common.h"
 
-#include "entity_common.h"
 #include "player.h"
 #include "spawn.h"
 #include "level.h"

@@ -9,7 +9,7 @@
 #include "gf2d_element_label.h"
 #include "gf2d_element_entry.h"
 
-#include "windows_common.h"
+#include "gf2d_windows_common.h"
 
 int yes_no_free(Window *win)
 {

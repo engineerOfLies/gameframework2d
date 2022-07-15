@@ -14,7 +14,7 @@
 #include "gf2d_element_list.h"
 #include "gf2d_element_entry.h"
 
-#include "message_buffer.h"
+#include "gf2d_message_buffer.h"
 
 typedef struct
 {

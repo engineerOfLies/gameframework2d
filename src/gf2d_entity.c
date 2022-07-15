@@ -1,8 +1,8 @@
 #include "simple_logger.h"
 #include "gf2d_entity.h"
 #include "gf2d_camera.h"
+#include "gf2d_particle_effects.h"
 #include "level.h"
-#include "particle_effects.h"
 #include "monsters.h"
 
 extern int __DebugMode;
@@ -358,18 +358,10 @@ void gf2d_entity_update(Entity *self)
     //water check
     if (level_water_check(self->body.position))
     {
-        if (!self->inWater)
-        {            //make a splash
-            particle_spray(self->body.position, vector2d(0,-2),gfc_color8(0,100,255,200), 100);
-        }
         self->inWater = 1;
     }
     else
     {
-        if (self->inWater)
-        {            //make a splash
-            particle_spray(self->body.position, vector2d(0,-2),gfc_color8(0,100,255,200), 100);
-        }
         self->inWater = 0;
     }
     /*collision handles position and velocity*/

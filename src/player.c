@@ -5,11 +5,11 @@
 
 #include "gf2d_camera.h"
 
+#include "gf2d_entity_common.h"
+#include "gf2d_message_buffer.h"
+#include "gf2d_windows_common.h"
+#include "gf2d_particle_effects.h"
 #include "level.h"
-#include "entity_common.h"
-#include "message_buffer.h"
-#include "windows_common.h"
-#include "particle_effects.h"
 #include "monsters.h"
 #include "player.h"
 
@@ -330,6 +330,7 @@ float player_damage(Entity *self,float *amount, Entity *source)
         dir.y = -1;
     }
     particle_spray(
+        level_get_particle_emitter(),
         self->body.position,
         dir,
         gfc_color8(255,100,100,200),//from config

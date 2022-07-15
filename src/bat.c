@@ -1,7 +1,6 @@
 #include "simple_logger.h"
 
-#include "windows_common.h"
-#include "entity_common.h"
+#include "gf2d_entity_common.h"
 
 #include "player.h"
 #include "level.h"

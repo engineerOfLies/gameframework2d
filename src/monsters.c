@@ -1,7 +1,7 @@
 #include "simple_logger.h"
 
-#include "particle_effects.h"
-#include "entity_common.h"
+#include "gf2d_particle_effects.h"
+#include "gf2d_entity_common.h"
 #include "level.h"
 #include "player.h"
 #include "monsters.h"
@@ -514,6 +514,7 @@ float monster_damage(Entity *self,float *amount, Entity *source)
     }
     vector2d_normalize(&dir);
     particle_spray(
+        level_get_particle_emitter(),
         self->body.position,
         dir,
         gfc_color8(200,200,200,200),//from config

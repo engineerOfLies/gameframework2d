@@ -7,13 +7,13 @@
 #include "gf2d_draw.h"
 #include "gf2d_actor.h"
 #include "gf2d_entity.h"
+#include "gf2d_entity_common.h"
+#include "gf2d_message_buffer.h"
+#include "gf2d_particle_effects.h"
 
-#include "message_buffer.h"
-#include "particle_effects.h"
 #include "player.h"
 #include "level.h"
 #include "monsters.h"
-#include "entity_common.h"
 
 extern int __DebugMode;
 

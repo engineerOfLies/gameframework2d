@@ -2,10 +2,9 @@
 
 #include "gf2d_particles.h"
 
-#include "particle_effects.h"
-#include "level.h"
+#include "gf2d_particle_effects.h"
 
-void particle_spray(Vector2D position, Vector2D direction,Color color, Uint32 count)
+void particle_spray(ParticleEmitter *pe,Vector2D position, Vector2D direction,Color color, Uint32 count)
 {
     int i;
     Vector2D dir;
@@ -14,7 +13,7 @@ void particle_spray(Vector2D position, Vector2D direction,Color color, Uint32 co
         dir = vector2d_rotate(direction, gfc_crandom()*0.25);
         vector2d_scale(dir,dir,0.5 + gfc_random()*1);
         gf2d_particle_new_full(
-            level_get_particle_emitter(),
+            pe,
             500,
             NULL,
             NULL,
@@ -32,12 +31,12 @@ void particle_spray(Vector2D position, Vector2D direction,Color color, Uint32 co
     }
 }
 
-void particle_trail(Vector2D start, Vector2D end,Color color)
+void particle_trail(ParticleEmitter *pe,Vector2D start, Vector2D end,Color color)
 {
     Shape s;
     s = gfc_shape_edge(start.x,start.y,end.x,end.y);
     gf2d_particle_new_full(
-        level_get_particle_emitter(),
+        pe,
         500,
         NULL,
         &s,

@@ -3,6 +3,8 @@
 
 #include "gf2d_entity.h"
 
+//common functions useful for working with entities
+
 /**
  * @brief calculate total damage based on damage and armor affinities
  * @param damage an array of damages (up to DT_MAX must exist)

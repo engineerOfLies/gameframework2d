@@ -15,7 +15,7 @@
 #include "gf2d_space.h"
 #include "gf2d_lighting.h"
 #include "gf2d_collision.h"
-#include "windows_common.h"
+#include "gf2d_windows_common.h"
 
 
 void init_all(int argc, char *argv[]);
