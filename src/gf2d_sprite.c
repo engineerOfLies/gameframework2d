@@ -50,6 +50,10 @@ void gf2d_sprite_init(Uint32 max)
 void gf2d_sprite_delete(Sprite *sprite)
 {
     if (!sprite)return;
+    if (sprite->surface != NULL)
+    {
+        SDL_FreeSurface(sprite->surface);
+    }
     if (sprite->texture != NULL)
     {
         SDL_DestroyTexture(sprite->texture);
@@ -80,6 +84,7 @@ Sprite *gf2d_sprite_new()
     {
         if ((sprite_manager.sprite_list[i].ref_count == 0)&&(sprite_manager.sprite_list[i].texture == NULL))
         {
+            memset(&sprite_manager.sprite_list[i],0,sizeof(Sprite));
             sprite_manager.sprite_list[i].ref_count = 1;//set ref count
             return &sprite_manager.sprite_list[i];//return address of this array element        }
         }
@@ -87,7 +92,7 @@ Sprite *gf2d_sprite_new()
     /*find an unused sprite address and clean up the old data*/
     for (i = 0;i < sprite_manager.max_sprites;i++)
     {
-        if (sprite_manager.sprite_list[i].ref_count == 0)
+        if (sprite_manager.sprite_list[i].ref_count <= 0)
         {
             gf2d_sprite_delete(&sprite_manager.sprite_list[i]);// clean up the old data
             sprite_manager.sprite_list[i].ref_count = 1;//set ref count
@@ -98,9 +103,14 @@ Sprite *gf2d_sprite_new()
     return NULL;
 }
 
-Sprite *gf2d_sprite_get_by_filename(char * filename)
+Sprite *gf2d_sprite_get_by_filename(const char * filename)
 {
     int i;
+    if (!filename)
+    {
+        slog("cannot find blank filename");
+        return NULL;
+    }
     for (i = 0;i < sprite_manager.max_sprites;i++)
     {
         if (gfc_line_cmp(sprite_manager.sprite_list[i].filepath,filename)==0)
@@ -111,21 +121,27 @@ Sprite *gf2d_sprite_get_by_filename(char * filename)
     return NULL;// not found
 }
 
-Sprite *gf2d_sprite_load_image(char *filename)
+Sprite *gf2d_sprite_load_image(const char *filename)
 {
-    return gf2d_sprite_load_all(filename,-1,-1,1);
+    return gf2d_sprite_load_all(filename,-1,-1,1,false);
 }
 
 Sprite *gf2d_sprite_load_all(
-    char *filename,
-    Sint32 frameWidth,
-    Sint32 frameHeight,
-    Sint32 framesPerLine
+    const char   *filename,
+    Sint32  frameWidth,
+    Sint32  frameHeight,
+    Sint32  framesPerLine,
+    Bool    keepSurface
 )
 {
     SDL_Surface *surface = NULL;
     Sprite *sprite = NULL;
-    
+    if (!filename)
+    {
+        slog("cannot find blank filename");
+        return NULL;
+    }
+
     sprite = gf2d_sprite_get_by_filename(filename);
     if (sprite != NULL)
     {
@@ -182,8 +198,71 @@ Sprite *gf2d_sprite_load_all(
     sprite->frames_per_line = framesPerLine;
     gfc_line_cpy(sprite->filepath,filename);
 
-    SDL_FreeSurface(surface);
+    if(!keepSurface)
+    {
+        SDL_FreeSurface(surface);
+    }
+    else
+    {
+        sprite->surface = surface;
+    }
     return sprite;
+}
+
+void gf2d_sprite_draw_to_surface(
+    Sprite *sprite,
+    Vector2D position,
+    Vector2D * scale,
+    Vector2D * center,
+    Uint32 frame,
+    SDL_Surface *surface
+)
+{
+    SDL_Rect cell,target;
+    int fpl;
+    Vector2D scaleFactor = {1,1};
+    Vector2D scaleOffset = {0,0};
+    if (!sprite)
+    {
+        slog("no sprite provided to draw");
+        return;
+    }
+    if (!sprite->surface)
+    {
+        slog("sprite does not contain surface to draw with");
+        return;
+    }
+    if (!surface)
+    {
+        slog("no surface provided to draw to");
+        return;
+    }
+    if (scale)
+    {
+        vector2d_copy(scaleFactor,(*scale));
+    }
+    if (center)
+    {
+        vector2d_copy(scaleOffset,(*center));
+    }
+    fpl = (sprite->frames_per_line)?sprite->frames_per_line:1;
+    gfc_rect_set(
+        cell,
+        frame%fpl * sprite->frame_w,
+        frame/fpl * sprite->frame_h,
+        sprite->frame_w,
+        sprite->frame_h);
+    gfc_rect_set(
+        target,
+        position.x - (scaleFactor.x * scaleOffset.x),
+        position.y - (scaleFactor.y * scaleOffset.y),
+        sprite->frame_w * scaleFactor.x,
+        sprite->frame_h * scaleFactor.y);
+    SDL_BlitScaled(
+        sprite->surface,
+        &cell,
+        surface,
+        &target);
 }
 
 void gf2d_sprite_draw_image(Sprite *image,Vector2D position)
@@ -203,15 +282,41 @@ void gf2d_sprite_draw(
     Sprite * sprite,
     Vector2D position,
     Vector2D * scale,
-    Vector2D * scaleCenter,
-    Vector3D * rotation,
+    Vector2D * center,
+    float    * rotation,
     Vector2D * flip,
-    Vector4D * colorShift,
+    Color    * color,
     Uint32 frame)
 {
+    gf2d_sprite_render(
+        sprite,
+        position,
+        scale,
+        center,
+        rotation,
+        flip,
+        color,
+        NULL,
+        frame);
+}
+
+void gf2d_sprite_render(
+    Sprite * sprite,
+    Vector2D position,
+    Vector2D * scale,
+    Vector2D * center,
+    float    * rotation,
+    Vector2D * flip,
+    Color    * color,
+    Vector4D * clip,
+    Uint32 frame)
+{
+    float drawRotation = 0;
+    Vector4D colorShift = {1,1,1,1};
+    Vector4D drawClip = {0,0,1,1};
     SDL_Rect cell,target;
     SDL_RendererFlip flipFlags = SDL_FLIP_NONE;
-    SDL_Point r;
+    SDL_Point r = {0,0};
     int fpl;
     Vector2D scaleFactor = {1,1};
     Vector2D scaleOffset = {0,0};
@@ -219,59 +324,75 @@ void gf2d_sprite_draw(
     {
         return;
     }
-    
+    if (clip)
+    {
+        vector4d_copy(drawClip,(*clip));
+    }
     if (scale)
     {
         vector2d_copy(scaleFactor,(*scale));
+        if (scale->x < 0)
+        {
+            if (scale->x)flipFlags |= SDL_FLIP_HORIZONTAL;
+            scaleFactor.x *= -1;
+        }
+        if (scale->y < 0)
+        {
+            if (scale->y)flipFlags |= SDL_FLIP_VERTICAL;
+            scaleFactor.y *= -1;
+        }
     }
-    if (scaleCenter)
+    if (center)
     {
-        vector2d_copy(scaleOffset,(*scaleCenter));
+        vector2d_copy(scaleOffset,(*center));
+        vector2d_copy(r,(*center));
     }
     if (rotation)
     {
-        vector2d_copy(r,(*rotation));
-        r.x *= scaleFactor.x;
-        r.y *= scaleFactor.y;
+        drawRotation = *rotation;
+        vector2d_copy(r,(scaleOffset));
+        r.x *= fabs(scaleFactor.x);
+        r.y *= fabs(scaleFactor.y);
     }
     if (flip)
     {
         if (flip->x)flipFlags |= SDL_FLIP_HORIZONTAL;
         if (flip->y)flipFlags |= SDL_FLIP_VERTICAL;
     }
-    if (colorShift)
+    if (color)
     {
+        colorShift = gfc_color_to_vector4(gfc_color_to_int8(*color));
         SDL_SetTextureColorMod(
             sprite->texture,
-            colorShift->x,
-            colorShift->y,
-            colorShift->z);
+            colorShift.x,
+            colorShift.y,
+            colorShift.z);
         SDL_SetTextureAlphaMod(
             sprite->texture,
-            colorShift->w);
+            colorShift.w);
     }
     
     fpl = (sprite->frames_per_line)?sprite->frames_per_line:1;
     gfc_rect_set(
         cell,
-        frame%fpl * sprite->frame_w,
-        frame/fpl * sprite->frame_h,
-        sprite->frame_w,
-        sprite->frame_h);
+        (frame%fpl * sprite->frame_w) + (drawClip.x * sprite->frame_w),
+        (frame/fpl * sprite->frame_h) + (drawClip.y * sprite->frame_h),
+        (sprite->frame_w * drawClip.z) - (drawClip.x * sprite->frame_w),
+        (sprite->frame_h * drawClip.w) - (drawClip.y * sprite->frame_h));
     gfc_rect_set(
         target,
-        position.x - (scaleFactor.x * scaleOffset.x),
-        position.y - (scaleFactor.y * scaleOffset.y),
-        sprite->frame_w * scaleFactor.x,
-        sprite->frame_h * scaleFactor.y);
+        position.x - (scaleFactor.x * scaleOffset.x) + (drawClip.x * sprite->frame_w * scaleFactor.x),
+        position.y - (scaleFactor.y * scaleOffset.y) + (drawClip.y * sprite->frame_h * scaleFactor.y),
+        (sprite->frame_w * scaleFactor.x * drawClip.z) - (drawClip.x * sprite->frame_w * scaleFactor.x),
+        (sprite->frame_h * scaleFactor.y * drawClip.w) - (drawClip.y * sprite->frame_h * scaleFactor.y));
     SDL_RenderCopyEx(gf2d_graphics_get_renderer(),
                      sprite->texture,
                      &cell,
                      &target,
-                     rotation?rotation->z:0,
-                     rotation?&r:NULL,
+                     drawRotation,
+                     &r,
                      flipFlags);
-    if (colorShift)
+    if (color)
     {
         SDL_SetTextureColorMod(
             sprite->texture,

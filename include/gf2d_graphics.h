@@ -39,10 +39,32 @@ void gf2d_graphics_set_frame_delay(Uint32 frameDelay);
 float gf2d_graphics_get_frames_per_second();
 
 /**
+ * @brief get the current rendering resolution
+ */
+Vector2D gf2d_graphics_get_resolution();
+
+/**
  * @brief get the current rendering context
  * @return NULL on error or the current rendering context
  */
 SDL_Renderer *gf2d_graphics_get_renderer();
+
+/**
+ * @brief set the blend mode for the next draw calls (until this is changed)
+ * @param mode the mode to set it to,  Supports all SDL_BlendModes
+ */
+void gf2d_graphics_set_blend_mode(SDL_BlendMode mode);
+
+/**
+ * @brief get the blend mode for a custom draw mode
+ * @note this takes the minimum of both source and dest alpha, while using the src colors
+ */
+SDL_BlendMode gf2d_graphics_get_light_blend_mode();
+
+/**
+ * @brief get the blend mode for a custom subtract blend mode
+ */
+SDL_BlendMode gf2d_graphics_get_subtract_blend_mode();
 
 /**
  * @brief render the current frame to screen
@@ -53,6 +75,12 @@ void gf2d_grahics_next_frame();
  * @brief clears drawing buffer.  Should be called each frame before drawing
  */
 void gf2d_graphics_clear_screen();
+
+/**
+ * @brief get the image format for the screen
+ * @return the image bit format
+ */
+Uint32 gf2d_graphics_get_image_format();
 
 /*drawing support functions*/
 
@@ -78,5 +106,20 @@ void gf2d_graphics_blit_surface_to_screen(SDL_Surface *surface,const SDL_Rect * 
  * @returns NULL on error, or the new SDL Surface upon success
  */
 SDL_Surface *gf2d_graphics_screen_convert(SDL_Surface **surface);
+
+/**
+ * @brief convert the texture texture target into an SDL surface.
+ * @note: this is slow don't do this often
+ * @return NULL on no texture target or error.  A surface otherwise
+ */
+SDL_Surface *gf2d_graphics_get_render();
+
+/**
+ * @brief save the last render to a PNG
+ * @param filename the filepath and name of the screenshot to save
+ */
+void gf2d_graphics_save_screenshot(const char *filename);
+
+
 
 #endif

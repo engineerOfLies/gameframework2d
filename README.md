@@ -2,11 +2,11 @@
 a collection of utlitity functions designed to facilitate creating 2D games with SDL2
 This project is specifically intended to function as an educational tool for my students taking 2D Game Programming.
 
-Currently the project is in a WIP state, however it is functional with sample projects showcasing rudimentary scrolling shooters,
-platformers, and adventure games.
+FOR FULL FEATURES CHECKOUT THE MASTER BRANCH
+Students: Don't do that.  You are not ready.... yet.
 
-The master branch is kept deliberately minimal to allow students to build out systems as they are learning.
-Other branches have more complete system: Collisions, menus, input abstraction.
+The main branch is kept deliberately minimal to allow students to build out systems as they are learning.
+Other branches have more complete system: Collisions, Windows, Armatures, Entities, Particles...
 
 # Build Process
 
