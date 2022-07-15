@@ -355,15 +355,6 @@ void gf2d_entity_update(Entity *self)
         gf2d_entity_free(self);
         return;
     }
-    //water check
-    if (level_water_check(self->body.position))
-    {
-        self->inWater = 1;
-    }
-    else
-    {
-        self->inWater = 0;
-    }
     /*collision handles position and velocity*/
     vector2d_add(self->body.velocity,self->body.velocity,self->acceleration);
     
