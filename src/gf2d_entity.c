@@ -2,8 +2,6 @@
 #include "gf2d_entity.h"
 #include "gf2d_camera.h"
 #include "gf2d_particle_effects.h"
-#include "level.h"
-#include "monsters.h"
 
 extern int __DebugMode;
 
@@ -117,7 +115,6 @@ Entity *gf2d_entity_iterate(Entity *start)
 
 void gf2d_entity_free(Entity *self)
 {
-    MonsterAttack *attack;
     EntityLink *link;
     int i,c;
     if (!self)return;
@@ -132,18 +129,6 @@ void gf2d_entity_free(Entity *self)
     }
     gfc_list_delete(self->links);
     gf2d_actor_free(self->actor);
-    if (self->attacks)
-    {
-        c = gfc_list_get_count(self->attacks);
-        for (i = 0; i < c; i++)
-        {
-            attack = gfc_list_get_nth(self->attacks,i);
-            if (!attack)return;
-            gfc_list_delete(attack->attack_frames);
-            free(attack);
-        }
-        gfc_list_delete(self->attacks);
-    }
     memset(self,0,sizeof(Entity));
 }
 
