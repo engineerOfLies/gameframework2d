@@ -14,22 +14,6 @@ typedef struct
 
 static EntityManager entity_manager = {0};
 
-static const char *damage_types[] = 
-{
-    "Physical",
-    "Arcane",
-    "Fire",
-    "Ice",
-    "Light",
-    "Dark"
-};
-
-const char *gf2d_entity_damage_type_to_name(DamageTypes type)
-{
-    if (type >= DT_MAX)return NULL;
-    return damage_types[type];
-}
-
 EntityState gf2d_entity_state_from_name(const char *state)
 {
     if (strcmp(state,"idle")==0)return ES_Idle;

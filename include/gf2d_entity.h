@@ -15,17 +15,6 @@
 
 typedef enum
 {
-    DT_Physical,
-    DT_Arcane,
-    DT_Fire,
-    DT_Ice,
-    DT_Light,
-    DT_Dark,
-    DT_MAX
-}DamageTypes;
-
-typedef enum
-{
     ES_Idle,
     ES_Activated,
     ES_Locked,
@@ -130,8 +119,6 @@ typedef struct Entity_S
     int   is_boss;                           /**<if true, this will display boss health*/
     float sight_range;                      /**<how far away befor the monster will see the player*/
     float attack_range;                     /**<monster reach for an attack*/
-    float damages[DT_MAX];                  /**<types of damage dealt by this entity*/
-    float armor[DT_MAX];                    /**<defenses against different damage types*/
     int   connectedAttack;                  // for making sure we don't hit multiple times
 
     float jumpcool;
@@ -300,20 +287,6 @@ Entity *gf2d_entity_get_by_name_id(const char *name,Uint32 id);
  * @return the next entity in the list that is active or NULL when there are not more
  */
 Entity *gf2d_entity_iterate(Entity *start);
-
-/**
- * @brief convert name to damage type
- * @param name of the damage type
- * @return DT_MAX on not a match, or the DT_* in question
- */
-DamageTypes gf2d_entity_damage_type_from_name(const char *name);
-
-/**
- * @brief convert damage type to name
- * @param type the DT
- * @return NULL on error or the printable name otherwise
- */
-const char *gf2d_entity_damage_type_to_name(DamageTypes type);
 
 /**
  * @brief convert name to entity state
