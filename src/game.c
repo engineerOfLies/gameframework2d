@@ -4,17 +4,12 @@
 #include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
 
-#include "entity.h"
-
-void bug_think(Entity *self);
-
 int main(int argc, char * argv[])
 {
     /*variable declarations*/
     int done = 0;
     const Uint8 * keys;
     Sprite *sprite;
-    Entity *ent;
     
     int mx,my;
     float mf = 0;
@@ -22,7 +17,7 @@ int main(int argc, char * argv[])
     Color mouseColor = gfc_color8(255,100,255,200);
     
     /*program initializtion*/
-    init_logger("gf2d.log");
+    init_logger("gf2d.log",0);
     slog("---==== BEGIN ====---");
     gf2d_graphics_initialize(
         "gf2d",
@@ -34,25 +29,11 @@ int main(int argc, char * argv[])
         0);
     gf2d_graphics_set_frame_delay(16);
     gf2d_sprite_init(1024);
-    entity_manager_init(1024);
     SDL_ShowCursor(SDL_DISABLE);
     
     /*demo setup*/
     sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16,0);
-    
-    ent = entity_new();
-    if (ent)
-    {
-        ent->sprite = gf2d_sprite_load_all(
-            "images/space_bug_top.png",
-            128,
-            128,
-            16,
-            0);
-        ent->think = bug_think;
-    }
-    
     /*main game loop*/
     while(!done)
     {
@@ -62,15 +43,12 @@ int main(int argc, char * argv[])
         SDL_GetMouseState(&mx,&my);
         mf+=0.1;
         if (mf >= 16.0)mf = 0;
-        entity_think_all();
-        entity_update_all();
         
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
             gf2d_sprite_draw_image(sprite,vector2d(0,0));
             
-            entity_draw_all();
             //UI elements last
             gf2d_sprite_draw(
                 mouse,
@@ -89,16 +67,5 @@ int main(int argc, char * argv[])
     }
     slog("---==== END ====---");
     return 0;
-}
-
-void bug_think(Entity *self)
-{
-    int mx,my;
-    if (!self)return;
-    SDL_GetMouseState(&mx,&my);
-    if (mx < self->position.x)self->velocity.x = -0.1;
-    if (mx > self->position.x)self->velocity.x = 0.1;
-    if (my < self->position.y)self->velocity.y = -0.1;
-    if (my > self->position.y)self->velocity.y = 0.1;
 }
 /*eol@eof*/
