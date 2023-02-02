@@ -60,7 +60,6 @@ void entity_free(Entity *ent)
 {
     if (!ent)
     {
-        slog("no entity provided");
         return;
     }
     if (ent->sprite)gf2d_sprite_free(ent->sprite);
@@ -69,12 +68,14 @@ void entity_free(Entity *ent)
 
 void entity_draw(Entity *ent)
 {
+    Vector2D drawPosition;
     if (!ent)return;
     if (ent->sprite)
     {
+        vector2d_sub(drawPosition,ent->position,ent->drawOffset);
         gf2d_sprite_draw(
             ent->sprite,
-            ent->position,
+            drawPosition,
             NULL,
             NULL,
             NULL,
