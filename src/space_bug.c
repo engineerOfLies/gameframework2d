@@ -18,19 +18,28 @@ Entity *space_bug_new(Vector2D position)
     ent->think = space_bug_think;
     vector2d_copy(ent->position,position);
     ent->drawOffset = vector2d(64,74);
-    
+    ent->speed = 2.5;
     return ent;
 }
 
 void space_bug_think(Entity *self)
 {
+    Vector2D m,dir;
     int mx,my;
     if (!self)return;
     SDL_GetMouseState(&mx,&my);
-    if (mx < self->position.x)self->velocity.x = -0.1;
-    if (mx > self->position.x)self->velocity.x = 0.1;
-    if (my < self->position.y)self->velocity.y = -0.1;
-    if (my > self->position.y)self->velocity.y = 0.1;
+    m.x = mx;
+    m.y = my;
+    vector2d_sub(dir,m,self->position);
+    if (vector2d_magnitude_compare(dir,10)>0)
+    {
+        vector2d_set_magnitude(&dir,self->speed);
+        vector2d_copy(self->velocity,dir);
+    }
+    else
+    {
+        vector2d_clear(self->velocity);
+    }
 }
 
 /*eol@eof*/

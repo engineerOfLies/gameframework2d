@@ -1,10 +1,12 @@
 #include "simple_logger.h"
+#include "gf2d_draw.h"
 #include "entity.h"
 
 typedef struct
 {
     Uint32  entity_max;
     Entity *entity_list;
+    SJson  *entity_def;
 }EntityManager;
 
 static EntityManager entity_manager = {0};
@@ -30,6 +32,7 @@ void entity_manager_init(Uint32 max)
         return;
     }
     entity_manager.entity_max = max;
+    entity_manager.entity_def = sj_load("config/entities.def");
     atexit(entity_manager_close);
     slog("entity system initialized");
 }
@@ -68,21 +71,21 @@ void entity_free(Entity *ent)
 
 void entity_draw(Entity *ent)
 {
-    Vector2D drawPosition;
     if (!ent)return;
     if (ent->sprite)
     {
-        vector2d_sub(drawPosition,ent->position,ent->drawOffset);
         gf2d_sprite_draw(
             ent->sprite,
-            drawPosition,
+            ent->position,
+            NULL,
+            &ent->drawOffset,
+            &ent->rotation,
             NULL,
             NULL,
-            NULL,
-            NULL,
-            NULL,
-            (int)ent->frame);
+            (Uint32)ent->frame);
     }
+    gf2d_draw_pixel(ent->position,GFC_COLOR_YELLOW);
+    gf2d_draw_circle(ent->position,10,GFC_COLOR_YELLOW);
 }
 
 void entity_draw_all()
@@ -98,9 +101,20 @@ void entity_draw_all()
 void entity_update(Entity *ent)
 {
     if (!ent)return;
+    if (ent->update)
+    {
+        if (ent->update(ent))return;// if the update function returns 1, do not do generic update
+    }
     ent->frame += 0.1;
     if (ent->frame >= 16)ent->frame = 0;
     vector2d_add(ent->position,ent->position,ent->velocity);
+    if(vector2d_magnitude_compare(ent->velocity,0) != 0)
+    {
+        //means the vector is non zero
+        slog("GFC_PI: %f",GFC_PI);
+        ent->rotation = (vector2d_angle(ent->velocity) + 180);
+//        angle_clamp_radians(&ent->rotation);
+    }
 }
 
 void entity_update_all()
@@ -127,6 +141,14 @@ void entity_think_all()
         if (!entity_manager.entity_list[i]._inuse)continue;
         entity_think(&entity_manager.entity_list[i]);
     }
+}
+
+SJson *entity_get_def_by_name(const char *name)
+{
+//    int i,c;
+    if (!name)return NULL;
+    
+    return NULL;
 }
 
 
