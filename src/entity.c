@@ -111,7 +111,6 @@ void entity_update(Entity *ent)
     if(vector2d_magnitude_compare(ent->velocity,0) != 0)
     {
         //means the vector is non zero
-        slog("GFC_PI: %f",GFC_PI);
         ent->rotation = (vector2d_angle(ent->velocity) + 180);
 //        angle_clamp_radians(&ent->rotation);
     }

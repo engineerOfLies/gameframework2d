@@ -1,6 +1,8 @@
 #include <SDL.h>
 #include "simple_logger.h"
 
+#include "gfc_list.h"
+#include "gfc_audio.h"
 #include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
 
@@ -14,6 +16,7 @@ int main(int argc, char * argv[])
     const Uint8 * keys;
     Sprite *sprite;
     Entity *ent;
+    List *sounds;
     
     int mx,my;
     float mf = 0;
@@ -31,6 +34,13 @@ int main(int argc, char * argv[])
         720,
         vector4d(0,0,0,255),
         0);
+    gfc_audio_init(
+        1024,
+        16,
+        5,
+        MIX_MAX_VOLUME,
+        1,
+        1); 
     gf2d_graphics_set_frame_delay(16);
     gf2d_sprite_init(1024);
     entity_manager_init(1024);
@@ -40,6 +50,17 @@ int main(int argc, char * argv[])
     sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16,0);
     ent = space_bug_new(vector2d(100,100));
+    sounds = gfc_list_new();
+    gfc_list_append(sounds,gfc_sound_load("audio/blue.wav",1,5));
+    gfc_list_append(sounds,gfc_sound_load("audio/medic.wav",1,5));    
+    gfc_list_append(sounds,gfc_sound_load("audio/is_about_to_die.wav",1,5));
+    gfc_sound_queue_sequence(sounds,5);
+    gfc_list_delete(sounds);
+    sounds = gfc_list_new();
+    gfc_list_append(sounds,gfc_sound_load("audio/blue.wav",1,5));
+    gfc_list_append(sounds,gfc_sound_load("audio/medic.wav",1,5));    
+    gfc_list_append(sounds,gfc_sound_load("audio/has_died.wav",1,5));
+    gfc_sound_queue_sequence(sounds,5);
     
     /*main game loop*/
     while(!done)
