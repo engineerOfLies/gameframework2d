@@ -2,7 +2,9 @@
 #include <stdlib.h>
 
 #include "simple_logger.h"
+
 #include "gfc_text.h"
+#include "gfc_pak.h"
 
 #include "gf2d_graphics.h"
 
@@ -134,6 +136,9 @@ Sprite *gf2d_sprite_load_all(
     Bool    keepSurface
 )
 {
+    void *mem;
+    SDL_RWops *src;
+    size_t fileSize = 0;
     SDL_Surface *surface = NULL;
     Sprite *sprite = NULL;
     if (!filename)
@@ -149,21 +154,30 @@ Sprite *gf2d_sprite_load_all(
         sprite->ref_count++;
         return sprite;
     }
-    
-    sprite = gf2d_sprite_new();
-    if (!sprite)
+    mem = gfc_pak_file_extract(filename,&fileSize);
+    if (!mem)
     {
+        slog("failed to load image %s",filename);
         return NULL;
     }
-    
-    surface = IMG_Load(filename);
+    src = SDL_RWFromMem(mem, fileSize);
+    if (!src)
+    {
+        slog("failed to read image %s",filename);
+        return NULL;
+    }
+    surface = IMG_Load_RW(src,1);
     if (!surface)
     {
         slog("failed to load sprite image %s",filename);
-        gf2d_sprite_free(sprite);
         return NULL;
     }
-
+    sprite = gf2d_sprite_new();
+    if (!sprite)
+    {
+        SDL_FreeSurface(surface);
+        return NULL;
+    }
     surface = gf2d_graphics_screen_convert(&surface);
     if (!surface)
     {
