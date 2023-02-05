@@ -167,6 +167,7 @@ Sprite *gf2d_sprite_load_all(
         return NULL;
     }
     surface = IMG_Load_RW(src,1);
+    free(mem);
     if (!surface)
     {
         slog("failed to load sprite image %s",filename);
