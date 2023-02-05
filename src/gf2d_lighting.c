@@ -2,6 +2,7 @@
 #include "simple_json.h"
 
 #include "gfc_hashmap.h"
+#include "gfc_pak.h"
 
 #include "gf2d_graphics.h"
 #include "gf2d_lighting.h"
@@ -42,7 +43,7 @@ HashMap *g2d_lights_parse_file(const char *filename)
     const char *name;
     const char *sprite;
     if (!filename)return NULL;
-    file = sj_load(filename);
+    file = gfc_pak_load_json(filename);
     if (!file)return NULL;
     
     lights = sj_object_get_value(file,"lights");

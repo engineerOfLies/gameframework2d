@@ -3,6 +3,7 @@
 
 #include "gfc_config.h"
 #include "gfc_shape.h"
+#include "gfc_pak.h"
 
 #include "gf2d_draw.h"
 #include "gf2d_actor.h"
@@ -858,7 +859,7 @@ Armature *gf2d_armature_load(const char *filepath)
         return armature;
     }
     
-    json = sj_load(filepath);
+    json = gfc_pak_load_json(filepath);
     if (!json)return NULL;
     armature = gf2d_armature_new();
     if (!armature)

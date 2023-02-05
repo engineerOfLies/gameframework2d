@@ -6,6 +6,7 @@
 
 #include "gfc_hashmap.h"
 #include "gfc_audio.h"
+#include "gfc_pak.h"
 
 #include "gf2d_graphics.h"
 #include "gf2d_draw.h"
@@ -361,7 +362,7 @@ void gf2d_windows_init(int max_windows,const char *config)
     //config overrides
     if (config)
     {
-        file = sj_load(config);
+        file = gfc_pak_load_json(config);
         if (file)
         {
             window = sj_object_get_value(file,"window");

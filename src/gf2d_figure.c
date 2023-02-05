@@ -4,6 +4,7 @@
 #include "gfc_color.h"
 #include "gfc_text.h"
 #include "gfc_config.h"
+#include "gfc_pak.h"
 
 #include "gf2d_figure.h"
 
@@ -245,7 +246,7 @@ Figure *gf2d_figure_load(const char *filepath)
     SJson *load;
     Figure *figure;
     if (!filepath)return NULL;
-    load = sj_load(filepath);
+    load = gfc_pak_load_json(filepath);
     if (!load)return NULL;
     figure = gf2d_figure_from_json(load,filepath);
     sj_free(load);
