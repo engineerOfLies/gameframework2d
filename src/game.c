@@ -3,6 +3,8 @@
 
 #include "gfc_list.h"
 #include "gfc_audio.h"
+#include "gfc_pak.h"
+
 #include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
 
@@ -25,6 +27,8 @@ int main(int argc, char * argv[])
     
     /*program initializtion*/
     init_logger("gf2d.log",0);
+    gfc_pak_manager_init();
+    gfc_pak_manager_add("paks/audio.zip");
     slog("---==== BEGIN ====---");
     gf2d_graphics_initialize(
         "gf2d",
