@@ -8,6 +8,7 @@
 #include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
 
+#include "level.h"
 #include "entity.h"
 #include "space_bug.h"
 
@@ -15,6 +16,7 @@ int main(int argc, char * argv[])
 {
     /*variable declarations*/
     int done = 0;
+    Level *level;
     const Uint8 * keys;
     Sprite *sprite;
     Entity *ent;
@@ -51,6 +53,8 @@ int main(int argc, char * argv[])
     SDL_ShowCursor(SDL_DISABLE);
     
     /*demo setup*/
+    level = level_load("config/test.level");
+    
     sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16,0);
     ent = space_bug_new(vector2d(100,100));
@@ -100,6 +104,7 @@ int main(int argc, char * argv[])
         if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition
         //slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
+    level_free(level);
     entity_free(ent);
     slog("---==== END ====---");
     return 0;
