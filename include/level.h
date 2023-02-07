@@ -30,6 +30,12 @@ typedef struct
 Level *level_load(const char *filename);
 
 /**
+ * @brief draw a level
+ * @param level the level to draw
+ */
+void level_draw(Level *level);
+
+/**
  * @brief allocate a blank level struct
  * @return NULL on error or an intialized level
  */

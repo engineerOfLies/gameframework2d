@@ -30,7 +30,6 @@ int main(int argc, char * argv[])
     /*program initializtion*/
     init_logger("gf2d.log",0);
     gfc_pak_manager_init();
-    gfc_pak_manager_add("paks/audio.zip");
     slog("---==== BEGIN ====---");
     gf2d_graphics_initialize(
         "gf2d",
@@ -86,7 +85,7 @@ int main(int argc, char * argv[])
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
             gf2d_sprite_draw_image(sprite,vector2d(0,0));
-            
+            level_draw(level);
             entity_draw_all();
             //UI elements last
             gf2d_sprite_draw(
