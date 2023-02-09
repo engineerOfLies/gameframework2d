@@ -1,4 +1,6 @@
 #include "simple_logger.h"
+#include "gf2d_graphics.h"
+#include "camera.h"
 #include "space_bug.h"
 
 void space_bug_think(Entity *self);
@@ -24,12 +26,14 @@ Entity *space_bug_new(Vector2D position)
 
 void space_bug_think(Entity *self)
 {
-    Vector2D m,dir;
+    Vector2D m,dir,camera;
     int mx,my;
     if (!self)return;
+    camera = camera_get_position();
     SDL_GetMouseState(&mx,&my);
     m.x = mx;
     m.y = my;
+    vector2d_add(m,m,camera);
     vector2d_sub(dir,m,self->position);
     if (vector2d_magnitude_compare(dir,10)>0)
     {
@@ -40,6 +44,7 @@ void space_bug_think(Entity *self)
     {
         vector2d_clear(self->velocity);
     }
+    camera_center_at(self->position);
 }
 
 /*eol@eof*/

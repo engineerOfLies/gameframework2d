@@ -9,6 +9,7 @@
 #include "gf2d_sprite.h"
 
 #include "level.h"
+#include "camera.h"
 #include "entity.h"
 #include "space_bug.h"
 
@@ -20,7 +21,6 @@ int main(int argc, char * argv[])
     const Uint8 * keys;
     Sprite *sprite;
     Entity *ent;
-    List *sounds;
     
     int mx,my;
     float mf = 0;
@@ -53,21 +53,11 @@ int main(int argc, char * argv[])
     
     /*demo setup*/
     level = level_load("config/test.level");
+    level_set_active_level(level);
     
     sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16,0);
     ent = space_bug_new(vector2d(100,100));
-    sounds = gfc_list_new();
-    gfc_list_append(sounds,gfc_sound_load("audio/blue.wav",1,5));
-    gfc_list_append(sounds,gfc_sound_load("audio/medic.wav",1,5));    
-    gfc_list_append(sounds,gfc_sound_load("audio/is_about_to_die.wav",1,5));
-    gfc_sound_queue_sequence(sounds,5);
-    gfc_list_delete(sounds);
-    sounds = gfc_list_new();
-    gfc_list_append(sounds,gfc_sound_load("audio/blue.wav",1,5));
-    gfc_list_append(sounds,gfc_sound_load("audio/medic.wav",1,5));    
-    gfc_list_append(sounds,gfc_sound_load("audio/has_died.wav",1,5));
-    gfc_sound_queue_sequence(sounds,5);
     
     /*main game loop*/
     while(!done)
@@ -80,12 +70,13 @@ int main(int argc, char * argv[])
         if (mf >= 16.0)mf = 0;
         entity_think_all();
         entity_update_all();
+        camera_world_snap();
         
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
             gf2d_sprite_draw_image(sprite,vector2d(0,0));
-            level_draw(level);
+            level_draw(level_get_active_level());
             entity_draw_all();
             //UI elements last
             gf2d_sprite_draw(

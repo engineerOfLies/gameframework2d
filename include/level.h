@@ -2,6 +2,7 @@
 #define __LEVEL_H__
 
 #include "gfc_text.h"
+#include "gfc_shape.h"
 
 #include "gf2d_sprite.h"
 
@@ -19,8 +20,28 @@ typedef struct
     Vector2D    mapSize;    //the width and height of the tile map
     int        *tileMap;    //WTF???
     Sprite     *tileLayer;  //TBD
+    List       *clips;      //list of static shapes to clip against in the game world
 }Level;
 
+/**
+ * @brief get the set active level pointer if it is set
+ * @return NULL if no active level, or a pointer to it
+ */
+Level *level_get_active_level();
+
+/**
+ * @brief check if a shape clips any of the level static shapes
+ * @param level the level to check
+ * @param shape the shape to check with
+ * @return 0 if there is no overlap, 1 if there is
+ */
+int level_shape_clip(Level *level, Shape shape);
+
+/**
+ * @brief set the active level (or turn it off)
+ * @param level the level to set it too (or NULL to turn off the level)
+ */
+void level_set_active_level(Level *level);
 
 /**
  * @brief load a level from a json file

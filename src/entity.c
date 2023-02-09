@@ -1,5 +1,6 @@
 #include "simple_logger.h"
 #include "gf2d_draw.h"
+#include "camera.h"
 #include "entity.h"
 
 typedef struct
@@ -71,12 +72,15 @@ void entity_free(Entity *ent)
 
 void entity_draw(Entity *ent)
 {
+    Vector2D drawPosition,camera;
     if (!ent)return;
+    camera = camera_get_draw_offset();
+    vector2d_add(drawPosition,ent->position,camera);
     if (ent->sprite)
     {
         gf2d_sprite_draw(
             ent->sprite,
-            ent->position,
+            drawPosition,
             NULL,
             &ent->drawOffset,
             &ent->rotation,
@@ -84,8 +88,8 @@ void entity_draw(Entity *ent)
             NULL,
             (Uint32)ent->frame);
     }
-    gf2d_draw_pixel(ent->position,GFC_COLOR_YELLOW);
-    gf2d_draw_circle(ent->position,10,GFC_COLOR_YELLOW);
+    gf2d_draw_pixel(drawPosition,GFC_COLOR_YELLOW);
+    gf2d_draw_circle(drawPosition,10,GFC_COLOR_YELLOW);
 }
 
 void entity_draw_all()

@@ -2,13 +2,26 @@
 #include "simple_json.h"
 
 #include "gfc_config.h"
+#include "gfc_list.h"
 
 #include "gf2d_graphics.h"
 
+#include "camera.h"
 #include "level.h"
 
 void level_build(Level *level);
 
+static Level *activeLevel = NULL;
+
+Level *level_get_active_level()
+{
+    return activeLevel;
+}
+
+void level_set_active_level(Level *level)
+{
+    activeLevel = level;
+}
 
 Level *level_load(const char *filename)
 {
@@ -86,6 +99,39 @@ Level *level_load(const char *filename)
     return level;
 }
 
+int level_shape_clip(Level *level, Shape shape)
+{
+    int i,c;
+    Shape *clip;
+    if (!level)return 0;
+    c = gfc_list_get_count(level->clips);
+    for (i = 0; i < c; i++)
+    {
+        clip = gfc_list_get_nth(level->clips,i);
+        if (!clip)continue;
+        if (gfc_shape_overlap(*clip, shape))return 1;
+    }
+    return 0;
+}
+
+void level_build_clip_space(Level *level)
+{
+    Shape *shape;
+    int i,j;
+    if (!level)return;
+    for (j = 0;j < level->mapSize.y;j++)//j is row
+    {
+        for (i = 0; i < level->mapSize.x;i++)// i is column
+        {
+            if (level->tileMap[(j * (int)level->mapSize.x) + i] <= 0)continue;//skip zero
+            shape = gfc_allocate_array(sizeof(Shape),1);
+            if (!shape)continue;
+            *shape = gfc_shape_rect(i * level->tileSize.x, j * level->tileSize.y, level->tileSize.x,level->tileSize.y);
+            gfc_list_append(level->clips,shape);
+        }
+    }
+}
+
 void level_build(Level *level)
 {
     int i,j;
@@ -106,7 +152,6 @@ void level_build(Level *level)
         slog("failed to create tileLayer surface");
         return;
     }
-    slog("created surface of size (%i,%i)",level->tileLayer->surface->w,level->tileLayer->surface->h);
     //make sure the surface is compatible with our graphics settings
     level->tileLayer->surface = gf2d_graphics_screen_convert(&level->tileLayer->surface);
     if (!level->tileLayer->surface)
@@ -139,41 +184,22 @@ void level_build(Level *level)
     level->tileLayer->frame_w = level->tileLayer->surface->w;
     level->tileLayer->frame_h = level->tileLayer->surface->h;
     level->tileLayer->frames_per_line = 1;
+    camera_set_world_size(vector2d(level->tileLayer->frame_w,level->tileLayer->frame_h));
+    level_build_clip_space(level);
 }
 
 void level_draw(Level *level)
 {
-    int i,j;
     if (!level)return;
-    if (level->tileLayer)
-    {
-        gf2d_sprite_draw_image(level->tileLayer,vector2d(0,0));
-        return;
-    }
-    slog("slow");
-    for (j = 0;j < level->mapSize.y;j++)//j is row
-    {
-        for (i = 0; i < level->mapSize.x;i++)// i is column
-        {
-            if (level->tileMap[(j * (int)level->mapSize.x) + i] <= 0)continue;//skip zero
-            gf2d_sprite_draw(
-                level->tileSet,
-                vector2d(i * level->tileSize.x,j *level->tileSize.y),
-                NULL,
-                NULL,
-                NULL,
-                NULL,
-                NULL,
-                level->tileMap[(j * (int)level->mapSize.x) + i] - 1);
-        }
-    }
+    if (!level->tileLayer)return;
+    gf2d_sprite_draw_image(level->tileLayer,camera_get_draw_offset());
 }
 
 Level *level_new()
 {
     Level *level;
     level = gfc_allocate_array(sizeof(Level),1);
-    
+    level->clips = gfc_list_new();
     return level;
 }
 
@@ -183,6 +209,8 @@ void level_free(Level *level)
     if (level->tileSet)gf2d_sprite_free(level->tileSet);
     if (level->tileLayer)gf2d_sprite_free(level->tileLayer);
     if (level->tileMap)free(level->tileMap);
+    gfc_list_foreach(level->clips,free);
+    gfc_list_delete(level->clips);
     free(level);
 }
 
