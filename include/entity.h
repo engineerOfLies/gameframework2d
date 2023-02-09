@@ -3,6 +3,7 @@
 
 #include "gfc_types.h"
 #include "gfc_vector.h"
+#include "gfc_shape.h"
 
 #include "gf2d_sprite.h"
 
@@ -15,6 +16,7 @@ typedef struct Entity_S
     float   speed;
     Vector2D drawOffset;
     
+    Shape shape;    //collision shape
     
     Vector2D position;
     Vector2D velocity;
@@ -66,5 +68,18 @@ void entity_update_all();
  */
 void entity_think_all();
 
+/**
+ * @brief given an entity get its shape in world space
+ * @param ent the entity to check
+ * @return a shape where its position is set to the world position
+ */
+Shape entity_get_shape(Entity *ent);
+
+/**
+ * @brief given an entity get its shape in world space where it will be after it moves
+ * @param ent the entity to check
+ * @return a shape where its position + velocity is set to the world position
+ */
+Shape entity_get_shape_after_move(Entity *ent);
 
 #endif
