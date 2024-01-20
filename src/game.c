@@ -4,6 +4,8 @@
 #include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
 
+//This is the beginning of something (hopefully) awesome
+
 int main(int argc, char * argv[])
 {
     /*variable declarations*/

@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "gfc_hashmap.h": "c",
+        "gfc_text.h": "c",
+        "gfc_color.h": "c"
+    }
+}
