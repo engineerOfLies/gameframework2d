@@ -16,8 +16,11 @@ typedef struct Entity_S
     Uint8 selected;
     Uint8 isPlayer;
     Uint8 isEnemy;
+    float frame;
 
     Vector2D position;
+    
+    const char *entityName;
     
     void       (*think)(struct Entity_S *self);
     void       (*update)(struct Entity_S *self);

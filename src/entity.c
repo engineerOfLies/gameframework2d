@@ -57,6 +57,7 @@ Entity *entity_new()
             entity_manager.entity_list[i]._inuse = 1;
             entity_manager.entity_list[i].isPlayer = 0;
             entity_manager.entity_list[i].isEnemy = 0;
+
             
             return &entity_manager.entity_list[i];
         }
@@ -70,9 +71,74 @@ void entity_free(Entity *self)
     if (!self)return;
     //MUST DESTROY
     gf2d_sprite_free(self->sprite);
+    if(self->free)self->free(self->customData);
     memset(self,0,sizeof(Entity));
 }
 
+void entity_think(Entity *self)
+{
+    if(!self)return;
+    if(self->health <= 0)entity_free(self);
+    if(self->think)self->think(self);
+}
+
+
+void entity_think_all()
+{
+    int i;
+    for (i = 0; i < entity_manager.entity_count; i++)
+    {
+        if (!entity_manager.entity_list[i]._inuse)continue;
+        entity_think(&entity_manager.entity_list[i]);
+    }    
+}
+
+void entity_update(Entity *self)
+{
+    if(!self)return;
+    if(self->update)self->update(self);
+}
+
+
+void entity_update_all()
+{
+    int i;
+    for (i = 0; i < entity_manager.entity_count; i++)
+    {
+        if (!entity_manager.entity_list[i]._inuse)continue;
+        entity_update(&entity_manager.entity_list[i]);
+    }    
+}
+
+
+void entity_draw(Entity *self)
+{
+    if(!self)return;
+    if(self->sprite)
+    {
+    gf2d_sprite_render(
+    self->sprite,
+    self->position,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    (Uint32) self->frame);
+    }
+}
+
+void entity_draw_all()
+{
+    int i;
+    for (i = 0; i < entity_manager.entity_count; i++)
+    {
+        if (!entity_manager.entity_list[i]._inuse)continue;
+        entity_draw(&entity_manager.entity_list[i]);
+    }    
+
+}
 
 
 Entity *entity_get_player(void)
