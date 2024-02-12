@@ -56,6 +56,7 @@ Entity *entity_new()
         if (!entity_manager.entity_list[i]._inuse)// not used yet, so we can!
         {
             entity_manager.entity_list[i]._inuse = 1;
+            entity_manager.entity_list[i].health = 100;
             entity_manager.entity_list[i].isPlayer = 0;
             entity_manager.entity_list[i].isEnemy = 0;
 
@@ -114,10 +115,12 @@ void entity_update_all()
 
 void entity_draw(Entity *self)
 {
+    slog("entity.c line 117");
     if(!self)return;
+    slog("entity.c line 119");
     if(self->sprite)
     {
-        slog("Do I reach here?");
+        slog("entity.c line 120");
         gf2d_sprite_render(
         self->sprite,
         self->position,
@@ -136,11 +139,15 @@ void entity_draw_all()
     int i;
     for (i = 0; i < entity_manager.entity_count; i++)
     {
-        if (!entity_manager.entity_list[i]._inuse)continue;
+        //slog("entity.c line 141");
+        if (!entity_manager.entity_list[i]._inuse)
+        {
+            //slog("RAHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
+            continue;
+        }
         slog("Entity to draw: %s", entity_manager.entity_list[i].entityName);
         entity_draw(&entity_manager.entity_list[i]);
     }    
-
 }
 
 

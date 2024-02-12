@@ -29,6 +29,7 @@ Player *player_new(const char *thePlayerName)
     player->sprite = gf2d_sprite_load_all("images/ed210.png",128,128,16,0);
     player->frame = 0;
     player->position = vector2d(0,0);
+    player->isPlayer = 1;
     player->entityName = thePlayerName;
     player->think = player_think;
     player->update = player_update;
@@ -55,6 +56,7 @@ void player_free(Player *self)
     entity_free(self->player);
     self->playerName = NULL;
     thePlayer.exsits = 0;
+    slog("exsists?: %i | Player Freed", thePlayer.exsits);
 }
 
 
