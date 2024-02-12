@@ -30,7 +30,7 @@ void entity_clear_all(Entity *ignore)
 
 void entity_system_init(Uint32 maxEntities)
 {
-    if(!entity_manager.entity_list)
+    if(entity_manager.entity_list)
     {
         slog("An active entity manager already exsists");
         return;
@@ -49,6 +49,7 @@ void entity_system_init(Uint32 maxEntities)
 
 Entity *entity_new()
 {
+    
     int i;
     for (i = 0; i < entity_manager.entity_count; i++)
     {
@@ -58,7 +59,7 @@ Entity *entity_new()
             entity_manager.entity_list[i].isPlayer = 0;
             entity_manager.entity_list[i].isEnemy = 0;
 
-            
+            slog("made new entity");
             return &entity_manager.entity_list[i];
         }
     }
@@ -116,16 +117,17 @@ void entity_draw(Entity *self)
     if(!self)return;
     if(self->sprite)
     {
-    gf2d_sprite_render(
-    self->sprite,
-    self->position,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    (Uint32) self->frame);
+        slog("Do I reach here?");
+        gf2d_sprite_render(
+        self->sprite,
+        self->position,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        (Uint32) self->frame);
     }
 }
 
@@ -135,6 +137,7 @@ void entity_draw_all()
     for (i = 0; i < entity_manager.entity_count; i++)
     {
         if (!entity_manager.entity_list[i]._inuse)continue;
+        slog("Entity to draw: %s", entity_manager.entity_list[i].entityName);
         entity_draw(&entity_manager.entity_list[i]);
     }    
 
