@@ -25,7 +25,7 @@ void entity_clear_all(Entity *ignore)
         if(!entity_manager.entity_list[i]._inuse)continue;
         entity_free(&entity_manager.entity_list[i]);        
     }
-    free(entity_manager.entity_list);
+    //free(entity_manager.entity_list);
 }
 
 void entity_system_init(Uint32 maxEntities)
@@ -60,7 +60,7 @@ Entity *entity_new()
             entity_manager.entity_list[i].isPlayer = 0;
             entity_manager.entity_list[i].isEnemy = 0;
 
-            slog("made new entity");
+            //slog("made new entity");
             return &entity_manager.entity_list[i];
         }
     }
@@ -115,12 +115,9 @@ void entity_update_all()
 
 void entity_draw(Entity *self)
 {
-    slog("entity.c line 117");
     if(!self)return;
-    slog("entity.c line 119");
     if(self->sprite)
     {
-        slog("entity.c line 120");
         gf2d_sprite_render(
         self->sprite,
         self->position,
@@ -139,13 +136,8 @@ void entity_draw_all()
     int i;
     for (i = 0; i < entity_manager.entity_count; i++)
     {
-        //slog("entity.c line 141");
-        if (!entity_manager.entity_list[i]._inuse)
-        {
-            //slog("RAHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
-            continue;
-        }
-        slog("Entity to draw: %s", entity_manager.entity_list[i].entityName);
+        if (!entity_manager.entity_list[i]._inuse)continue;
+        //slog("Entity to draw: %s", entity_manager.entity_list[i].entityName);
         entity_draw(&entity_manager.entity_list[i]);
     }    
 }

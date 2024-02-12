@@ -36,7 +36,7 @@ int main(int argc, char * argv[])
         0);
     gf2d_graphics_set_frame_delay(16);
     gf2d_sprite_init(1024);
-    entity_system_init(1024);
+    entity_system_init(2048);
     SDL_ShowCursor(SDL_DISABLE);
     
     /*demo setup*/
@@ -55,6 +55,8 @@ int main(int argc, char * argv[])
 
         entity_think_all();
         entity_update_all();
+        player_think(player);
+        player_update(player);
         
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame

@@ -94,6 +94,7 @@ Entity *entity_get_player(void);
 
 
 
+
 //Entity Class derived from my 3D game code, originally found here: https://github.com/engineerOfLies/gf3d/blob/main/include/entity.h
 //My (arguably worse) version found here: https://github.com/Stereo3/IT485-DayTar/blob/main/include/entity.h     
 #endif
