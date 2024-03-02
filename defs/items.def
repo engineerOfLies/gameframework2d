@@ -1,0 +1,33 @@
+{
+    "items":[
+        {
+            "name":"short_sword",
+            "displayName":"Short Short",
+            "sprite":
+            {
+                "filename":"images/itemslist.png",
+                "frame":1,
+            },
+            "price":100,
+            "type":"melee",
+            "cooldown":10,
+            "damage":5
+        },
+        {
+            "name":"wood_shield",
+            "displayName":"Wood Shield",
+            "price":50,
+            "type":"shield",
+            "defense":10,
+            "cooldown":20
+        },
+        {
+            "name":"health_potion",
+            "displayName":"Health Potion",
+            "price":25,
+            "type":"potion",
+            "heal":10,
+            "stackable":1
+        }
+    ]
+}
