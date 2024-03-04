@@ -28,3 +28,11 @@ Once each submodule has been made you can go into the base project src folder an
 `make`
 
 You should now have a `gf2d` binary within the root of your git repository. Executing this will start your game.
+
+# video overviews and tutorials
+Overview: https://www.youtube.com/watch?v=nvVQ_n6ycC4
+
+Linux Setup: https://www.youtube.com/watch?v=0Znnv5C4mCo
+
+Windows Setup: https://www.youtube.com/watch?v=zj_egJ4sw3I
+
