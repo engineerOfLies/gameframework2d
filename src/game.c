@@ -34,17 +34,16 @@ int main(int argc, char * argv[])
     gf2d_graphics_set_frame_delay(16);
     gf2d_sprite_init(1024);
     SDL_ShowCursor(SDL_DISABLE);
+    level_system_init();
     
     /*demo setup*/
     sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16,0);
     
-//    srand(4);   //for repeatable random levels
     srand(SDL_GetTicks());  //for completelye random each time
+    level = level_generate(100,50);
+    level_generate_tile_layer(level);
     /*main game loop*/
-    slog("hit g to generate a new level");
-    slog("fullscreen your output window to see the level right");
-    slog("hit ESC to quit");
     while(!done)
     {
         SDL_PumpEvents();   // update SDL's internal event structures
@@ -54,16 +53,12 @@ int main(int argc, char * argv[])
         mf+=0.1;
         if (mf >= 16.0)mf = 0;
 
-        if (keys[SDL_SCANCODE_G])
-        {
-            level = level_generate(100,50);
-            level_free(level);//cleanup what you create
-        }
         
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
             gf2d_sprite_draw_image(sprite,vector2d(0,0));
+            level_draw(level, vector2d(0,0));
             
             //UI elements last
             gf2d_sprite_draw(
@@ -81,6 +76,7 @@ int main(int argc, char * argv[])
         if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition
         //slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
+    level_free(level);//cleanup what you create
     slog("---==== END ====---");
     return 0;
 }

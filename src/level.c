@@ -1,6 +1,27 @@
 #include "simple_logger.h"
 
+#include "gf2d_graphics.h"
+
 #include "level.h"
+
+typedef struct
+{
+    Level *activeLevel;
+    Sprite *tileSet;
+}LevelManager;
+
+static LevelManager level_manager = {0};
+
+void level_system_close()
+{
+    gf2d_sprite_free(level_manager.tileSet);
+    memset(&level_manager,0,sizeof(LevelManager));
+}
+
+void level_system_init()
+{
+    level_manager.tileSet = gf2d_sprite_load_all("images/backgrounds/tileSet.png",32,32, 1,1);
+}
 
 
 void level_print(Level *level)
@@ -204,6 +225,69 @@ Level *level_generate(Uint32 w, Uint32 h)
     level_print(level);//remove this at some point, or make an ASCII GAME!
     
     return level;
+}
+
+void level_generate_tile_layer(Level *level)
+{
+    int i,j;
+    int w,h;
+    int tileIndex;
+    if ((!level)||(!level->tileMap))return;
+    if (!level_manager.tileSet)return;// can't do this without tiles to draw
+    if (level->tileLayer)
+    {
+        gf2d_sprite_free(level->tileLayer);
+        //throw out the old one
+        level->tileLayer = NULL;
+    }
+    level->tileLayer = gf2d_sprite_new();//get a blank sprite to work with
+    if (!level->tileLayer)
+    {
+        slog("failed to generate a tile layer sprite");
+        return;
+    }
+        /*number of tiles across*/      /*how large a tile is*/
+    w = level->bounds.w * level_manager.tileSet->frame_w;
+    h = level->bounds.h * level_manager.tileSet->frame_h;
+    level->tileLayer->surface = gf2d_graphics_create_surface(w,h);
+    //draw all the tiles to the layer
+    for (j = 0; j < level->bounds.h; j++)
+    {
+        for (i = 0; i < level->bounds.w; i++)
+        {
+            tileIndex = level->tileMap[room_get_index(i,j,level->bounds.w)];
+            if (!tileIndex)continue; // skip zero, thats an empty tile
+            tileIndex--;//but the tiles index from 0, so...
+            gf2d_sprite_draw_to_surface(
+                level_manager.tileSet,
+                vector2d(i*level_manager.tileSet->frame_w,j*level_manager.tileSet->frame_h),
+                NULL,
+                NULL,
+                tileIndex,
+                level->tileLayer->surface);
+        }
+    }
+    level->tileLayer->texture = SDL_CreateTextureFromSurface(gf2d_graphics_get_renderer(),level->tileLayer->surface);
+    if (!level->tileLayer->texture)
+    {
+        slog("failed to convert tileLayer to texture");
+        gf2d_sprite_free(level->tileLayer);
+        level->tileLayer = NULL;
+        return;
+    }
+    SDL_SetTextureBlendMode(level->tileLayer->texture,SDL_BLENDMODE_BLEND);        
+    SDL_UpdateTexture(level->tileLayer->texture,
+                    NULL,
+                    level->tileLayer->surface->pixels,
+                    level->tileLayer->surface->pitch);
+    level->tileLayer->frame_w = level->tileLayer->surface->w;
+    level->tileLayer->frame_h = level->tileLayer->surface->h;
+}
+
+void level_draw(Level * level, Vector2D offset)
+{
+    if ((!level)||(!level->tileLayer))return;
+    gf2d_sprite_draw_image(level->tileLayer,offset);
 }
 
 Level *level_new()
