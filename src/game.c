@@ -1,9 +1,12 @@
 #include <SDL.h>
 #include "simple_logger.h"
 
+#include "gfc_shape.h"
+
 #include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
 
+#include "camera.h"
 #include "level.h"
 
 int main(int argc, char * argv[])
@@ -19,6 +22,7 @@ int main(int argc, char * argv[])
     Color mouseColor = gfc_color8(255,100,255,200);
     
     Level *level;
+    Vector2D cam;
     
     /*program initializtion*/
     init_logger("gf2d.log",0);
@@ -36,6 +40,8 @@ int main(int argc, char * argv[])
     SDL_ShowCursor(SDL_DISABLE);
     level_system_init();
     
+    camera_set_size(vector2d(1200,720));
+    
     /*demo setup*/
     sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16,0);
@@ -43,6 +49,10 @@ int main(int argc, char * argv[])
     srand(SDL_GetTicks());  //for completelye random each time
     level = level_generate(100,50);
     level_generate_tile_layer(level);
+    if (level->tileLayer)
+    {
+        camera_set_bounds(gfc_rect(0,0,level->tileLayer->frame_w,level->tileLayer->frame_h));
+    }
     /*main game loop*/
     while(!done)
     {
@@ -52,13 +62,32 @@ int main(int argc, char * argv[])
         SDL_GetMouseState(&mx,&my);
         mf+=0.1;
         if (mf >= 16.0)mf = 0;
-
+        
+        cam = camera_get_position();
+        if ((mx <= 10)||(keys[SDL_SCANCODE_A]))
+        {
+            cam.x -= 5;
+        }
+        if ((mx >= 1190)||(keys[SDL_SCANCODE_D]))
+        {
+            cam.x += 5;
+        }
+        if ((my <= 10)||(keys[SDL_SCANCODE_W]))
+        {
+            cam.y -= 5;
+        }
+        if ((my >= 710)||(keys[SDL_SCANCODE_S]))
+        {
+            cam.y += 5;
+        }
+        camera_set_postition(cam);
+        camera_apply_bounds();
         
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
             gf2d_sprite_draw_image(sprite,vector2d(0,0));
-            level_draw(level, vector2d(0,0));
+            level_draw(level, camera_get_offset());
             
             //UI elements last
             gf2d_sprite_draw(
