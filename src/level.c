@@ -1,6 +1,9 @@
 #include "simple_logger.h"
 
 #include "gf2d_graphics.h"
+#include "gf2d_draw.h"
+
+#include "camera.h"
 
 #include "level.h"
 
@@ -11,6 +14,37 @@ typedef struct
 }LevelManager;
 
 static LevelManager level_manager = {0};
+
+int level_get_tile_index(Level *level, int x,int y)
+{
+    if ((!level)||(!level->tileMap))return 0;
+    return level->tileMap[room_get_index(x,y,level->bounds.w)];
+}
+
+SDL_Point level_get_tile_from_position(Level *level, Vector2D position)
+{
+    SDL_Point out = {-1,-1};
+    if (!level)return out;
+    if ((!level->bounds.w)||(!level->bounds.h))return out;
+    out.x = (int)(position.x / level->bounds.w);
+    out.y = (int)(position.y / level->bounds.h);
+    return out;
+}
+
+SDL_Point level_get_tile_from_mouse_position(Level *level)
+{
+    Vector2D position = {0};
+    int mx,my;
+    SDL_Point out = {-1,-1};
+    if (!level)return out;
+    if ((!level->bounds.w)||(!level->bounds.h))return out;
+    SDL_GetMouseState(&mx,&my);
+    position = camera_get_position();
+    position.x += mx;
+    position.y += my;
+    return level_get_tile_from_position(level, position);
+}
+
 
 void level_system_close()
 {
@@ -43,19 +77,22 @@ void level_print(Level *level)
 int level_check_room_overlap(Level *level, Room *room)
 {
     Room *check;
+    SDL_Point parentDoor;
     SDL_Rect checkR,overlap;
     int i,c;
-    if ((!level)||(!room))return 0;
+    if ((!level)||(!room)||(!room->parent))return 0;
     checkR.x = room->bounds.x + 1;
     checkR.y = room->bounds.y + 1;
     checkR.w = room->bounds.w - 2;
     checkR.h = room->bounds.h - 2;
     
+    parentDoor = room_get_exit_level_position(room->parent,room->parentDir);
+    
     c = gfc_list_get_count(level->rooms);
     for (i = 0; i < c; i++)
     {
         check = gfc_list_get_nth(level->rooms,i);
-        if ((!check)||(check == room))continue;
+        if ((!check)||(check == room)||(check == room->parent))continue;
         while (SDL_IntersectRect(&checkR,&check->bounds,&overlap))
         {
             if (overlap.w < overlap.h)
@@ -69,6 +106,11 @@ int level_check_room_overlap(Level *level, Room *room)
                 if (room->parentDir == ED_N)checkR.y++;
             }
             if ((checkR.w+2 < RMINX) || (checkR.h+2 < RMINY))return 0;//failed to fit
+            if (((checkR.x - 1) > parentDoor.x)||((checkR.x + checkR.w +1) < parentDoor.x)||
+                ((checkR.y - 1) > parentDoor.y)||((checkR.y + checkR.h +1) < parentDoor.y))
+            {
+                return 0;// lost our door
+            }
         }
     }
     room->bounds.x = checkR.x - 1;
@@ -92,11 +134,13 @@ Room *level_generate_room(Level *level,Room *parent, ExitDirection parentDir)
     {
         room->bounds.x = (gfc_random() * (level->bounds.w - room->bounds.w));
         room->bounds.y = (gfc_random() * (level->bounds.h - room->bounds.h));
+        level->start.x = room->bounds.x + (room->bounds.w/2);
+        level->start.y = room->bounds.y + (room->bounds.h/2);
     }
     else
     {
         room->depth = parent->depth + 1;
-        room->parentId = parent->id;
+        room->parent= parent;
         room->parentDir = parentDir;
 
         switch (parentDir)
@@ -190,6 +234,7 @@ void level_dig_room(Level *level,Room *room)
 void level_setup(Level *level)
 {
     int i,c;
+    int bestDepth = 0;
     Room *room;
     if (!level)return;
     c = gfc_list_get_count(level->rooms);
@@ -199,6 +244,12 @@ void level_setup(Level *level)
         if (!room)continue;
         room_setup(room);
         level_dig_room(level,room);
+        if (room->depth > bestDepth)
+        {
+            bestDepth = room->depth;
+            level->end.x = room->bounds.x + (room->bounds.w/2);
+            level->end.y = room->bounds.y + (room->bounds.y/2);
+        }
         //room_print(room);
     }
 }
@@ -286,8 +337,15 @@ void level_generate_tile_layer(Level *level)
 
 void level_draw(Level * level, Vector2D offset)
 {
+    Rect rect = {0,0,32,32};
     if ((!level)||(!level->tileLayer))return;
     gf2d_sprite_draw_image(level->tileLayer,offset);
+    rect.x = (level->start.x * 32) + offset.x;
+    rect.y = (level->start.y * 32) + offset.y;
+    gf2d_draw_rect_filled(rect,GFC_COLOR_GREEN);
+    rect.x = (level->end.x * 32) + offset.x;
+    rect.y = (level->end.y * 32) + offset.y;
+    gf2d_draw_rect_filled(rect,GFC_COLOR_RED);
 }
 
 Level *level_new()
@@ -320,7 +378,5 @@ void level_free(Level *level)
     
     free(level);
 }
-
-
 
 /*eol@eof*/

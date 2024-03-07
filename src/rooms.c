@@ -52,7 +52,7 @@ Room *room_generate(Room *parent, Vector2D mins, Vector2D maxs)
     //random dimensions based on mins and maxs
     room->bounds.w = (int)(mins.x + (gfc_random() * (maxs.x - mins.x)));
     room->bounds.h = (int)(mins.y + (gfc_random() * (maxs.y - mins.y)));
-    if (parent)room->parentId = parent->id;
+    if (parent)room->parent = parent;
     return room;
 }
 
@@ -220,41 +220,85 @@ void room_setup(Room *room)
     room_add_walls(room);
 }
 
+
+SDL_Point room_get_exit_level_position(Room *room,ExitDirection parentDir)
+{
+    SDL_Point out = {-1,-1};
+    if (!room)return out;
+    out = room_get_exit_position(room,parentDir);
+    out.x += room->bounds.x;
+    out.y += room->bounds.y;
+    return out;
+}
+
+SDL_Point room_get_exit_position(Room *room,ExitDirection parentDir)
+{
+    SDL_Point out = {-1,-1};
+    if (!room)return out;
+    switch(parentDir)
+    {
+        case ED_N:
+            out.y = 0;
+            out.x = room->bounds.w / 2;
+            break;
+        case ED_S:
+            out.y = room->bounds.h - 1;
+            out.x = room->bounds.w / 2;
+            break;
+        case ED_E:
+            out.x = room->bounds.w - 1;
+            out.y = room->bounds.h / 2;
+            break;
+        case ED_W:
+            out.x = 0;
+            out.y = room->bounds.h / 2;
+            break;
+        default:
+            break;
+    }
+    return out;
+}
+
 void room_add_child(Room *parent,ExitDirection parentDir, Room *child)
 {
+    SDL_Point exit;
     if ((!parent)||(!child))return;
     
     parent->exits[parentDir].room = child;
     parent->exits[parentDir].et = 1;
+    exit = room_get_exit_position(parent,parentDir);
+    parent->exits[parentDir].position.x = exit.x;
+    parent->exits[parentDir].position.y = exit.y;
+    
     switch(parentDir)
     {
         case ED_N:
-            parent->exits[ED_N].position.y = 0;
-            parent->exits[ED_N].position.x = parent->bounds.w / 2;
+//             parent->exits[ED_N].position.y = 0;
+//             parent->exits[ED_N].position.x = parent->bounds.w / 2;
             child->exits[ED_S].room = parent;
             child->exits[ED_S].et = 1;
             child->exits[ED_S].position.y = child->bounds.h - 1;
             child->exits[ED_S].position.x = parent->exits[ED_N].position.x + parent->bounds.x - child->bounds.x;
             break;
         case ED_S:
-            parent->exits[ED_S].position.y = parent->bounds.h - 1;
-            parent->exits[ED_S].position.x = parent->bounds.w / 2;
+//             parent->exits[ED_S].position.y = parent->bounds.h - 1;
+//             parent->exits[ED_S].position.x = parent->bounds.w / 2;
             child->exits[ED_N].room = parent;
             child->exits[ED_N].et = 1;
             child->exits[ED_N].position.y = 0;
             child->exits[ED_N].position.x = parent->exits[ED_S].position.x + parent->bounds.x - child->bounds.x;
             break;
         case ED_E:
-            parent->exits[ED_E].position.x = parent->bounds.w - 1;
-            parent->exits[ED_E].position.y = parent->bounds.h / 2;
+//             parent->exits[ED_E].position.x = parent->bounds.w - 1;
+//             parent->exits[ED_E].position.y = parent->bounds.h / 2;
             child->exits[ED_W].room = parent;
             child->exits[ED_W].et = 1;
             child->exits[ED_W].position.x = 0;
             child->exits[ED_W].position.y = parent->exits[ED_E].position.y + parent->bounds.y - child->bounds.y;
             break;
         case ED_W:
-            parent->exits[ED_W].position.x = 0;
-            parent->exits[ED_W].position.y = parent->bounds.h / 2;
+//             parent->exits[ED_W].position.x = 0;
+//             parent->exits[ED_W].position.y = parent->bounds.h / 2;
             child->exits[ED_E].room = parent;
             child->exits[ED_E].et = 1;
             child->exits[ED_E].position.x = child->bounds.w - 1;

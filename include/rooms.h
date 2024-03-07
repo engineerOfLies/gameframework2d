@@ -45,16 +45,16 @@ typedef enum
 
 struct Room_S
 {
-    Uint32 id;                  //unique id for the level
-    int size;                   // area of the room
+    Uint32  id;                  //unique id for the level
+    int     size;                   // area of the room
     RoomType rtype;             //room type
-    int depth;                  //distance from starting room
+    int     depth;                  //distance from starting room
     SDL_Rect bounds;            //room bounds
-    Uint8 *tileMap;             //tiles for the room.  It will be bounds.w * bounds.h large and will be bounds.w per line
+    Uint8  *tileMap;             //tiles for the room.  It will be bounds.w * bounds.h large and will be bounds.w per line
                                 // 0 will be WALL, 1 will be open
-    Exit exits[ED_MAX];         //exit information
+    Exit    exits[ED_MAX];         //exit information
     Uint8   children;           //how many children have been set
-    Uint32 parentId;
+    Room   *parent;
     ExitDirection   parentDir;  //how this room was added off of the parent
 };
 
@@ -82,6 +82,17 @@ Uint32 room_get_index(int x,int y,int w);
  * @brief for debug purpose, get the character to print for a given tile
  */
 char room_get_tile_get_char(Uint8 tile);
+
+/**
+ * @brief get the position in room space where an exit should be
+ */
+SDL_Point room_get_exit_position(Room *room,ExitDirection parentDir);
+
+/**
+ * @brief get the position in level space where an exit should be for a room
+ */
+SDL_Point room_get_exit_level_position(Room *room,ExitDirection parentDir);
+
 
 /**
  * @brief allocate a new blank room

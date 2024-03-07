@@ -16,6 +16,8 @@ typedef struct
   Uint8    *tileMap;    /*tiles of the map, after it is "dug"*/
   int       numtiles;  /*number of tiles in the list*/
   Sprite   *tileLayer;
+  SDL_Point start;    /*where the map begins*/
+  SDL_Point end;      /*where it ends*/
 }Level;
 
 /**
@@ -53,6 +55,31 @@ void level_draw(Level * level, Vector2D offset);
  * @brief free a level
  */
 void level_free(Level *level);
+
+/**
+ * @brief get the tile position based on world position
+ * @param level to check
+ * @param position where to check
+ * @return (-1,-1) if bad, the tile position otherwise
+ */
+SDL_Point level_get_tile_from_position(Level *level, Vector2D position);
+
+/**
+ * @brief get the tile position base on the mouse
+ * @note SDL events must have been updated for this to work
+ * @param level to check
+ * @return (-1,-1) if bad, the tile position otherwise
+ */
+SDL_Point level_get_tile_from_mouse_position(Level *level);
+
+/**
+ * @brief given a tile position, return the tile index at that position
+ * @param level to check
+ * @param x position
+ * @param y position
+ * @return 0 on error, or the tile index otherwise.  0 is a valid choice, an empty tile
+ */
+int level_get_tile_index(Level *level, int x,int y);
 
 
 #endif
