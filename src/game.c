@@ -8,6 +8,7 @@
 
 #include "camera.h"
 #include "level.h"
+#include "path.h"
 
 int main(int argc, char * argv[])
 {
@@ -23,6 +24,7 @@ int main(int argc, char * argv[])
     
     Level *level;
     Vector2D cam;
+    List *path = NULL;
     
     /*program initializtion*/
     init_logger("gf2d.log",0);
@@ -52,6 +54,15 @@ int main(int argc, char * argv[])
     if (level->tileLayer)
     {
         camera_set_bounds(gfc_rect(0,0,level->tileLayer->frame_w,level->tileLayer->frame_h));
+    }
+    //test path finding
+    if (level)
+    {
+        path = path_find(level->tileMap,
+                         level->bounds.w,
+                         level->bounds.h,
+                         vector2d(level->start.x,level->start.y),
+                         vector2d(level->end.x,level->end.y));
     }
     /*main game loop*/
     while(!done)
@@ -88,7 +99,7 @@ int main(int argc, char * argv[])
             //backgrounds drawn first
             gf2d_sprite_draw_image(sprite,vector2d(0,0));
             level_draw(level, camera_get_offset());
-            
+            if (path)path_draw(path,camera_get_offset());
             //UI elements last
             gf2d_sprite_draw(
                 mouse,
@@ -106,6 +117,7 @@ int main(int argc, char * argv[])
         //slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
     level_free(level);//cleanup what you create
+    path_free(path);
     slog("---==== END ====---");
     return 0;
 }

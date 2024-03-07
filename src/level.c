@@ -62,12 +62,16 @@ void level_print(Level *level)
 {
     int i,j;
     if ((!level)||(!level->tileMap))return;
-    slog("Level:");
+    slog("Level w:%i, h:%i",level->bounds.w,level->bounds.h);
+    slog("start: %i,%i",level->start.x,level->start.y);
+    slog("end  : %i,%i",level->end.x,level->end.y);
     for (j = 0; j < level->bounds.h;j++)
     {
         for (i = 0; i < level->bounds.w;i++)
         {
-            printf("%c",room_get_tile_get_char(level->tileMap[room_get_index(i,j,level->bounds.w)]));
+            if ((i == level->start.x)&&(j == level->start.y))printf("S");
+            else if ((i == level->end.x)&&(j == level->end.y))printf("E");
+            else printf("%c",room_get_tile_get_char(level->tileMap[room_get_index(i,j,level->bounds.w)]));
 
         }
         printf("\n");
@@ -248,7 +252,7 @@ void level_setup(Level *level)
         {
             bestDepth = room->depth;
             level->end.x = room->bounds.x + (room->bounds.w/2);
-            level->end.y = room->bounds.y + (room->bounds.y/2);
+            level->end.y = room->bounds.y + (room->bounds.h/2);
         }
         //room_print(room);
     }
