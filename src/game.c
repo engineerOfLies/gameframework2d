@@ -14,6 +14,7 @@ int main(int argc, char * argv[])
 {
     /*variable declarations*/
     int done = 0;
+    Uint32 press;
     const Uint8 * keys;
     Sprite *sprite;
     
@@ -25,6 +26,7 @@ int main(int argc, char * argv[])
     Level *level;
     Vector2D cam;
     List *path = NULL;
+    SDL_Point search;
     
     /*program initializtion*/
     init_logger("gf2d.log",0);
@@ -70,9 +72,19 @@ int main(int argc, char * argv[])
         SDL_PumpEvents();   // update SDL's internal event structures
         keys = SDL_GetKeyboardState(NULL); // get the keyboard state for this frame
         /*update things here*/
-        SDL_GetMouseState(&mx,&my);
+        press = SDL_GetMouseState(&mx,&my);
         mf+=0.1;
         if (mf >= 16.0)mf = 0;
+        
+        if (press)
+        {
+            search = level_get_tile_from_mouse_position(level);
+            path = path_find(level->tileMap,
+                            level->bounds.w,
+                            level->bounds.h,
+                            vector2d(level->start.x,level->start.y),
+                            vector2d(search.x,search.y));
+        }
         
         cam = camera_get_position();
         if ((mx <= 10)||(keys[SDL_SCANCODE_A]))

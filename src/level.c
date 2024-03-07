@@ -26,8 +26,8 @@ SDL_Point level_get_tile_from_position(Level *level, Vector2D position)
     SDL_Point out = {-1,-1};
     if (!level)return out;
     if ((!level->bounds.w)||(!level->bounds.h))return out;
-    out.x = (int)(position.x / level->bounds.w);
-    out.y = (int)(position.y / level->bounds.h);
+    out.x = (int)(position.x / level_manager.tileSet->frame_w);
+    out.y = (int)(position.y / level_manager.tileSet->frame_h);
     return out;
 }
 
