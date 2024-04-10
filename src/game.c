@@ -4,6 +4,8 @@
 #include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
 
+#include "particles.h"
+
 int main(int argc, char * argv[])
 {
     /*variable declarations*/
@@ -29,6 +31,7 @@ int main(int argc, char * argv[])
         0);
     gf2d_graphics_set_frame_delay(16);
     gf2d_sprite_init(1024);
+    particle_manager_init(100000);
     SDL_ShowCursor(SDL_DISABLE);
     
     /*demo setup*/
@@ -40,7 +43,20 @@ int main(int argc, char * argv[])
         SDL_PumpEvents();   // update SDL's internal event structures
         keys = SDL_GetKeyboardState(NULL); // get the keyboard state for this frame
         /*update things here*/
-        SDL_GetMouseState(&mx,&my);
+        if (SDL_GetMouseState(&mx,&my))
+        {
+            particle_spray(
+                10,
+                300,
+                vector2d(mx,my),
+                gfc_color_hsl(10,1,0.5,0.8),
+                gfc_color_hsl(40,0,0.1,0.2),
+                vector2d(0,-1),
+                5,
+                0.2,
+                0.25,
+                vector2d(0,0.01));
+        }
         mf+=0.1;
         if (mf >= 16.0)mf = 0;
         
@@ -48,6 +64,8 @@ int main(int argc, char * argv[])
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
             gf2d_sprite_draw_image(sprite,vector2d(0,0));
+            
+            particle_manager_draw();
             
             //UI elements last
             gf2d_sprite_draw(
@@ -63,7 +81,7 @@ int main(int argc, char * argv[])
         gf2d_graphics_next_frame();// render current draw frame and skip to the next frame
         
         if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition
-        //slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
+        slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
     slog("---==== END ====---");
     return 0;
