@@ -42,7 +42,7 @@ BUILD		:=	build_switch
 SOURCES		:=	gfc/simple_logger/src gfc/simple_json/src gfc/src src
 DATA		:=	data
 INCLUDES	:=	include gfc/include gfc/simple_logger/include gfc/simple_json/include
-ROMFS		:=	romfs
+ROMFS		:=	platform/switch/romfs
 
 APP_TITLE   := GF2D
 APP_AUTHOR  := DJ Kehoe
