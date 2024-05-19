@@ -62,6 +62,7 @@ makefile.dep
 # platform build folders
 build_gamecube
 build_switch
+build_wii
 
 #vscode folder and executables
 .vscode

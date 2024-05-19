@@ -12,12 +12,17 @@
 #ifdef __GAMECUBE__
 #include <ogcsys.h>
 #include <gccore.h>
+#endif
+
+#if defined(__GAMECUBE__) || defined(__WII__)
 #include "bg_flat_png.h"
 #include "pointer_png.h"
 #endif
 
-int main(int argc, char * argv[])
+
+int main(int argc, char **argv)
 {
+
 #ifdef __SWITCH__
     romfsInit();
     chdir("romfs:/");
@@ -51,6 +56,8 @@ int main(int argc, char * argv[])
     slog("---==== BEGIN ====---");
 #ifdef __GAMECUBE__
     gf2d_graphics_initialize("gf2d", 640, 480, 640, 480, vector4d(0,0,0,255), 0);
+#elif __WII__
+    gf2d_graphics_initialize("gf2d", 1024, 720, 1024, 720, vector4d(0,0,0,255), 0);
 #else
     gf2d_graphics_initialize("gf2d", 1200, 720, 1200, 720, vector4d(0,0,0,255), 0);
 #endif
@@ -63,7 +70,7 @@ int main(int argc, char * argv[])
     SDL_Joystick* joystick = SDL_JoystickOpen(0);
 #endif
 
-#ifdef __GAMECUBE__
+#if defined(__GAMECUBE__) || defined(__WII__)
     sprite = gf2d_sprite_load_image_mem("images/backgrounds/bg_flat.png", bg_flat_png, bg_flat_png_size);
     mouse = gf2d_sprite_load_all_mem("images/pointer.png", pointer_png, pointer_png_size,32,32,16,0);
 #else
