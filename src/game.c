@@ -1,23 +1,38 @@
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include "simple_logger.h"
 
 #include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
+#ifdef __SWITCH__
+#include <switch.h>
+#include <unistd.h>
+#endif
 
 int main(int argc, char * argv[])
 {
+#ifdef __SWITCH__
+    romfsInit();
+    chdir("romfs:/");
+#endif
+
     /*variable declarations*/
     int done = 0;
     const Uint8 * keys;
     Sprite *sprite;
     
-    int mx,my;
+    int mx = 0, my = 0;
     float mf = 0;
     Sprite *mouse;
     Color mouseColor = gfc_color8(255,100,255,200);
     
     /*program initializtion*/
+
+#ifdef __SWITCH__
+    init_logger("sdmc:/gf2d.log",0);
+#else
     init_logger("gf2d.log",0);
+#endif
+
     slog("---==== BEGIN ====---");
     gf2d_graphics_initialize(
         "gf2d",
@@ -31,16 +46,45 @@ int main(int argc, char * argv[])
     gf2d_sprite_init(1024);
     SDL_ShowCursor(SDL_DISABLE);
     
+#ifdef __SWITCH__
+    SDL_JoystickEventState(SDL_ENABLE);
+    SDL_Joystick* joystick = SDL_JoystickOpen(0);
+#endif
+
     /*demo setup*/
     sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16,0);
     /*main game loop*/
+#ifdef __SWITCH__
+    while(!done && appletMainLoop())
+#else
     while(!done)
+#endif
     {
         SDL_PumpEvents();   // update SDL's internal event structures
         keys = SDL_GetKeyboardState(NULL); // get the keyboard state for this frame
         /*update things here*/
+#ifndef __SWITCH__
         SDL_GetMouseState(&mx,&my);
+#else
+        if(SDL_JoystickGetAxis(joystick, 0) > 0)
+        {
+            mx+=4;
+        }
+        else if(SDL_JoystickGetAxis(joystick, 0) < 0)
+        {
+            mx-=4;
+        }
+        
+        if(SDL_JoystickGetAxis(joystick, 1) > 0)
+        {
+            my+=4;
+        }
+        else if(SDL_JoystickGetAxis(joystick, 1) < 0)
+        {
+            my-=4;
+        }
+#endif
         mf+=0.1;
         if (mf >= 16.0)mf = 0;
         
@@ -66,6 +110,9 @@ int main(int argc, char * argv[])
         //slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
     slog("---==== END ====---");
+#ifdef __SWITCH__
+    romfsExit();
+#endif
     return 0;
 }
 /*eol@eof*/
