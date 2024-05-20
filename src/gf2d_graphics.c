@@ -109,6 +109,7 @@ void gf2d_graphics_initialize(
         return;
     }
     
+
     SDL_PixelFormatEnumToMasks(SDL_PIXELFORMAT_ARGB8888,
                                     &gf2d_graphics.bitdepth,
                                     &gf2d_graphics.rmask,

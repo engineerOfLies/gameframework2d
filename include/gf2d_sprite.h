@@ -30,6 +30,8 @@ void gf2d_sprite_init(Uint32 max);
  */
 Sprite *gf2d_sprite_load_image(const char *filename);
 
+Sprite *gf2d_sprite_load_image_mem(const char *name, const uint8_t *data, size_t size);
+
 /**
  * @brief draw a simple image to screen at the position provided
  * @param image the sprite image to draw
@@ -47,6 +49,16 @@ void gf2d_sprite_draw_image(Sprite *image,Vector2D position);
  */
 Sprite *gf2d_sprite_load_all(
     const char *filename,
+    Sint32 frameWidth,
+    Sint32 frameHeigh,
+    Sint32 framesPerLine,
+    Bool    keepSurface
+);
+
+Sprite *gf2d_sprite_load_all_mem(
+    const char *name,
+    const uint8_t *data,
+    size_t size,
     Sint32 frameWidth,
     Sint32 frameHeigh,
     Sint32 framesPerLine,
