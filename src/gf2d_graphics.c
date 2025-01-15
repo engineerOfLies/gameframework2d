@@ -21,7 +21,7 @@ typedef struct
     float fps; 
 
     Uint32 background_color;
-    Vector4D background_color_v;
+    GFC_Vector4D background_color_v;
 
     Sint32 bitdepth;
     Uint32 rmask;
@@ -48,7 +48,7 @@ void gf2d_graphics_initialize(
     int viewHeight,
     int renderWidth,
     int renderHeight,
-    Vector4D bgcolor,
+    GFC_Vector4D bgcolor,
     Bool fullscreen
 )
 {
@@ -133,7 +133,7 @@ void gf2d_graphics_initialize(
     }
     
     gf2d_graphics.background_color = SDL_MapRGB(gf2d_graphics.surface->format, bgcolor.x,bgcolor.y,bgcolor.z);
-    vector4d_set(gf2d_graphics.background_color_v,bgcolor.x,bgcolor.y,bgcolor.z,bgcolor.w);
+    gfc_vector4d_set(gf2d_graphics.background_color_v,bgcolor.x,bgcolor.y,bgcolor.z,bgcolor.w);
     SDL_SetRenderDrawBlendMode(gf2d_graphics_get_renderer(),SDL_BLENDMODE_BLEND);
 
     srand(SDL_GetTicks());
@@ -292,9 +292,9 @@ float gf2d_graphics_get_frames_per_second()
     return gf2d_graphics.fps;
 }
 
-Vector2D gf2d_graphics_get_resolution()
+GFC_Vector2D gf2d_graphics_get_resolution()
 {
-    return vector2d((float)gf2d_graphics.renderWidth,(float)gf2d_graphics.renderHeight);
+    return gfc_vector2d((float)gf2d_graphics.renderWidth,(float)gf2d_graphics.renderHeight);
 }
 
 void gf2d_graphics_frame_delay()

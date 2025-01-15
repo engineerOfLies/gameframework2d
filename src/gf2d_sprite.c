@@ -3,6 +3,7 @@
 
 #include "simple_logger.h"
 
+#include "gfc_shape.h"
 #include "gfc_text.h"
 #include "gfc_pak.h"
 
@@ -210,17 +211,17 @@ Sprite *gf2d_sprite_load_all(
 
 void gf2d_sprite_draw_to_surface(
     Sprite *sprite,
-    Vector2D position,
-    Vector2D * scale,
-    Vector2D * center,
+    GFC_Vector2D position,
+    GFC_Vector2D * scale,
+    GFC_Vector2D * center,
     Uint32 frame,
     SDL_Surface *surface
 )
 {
     SDL_Rect cell,target;
     int fpl;
-    Vector2D scaleFactor = {1,1};
-    Vector2D scaleOffset = {0,0};
+    GFC_Vector2D scaleFactor = {1,1};
+    GFC_Vector2D scaleOffset = {0,0};
     if (!sprite)
     {
         slog("no sprite provided to draw");
@@ -238,11 +239,11 @@ void gf2d_sprite_draw_to_surface(
     }
     if (scale)
     {
-        vector2d_copy(scaleFactor,(*scale));
+        gfc_vector2d_copy(scaleFactor,(*scale));
     }
     if (center)
     {
-        vector2d_copy(scaleOffset,(*center));
+        gfc_vector2d_copy(scaleOffset,(*center));
     }
     fpl = (sprite->frames_per_line)?sprite->frames_per_line:1;
     gfc_rect_set(
@@ -264,7 +265,7 @@ void gf2d_sprite_draw_to_surface(
         &target);
 }
 
-void gf2d_sprite_draw_image(Sprite *image,Vector2D position)
+void gf2d_sprite_draw_image(Sprite *image,GFC_Vector2D position)
 {
     gf2d_sprite_draw(
         image,
@@ -279,12 +280,12 @@ void gf2d_sprite_draw_image(Sprite *image,Vector2D position)
 
 void gf2d_sprite_draw(
     Sprite * sprite,
-    Vector2D position,
-    Vector2D * scale,
-    Vector2D * center,
+    GFC_Vector2D position,
+    GFC_Vector2D * scale,
+    GFC_Vector2D * center,
     float    * rotation,
-    Vector2D * flip,
-    Color    * color,
+    GFC_Vector2D * flip,
+    GFC_Color    * color,
     Uint32 frame)
 {
     gf2d_sprite_render(
@@ -301,35 +302,35 @@ void gf2d_sprite_draw(
 
 void gf2d_sprite_render(
     Sprite * sprite,
-    Vector2D position,
-    Vector2D * scale,
-    Vector2D * center,
+    GFC_Vector2D position,
+    GFC_Vector2D * scale,
+    GFC_Vector2D * center,
     float    * rotation,
-    Vector2D * flip,
-    Color    * color,
-    Vector4D * clip,
+    GFC_Vector2D * flip,
+    GFC_Color    * color,
+    GFC_Vector4D * clip,
     Uint32 frame)
 {
     float drawRotation = 0;
-    Vector4D colorShift = {1,1,1,1};
-    Vector4D drawClip = {0,0,1,1};
+    GFC_Vector4D colorShift = {1,1,1,1};
+    GFC_Vector4D drawClip = {0,0,1,1};
     SDL_Rect cell,target;
     SDL_RendererFlip flipFlags = SDL_FLIP_NONE;
     SDL_Point r = {0,0};
     int fpl;
-    Vector2D scaleFactor = {1,1};
-    Vector2D scaleOffset = {0,0};
+    GFC_Vector2D scaleFactor = {1,1};
+    GFC_Vector2D scaleOffset = {0,0};
     if (!sprite)
     {
         return;
     }
     if (clip)
     {
-        vector4d_copy(drawClip,(*clip));
+        gfc_vector4d_copy(drawClip,(*clip));
     }
     if (scale)
     {
-        vector2d_copy(scaleFactor,(*scale));
+        gfc_vector2d_copy(scaleFactor,(*scale));
         if (scale->x < 0)
         {
             if (scale->x)flipFlags |= SDL_FLIP_HORIZONTAL;
@@ -343,13 +344,13 @@ void gf2d_sprite_render(
     }
     if (center)
     {
-        vector2d_copy(scaleOffset,(*center));
-        vector2d_copy(r,(*center));
+        gfc_vector2d_copy(scaleOffset,(*center));
+        gfc_vector2d_copy(r,(*center));
     }
     if (rotation)
     {
         drawRotation = *rotation;
-        vector2d_copy(r,(scaleOffset));
+        gfc_vector2d_copy(r,(scaleOffset));
         r.x *= fabs(scaleFactor.x);
         r.y *= fabs(scaleFactor.y);
     }

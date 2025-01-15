@@ -10,7 +10,7 @@
 typedef struct Sprite_S
 {
     int ref_count;
-    TextLine filepath;
+    GFC_TextLine filepath;
     SDL_Texture *texture;
     SDL_Surface *surface;
     Uint32 frames_per_line;
@@ -35,7 +35,7 @@ Sprite *gf2d_sprite_load_image(const char *filename);
  * @param image the sprite image to draw
  * @param position the x and y position to draw the image at (top left corner)
  */
-void gf2d_sprite_draw_image(Sprite *image,Vector2D position);
+void gf2d_sprite_draw_image(Sprite *image,GFC_Vector2D position);
 
 /**
  * @brief loads a sprite from file using the sprite system
@@ -68,13 +68,13 @@ Sprite *gf2d_sprite_load_all(
  */
 void gf2d_sprite_render(
     Sprite * sprite,
-    Vector2D position,
-    Vector2D * scale,
-    Vector2D * center,
+    GFC_Vector2D position,
+    GFC_Vector2D * scale,
+    GFC_Vector2D * center,
     float    * rotation,
-    Vector2D * flip,
-    Color    * color,
-    Vector4D * clip,
+    GFC_Vector2D * flip,
+    GFC_Color    * color,
+    GFC_Vector4D * clip,
     Uint32 frame);
 
 /**
@@ -90,12 +90,12 @@ void gf2d_sprite_render(
  */
 void gf2d_sprite_draw(
     Sprite * sprite,
-    Vector2D position,
-    Vector2D * scale,
-    Vector2D * center,
+    GFC_Vector2D position,
+    GFC_Vector2D * scale,
+    GFC_Vector2D * center,
     float    * rotation,
-    Vector2D * flip,
-    Color    * colorShift,
+    GFC_Vector2D * flip,
+    GFC_Color    * colorShift,
     Uint32 frame);
 
 /**
@@ -129,9 +129,9 @@ void gf2d_sprite_clear_all();
  */
 void gf2d_sprite_draw_to_surface(
     Sprite *sprite,
-    Vector2D position,
-    Vector2D * scale,
-    Vector2D * scaleCenter,
+    GFC_Vector2D position,
+    GFC_Vector2D * scale,
+    GFC_Vector2D * scaleCenter,
     Uint32 frame,
     SDL_Surface *surface
 );

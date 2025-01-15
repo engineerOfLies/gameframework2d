@@ -22,7 +22,7 @@ void gf2d_graphics_initialize(
     int viewHeight,
     int renderWidth,
     int renderHeight,
-    Vector4D bgcolor,
+    GFC_Vector4D bgcolor,
     Bool fullscreen
 );
 
@@ -41,7 +41,7 @@ float gf2d_graphics_get_frames_per_second();
 /**
  * @brief get the current rendering resolution
  */
-Vector2D gf2d_graphics_get_resolution();
+GFC_Vector2D gf2d_graphics_get_resolution();
 
 /**
  * @brief get the current rendering context
