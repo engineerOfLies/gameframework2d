@@ -17,7 +17,7 @@ typedef struct
     Sprite * sprite_list;
 }SpriteManager;
 
-static SpriteManager sprite_manager;
+static SpriteManager sprite_manager = {0};
 
 void gf2d_sprite_close()
 {
