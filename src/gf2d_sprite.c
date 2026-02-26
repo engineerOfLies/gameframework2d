@@ -209,6 +209,64 @@ Sprite *gf2d_sprite_load_all(
     return sprite;
 }
 
+Sprite *gf2d_sprite_from_surface(
+    SDL_Surface *surface,
+    Sint32  frameWidth,
+    Sint32  frameHeight,
+    Sint32  framesPerLine,
+    Bool    keepSurface
+)
+{
+    Sprite *sprite = NULL;
+    if (!surface)
+    {
+        slog("cannot convert nothing to a sprite");
+        return NULL;
+    }
+
+    sprite = gf2d_sprite_new();
+    if (!sprite)
+    {
+        SDL_FreeSurface(surface);
+        return NULL;
+    }
+    
+    sprite->texture = SDL_CreateTextureFromSurface(gf2d_graphics_get_renderer(),surface);
+    if (!sprite->texture)
+    {
+        slog("failed to convert surface image");
+        gf2d_sprite_free(sprite);
+        return NULL;
+    }
+    SDL_SetTextureBlendMode(sprite->texture,SDL_BLENDMODE_BLEND);        
+    SDL_UpdateTexture(sprite->texture,
+                    NULL,
+                    surface->pixels,
+                    surface->pitch);
+    if (frameHeight == -1)
+    {
+        sprite->frame_h = surface->h;
+    }
+    else sprite->frame_h = frameHeight;
+    if (frameWidth == -1)
+    {
+        sprite->frame_w = surface->w;
+    }
+    else sprite->frame_w = frameWidth;
+    sprite->frames_per_line = framesPerLine;
+
+    if(!keepSurface)
+    {
+        SDL_FreeSurface(surface);
+    }
+    else
+    {
+        sprite->surface = surface;
+    }
+    return sprite;
+}
+
+
 void gf2d_sprite_draw_to_surface(
     Sprite *sprite,
     GFC_Vector2D position,

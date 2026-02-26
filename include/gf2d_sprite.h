@@ -54,6 +54,22 @@ Sprite *gf2d_sprite_load_all(
 );
 
 /**
+ * @brief creates a sprite from surface information
+ * @param surface the pixel data to use
+ * @param frameWidth the width of an individual sprite frame
+ * @param frameHeigh the height of an individual sprite frame
+ * @param framesPerLine how many frames go in a row in the sprite sheet
+ * @param keepSurface if you plan on doing surface editing with this sprite, set to true otherwise the surface data is cleaned up
+ */
+Sprite *gf2d_sprite_from_surface(
+    SDL_Surface *surface,
+    Sint32  frameWidth,
+    Sint32  frameHeight,
+    Sint32  framesPerLine,
+    Bool    keepSurface
+);
+
+/**
  * @brief draw a sprite to the screen with all options
  * @param sprite the sprite to draw
  * @param position here on the screen to draw it
