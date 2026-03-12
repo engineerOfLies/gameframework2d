@@ -9,6 +9,7 @@
 
 #include "camera.h"
 #include "entity.h"
+#include "parallax.h"
 #include "player.h"
 #include "monster.h"
 #include "level.h"
@@ -17,6 +18,7 @@ int main(int argc, char * argv[])
 {
     /*variable declarations*/
     Level *level;
+    Parallax *parallax;
     int done = 0;
     int i;
     const Uint8 * keys;
@@ -48,13 +50,15 @@ int main(int argc, char * argv[])
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16,0);
     slog("press [escape] to quit");
     
-    level = level_load("levels/testlevel.level");
-    level_bake_tiles(level);
+    parallax = parallax_load("levels/testparallax.level");
+//     level = level_load_bin("levels/testlevel.bin");
+//     level_bake_tiles(level);
     player_entity_new(gfc_vector2d(100,100));
-    for (i = 0; i < 10;i++)
-    {
-        monster_new(gfc_vector2d(gfc_random() * level->size.x,gfc_random()*level->size.y));
-    }
+//     for (i = 0; i < 10;i++)
+//     {
+//         monster_new(gfc_vector2d(gfc_random() * level->size.x,gfc_random()*level->size.y));
+//     }
+//    level_save_bin(level, "levels/testlevel.bin");
     /*main game loop*/
     while(!done)
     {
@@ -71,7 +75,8 @@ int main(int argc, char * argv[])
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
-            level_draw(level);
+//            level_draw(level);
+            parallax_draw(parallax);
             entity_manager_draw_all();
             entity_draw(player_entity_get());
             //UI elements last

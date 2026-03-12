@@ -34,12 +34,13 @@ void player_entity_think(Entity *self)
     }
     if ((move.x) || (move.y))
     {
-        self->rotation = gfc_vector2d_angle(move) * GFC_RADTODEG;
         gfc_vector2d_normalize(&move);
         gfc_vector2d_scale(self->velocity,move,self->topSpeed);
     }
+    if (move.x < 0)self->flip.x = 0;
+    if (move.x > 0)self->flip.x = 1;
     self->frame += 0.1;
-    if (self->frame >= 8)self->frame = 0;
+    if (self->frame >= 110)self->frame = 96;
 }
 
 void player_entity_update(Entity *self)
@@ -54,11 +55,12 @@ Entity *player_entity_new(GFC_Vector2D position)
     self = entity_new();
     if (!self)return NULL;
     self->sprite = gf2d_sprite_load_all(
-        "images/ed210_top.png",
+        "images/ed210.png",
         128,
         128,
         16,
         0);
+    self->frame = 96;
     self->bounds = gfc_rect(-32,-32,72,72);
     self->rotationCenter = gfc_vector2d(64,64);
     self->topSpeed = 3;

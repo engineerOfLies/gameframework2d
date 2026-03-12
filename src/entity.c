@@ -106,7 +106,7 @@ void entity_draw(Entity *self)
         &self->scale,
         &self->rotationCenter,
         &self->rotation,
-        NULL,
+        &self->flip,
         &self->color,
         (Uint32)self->frame);
     bounds = self->bounds;

@@ -22,4 +22,7 @@ void camera_set_position(GFC_Vector2D position);
 
 void camera_set_dimension(GFC_Vector2D dimenstions);
 
+GFC_Vector2D camera_get_dimension();
+
+
 #endif

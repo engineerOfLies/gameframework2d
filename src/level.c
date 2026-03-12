@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "simple_logger.h"
 
 #include "gf2d_graphics.h"
@@ -187,6 +189,86 @@ void level_bake_tiles(Level *level)
             0,
             1
         );
+}
+
+Level *level_load_bin(const char *filename)
+{
+    GFC_TextLine buffer;
+    FILE *file;
+    Level *level;
+    if (!filename)return NULL;
+    file = fopen(filename, "rb");
+    if (!file)
+    {
+        slog("failed to open level file %s",filename);
+        return NULL;
+    }
+    level = level_new();
+    if (!level)
+    {
+        slog("failed to allocate a new level");
+        goto failparse;
+    }
+    
+    fread(buffer, sizeof(GFC_TextLine), 1,file);
+    level->background = gf2d_sprite_load_image(buffer);
+    fread(&level->width,sizeof(Uint32),1,file);
+    fread(&level->height,sizeof(Uint32),1,file);
+    if ((!level->width)||(!level->height))
+    {
+        slog("level file %s is bad: width: %i, height: %i",filename,level->width,level->height);
+        goto failparse;
+    }
+    level->tileMap = gfc_allocate_array(sizeof(Uint8),level->width* level->height);
+    if (!level->tileMap)
+    {
+        slog("failed to allocate tilemap for %s, width: %i, height: %i",filename,level->width,level->height);
+        goto failparse;
+    }
+    fread(level->tileMap,sizeof(Uint8),level->width* level->height,file);
+    slog("we loaded %i by %i tiles",level->width,level->height);
+    level->tiledef = tiledef_load_from_file(file);
+    level_setup_camera_bounds(level);
+
+    fclose(file);
+    return level;
+failparse:
+    level_free(level);
+    fclose(file);
+    return NULL;
+}
+
+void level_save_bin(Level *level, const char *filename)
+{
+    FILE *file;
+    GFC_TextLine blank = {0};
+    if ((!level)||(!filename))return;
+    file = fopen(filename, "wb");
+    if (!file)
+    {
+        slog("failed to savel level to file %s!",filename);
+        return;
+    }
+    if (level->background)
+    {
+        fwrite(level->background->filepath,sizeof(GFC_TextLine),1,file);
+    }
+    else
+    {
+        fwrite(blank,sizeof(GFC_TextLine),1,file);
+    }
+    fwrite(&level->width,sizeof(Uint32),1,file);
+    fwrite(&level->height,sizeof(Uint32),1,file);
+    fwrite(level->tileMap,sizeof(Uint8),level->width* level->height,file);
+    tiledef_save_to_file(level->tiledef, file);
+    fclose(file);
+}
+
+void level_slog(Level *level)
+{
+    if (!level)return;
+    if (level->background)slog("level background: %s",level->background->filepath);
+    slog("level tile width: %i height: %i",level->width,level->height);
 }
 
 void level_draw(Level *level)

@@ -34,6 +34,7 @@ typedef struct Entity_S
     GFC_Vector2D    scale;
     GFC_Vector2D    rotationCenter;
     float           rotation;
+    GFC_Vector2D    flip;
     Sprite         *sprite;
     float           frame;
     void          (*think)(struct Entity_S *self);  //called every frame if defined for the entity

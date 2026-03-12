@@ -1,0 +1,10 @@
+{
+    "parallax":
+    [
+        "images/backgrounds/sky_layer.png",
+        "images/backgrounds/mountain_layer.png",
+        "images/backgrounds/tree_layer.png",
+        "images/backgrounds/foreground_layer.png"
+    ],
+    "backgroundLayer": 3
+}

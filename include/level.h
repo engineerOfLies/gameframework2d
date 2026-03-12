@@ -7,8 +7,8 @@ typedef struct
 {
     Sprite *background;     //background sprite
     Sprite *tileLayer;      //static tile layer for fast rendering
-    Uint8  *tileMap;        //pointer to the tile map data
     Uint32  width,height;   //size of the tileMap in tiles
+    Uint8  *tileMap;        //pointer to the tile map data
     GFC_Vector2D size;      //size of the tileMap in pixels
     TileDef *tiledef;        //describes the tiles
 }Level;
@@ -20,6 +20,18 @@ typedef struct
  * @note the tilemap still needs to be set
  */
 Level *level_load(const char *filepath);
+
+/**
+ * @brief same as level_load, but for a binary file
+ */
+Level *level_load_bin(const char *filename);
+
+
+/**
+ * @brief save a level to file in raw binary
+ */
+void level_save_bin(Level *level, const char *filename);
+
 
 /**
  * @brief set the boarder tiles of the level to the given tile

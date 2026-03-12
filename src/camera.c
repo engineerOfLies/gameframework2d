@@ -48,6 +48,14 @@ void camera_set_dimension(GFC_Vector2D dimenstions)
     camera.view.h = dimenstions.y;
 }
 
+GFC_Vector2D camera_get_dimension()
+{
+    GFC_Vector2D  out;
+    out.x = camera.view.w;
+    out.y = camera.view.h;
+    return out;
+}
+
 
 
 /**/
